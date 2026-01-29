@@ -9,31 +9,22 @@ Single-page site for private arrangements. By referral only.
 
 ## Publish to a new private Git repository
 
-Run these in a terminal from the `atelier-deploy` folder:
+The repo is already initialized with an initial commit. To publish to GitHub:
 
-```bash
-cd C:\Users\email\atelier-deploy
+1. **Create the private repo on GitHub**
+   - Go to [github.com/new](https://github.com/new).
+   - Repository name: `atelier` (or any name).
+   - Set visibility to **Private**.
+   - Do **not** add a README, .gitignore, or license (this folder already has them).
+   - Click **Create repository**.
 
-# Initialize and first commit
-git init
-git add .
-git commit -m "Initial commit: Atelier site"
+2. **Add the remote and push** (run in PowerShell from this folder):
 
-# Create a new private repo on GitHub and push (requires GitHub CLI)
-gh repo create atelier --private --source=. --remote=origin --push
-```
-
-If you don't use GitHub CLI, create the repo in the browser first:
-
-1. Go to [github.com/new](https://github.com/new).
-2. Name the repo (e.g. `atelier`), set it to **Private**, leave “Add a README” unchecked.
-3. Create the repository, then run:
-
-```bash
+```powershell
 cd C:\Users\email\atelier-deploy
 git remote add origin https://github.com/YOUR_USERNAME/atelier.git
 git branch -M main
 git push -u origin main
 ```
 
-Replace `YOUR_USERNAME` with your GitHub username.
+Replace `YOUR_USERNAME` with your GitHub username. If GitHub prompts for credentials, use a [Personal Access Token](https://github.com/settings/tokens) instead of your password.
