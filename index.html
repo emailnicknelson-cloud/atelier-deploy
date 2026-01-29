@@ -134,6 +134,12 @@
             border-bottom: 1px solid rgba(250, 248, 245, 0.06);
         }
         
+        /* Position first section content higher in viewport */
+        #threshold {
+            justify-content: flex-start;
+            padding-top: 14vh;
+        }
+        
         h1, h2 {
             font-family: 'Cormorant Garamond', serif;
             font-weight: 300;
@@ -149,7 +155,7 @@
         .subtitle {
             font-family: 'Cormorant Garamond', serif;
             font-weight: 400;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             color: var(--accent);
             opacity: 0.9;
             letter-spacing: 0.1em;
@@ -402,7 +408,8 @@
             }
             
             #threshold {
-                padding-top: 25vh;
+                justify-content: flex-start;
+                padding-top: 18vh;
                 min-height: 100vh;
             }
             
@@ -436,7 +443,7 @@
                 padding-top: 22vh;
             }
             #threshold {
-                padding-top: 28vh;
+                padding-top: 20vh;
             }
         }
         
@@ -469,8 +476,10 @@
     </section>
 
     <section id="philosophy">
-        <h2>Discretion as infrastructure</h2>
-        <p>Each arrangement is structured around the specific gravity of your occasion. We do not maintain portfolios, publish client lists, or repeat concepts.</p>
+        <div class="subtitle">Discretion as infrastructure</div>
+        <p style="opacity: 0.7; max-width: 380px;">
+            Each arrangement is structured around the specific gravity of your occasion. We do not maintain portfolios, publish client lists, or repeat concepts.
+        </p>
         <div class="note">
             <h3>Estate & Residential</h3>
             <p>Full household integration with staff briefing and security coordination.</p>
@@ -648,8 +657,8 @@
         scrollContainer.addEventListener('scroll', () => {
             // On mobile layout or in overflowing last section, no snap-back
             if (isMobileLayout) return;
-            if (isSnapping) return;
             if (isInOverflowingLastSection()) return;
+            if (isSnapping) return;
             if (isTouch && (Date.now() - lastSnapEndTime) < SNAP_COOLDOWN) return;
             
             clearTimeout(scrollEndTimer);
