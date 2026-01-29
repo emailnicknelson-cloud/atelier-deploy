@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Atelier</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400&display=swap');
+        
+        :root {
+            --ground: #1a1110;
+            --light: #faf8f5;
+            --accent: #8b4513;
+            --accent-light: #a65c2a;
+            --accent-subtle: rgba(139, 69, 19, 0.3);
+            --shadow: #251b19;
+            --transition: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --margin-left: 20%;
+            --max-text: 520px;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { overflow-x: hidden; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            background-color: var(--ground);
+            color: var(--light);
+            line-height: 1.9;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .scroll-container {
+            height: 100vh;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            scroll-behavior: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(139, 69, 19, 0.2) transparent;
+        }
+        .scroll-container::-webkit-scrollbar { width: 5px; }
+        .scroll-container::-webkit-scrollbar-track { background: transparent; }
+        .scroll-container::-webkit-scrollbar-thumb {
+            background: rgba(139, 69, 19, 0.2);
+            border-radius: 3px;
+        }
+        
+        .thread {
+            position: fixed;
+            left: 15%;
+            top: 0;
+            width: 1px;
+            height: 100vh;
+            background: linear-gradient(to bottom, transparent 5%, var(--accent) 20%, var(--accent) 80%, transparent 95%);
+            opacity: 0.35;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .noise {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+        
+        nav {
+            position: fixed;
+            top: 3rem;
+            left: var(--margin-left);
+            transform: translateX(-3rem);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+        
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 400;
+            font-size: 1.25rem;
+            letter-spacing: 0.15em;
+            color: var(--light);
+            text-decoration: none;
+            margin-bottom: 2rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+            cursor: pointer;
+        }
+        
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 2rem; height: 1px;
+            background: var(--accent);
+        }
+        
+        .nav-link {
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent);
+            opacity: 0.8;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+            height: auto;
+            padding: 0.5rem 0;
+        }
+        
+        .nav-link:hover { opacity: 1; color: var(--light); }
+        
+        section {
+            min-height: 100vh;
+            padding: 15vh 10% 20vh var(--margin-left);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-bottom: 1px solid rgba(250, 248, 245, 0.06);
+        }
+        
+        h1, h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 300;
+            line-height: 1.15;
+            max-width: var(--max-text);
+            margin-bottom: 2.5rem;
+            color: var(--light);
+        }
+        
+        h1 { font-size: clamp(2.5rem, 5vw, 4rem); letter-spacing: -0.02em; }
+        h2 { font-size: clamp(1.75rem, 3vw, 2.5rem); color: var(--accent); opacity: 1; margin-top: 3rem; }
+        
+        .subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 400;
+            font-size: 0.8rem;
+            color: var(--accent);
+            opacity: 0.9;
+            letter-spacing: 0.1em;
+            margin-bottom: 4rem;
+            text-transform: uppercase;
+        }
+        
+        p {
+            font-size: 1rem;
+            line-height: 1.9;
+            max-width: var(--max-text);
+            margin-bottom: 1.8rem;
+            color: var(--light);
+            opacity: 0.9;
+            letter-spacing: 0.01em;
+        }
+        
+        .threshold-content { max-width: var(--max-text); }
+        .threshold-content h1 { margin-bottom: 3rem; }
+        
+        .note {
+            margin-left: 2rem;
+            border-left: 1px solid var(--accent-subtle);
+            padding-left: 2rem;
+            margin-bottom: 4rem;
+            max-width: 440px;
+        }
+        
+        .note h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 400;
+            font-size: 1.25rem;
+            color: var(--light);
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+            opacity: 1;
+        }
+        
+        .note p {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            margin-bottom: 0;
+        }
+        
+        .inquiry-container { max-width: 480px; }
+        
+        .form-preface {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            color: var(--accent);
+            opacity: 0.85;
+            margin-bottom: 4rem;
+            line-height: 1.6;
+            border-bottom: 1px solid var(--accent-subtle);
+            padding-bottom: 2rem;
+        }
+        
+        .form-group { margin-bottom: 3.5rem; position: relative; }
+        
+        label {
+            display: block;
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent);
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+            position: absolute;
+            top: -1.5rem; left: 0;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(250, 248, 245, 0.15);
+            border-radius: 0;
+            color: var(--light);
+            padding: 1rem 0;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 300;
+            font-size: 1.25rem;
+            letter-spacing: 0.03em;
+            transition: all 0.4s ease;
+            outline: none;
+        }
+        
+        input:focus, select:focus, textarea:focus { border-bottom-color: var(--accent); }
+        
+        input::placeholder, textarea::placeholder {
+            color: var(--light);
+            opacity: 0.4;
+            font-family: 'Cormorant Garamond', serif;
+        }
+        
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b4513' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0 center;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        
+        select:invalid {
+            opacity: 0.4;
+            color: var(--light);
+        }
+        
+        select:valid {
+            opacity: 1;
+            color: var(--light);
+        }
+        
+        select option {
+            opacity: 1;
+            background: var(--ground);
+            color: var(--light);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        select option[value=""] {
+            opacity: 0.4;
+        }
+        
+        button[type="submit"] {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            cursor: pointer;
+            padding: 1.25rem 3rem;
+            transition: all 0.4s var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button[type="submit"]::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: var(--accent);
+            transition: left 0.4s var(--transition);
+            z-index: -1;
+        }
+        
+        button[type="submit"]:hover { color: var(--ground); }
+        button[type="submit"]:hover::before { left: 0; }
+        button[type="submit"]:disabled { opacity: 0.3; cursor: not-allowed; }
+        
+        .submit-container {
+            margin-top: 5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-top: 1px solid rgba(250, 248, 245, 0.08);
+            padding-top: 3rem;
+        }
+        
+        .form-footer-note {
+            font-size: 0.75rem;
+            color: var(--light);
+            opacity: 0.5;
+            letter-spacing: 0.05em;
+            max-width: 280px;
+            line-height: 1.6;
+        }
+        
+        .success-state {
+            display: none;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--light);
+            line-height: 1.6;
+            max-width: var(--max-text);
+        }
+        
+        .success-state.active { display: block; }
+        
+        .success-state .small {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            color: var(--accent);
+            opacity: 0.9;
+            display: block;
+            margin-top: 3rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        
+        @media (max-width: 768px) {
+            :root { --margin-left: 10%; }
+            
+            /* Hide scrollbar on mobile */
+            body::-webkit-scrollbar { 
+                display: none; 
+            }
+            body {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            
+            .thread { left: 5%; opacity: 0.4; }
+            nav {
+                position: relative;
+                left: var(--margin-left);
+                top: 2rem;
+                transform: none;
+                flex-direction: row;
+                gap: 2rem;
+                margin-bottom: 4rem;
+            }
+            .nav-link { writing-mode: horizontal-tb; transform: none; opacity: 0.9; }
+            section { padding: 10vh 8% 15vh var(--margin-left); }
+            h1 { font-size: 2rem; }
+            .note { margin-left: 1rem; padding-left: 1rem; }
+        }
+        
+        ::selection {
+            background: var(--accent);
+            opacity: 0.3;
+            color: var(--light);
+        }
+    </style>
+</head>
+<body>
+    <div class="thread"></div>
+    <div class="noise"></div>
+    
+    <nav>
+        <a class="logo" href="#threshold">Atelier</a>
+        <a class="nav-link" href="#philosophy">Approach</a>
+        <a class="nav-link" href="#inquiry">Inquiry</a>
+    </nav>
+
+    <section id="threshold">
+        <div class="threshold-content">
+            <div class="subtitle">Private arrangements</div>
+            <h1>For those who require no introduction</h1>
+            <p style="opacity: 0.7; max-width: 380px;">
+                The atelier conceives residential weekends and board-level occasions as private commissions. By referral only.
+            </p>
+        </div>
+    </section>
+
+    <section id="philosophy">
+        <h2>Discretion as infrastructure</h2>
+        <p>Each arrangement is structured around the specific gravity of your occasion. We do not maintain portfolios, publish client lists, or repeat concepts.</p>
+        <div class="note">
+            <h3>Estate & Residential</h3>
+            <p>Full household integration with staff briefing and security coordination.</p>
+        </div>
+        <div class="note">
+            <h3>Corporate & Board</h3>
+            <p>NDA-bound discretion for sensitive transitions and observances.</p>
+        </div>
+        <div class="note">
+            <h3>Milestones</h3>
+            <p>Zero public footprint. No social visibility. Memory only.</p>
+        </div>
+    </section>
+
+    <section id="inquiry">
+        <div class="inquiry-container" id="formContainer">
+            <div class="form-preface">
+                Introductions are accepted by referral or considered request. All inquiries held in strict confidence.
+            </div>
+            <form id="inquiryForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required placeholder="As known professionally">
+                </div>
+                <div class="form-group">
+                    <label for="affiliation">Affiliation</label>
+                    <input type="text" id="affiliation" name="affiliation" required placeholder="Organization or Family Office">
+                </div>
+                <div class="form-group">
+                    <label for="referral">Referring Party</label>
+                    <input type="text" id="referral" name="referral" placeholder="If applicable">
+                </div>
+                <div class="form-group">
+                    <label for="occasion">Occasion</label>
+                    <select id="occasion" name="occasion" required>
+                        <option value="" disabled selected>Select type</option>
+                        <option value="dinner">Private dinner</option>
+                        <option value="weekend">Residential weekend</option>
+                        <option value="milestone">Milestone observance</option>
+                        <option value="corporate">Board mandate</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="protocol">Contact protocol</label>
+                    <select id="protocol" name="protocol" required>
+                        <option value="" disabled selected>Select method</option>
+                        <option value="assistant">Through assistant</option>
+                        <option value="direct">Direct encrypted</option>
+                        <option value="intermediary">Referring party</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Context</label>
+                    <textarea id="notes" name="notes" placeholder="Specific requirements or constraints"></textarea>
+                </div>
+                <div class="submit-container">
+                    <div class="form-footer-note">
+                        Response within forty-eight hours if accepted.
+                    </div>
+                    <button type="submit" id="submitBtn">Submit</button>
+                </div>
+            </form>
+            <div class="success-state" id="successMsg">
+                Your introduction has been received.
+                <span class="small">You will be contacted through your specified protocol.</span>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <script>
+        const scrollContainer = document.querySelector('.scroll-container');
+        const sections = Array.from(document.querySelectorAll('.scroll-container > section'));
+        const SNAP_DURATION = 2000;
+        const SNAP_DELAY = 280;
+        const easeOutExpo = (t) => t >= 1 ? 1 : 1 - Math.pow(2, -10 * t);
+
+        function nearestSection() {
+            const top = scrollContainer.scrollTop;
+            const mid = scrollContainer.clientHeight * 0.35;
+            let best = sections[0];
+            let bestD = Infinity;
+            sections.forEach(s => {
+                const sTop = s.offsetTop;
+                const d = Math.abs((sTop + mid) - (top + mid));
+                if (d < bestD) { bestD = d; best = s; }
+            });
+            return best;
+        }
+
+        let isSnapping = false;
+        let snapRafId = 0;
+        function smoothSnapTo(targetTop) {
+            const start = scrollContainer.scrollTop;
+            const dist = targetTop - start;
+            if (Math.abs(dist) < 4) return;
+            if (snapRafId) cancelAnimationFrame(snapRafId);
+            isSnapping = true;
+            const startT = performance.now();
+            function tick(now) {
+                const elapsed = now - startT;
+                const t = Math.min(elapsed / SNAP_DURATION, 1);
+                scrollContainer.scrollTop = start + dist * easeOutExpo(t);
+                if (t < 1) snapRafId = requestAnimationFrame(tick);
+                else { isSnapping = false; snapRafId = 0; }
+            }
+            snapRafId = requestAnimationFrame(tick);
+        }
+
+        function getCurrentSectionIndex() {
+            const top = scrollContainer.scrollTop;
+            const mid = scrollContainer.clientHeight * 0.35;
+            let best = 0;
+            let bestD = Infinity;
+            sections.forEach((s, i) => {
+                const sTop = s.offsetTop;
+                const d = Math.abs((sTop + mid) - (top + mid));
+                if (d < bestD) { bestD = d; best = i; }
+            });
+            return best;
+        }
+
+        let wheelCooldownUntil = 0;
+        scrollContainer.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            if (Date.now() < wheelCooldownUntil) return;
+            if (e.deltaY > 30) {
+                const i = Math.min(getCurrentSectionIndex() + 1, sections.length - 1);
+                smoothSnapTo(sections[i].offsetTop);
+                wheelCooldownUntil = Date.now() + 700;
+            } else if (e.deltaY < -30) {
+                const i = Math.max(getCurrentSectionIndex() - 1, 0);
+                smoothSnapTo(sections[i].offsetTop);
+                wheelCooldownUntil = Date.now() + 700;
+            }
+        }, { passive: false });
+
+        let scrollEndTimer;
+        scrollContainer.addEventListener('scroll', () => {
+            if (isSnapping) return;
+            clearTimeout(scrollEndTimer);
+            scrollEndTimer = setTimeout(() => {
+                const section = nearestSection();
+                smoothSnapTo(section.offsetTop);
+            }, SNAP_DELAY);
+        }, { passive: true });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const id = this.getAttribute('href').substring(1);
+                const target = document.getElementById(id);
+                if (target && scrollContainer) smoothSnapTo(target.offsetTop);
+            });
+        });
+
+        document.getElementById('inquiryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Processing';
+            setTimeout(() => {
+                document.getElementById('inquiryForm').style.display = 'none';
+                document.getElementById('successMsg').classList.add('active');
+            }, 1500);
+        });
+    </script>
+</body>
+</html>
