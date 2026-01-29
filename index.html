@@ -482,8 +482,9 @@
         const scrollContainer = document.querySelector('.scroll-container');
         const sections = Array.from(document.querySelectorAll('.scroll-container > section'));
         const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        const SNAP_DURATION = isTouch ? 900 : 2000;
-        const SNAP_DELAY = isTouch ? 100 : 280;
+        const SNAP_DURATION = isTouch ? 800 : 2000;
+        const SNAP_DELAY = isTouch ? 180 : 280;
+        const SNAP_COOLDOWN = 600;
         const easeOutExpo = (t) => t >= 1 ? 1 : 1 - Math.pow(2, -10 * t);
 
         function nearestSection() {
@@ -501,6 +502,7 @@
 
         let isSnapping = false;
         let snapRafId = 0;
+        let lastSnapEndTime = 0;
         function smoothSnapTo(targetTop) {
             const start = scrollContainer.scrollTop;
             const dist = targetTop - start;
@@ -513,7 +515,7 @@
                 const t = Math.min(elapsed / SNAP_DURATION, 1);
                 scrollContainer.scrollTop = start + dist * easeOutExpo(t);
                 if (t < 1) snapRafId = requestAnimationFrame(tick);
-                else { isSnapping = false; snapRafId = 0; }
+                else { isSnapping = false; snapRafId = 0; lastSnapEndTime = Date.now(); }
             }
             snapRafId = requestAnimationFrame(tick);
         }
@@ -546,36 +548,10 @@
             }
         }, { passive: false });
 
-        let touchStartY = 0;
-        let touchCooldownUntil = 0;
-        let touchScrollLock = false;
-        scrollContainer.addEventListener('touchstart', (e) => {
-            touchStartY = e.touches[0].clientY;
-            touchScrollLock = false;
-        }, { passive: true });
-        scrollContainer.addEventListener('touchmove', (e) => {
-            if (!touchScrollLock && Math.abs(e.touches[0].clientY - touchStartY) > 25) touchScrollLock = true;
-            if (touchScrollLock) e.preventDefault();
-        }, { passive: false });
-        scrollContainer.addEventListener('touchend', (e) => {
-            if (e.changedTouches.length === 0 || Date.now() < touchCooldownUntil) return;
-            const touchEndY = e.changedTouches[0].clientY;
-            const deltaY = touchEndY - touchStartY;
-            const threshold = 50;
-            if (deltaY < -threshold) {
-                const i = Math.min(getCurrentSectionIndex() + 1, sections.length - 1);
-                smoothSnapTo(sections[i].offsetTop);
-                touchCooldownUntil = Date.now() + 600;
-            } else if (deltaY > threshold) {
-                const i = Math.max(getCurrentSectionIndex() - 1, 0);
-                smoothSnapTo(sections[i].offsetTop);
-                touchCooldownUntil = Date.now() + 600;
-            }
-        }, { passive: true });
-
         let scrollEndTimer;
         scrollContainer.addEventListener('scroll', () => {
             if (isSnapping) return;
+            if (isTouch && (Date.now() - lastSnapEndTime) < SNAP_COOLDOWN) return;
             clearTimeout(scrollEndTimer);
             scrollEndTimer = setTimeout(() => {
                 const section = nearestSection();
