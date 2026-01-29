@@ -351,29 +351,93 @@
         @media (max-width: 768px) {
             :root { --margin-left: 10%; }
             
-            /* Hide scrollbar on mobile */
             body::-webkit-scrollbar { 
                 display: none; 
             }
             body {
                 -ms-overflow-style: none;
                 scrollbar-width: none;
+                overflow: hidden;
             }
             
             .thread { left: 5%; opacity: 0.4; }
+            
             nav {
-                position: relative;
-                left: var(--margin-left);
-                top: 2rem;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
                 transform: none;
                 flex-direction: row;
                 gap: 2rem;
-                margin-bottom: 4rem;
+                padding: 1.5rem 10% 1.5rem 10%;
+                background: linear-gradient(to bottom, var(--ground) 80%, transparent);
+                backdrop-filter: blur(2px);
+                align-items: center;
+                justify-content: flex-start;
             }
-            .nav-link { writing-mode: horizontal-tb; transform: none; opacity: 0.9; }
-            section { padding: 10vh 8% 15vh var(--margin-left); }
+            
+            .logo {
+                margin-bottom: 0;
+                font-size: 1.1rem;
+                padding-bottom: 0;
+            }
+            
+            .logo::after {
+                display: none;
+            }
+            
+            .nav-link { 
+                writing-mode: horizontal-tb; 
+                transform: none; 
+                opacity: 0.9;
+                font-size: 0.65rem;
+                padding: 0;
+            }
+            
+            section { 
+                padding: 20vh 8% 15vh var(--margin-left);
+                min-height: auto;
+            }
+            
+            #threshold {
+                padding-top: 25vh;
+                min-height: 100vh;
+            }
+            
+            #inquiry {
+                min-height: auto;
+                padding-bottom: 10vh;
+            }
+            
             h1 { font-size: 2rem; }
             .note { margin-left: 1rem; padding-left: 1rem; }
+            
+            .submit-container {
+                flex-direction: column;
+                gap: 1.5rem;
+                align-items: flex-start;
+            }
+            
+            .submit-container button[type="submit"] {
+                order: 1;
+                width: 100%;
+            }
+            
+            .submit-container .form-footer-note {
+                order: 2;
+                margin-top: 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            section {
+                padding-top: 22vh;
+            }
+            #threshold {
+                padding-top: 28vh;
+            }
         }
         
         ::selection {
@@ -461,7 +525,7 @@
                 </div>
                 <div class="form-group">
                     <label for="notes">Context</label>
-                    <textarea id="notes" name="notes" placeholder="Specific requirements or constraints"></textarea>
+                    <textarea id="notes" name="notes" rows="3" placeholder="Specific requirements or constraints"></textarea>
                 </div>
                 <div class="submit-container">
                     <div class="form-footer-note">
@@ -482,43 +546,19 @@
         const scrollContainer = document.querySelector('.scroll-container');
         const sections = Array.from(document.querySelectorAll('.scroll-container > section'));
         const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        
+        // Detect mobile layout
+        const mqMobile = window.matchMedia('(max-width: 768px)');
+        let isMobileLayout = mqMobile.matches;
+        
+        mqMobile.addEventListener('change', (e) => {
+            isMobileLayout = e.matches;
+        });
+        
         const SNAP_DURATION = isTouch ? 800 : 2000;
-        const SNAP_DELAY = isTouch ? 180 : 280;
+        const SNAP_DELAY = 280;
         const SNAP_COOLDOWN = 600;
         const easeOutExpo = (t) => t >= 1 ? 1 : 1 - Math.pow(2, -10 * t);
-
-        function nearestSection() {
-            const top = scrollContainer.scrollTop;
-            const mid = scrollContainer.clientHeight * 0.35;
-            let best = sections[0];
-            let bestD = Infinity;
-            sections.forEach(s => {
-                const sTop = s.offsetTop;
-                const d = Math.abs((sTop + mid) - (top + mid));
-                if (d < bestD) { bestD = d; best = s; }
-            });
-            return best;
-        }
-
-        let isSnapping = false;
-        let snapRafId = 0;
-        let lastSnapEndTime = 0;
-        function smoothSnapTo(targetTop) {
-            const start = scrollContainer.scrollTop;
-            const dist = targetTop - start;
-            if (Math.abs(dist) < 4) return;
-            if (snapRafId) cancelAnimationFrame(snapRafId);
-            isSnapping = true;
-            const startT = performance.now();
-            function tick(now) {
-                const elapsed = now - startT;
-                const t = Math.min(elapsed / SNAP_DURATION, 1);
-                scrollContainer.scrollTop = start + dist * easeOutExpo(t);
-                if (t < 1) snapRafId = requestAnimationFrame(tick);
-                else { isSnapping = false; snapRafId = 0; lastSnapEndTime = Date.now(); }
-            }
-            snapRafId = requestAnimationFrame(tick);
-        }
 
         function getCurrentSectionIndex() {
             const top = scrollContainer.scrollTop;
@@ -532,11 +572,66 @@
             });
             return best;
         }
+        
+        // Check if we're at the last section with overflowing content
+        function isInOverflowingLastSection() {
+            const currentIdx = getCurrentSectionIndex();
+            if (currentIdx === sections.length - 1) {
+                const lastSection = sections[currentIdx];
+                // If content is taller than viewport, allow free scroll
+                return lastSection.scrollHeight > scrollContainer.clientHeight;
+            }
+            return false;
+        }
+
+        let isSnapping = false;
+        let snapRafId = 0;
+        let lastSnapEndTime = 0;
+        
+        function smoothSnapTo(targetTop) {
+            // Don't snap on mobile layout
+            if (isMobileLayout) {
+                scrollContainer.scrollTo({ top: targetTop, behavior: 'smooth' });
+                return;
+            }
+            
+            const start = scrollContainer.scrollTop;
+            const dist = targetTop - start;
+            if (Math.abs(dist) < 4) return;
+            if (snapRafId) cancelAnimationFrame(snapRafId);
+            isSnapping = true;
+            const startT = performance.now();
+            function tick(now) {
+                const elapsed = now - startT;
+                const t = Math.min(elapsed / SNAP_DURATION, 1);
+                scrollContainer.scrollTop = start + dist * easeOutExpo(t);
+                if (t < 1) snapRafId = requestAnimationFrame(tick);
+                else { 
+                    isSnapping = false; 
+                    snapRafId = 0; 
+                    lastSnapEndTime = Date.now(); 
+                }
+            }
+            snapRafId = requestAnimationFrame(tick);
+        }
 
         let wheelCooldownUntil = 0;
+        
         scrollContainer.addEventListener('wheel', (e) => {
+            // On mobile, let native scrolling handle everything
+            if (isMobileLayout) return;
+            
+            // If we're in the last section and it overflows, allow native scroll
+            // Don't prevent default so the user can scroll through the form
+            if (isInOverflowingLastSection()) {
+                return;
+            }
+            
+            // Otherwise, hijack scroll for snapping between sections
             e.preventDefault();
+            
             if (Date.now() < wheelCooldownUntil) return;
+            
             if (e.deltaY > 30) {
                 const i = Math.min(getCurrentSectionIndex() + 1, sections.length - 1);
                 smoothSnapTo(sections[i].offsetTop);
@@ -549,22 +644,36 @@
         }, { passive: false });
 
         let scrollEndTimer;
+        
         scrollContainer.addEventListener('scroll', () => {
+            // On mobile layout or in overflowing last section, no snap-back
+            if (isMobileLayout) return;
             if (isSnapping) return;
+            if (isInOverflowingLastSection()) return;
             if (isTouch && (Date.now() - lastSnapEndTime) < SNAP_COOLDOWN) return;
+            
             clearTimeout(scrollEndTimer);
             scrollEndTimer = setTimeout(() => {
-                const section = nearestSection();
-                smoothSnapTo(section.offsetTop);
+                const section = sections[getCurrentSectionIndex()];
+                if (section) smoothSnapTo(section.offsetTop);
             }, SNAP_DELAY);
         }, { passive: true });
 
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
-                e.preventDefault();
                 const id = this.getAttribute('href').substring(1);
                 const target = document.getElementById(id);
-                if (target && scrollContainer) smoothSnapTo(target.offsetTop);
+                if (!target || !scrollContainer) return;
+                
+                // On mobile, use browser default behavior (smooth scroll if CSS supports)
+                if (isMobileLayout) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                    return;
+                }
+                
+                // On desktop, snap to section
+                e.preventDefault();
+                smoothSnapTo(target.offsetTop);
             });
         });
 
@@ -576,6 +685,11 @@
             setTimeout(() => {
                 document.getElementById('inquiryForm').style.display = 'none';
                 document.getElementById('successMsg').classList.add('active');
+                // Adjust scroll if needed after form collapse
+                if (!isMobileLayout && isInOverflowingLastSection()) {
+                    // Allow natural scroll position or scroll to show success message
+                    document.getElementById('successMsg').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
             }, 1500);
         });
     </script>
