@@ -207,10 +207,30 @@
             font-size: 1.2rem;
             color: var(--accent);
             opacity: 0.85;
-            margin-bottom: 4rem;
+            margin-bottom: 2.5rem;
             line-height: 1.6;
             border-bottom: 1px solid var(--accent-subtle);
             padding-bottom: 2rem;
+        }
+        
+        .email-contact {
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+        }
+        
+        .email-contact a {
+            color: var(--light);
+            opacity: 0.9;
+            text-decoration: none;
+            border-bottom: 1px solid var(--accent-subtle);
+            padding-bottom: 0.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .email-contact a:hover {
+            opacity: 1;
+            border-bottom-color: var(--accent);
         }
         
         .form-group { margin-bottom: 3.5rem; position: relative; }
@@ -440,6 +460,10 @@
                 order: 2;
                 margin-top: 0;
             }
+            
+            .email-contact {
+                font-size: 1rem;
+            }
         }
         
         @media (max-width: 480px) {
@@ -502,8 +526,12 @@
         <div class="inquiry-container" id="formContainer">
             <div class="form-preface">
                 Introductions are accepted by referral or considered request. All inquiries held in strict confidence.
+                <div class="email-contact">
+                    <a href="mailto:inquiry@whisperworkshop.com">inquiry@whisperworkshop.com</a>
+                </div>
             </div>
-            <form id="inquiryForm">
+            <form id="inquiryForm" action="https://formspree.io/f/xbdkrlyo" method="POST">
+                <input type="text" name="_gotcha" style="display:none">
                 <div class="form-group">
                     <label for="name">Full Name</label>
                     <input type="text" id="name" name="name" required placeholder="As known professionally">
@@ -693,17 +721,34 @@
         document.getElementById('inquiryForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
+            const form = this;
+            
             btn.disabled = true;
             btn.textContent = 'Processing';
-            setTimeout(() => {
-                document.getElementById('inquiryForm').style.display = 'none';
-                document.getElementById('successMsg').classList.add('active');
-                // Adjust scroll if needed after form collapse
-                if (!isMobileLayout && isInOverflowingLastSection()) {
-                    // Allow natural scroll position or scroll to show success message
-                    document.getElementById('successMsg').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            const formData = new FormData(form);
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
                 }
-            }, 1500);
+            }).then(response => {
+                if (response.ok) {
+                    document.getElementById('inquiryForm').style.display = 'none';
+                    document.getElementById('successMsg').classList.add('active');
+                    if (!isMobileLayout && isInOverflowingLastSection()) {
+                        document.getElementById('successMsg').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                } else {
+                    throw new Error('Network response was not ok');
+                }
+            }).catch(error => {
+                btn.disabled = false;
+                btn.textContent = 'Submit';
+                alert('There was a problem submitting your form. Please try again or contact us directly at inquiry@whisperworkshop.com');
+            });
         });
     </script>
 </body>
