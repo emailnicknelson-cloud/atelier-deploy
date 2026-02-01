@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Atelier — Event Direction</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'luxury': { 50: '#f6f5f3', 100: '#e8e6e1', 200: '#d1ccc2', 300: '#b3aa9a', 400: '#958a76', 500: '#7a6e5d', 600: '#635848', 700: '#4f4639', 800: '#413a30', 900: '#373029', 950: '#1a1814' },
+                        'ochre': { 50: '#faf8f5', 100: '#f2ede4', 200: '#e6dcc8', 300: '#d4c2a3', 400: '#c4a77d', 500: '#b8925e', 600: '#aa7d4d', 700: '#8d643f', 800: '#745237', 900: '#5e4330' }
+                    },
+                    fontFamily: { 'serif': ['Cormorant Garamond', 'serif'], 'sans': ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            background-image: radial-gradient(circle at 20% 50%, rgba(120, 80, 40, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(180, 160, 120, 0.05) 0%, transparent 40%);
+            color: #f5f5f0;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+        
+        .glass-panel { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.06); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2), inset 0 1px 0 0 rgba(255, 255, 255, 0.05); }
+        .glass-card { background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .glass-card:hover { border-color: rgba(184, 146, 94, 0.3); transform: translateY(-2px); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(184, 146, 94, 0.1); }
+        
+        .welcome-overlay { position: fixed; inset: 0; z-index: 100; background: #0a0a0a; display: flex; align-items: center; justify-content: center; transition: opacity 0.6s ease, visibility 0.6s; }
+        .welcome-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        
+        .mode-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); transition: all 0.4s ease; cursor: pointer; position: relative; overflow: hidden; }
+        .mode-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(184,146,94,0.15) 0%, transparent 70%); opacity: 0; transition: opacity 0.4s; }
+        .mode-card:hover::before { opacity: 1; }
+        .mode-card:hover { border-color: rgba(184,146,94,0.4); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .mode-card.active { border-color: #b8925e; background: rgba(184,146,94,0.05); }
+        .mode-card.selected-ring { box-shadow: 0 0 0 2px #b8925e, 0 20px 40px rgba(0,0,0,0.4); }
+        
+        .luxury-button { background: linear-gradient(135deg, #b8925e 0%, #8d643f 100%); position: relative; overflow: hidden; transition: all 0.3s ease; }
+        .luxury-button::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s; }
+        .luxury-button:hover::before { left: 100%; }
+        .luxury-button:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(0.5); }
+        
+        .luxury-secondary { background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); transition: all 0.3s ease; }
+        .luxury-secondary:hover { border-color: #b8925e; background: rgba(184, 146, 94, 0.1); }
+        
+        body.mobile-mode { font-size: 15px; }
+        body.mobile-mode .glass-card { border-radius: 16px; }
+        body.desktop-mode { font-size: 14px; }
+        
+        .file-input { display: none; }
+        
+        .nav-item { position: relative; transition: all 0.3s ease; }
+        .nav-item::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 3px; height: 0; background: #b8925e; transition: height 0.3s ease; }
+        .nav-item:hover::before, .nav-item.active::before { height: 20px; }
+        .nav-item.active { background: rgba(184, 146, 94, 0.08); color: #f5f5f0; }
+        
+        .demo-badge { position: fixed; top: 20px; right: 20px; z-index: 50; background: rgba(184,146,94,0.2); border: 1px solid rgba(184,146,94,0.4); color: #e6dcc8; padding: 6px 12px; border-radius: 20px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; backdrop-filter: blur(10px); }
+        
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: rgba(184,146,94,0.95); color: white; padding: 12px 24px; border-radius: 30px; font-size: 13px; opacity: 0; transition: all 0.3s ease; z-index: 200; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        
+        .animate-fade-up { animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Welcome specific animations */
+        .welcome-enter { animation: welcomeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes welcomeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    </style>
+</head>
+<body class="font-sans antialiased text-luxury-100 selection:bg-ochre-500/30 selection:text-ochre-100">
+
+    <!-- Welcome Overlay - Always Shown On Load -->
+    <div id="welcome-overlay" class="welcome-overlay">
+        <div class="w-full max-w-4xl p-6 md:p-8 welcome-enter">
+            <div class="text-center mb-10">
+                <div class="inline-block mb-6">
+                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-ochre-400 to-ochre-700 flex items-center justify-center text-white font-serif text-3xl md:text-4xl italic shadow-2xl shadow-ochre-900/30 mx-auto border border-white/20">
+                        A
+                    </div>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-serif font-light text-white mb-3 tracking-wide">Atelier</h1>
+                <p class="text-luxury-400 font-light text-base md:text-lg">Event Direction & Management</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-8 md:mb-12">
+                <div class="mode-card rounded-2xl p-6 md:p-8 text-center" onclick="selectMode('desktop')" id="mode-desktop">
+                    <div class="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4 md:mb-6">
+                        <svg class="w-6 h-6 md:w-8 md:h-8 text-ochre-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg md:text-xl font-serif text-white mb-2">Desktop Experience</h3>
+                    <p class="text-xs md:text-sm text-luxury-400 mb-4 md:mb-6">Full featured dashboard with file management</p>
+                    <ul class="text-left space-y-1.5 md:space-y-2 text-[10px] md:text-xs text-luxury-500 mb-4 md:mb-6 pl-3 md:pl-4">
+                        <li>• Save & load workspace files</li>
+                        <li>• Advanced timeline editing</li>
+                        <li>• Full analytics suite</li>
+                        <li>• Keyboard shortcuts</li>
+                    </ul>
+                    <div class="text-xs text-ochre-400 font-medium opacity-0 transition-opacity" id="selected-desktop">Selected</div>
+                </div>
+
+                <div class="mode-card rounded-2xl p-6 md:p-8 text-center" onclick="selectMode('mobile')" id="mode-mobile">
+                    <div class="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4 md:mb-6">
+                        <svg class="w-6 h-6 md:w-8 md:h-8 text-ochre-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg md:text-xl font-serif text-white mb-2">Mobile Experience</h3>
+                    <p class="text-xs md:text-sm text-luxury-400 mb-4 md:mb-6">Optimized for on-the-go event management</p>
+                    <ul class="text-left space-y-1.5 md:space-y-2 text-[10px] md:text-xs text-luxury-500 mb-4 md:mb-6 pl-3 md:pl-4">
+                        <li>• Import workspace files</li>
+                        <li>• Touch-optimized workflow</li>
+                        <li>• Quick status updates</li>
+                        <li>• Streammed interface</li>
+                    </ul>
+                    <div class="text-xs text-ochre-400 font-medium opacity-0 transition-opacity" id="selected-mobile">Selected</div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="flex flex-col sm:flex-row justify-center gap-3">
+                    <button onclick="startWithDemo()" class="luxury-secondary text-white px-6 md:px-8 py-3 rounded-full text-sm tracking-wide w-full sm:w-auto">
+                        Start with Demo Data
+                    </button>
+                    <button onclick="enterApplication()" id="enter-btn" class="luxury-button text-white px-6 md:px-8 py-3 rounded-full text-sm tracking-wide w-full sm:w-auto opacity-50 cursor-not-allowed" disabled>
+                        Enter Workspace
+                    </button>
+                </div>
+
+                <div id="file-upload-area" class="hidden">
+                    <div class="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent my-4"></div>
+                    <div class="text-center">
+                        <p class="text-xs text-luxury-400 mb-3">Load existing workspace file</p>
+                        <button onclick="triggerFileLoad()" class="text-sm text-ochre-300 hover:text-ochre-200 flex items-center justify-center gap-2 mx-auto">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+                            Choose File
+                        </button>
+                    </div>
+                    <input type="file" id="file-input" accept=".json" onchange="handleFileLoad(event)">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demo Badge -->
+    <div class="demo-badge" id="demo-badge" style="display: none;">
+        Demo Mode
+        <button onclick="exitToWelcome()" class="ml-2 text-white hover:text-ochre-200" title="Exit to mode selection">
+            <svg class="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app-container" class="flex h-screen opacity-0 pointer-events-none transition-opacity duration-700">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-72 bg-[#0f0f0f] border-r border-white/5 flex flex-col relative z-30 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
+            <div class="p-6 border-b border-white/5 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-ochre-400 to-ochre-700 flex items-center justify-center text-white font-serif font-bold text-lg italic">A</div>
+                    <span class="font-serif text-lg text-white tracking-wide">Atelier</span>
+                </div>
+                <button onclick="toggleSidebar()" class="lg:hidden text-luxury-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+                <button onclick="switchView('dashboard')" id="nav-dashboard" class="nav-item active w-full flex items-center gap-3 px-4 py-3 text-sm font-light text-luxury-300 hover:text-white rounded-lg">
+                    <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5"/></svg>
+                    <span>Overview</span>
+                </button>
+                <button onclick="switchView('workflow')" id="nav-workflow" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-light text-luxury-300 hover:text-white rounded-lg">
+                    <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+                    <span>Workflow</span>
+                </button>
+                <button onclick="switchView('events')" id="nav-events" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-light text-luxury-300 hover:text-white rounded-lg">
+                    <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
+                    <span>Calendar</span>
+                </button>
+                <button onclick="switchView('categories')" id="nav-categories" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-light text-luxury-300 hover:text-white rounded-lg">
+                    <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+                    <span>Categories</span>
+                </button>
+                <button onclick="switchView('venues')" id="nav-venues" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-light text-luxury-300 hover:text-white rounded-lg">
+                    <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"/></svg>
+                    <span>Venues</span>
+                </button>
+            </nav>
+
+            <div class="p-4 border-t border-white/5 space-y-2">
+                <button onclick="saveToFile()" id="save-btn" class="w-full luxury-button text-white py-3 rounded-xl text-sm font-medium flex items-center justify-center gap-2 opacity-50 cursor-not-allowed" disabled>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                    Save Workspace
+                </button>
+                <button onclick="exitToWelcome()" class="w-full luxury-secondary text-white py-3 rounded-xl text-sm font-medium">
+                    Exit to Welcome
+                </button>
+            </div>
+        </aside>
+
+        <!-- Overlay -->
+        <div id="overlay" class="fixed inset-0 bg-black/50 z-20 hidden lg:hidden" onclick="toggleSidebar()"></div>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto relative bg-[#0a0a0a]">
+            <div class="fixed inset-0 pointer-events-none">
+                <div class="absolute top-0 left-1/4 w-96 h-96 bg-ochre-900/10 rounded-full blur-[120px]"></div>
+            </div>
+
+            <header class="sticky top-0 z-10 glass-panel border-b border-white/5 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <button onclick="toggleSidebar()" class="lg:hidden text-luxury-300 hover:text-white">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+                        </button>
+                        <h2 id="page-title" class="text-2xl font-serif font-light text-white tracking-wide">Overview</h2>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="text-xs text-luxury-500 hidden sm:block" id="data-mode-label">Demo Data</span>
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-ochre-600 to-luxury-800 border border-white/10 flex items-center justify-center text-xs font-serif text-white">JT</div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-6 max-w-7xl mx-auto relative z-0 pb-24 space-y-6" id="main-content">
+                <!-- Content injected dynamically -->
+            </div>
+        </main>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Global State - Fresh on every load
+        let appState = {
+            mode: null, // 'desktop' | 'mobile'
+            isDemo: false,
+            data: {
+                events: [],
+                venues: [],
+                attendees: [],
+                categories: [],
+                tasks: []
+            }
+        };
+
+        // Demo Data Staging (Example Data)
+        const demoData = {
+            events: [
+                { id: 1, name: 'Annual Tech Summit', date: '2026-02-04', time: '09:00', venue: 'Grand Ballroom', status: 'active', attendees: 450, capacity: 500, type: 'Conference' },
+                { id: 2, name: 'Product Launch Q1', date: '2026-02-15', time: '14:00', venue: 'Conference Center', status: 'planning', attendees: 120, capacity: 200, type: 'Corporate' },
+                { id: 3, name: 'Board Meeting', date: '2026-02-04', time: '14:00', venue: 'Executive Suite', status: 'active', attendees: 15, capacity: 20, type: 'Meeting' }
+            ],
+            venues: [
+                { id: 1, name: 'Grand Ballroom, Ritz', capacity: 500, upcoming: 3, image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&h=400&fit=crop', features: ['AV Equipment', 'Catering', 'Valet'] },
+                { id: 2, name: 'Conference Center', capacity: 200, upcoming: 5, image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=400&fit=crop', features: ['Video Conf', 'Whiteboards', 'Lounge'] },
+                { id: 3, name: 'Executive Suite', capacity: 50, upcoming: 2, image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=600&h=400&fit=crop', features: ['Private', 'Premium Bar', 'View'] }
+            ],
+            attendees: [
+                { id: 1, name: 'Michael Roberts', email: 'm.roberts@company.com', event: 'Annual Tech Summit', status: 'confirmed', type: 'VIP' },
+                { id: 2, name: 'Sarah Johnson', email: 'sarah.j@tech.com', event: 'Annual Tech Summit', status: 'confirmed', type: 'Speaker' },
+                { id: 3, name: 'David Chen', email: 'david.chen@email.com', event: 'Product Launch Q1', status: 'pending', type: 'General' }
+            ],
+            categories: [
+                { id: 1, name: 'VIP Clients', description: 'High-value clients', color: 'ochre', contacts: [0, 1] },
+                { id: 2, name: 'Speakers', description: 'Keynote presenters', color: 'blue', contacts: [1] }
+            ],
+            tasks: [
+                { id: 1, title: 'Confirm catering', event: 'Annual Tech Summit', due: '2 days', priority: 'high', completed: false },
+                { id: 2, title: 'AV equipment check', event: 'Board Meeting', due: 'Tomorrow', priority: 'high', completed: true }
+            ]
+        };
+
+        // Mode Selection
+        function selectMode(mode) {
+            appState.mode = mode;
+            
+            // Visual selection
+            document.querySelectorAll('.mode-card').forEach(c => {
+                c.classList.remove('active', 'selected-ring');
+                c.querySelector('[id^="selected-"]').style.opacity = '0';
+            });
+            
+            const selectedCard = document.getElementById(`mode-${mode}`);
+            selectedCard.classList.add('active', 'selected-ring');
+            selectedCard.querySelector(`[id^="selected-"]`).style.opacity = '1';
+            
+            // Enable enter button
+            const enterBtn = document.getElementById('enter-btn');
+            enterBtn.disabled = false;
+            enterBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            enterBtn.textContent = mode === 'desktop' ? 'Enter Workspace' : 'Enter Mobile';
+            
+            // Show file upload for both modes (desktop can save too, mobile import only)
+            document.getElementById('file-upload-area').classList.remove('hidden');
+        }
+
+        function startWithDemo() {
+            if (!appState.mode) {
+                showToast('Please select Desktop or Mobile first', 'error');
+                return;
+            }
+            appState.isDemo = true;
+            appState.data = JSON.parse(JSON.stringify(demoData));
+            initializeApp();
+        }
+
+        function enterApplication() {
+            if (!appState.mode) return;
+            
+            if (appState.data.events.length === 0 && !appState.isDemo) {
+                // If no file loaded and not demo, start with empty workspace
+                appState.data = { events: [], venues: [], attendees: [], categories: [], tasks: [] };
+            }
+            
+            initializeApp();
+        }
+
+        function initializeApp() {
+            // Apply mode class
+            document.body.classList.add(`${appState.mode}-mode`);
+            
+            // Hide welcome, show app
+            document.getElementById('welcome-overlay').classList.add('hidden');
+            const app = document.getElementById('app-container');
+            app.classList.remove('opacity-0', 'pointer-events-none');
+            app.style.opacity = '1';
+            
+            // Update UI based on mode/data
+            if (appState.isDemo) {
+                document.getElementById('demo-badge').style.display = 'block';
+                document.getElementById('data-mode-label').textContent = 'Demo Data';
+                document.getElementById('save-btn').disabled = true;
+                document.getElementById('save-btn').classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                document.getElementById('demo-badge').style.display = 'none';
+                document.getElementById('data-mode-label').textContent = 'Personal Data';
+                if (appState.mode === 'desktop') {
+                    document.getElementById('save-btn').disabled = false;
+                    document.getElementById('save-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    document.getElementById('save-btn').style.display = 'none'; // Hide save on mobile
+                }
+            }
+            
+            // Initialize view
+            renderView('dashboard');
+        }
+
+        function exitToWelcome() {
+            // Full reset
+            location.reload(); // Simplest way to ensure clean state
+        }
+
+        // File Operations
+        function triggerFileLoad() {
+            document.getElementById('file-input').click();
+        }
+
+        function handleFileLoad(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const loaded = JSON.parse(e.target.result);
+                    if (validateData(loaded)) {
+                        appState.data = loaded;
+                        appState.isDemo = false;
+                        
+                        // If mode not selected, assume desktop for file operations
+                        if (!appState.mode) selectMode('desktop');
+                        
+                        showToast(`Loaded: ${file.name}`);
+                        setTimeout(() => {
+                            enterApplication();
+                        }, 500);
+                    } else {
+                        showToast('Invalid workspace file structure', 'error');
+                    }
+                } catch (err) {
+                    showToast('Error parsing file', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function validateData(data) {
+            return data && Array.isArray(data.events) && Array.isArray(data.venues) && Array.isArray(data.attendees);
+        }
+
+        function saveToFile() {
+            if (appState.mode !== 'desktop' || appState.isDemo) {
+                showToast('Save only available in Desktop mode with personal data', 'error');
+                return;
+            }
+            
+            const dataStr = JSON.stringify(appState.data, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const date = new Date().toISOString().split('T')[0];
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `atelier-workspace-${date}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Workspace saved');
+        }
+
+        // View System
+        function switchView(viewName) {
+            renderView(viewName);
+            if (window.innerWidth < 1024) toggleSidebar();
+        }
+
+        function renderView(viewName) {
+            const container = document.getElementById('main-content');
+            const navTitle = document.getElementById('page-title');
+            
+            const titles = {
+                dashboard: 'Overview',
+                workflow: 'Workflow',
+                events: 'Calendar',
+                categories: 'Categories',
+                venues: 'Venues'
+            };
+            navTitle.textContent = titles[viewName] || 'Atelier';
+            
+            // Update nav active state
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            const activeNav = document.getElementById(`nav-${viewName}`);
+            if (activeNav) activeNav.classList.add('active');
+            
+            // Render content
+            let html = '';
+            switch(viewName) {
+                case 'dashboard':
+                    html = renderDashboard();
+                    break;
+                case 'venues':
+                    html = renderVenues();
+                    break;
+                case 'categories':
+                    html = renderCategories();
+                    break;
+                case 'workflow':
+                    html = renderWorkflow();
+                    break;
+                default:
+                    html = `<div class="glass-card rounded-2xl p-12 text-center"><p class="text-luxury-400">View: ${viewName}</p></div>`;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function renderDashboard() {
+            const stats = appState.data;
+            return `
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="glass-card rounded-2xl p-6">
+                        <p class="text-xs text-luxury-400 tracking-widest uppercase mb-2">Active Events</p>
+                        <h3 class="text-3xl font-serif font-light text-white">${stats.events.filter(e => e.status === 'active').length}</h3>
+                    </div>
+                    <div class="glass-card rounded-2xl p-6">
+                        <p class="text-xs text-luxury-400 tracking-widest uppercase mb-2">Total Guests</p>
+                        <h3 class="text-3xl font-serif font-light text-white">${stats.attendees.length}</h3>
+                    </div>
+                    <div class="glass-card rounded-2xl p-6">
+                        <p class="text-xs text-luxury-400 tracking-widest uppercase mb-2">Venues</p>
+                        <h3 class="text-3xl font-serif font-light text-white">${stats.venues.length}</h3>
+                    </div>
+                    <div class="glass-card rounded-2xl p-6">
+                        <p class="text-xs text-luxury-400 tracking-widest uppercase mb-2">Pending Tasks</p>
+                        <h3 class="text-3xl font-serif font-light text-white">${stats.tasks.filter(t => !t.completed).length}</h3>
+                    </div>
+                </div>
+                
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="font-serif text-xl text-white font-light mb-6">Recent Events</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="text-xs text-luxury-400 uppercase border-b border-white/5">
+                                <tr><th class="pb-3 font-normal">Event</th><th class="pb-3 font-normal hidden sm:table-cell">Date</th><th class="pb-3 font-normal">Status</th></tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5">
+                                ${stats.events.slice(0, 5).map(e => `
+                                    <tr class="hover:bg-white/[0.02]">
+                                        <td class="py-4 font-serif text-white">${e.name}</td>
+                                        <td class="py-4 text-luxury-400 hidden sm:table-cell">${e.date}</td>
+                                        <td class="py-4"><span class="px-3 py-1 rounded-full text-xs border ${e.status === 'active' ? 'border-ochre-500/30 text-ochre-200' : 'border-white/10 text-luxury-400'}">${e.status}</span></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderVenues() {
+            const isEditable = !appState.isDemo;
+            return `
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-serif text-2xl text-white font-light">Venue Directory</h3>
+                    ${isEditable ? `
+                        <button onclick="addVenue()" class="luxury-button px-4 py-2 rounded-full text-sm">Add Venue</button>
+                    ` : '<span class="text-xs text-luxury-500 border border-white/10 px-3 py-1 rounded-full">Demo Mode - View Only</span>'}
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    ${appState.data.venues.map(v => `
+                        <div class="glass-card rounded-2xl overflow-hidden ${isEditable ? 'cursor-pointer' : ''}" onclick="${isEditable ? `editVenue(${v.id})` : ''}">
+                            <div class="h-48 overflow-hidden relative">
+                                <img src="${v.image}" class="w-full h-full object-cover grayscale ${isEditable ? 'group-hover:grayscale-0' : ''} transition duration-500" alt="${v.name}">
+                                <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-transparent"></div>
+                                <div class="absolute bottom-0 left-0 right-0 p-4">
+                                    <h4 class="font-serif text-lg text-white">${v.name}</h4>
+                                    <p class="text-xs text-luxury-400">Capacity: ${v.capacity}</p>
+                                </div>
+                            </div>
+                            <div class="p-4 flex flex-wrap gap-2">
+                                ${v.features.map(f => `<span class="text-xs text-luxury-400 bg-white/5 px-2 py-1 rounded border border-white/5">${f}</span>`).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function renderCategories() {
+            const isEditable = !appState.isDemo;
+            return `
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-serif text-2xl text-white font-light">Contact Categories</h3>
+                    ${isEditable ? `
+                        <button onclick="addCategory()" class="luxury-button px-4 py-2 rounded-full text-sm">New Category</button>
+                    ` : '<span class="text-xs text-luxury-500 border border-white/10 px-3 py-1 rounded-full">Demo Mode - View Only</span>'}
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    ${appState.data.categories.map(c => `
+                        <div class="glass-card rounded-xl p-6 ${isEditable ? 'cursor-pointer hover:border-ochre-500/30' : ''}" onclick="${isEditable ? `editCategory(${c.id})` : ''}">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-serif text-lg text-white">${c.name}</h4>
+                                <span class="text-xs text-ochre-400 bg-ochre-500/10 px-2 py-1 rounded">${c.contacts?.length || 0} contacts</span>
+                            </div>
+                            <p class="text-sm text-luxury-400">${c.description || 'No description'}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function renderWorkflow() {
+            return `
+                <div class="glass-card rounded-2xl p-6 border-ochre-500/20 bg-gradient-to-r from-ochre-900/10 to-transparent mb-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-ochre-400 tracking-widest uppercase mb-1">Event Day Tracker</p>
+                            <h3 class="font-serif text-2xl text-white font-light">Live Timeline</h3>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-3xl font-serif text-white font-light" id="clock">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                        </div>
+                    </div>
+                    <div class="mt-4 h-2 bg-white/5 rounded-full overflow-hidden">
+                        <div class="h-full bg-ochre-500 rounded-full" style="width: ${Math.random() * 60 + 20}%"></div>
+                    </div>
+                </div>
+                
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="font-serif text-lg text-white font-light mb-4">Schedule Blocks</h3>
+                    <div class="space-y-3">
+                        ${appState.data.events.map((e, i) => `
+                            <div class="flex items-center gap-4 p-4 bg-white/5 rounded-lg border border-white/5">
+                                <div class="w-2 h-12 rounded-full ${i === 0 ? 'bg-ochre-500' : 'bg-white/20'}"></div>
+                                <div class="flex-1">
+                                    <h4 class="font-serif text-white">${e.name}</h4>
+                                    <p class="text-xs text-luxury-400">${e.time} • ${e.venue}</p>
+                                </div>
+                                <span class="text-xs text-luxury-500">${e.status}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function addVenue() {
+            if (appState.isDemo) return;
+            const name = prompt('Venue name:');
+            if (name) {
+                appState.data.venues.push({ id: Date.now(), name, capacity: 100, image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&h=400&fit=crop', features: [] });
+                renderView('venues');
+                showToast('Venue added');
+            }
+        }
+
+        function addCategory() {
+            if (appState.isDemo) return;
+            const name = prompt('Category name:');
+            if (name) {
+                appState.data.categories.push({ id: Date.now(), name, description: '', color: 'ochre', contacts: [] });
+                renderView('categories');
+                showToast('Category created');
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('hidden');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            if (type === 'error') toast.style.background = 'rgba(239, 68, 68, 0.9)';
+            else toast.style.background = 'rgba(184,146,94,0.95)';
+            
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Clock update
+        setInterval(() => {
+            const clock = document.getElementById('clock');
+            if (clock) clock.textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }, 60000);
+    </script>
+</body>
+</html>
