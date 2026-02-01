@@ -29,63 +29,57 @@
             overflow: hidden;
             touch-action: manipulation;
         }
-        
         .glass-panel { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.06); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2), inset 0 1px 0 0 rgba(255, 255, 255, 0.05); }
         .glass-card { background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .glass-card:hover { border-color: rgba(184, 146, 94, 0.3); transform: translateY(-2px); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(184, 146, 94, 0.1); }
-        
         .welcome-overlay { position: fixed; inset: 0; z-index: 100; background: #0a0a0a; display: flex; align-items: center; justify-content: center; transition: opacity 0.6s ease, visibility 0.6s; }
         .welcome-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-        
         .mode-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); transition: all 0.4s ease; cursor: pointer; position: relative; overflow: hidden; }
         .mode-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(184,146,94,0.15) 0%, transparent 70%); opacity: 0; transition: opacity 0.4s; }
         .mode-card:hover::before { opacity: 1; }
         .mode-card:hover { border-color: rgba(184,146,94,0.4); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
         .mode-card.active { border-color: #b8925e; background: rgba(184,146,94,0.05); }
         .mode-card.selected-ring { box-shadow: 0 0 0 2px #b8925e, 0 20px 40px rgba(0,0,0,0.4); }
-        
         .luxury-button { background: linear-gradient(135deg, #b8925e 0%, #8d643f 100%); position: relative; overflow: hidden; transition: all 0.3s ease; }
         .luxury-button::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s; }
         .luxury-button:hover::before { left: 100%; }
         .luxury-button:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(0.5); }
-        
         .luxury-secondary { background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); transition: all 0.3s ease; }
         .luxury-secondary:hover { border-color: #b8925e; background: rgba(184, 146, 94, 0.1); }
-        
         body.mobile-mode { font-size: 15px; }
         body.mobile-mode .glass-card { border-radius: 16px; }
         body.desktop-mode { font-size: 14px; }
-        
-        .file-input { display: none; }
-        
         .nav-item { position: relative; transition: all 0.3s ease; }
         .nav-item::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 3px; height: 0; background: #b8925e; transition: height 0.3s ease; }
         .nav-item:hover::before, .nav-item.active::before { height: 20px; }
         .nav-item.active { background: rgba(184, 146, 94, 0.08); color: #f5f5f0; }
-        
         .demo-badge { position: fixed; top: 20px; right: 20px; z-index: 50; background: rgba(184,146,94,0.2); border: 1px solid rgba(184,146,94,0.4); color: #e6dcc8; padding: 6px 12px; border-radius: 20px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; backdrop-filter: blur(10px); }
-        
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: rgba(184,146,94,0.95); color: white; padding: 12px 24px; border-radius: 30px; font-size: 13px; opacity: 0; transition: all 0.3s ease; z-index: 200; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-        
         .animate-fade-up { animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Welcome specific animations */
         .welcome-enter { animation: welcomeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes welcomeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .timeline-container { position: relative; overflow-x: auto; overflow-y: hidden; background: linear-gradient(90deg, transparent 0%, transparent 99%, rgba(184,146,94,0.1) 100%), linear-gradient(0deg, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 100% 100%, 100% 64px, 64px 100%; }
+        .timeline-track { position: relative; height: 64px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; }
+        .timeline-item { position: absolute; height: 40px; background: linear-gradient(135deg, rgba(184,146,94,0.2) 0%, rgba(184,146,94,0.1) 100%); border: 1px solid rgba(184,146,94,0.3); border-radius: 6px; cursor: pointer; display: flex; align-items: center; padding: 0 12px; font-size: 11px; transition: all 0.2s; overflow: hidden; white-space: nowrap; }
+        .timeline-item:hover { border-color: rgba(184,146,94,0.6); box-shadow: 0 4px 20px rgba(184,146,94,0.2); z-index: 10; }
+        .timeline-item.active { background: linear-gradient(135deg, rgba(184,146,94,0.4) 0%, rgba(184,146,94,0.2) 100%); border-color: #b8925e; }
+        .timeline-item.completed { background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); }
+        .timeline-cursor { position: absolute; top: 0; bottom: 0; width: 2px; background: #b8925e; box-shadow: 0 0 10px rgba(184,146,94,0.8); z-index: 100; pointer-events: none; }
+        .timeline-cursor::before { content: ''; position: absolute; top: -6px; left: -5px; width: 12px; height: 12px; background: #b8925e; border-radius: 50%; box-shadow: 0 0 10px rgba(184,146,94,0.8); }
+        .time-ruler { display: flex; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); }
+        .time-mark { flex-shrink: 0; width: 64px; text-align: center; font-size: 11px; color: #7a6e5d; padding: 8px 0; border-right: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
 <body class="font-sans antialiased text-luxury-100 selection:bg-ochre-500/30 selection:text-ochre-100">
 
-    <!-- Welcome Overlay - Always Shown On Load -->
+    <!-- Welcome Overlay -->
     <div id="welcome-overlay" class="welcome-overlay">
         <div class="w-full max-w-4xl p-6 md:p-8 welcome-enter">
             <div class="text-center mb-10">
                 <div class="inline-block mb-6">
-                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-ochre-400 to-ochre-700 flex items-center justify-center text-white font-serif text-3xl md:text-4xl italic shadow-2xl shadow-ochre-900/30 mx-auto border border-white/20">
-                        A
-                    </div>
+                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-ochre-400 to-ochre-700 flex items-center justify-center text-white font-serif text-3xl md:text-4xl italic shadow-2xl shadow-ochre-900/30 mx-auto border border-white/20">A</div>
                 </div>
                 <h1 class="text-4xl md:text-5xl font-serif font-light text-white mb-3 tracking-wide">Atelier</h1>
                 <p class="text-luxury-400 font-light text-base md:text-lg">Event Direction & Management</p>
@@ -94,26 +88,22 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-8 md:mb-12">
                 <div class="mode-card rounded-2xl p-6 md:p-8 text-center" onclick="selectMode('desktop')" id="mode-desktop">
                     <div class="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4 md:mb-6">
-                        <svg class="w-6 h-6 md:w-8 md:h-8 text-ochre-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25"/>
-                        </svg>
+                        <svg class="w-6 h-6 md:w-8 md:h-8 text-ochre-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25"/></svg>
                     </div>
                     <h3 class="text-lg md:text-xl font-serif text-white mb-2">Desktop Experience</h3>
                     <p class="text-xs md:text-sm text-luxury-400 mb-4 md:mb-6">Full featured dashboard with file management</p>
                     <ul class="text-left space-y-1.5 md:space-y-2 text-[10px] md:text-xs text-luxury-500 mb-4 md:mb-6 pl-3 md:pl-4">
                         <li>• Save & load workspace files</li>
                         <li>• Advanced timeline editing</li>
-                        <li>• Full analytics suite</li>
-                        <li>• Keyboard shortcuts</li>
+                        <li>• Multi-track workflow visualization</li>
+                        <li>• Comprehensive analytics</li>
                     </ul>
                     <div class="text-xs text-ochre-400 font-medium opacity-0 transition-opacity" id="selected-desktop">Selected</div>
                 </div>
 
                 <div class="mode-card rounded-2xl p-6 md:p-8 text-center" onclick="selectMode('mobile')" id="mode-mobile">
                     <div class="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4 md:mb-6">
-                        <svg class="w-6 h-6 md:w-8 md:h-8 text-ochre-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"/>
-                        </svg>
+                        <svg class="w-6 h-6 md:w-8 md:h-8 text-ochre-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"/></svg>
                     </div>
                     <h3 class="text-lg md:text-xl font-serif text-white mb-2">Mobile Experience</h3>
                     <p class="text-xs md:text-sm text-luxury-400 mb-4 md:mb-6">Optimized for on-the-go event management</p>
@@ -121,7 +111,7 @@
                         <li>• Import workspace files</li>
                         <li>• Touch-optimized workflow</li>
                         <li>• Quick status updates</li>
-                        <li>• Streammed interface</li>
+                        <li>• Streamlined interface</li>
                     </ul>
                     <div class="text-xs text-ochre-400 font-medium opacity-0 transition-opacity" id="selected-mobile">Selected</div>
                 </div>
@@ -129,12 +119,8 @@
 
             <div class="space-y-4">
                 <div class="flex flex-col sm:flex-row justify-center gap-3">
-                    <button onclick="startWithDemo()" class="luxury-secondary text-white px-6 md:px-8 py-3 rounded-full text-sm tracking-wide w-full sm:w-auto">
-                        Start with Demo Data
-                    </button>
-                    <button onclick="enterApplication()" id="enter-btn" class="luxury-button text-white px-6 md:px-8 py-3 rounded-full text-sm tracking-wide w-full sm:w-auto opacity-50 cursor-not-allowed" disabled>
-                        Enter Workspace
-                    </button>
+                    <button onclick="startWithDemo()" class="luxury-secondary text-white px-6 md:px-8 py-3 rounded-full text-sm tracking-wide w-full sm:w-auto">Start with Demo Data</button>
+                    <button onclick="enterApplication()" id="enter-btn" class="luxury-button text-white px-6 md:px-8 py-3 rounded-full text-sm tracking-wide w-full sm:w-auto opacity-50 cursor-not-allowed" disabled>Enter Workspace</button>
                 </div>
 
                 <div id="file-upload-area" class="hidden">
@@ -155,9 +141,7 @@
     <!-- Demo Badge -->
     <div class="demo-badge" id="demo-badge" style="display: none;">
         Demo Mode
-        <button onclick="exitToWelcome()" class="ml-2 text-white hover:text-ochre-200" title="Exit to mode selection">
-            <svg class="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
+        <button onclick="exitToWelcome()" class="ml-2 text-white hover:text-ochre-200" title="Exit to mode selection"><svg class="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
     </div>
 
     <!-- Main Application -->
@@ -169,9 +153,7 @@
                     <div class="w-8 h-8 rounded-full bg-gradient-to-br from-ochre-400 to-ochre-700 flex items-center justify-center text-white font-serif font-bold text-lg italic">A</div>
                     <span class="font-serif text-lg text-white tracking-wide">Atelier</span>
                 </div>
-                <button onclick="toggleSidebar()" class="lg:hidden text-luxury-300">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
+                <button onclick="toggleSidebar()" class="lg:hidden text-luxury-300"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
 
             <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
@@ -202,13 +184,10 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
                     Save Workspace
                 </button>
-                <button onclick="exitToWelcome()" class="w-full luxury-secondary text-white py-3 rounded-xl text-sm font-medium">
-                    Exit to Welcome
-                </button>
+                <button onclick="exitToWelcome()" class="w-full luxury-secondary text-white py-3 rounded-xl text-sm font-medium">Exit to Welcome</button>
             </div>
         </aside>
 
-        <!-- Overlay -->
         <div id="overlay" class="fixed inset-0 bg-black/50 z-20 hidden lg:hidden" onclick="toggleSidebar()"></div>
 
         <!-- Main Content -->
@@ -232,76 +211,97 @@
                 </div>
             </header>
 
-            <div class="p-6 max-w-7xl mx-auto relative z-0 pb-24 space-y-6" id="main-content">
-                <!-- Content injected dynamically -->
-            </div>
+            <div class="p-6 max-w-7xl mx-auto relative z-0 pb-24 space-y-6" id="main-content"></div>
         </main>
     </div>
 
     <div class="toast" id="toast"></div>
 
     <script>
-        // Global State - Fresh on every load
+        // Global State
         let appState = {
-            mode: null, // 'desktop' | 'mobile'
+            mode: null,
             isDemo: false,
             data: {
                 events: [],
                 venues: [],
                 attendees: [],
                 categories: [],
-                tasks: []
+                tasks: [],
+                timeline: []
             }
         };
 
-        // Demo Data Staging (Example Data)
+        // Comprehensive Demo Data showcasing all features
         const demoData = {
             events: [
-                { id: 1, name: 'Annual Tech Summit', date: '2026-02-04', time: '09:00', venue: 'Grand Ballroom', status: 'active', attendees: 450, capacity: 500, type: 'Conference' },
-                { id: 2, name: 'Product Launch Q1', date: '2026-02-15', time: '14:00', venue: 'Conference Center', status: 'planning', attendees: 120, capacity: 200, type: 'Corporate' },
-                { id: 3, name: 'Board Meeting', date: '2026-02-04', time: '14:00', venue: 'Executive Suite', status: 'active', attendees: 15, capacity: 20, type: 'Meeting' }
+                { id: 1, name: 'Annual Tech Summit 2026', date: '2026-02-15', time: '09:00', endTime: '17:00', venue: 'Grand Ballroom', status: 'active', attendees: 450, capacity: 500, type: 'Conference', budget: 75000, revenue: 125000 },
+                { id: 2, name: 'Product Launch: Aurora', date: '2026-02-22', time: '14:00', endTime: '16:30', venue: 'Executive Suite', status: 'planning', attendees: 85, capacity: 100, type: 'Corporate', budget: 25000, revenue: 0 },
+                { id: 3, name: 'Board Meeting - Q1 Review', date: '2026-02-04', time: '10:00', endTime: '12:00', venue: 'Executive Suite', status: 'completed', attendees: 12, capacity: 20, type: 'Meeting', budget: 5000, revenue: 0 },
+                { id: 4, name: 'Client Appreciation Gala', date: '2026-03-08', time: '18:00', endTime: '22:00', venue: 'Rooftop Terrace', status: 'planning', attendees: 150, capacity: 200, type: 'Social', budget: 45000, revenue: 0 },
+                { id: 5, name: 'Team Building Retreat', date: '2026-03-15', time: '08:00', endTime: '18:00', venue: 'Mountain Resort', status: 'draft', attendees: 45, capacity: 50, type: 'Corporate', budget: 15000, revenue: 0 },
+                { id: 6, name: 'Investor Pitch Day', date: '2026-02-28', time: '13:00', endTime: '16:00', venue: 'Conference Center A', status: 'active', attendees: 30, capacity: 40, type: 'Meeting', budget: 8000, revenue: 0 }
             ],
             venues: [
-                { id: 1, name: 'Grand Ballroom, Ritz', capacity: 500, upcoming: 3, image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&h=400&fit=crop', features: ['AV Equipment', 'Catering', 'Valet'] },
-                { id: 2, name: 'Conference Center', capacity: 200, upcoming: 5, image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=400&fit=crop', features: ['Video Conf', 'Whiteboards', 'Lounge'] },
-                { id: 3, name: 'Executive Suite', capacity: 50, upcoming: 2, image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=600&h=400&fit=crop', features: ['Private', 'Premium Bar', 'View'] }
+                { id: 1, name: 'Grand Ballroom, Ritz-Carlton', capacity: 500, upcoming: 3, image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&h=400&fit=crop', features: ['AV Equipment', 'Catering', 'Valet', 'Stage Lighting', 'Translation Booths'], address: '50 Central Park South, New York', price: '$8,500/day' },
+                { id: 2, name: 'Conference Center A', capacity: 200, upcoming: 5, image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=400&fit=crop', features: ['Video Conf', 'Whiteboards', 'Breakout Rooms', 'Recording Studio', 'High-Speed WiFi'], address: '350 5th Avenue, Suite 2000', price: '$3,200/day' },
+                { id: 3, name: 'Executive Suite', capacity: 50, upcoming: 2, image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=600&h=400&fit=crop', features: ['Private Bar', 'Panoramic View', 'Catering', 'Secure Access', 'Video Wall'], address: 'One World Trade Center, 78th Floor', price: '$5,000/day' },
+                { id: 4, name: 'Rooftop Terrace', capacity: 200, upcoming: 1, image: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=600&h=400&fit=crop', features: ['Outdoor', 'City View', 'Bar Service', 'Heating', 'Floral Arrangements'], address: 'The Standard Hotel, Rooftop', price: '$12,000/evening' },
+                { id: 5, name: 'Mountain Resort Lodge', capacity: 50, upcoming: 1, image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop', features: ['Lodging', 'Hiking Access', 'Spa', 'Fireplace', 'Catering'], address: 'Aspen, Colorado', price: '$15,000/weekend' }
             ],
             attendees: [
-                { id: 1, name: 'Michael Roberts', email: 'm.roberts@company.com', event: 'Annual Tech Summit', status: 'confirmed', type: 'VIP' },
-                { id: 2, name: 'Sarah Johnson', email: 'sarah.j@tech.com', event: 'Annual Tech Summit', status: 'confirmed', type: 'Speaker' },
-                { id: 3, name: 'David Chen', email: 'david.chen@email.com', event: 'Product Launch Q1', status: 'pending', type: 'General' }
+                { id: 1, name: 'Michael Roberts', email: 'm.roberts@venturecapital.com', event: 'Annual Tech Summit', status: 'confirmed', type: 'VIP', company: 'Horizon Ventures', phone: '+1-555-0123' },
+                { id: 2, name: 'Sarah Johnson', email: 'sarah.j@techcorp.com', event: 'Annual Tech Summit', status: 'confirmed', type: 'Speaker', company: 'TechCorp', phone: '+1-555-0124' },
+                { id: 3, name: 'David Chen', email: 'david.chen@innovate.io', event: 'Product Launch', status: 'pending', type: 'General', company: 'InnovateIO', phone: '+1-555-0125' },
+                { id: 4, name: 'Emma Williams', email: 'emma.w@boardmembers.com', event: 'Board Meeting', status: 'confirmed', type: 'Board', company: 'Atelier Board', phone: '+1-555-0126' },
+                { id: 5, name: 'James Wilson', email: 'j.wilson@creativeminds.com', event: 'Annual Tech Summit', status: 'cancelled', type: 'General', company: 'Creative Minds', phone: '+1-555-0127' },
+                { id: 6, name: 'Isabella Martinez', email: 'i.martinez@globalmedia.com', event: 'Annual Tech Summit', status: 'confirmed', type: 'VIP', company: 'Global Media', phone: '+1-555-0128' },
+                { id: 7, name: 'Christopher Lee', email: 'c.lee@futuretech.com', event: 'Investor Pitch Day', status: 'confirmed', type: 'Speaker', company: 'FutureTech', phone: '+1-555-0129' },
+                { id: 8, name: 'Sophia Anderson', email: 's.anderson@designstudio.com', event: 'Client Appreciation Gala', status: 'confirmed', type: 'VIP', company: 'Design Studio', phone: '+1-555-0130' }
             ],
             categories: [
-                { id: 1, name: 'VIP Clients', description: 'High-value clients', color: 'ochre', contacts: [0, 1] },
-                { id: 2, name: 'Speakers', description: 'Keynote presenters', color: 'blue', contacts: [1] }
+                { id: 1, name: 'VIP Clients', description: 'High-value clients and strategic partners requiring white-glove service', color: 'ochre', contacts: [0, 5, 7], icon: '👑' },
+                { id: 2, name: 'Keynote Speakers', description: 'Industry experts and thought leaders presenting at events', color: 'blue', contacts: [1, 6], icon: '🎤' },
+                { id: 3, name: 'Board Members', description: 'Internal board and executive committee members', color: 'purple', contacts: [3], icon: '💼' },
+                { id: 4, name: 'Press & Media', description: 'Journalists, bloggers, and media contacts', color: 'rose', contacts: [5], icon: '📰' },
+                { id: 5, name: 'Corporate Partners', description: 'Sponsors and business development partners', color: 'green', contacts: [0, 2], icon: '🤝' }
             ],
             tasks: [
-                { id: 1, title: 'Confirm catering', event: 'Annual Tech Summit', due: '2 days', priority: 'high', completed: false },
-                { id: 2, title: 'AV equipment check', event: 'Board Meeting', due: 'Tomorrow', priority: 'high', completed: true }
+                { id: 1, title: 'Confirm keynote speaker flights', event: 'Annual Tech Summit', due: '2 days', priority: 'high', completed: false, assignee: 'Jessica' },
+                { id: 2, title: 'Finalize catering menu', event: 'Client Appreciation Gala', due: '5 days', priority: 'high', completed: false, assignee: 'Team' },
+                { id: 3, title: 'AV equipment check', event: 'Board Meeting', due: 'Tomorrow', priority: 'medium', completed: true, assignee: 'Tech Crew' },
+                { id: 4, title: 'Send investor decks', event: 'Investor Pitch Day', due: '3 days', priority: 'high', completed: false, assignee: 'Finance' },
+                { id: 5, title: 'Arrange transportation', event: 'Team Building Retreat', due: 'Next week', priority: 'medium', completed: false, assignee: 'Logistics' },
+                { id: 6, title: 'Print name badges', event: 'Annual Tech Summit', due: '1 day', priority: 'low', completed: true, assignee: 'Admin' }
+            ],
+            timeline: [
+                { id: 1, track: 'Setup', name: 'Venue Access & Prep', start: 480, duration: 120, status: 'completed', type: 'setup' },
+                { id: 2, track: 'Setup', name: 'AV Sound Check', start: 600, duration: 60, status: 'completed', type: 'setup' },
+                { id: 3, track: 'Sessions', name: 'Registration & Coffee', start: 540, duration: 60, status: 'completed', type: 'break' },
+                { id: 4, track: 'Sessions', name: 'Opening Keynote', start: 600, duration: 90, status: 'active', type: 'keynote' },
+                { id: 5, track: 'Sessions', name: 'Panel: AI Ethics', start: 720, duration: 60, status: 'pending', type: 'panel' },
+                { id: 6, track: 'Catering', name: 'Networking Lunch', start: 780, duration: 90, status: 'pending', type: 'catering' },
+                { id: 7, track: 'Sessions', name: 'Workshop Sessions', start: 870, duration: 120, status: 'pending', type: 'workshop' },
+                { id: 8, track: 'Network', name: 'Cocktail Reception', start: 1020, duration: 120, status: 'pending', type: 'networking' }
             ]
         };
 
         // Mode Selection
         function selectMode(mode) {
             appState.mode = mode;
-            
-            // Visual selection
             document.querySelectorAll('.mode-card').forEach(c => {
                 c.classList.remove('active', 'selected-ring');
                 c.querySelector('[id^="selected-"]').style.opacity = '0';
             });
-            
             const selectedCard = document.getElementById(`mode-${mode}`);
             selectedCard.classList.add('active', 'selected-ring');
             selectedCard.querySelector(`[id^="selected-"]`).style.opacity = '1';
             
-            // Enable enter button
             const enterBtn = document.getElementById('enter-btn');
             enterBtn.disabled = false;
             enterBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             enterBtn.textContent = mode === 'desktop' ? 'Enter Workspace' : 'Enter Mobile';
             
-            // Show file upload for both modes (desktop can save too, mobile import only)
             document.getElementById('file-upload-area').classList.remove('hidden');
         }
 
@@ -317,26 +317,19 @@
 
         function enterApplication() {
             if (!appState.mode) return;
-            
             if (appState.data.events.length === 0 && !appState.isDemo) {
-                // If no file loaded and not demo, start with empty workspace
-                appState.data = { events: [], venues: [], attendees: [], categories: [], tasks: [] };
+                appState.data = { events: [], venues: [], attendees: [], categories: [], tasks: [], timeline: [] };
             }
-            
             initializeApp();
         }
 
         function initializeApp() {
-            // Apply mode class
             document.body.classList.add(`${appState.mode}-mode`);
-            
-            // Hide welcome, show app
             document.getElementById('welcome-overlay').classList.add('hidden');
             const app = document.getElementById('app-container');
             app.classList.remove('opacity-0', 'pointer-events-none');
             app.style.opacity = '1';
             
-            // Update UI based on mode/data
             if (appState.isDemo) {
                 document.getElementById('demo-badge').style.display = 'block';
                 document.getElementById('data-mode-label').textContent = 'Demo Data';
@@ -349,17 +342,15 @@
                     document.getElementById('save-btn').disabled = false;
                     document.getElementById('save-btn').classList.remove('opacity-50', 'cursor-not-allowed');
                 } else {
-                    document.getElementById('save-btn').style.display = 'none'; // Hide save on mobile
+                    document.getElementById('save-btn').style.display = 'none';
                 }
             }
             
-            // Initialize view
             renderView('dashboard');
         }
 
         function exitToWelcome() {
-            // Full reset
-            location.reload(); // Simplest way to ensure clean state
+            location.reload();
         }
 
         // File Operations
@@ -378,14 +369,9 @@
                     if (validateData(loaded)) {
                         appState.data = loaded;
                         appState.isDemo = false;
-                        
-                        // If mode not selected, assume desktop for file operations
                         if (!appState.mode) selectMode('desktop');
-                        
                         showToast(`Loaded: ${file.name}`);
-                        setTimeout(() => {
-                            enterApplication();
-                        }, 500);
+                        setTimeout(() => enterApplication(), 500);
                     } else {
                         showToast('Invalid workspace file structure', 'error');
                     }
@@ -405,20 +391,16 @@
                 showToast('Save only available in Desktop mode with personal data', 'error');
                 return;
             }
-            
             const dataStr = JSON.stringify(appState.data, null, 2);
             const blob = new Blob([dataStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
-            
-            const date = new Date().toISOString().split('T')[0];
             const a = document.createElement('a');
             a.href = url;
-            a.download = `atelier-workspace-${date}.json`;
+            a.download = `atelier-workspace-${new Date().toISOString().split('T')[0]}.json`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            
             showToast('Workspace saved');
         }
 
@@ -431,82 +413,164 @@
         function renderView(viewName) {
             const container = document.getElementById('main-content');
             const navTitle = document.getElementById('page-title');
-            
-            const titles = {
-                dashboard: 'Overview',
-                workflow: 'Workflow',
-                events: 'Calendar',
-                categories: 'Categories',
-                venues: 'Venues'
-            };
+            const titles = { dashboard: 'Overview', workflow: 'Workflow', events: 'Calendar', categories: 'Categories', venues: 'Venues' };
             navTitle.textContent = titles[viewName] || 'Atelier';
             
-            // Update nav active state
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             const activeNav = document.getElementById(`nav-${viewName}`);
             if (activeNav) activeNav.classList.add('active');
             
-            // Render content
-            let html = '';
             switch(viewName) {
                 case 'dashboard':
-                    html = renderDashboard();
+                    container.innerHTML = renderDashboard();
+                    initCharts();
                     break;
                 case 'venues':
-                    html = renderVenues();
+                    container.innerHTML = renderVenues();
                     break;
                 case 'categories':
-                    html = renderCategories();
+                    container.innerHTML = renderCategories();
                     break;
                 case 'workflow':
-                    html = renderWorkflow();
+                    container.innerHTML = renderWorkflow();
+                    break;
+                case 'events':
+                    container.innerHTML = renderCalendar();
                     break;
                 default:
-                    html = `<div class="glass-card rounded-2xl p-12 text-center"><p class="text-luxury-400">View: ${viewName}</p></div>`;
+                    container.innerHTML = `<div class="glass-card rounded-2xl p-12 text-center"><p class="text-luxury-400">View: ${viewName}</p></div>`;
             }
-            
-            container.innerHTML = html;
         }
 
         function renderDashboard() {
             const stats = appState.data;
+            const totalAttendees = stats.attendees.length;
+            const activeEvents = stats.events.filter(e => e.status === 'active').length;
+            const upcomingEvents = stats.events.filter(e => e.status === 'planning').length;
+            const completedTasks = stats.tasks.filter(t => t.completed).length;
+            const totalTasks = stats.tasks.length;
+            const completionRate = Math.round((completedTasks / totalTasks) * 100);
+            
             return `
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="glass-card rounded-2xl p-6">
                         <p class="text-xs text-luxury-400 tracking-widest uppercase mb-2">Active Events</p>
-                        <h3 class="text-3xl font-serif font-light text-white">${stats.events.filter(e => e.status === 'active').length}</h3>
+                        <h3 class="text-3xl font-serif font-light text-white">${activeEvents}</h3>
+                        <p class="text-xs text-luxury-500 mt-1">${upcomingEvents} upcoming</p>
                     </div>
                     <div class="glass-card rounded-2xl p-6">
                         <p class="text-xs text-luxury-400 tracking-widest uppercase mb-2">Total Guests</p>
-                        <h3 class="text-3xl font-serif font-light text-white">${stats.attendees.length}</h3>
+                        <h3 class="text-3xl font-serif font-light text-white">${totalAttendees}</h3>
+                        <p class="text-xs text-luxury-500 mt-1">Across all events</p>
+                    </div>
+                    <div class="glass-card rounded-2xl p-6">
+                        <p class="text-xs text-luxury-400 tracking-widest uppercase mb-2">Task Completion</p>
+                        <h3 class="text-3xl font-serif font-light text-white">${completionRate}%</h3>
+                        <p class="text-xs text-luxury-500 mt-1">${completedTasks}/${totalTasks} tasks</p>
                     </div>
                     <div class="glass-card rounded-2xl p-6">
                         <p class="text-xs text-luxury-400 tracking-widest uppercase mb-2">Venues</p>
                         <h3 class="text-3xl font-serif font-light text-white">${stats.venues.length}</h3>
-                    </div>
-                    <div class="glass-card rounded-2xl p-6">
-                        <p class="text-xs text-luxury-400 tracking-widest uppercase mb-2">Pending Tasks</p>
-                        <h3 class="text-3xl font-serif font-light text-white">${stats.tasks.filter(t => !t.completed).length}</h3>
+                        <p class="text-xs text-luxury-500 mt-1">Spaces available</p>
                     </div>
                 </div>
-                
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 glass-card rounded-2xl p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="font-serif text-xl text-white font-light">Event Performance</h3>
+                            <select class="bg-white/5 border border-white/10 rounded-lg px-3 py-1 text-xs text-luxury-300 outline-none">
+                                <option>This Month</option>
+                                <option>Last Month</option>
+                                <option>This Year</option>
+                            </select>
+                        </div>
+                        <div class="h-64">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="font-serif text-xl text-white font-light mb-6">Event Types</h3>
+                        <div class="h-48 flex items-center justify-center">
+                            <canvas id="typeChart"></canvas>
+                        </div>
+                        <div class="mt-4 space-y-2">
+                            ${['Conference', 'Corporate', 'Social', 'Meeting'].map((type, i) => {
+                                const count = stats.events.filter(e => e.type === type).length;
+                                const colors = ['bg-ochre-500', 'bg-blue-500', 'bg-purple-500', 'bg-green-500'];
+                                return `<div class="flex items-center justify-between text-sm"><span class="text-luxury-400">${type}</span><span class="text-white font-serif">${count}</span></div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+
                 <div class="glass-card rounded-2xl p-6">
-                    <h3 class="font-serif text-xl text-white font-light mb-6">Recent Events</h3>
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="font-serif text-xl text-white font-light">Recent Events</h3>
+                        <button onclick="switchView('events')" class="text-xs text-ochre-400 hover:text-ochre-300">View All</button>
+                    </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
                             <thead class="text-xs text-luxury-400 uppercase border-b border-white/5">
-                                <tr><th class="pb-3 font-normal">Event</th><th class="pb-3 font-normal hidden sm:table-cell">Date</th><th class="pb-3 font-normal">Status</th></tr>
+                                <tr>
+                                    <th class="pb-3 font-normal">Event</th>
+                                    <th class="pb-3 font-normal hidden sm:table-cell">Date</th>
+                                    <th class="pb-3 font-normal hidden md:table-cell">Venue</th>
+                                    <th class="pb-3 font-normal">Status</th>
+                                    <th class="pb-3 font-normal text-right">Attendees</th>
+                                </tr>
                             </thead>
                             <tbody class="divide-y divide-white/5">
                                 ${stats.events.slice(0, 5).map(e => `
-                                    <tr class="hover:bg-white/[0.02]">
-                                        <td class="py-4 font-serif text-white">${e.name}</td>
+                                    <tr class="hover:bg-white/[0.02] transition">
+                                        <td class="py-4">
+                                            <div class="font-serif text-white">${e.name}</div>
+                                            <div class="text-xs text-luxury-500">${e.type}</div>
+                                        </td>
                                         <td class="py-4 text-luxury-400 hidden sm:table-cell">${e.date}</td>
-                                        <td class="py-4"><span class="px-3 py-1 rounded-full text-xs border ${e.status === 'active' ? 'border-ochre-500/30 text-ochre-200' : 'border-white/10 text-luxury-400'}">${e.status}</span></td>
+                                        <td class="py-4 text-luxury-400 hidden md:table-cell">${e.venue}</td>
+                                        <td class="py-4"><span class="px-3 py-1 rounded-full text-xs border ${e.status === 'active' ? 'border-ochre-500/30 text-ochre-200 bg-ochre-500/10' : e.status === 'completed' ? 'border-green-500/30 text-green-200 bg-green-500/10' : 'border-white/10 text-luxury-400'}">${e.status}</span></td>
+                                        <td class="py-4 text-right font-serif text-white">${e.attendees}</td>
                                     </tr>
                                 `).join('')}
                             </tbody>
                         </table>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="font-serif text-xl text-white font-light mb-4">Pending Tasks</h3>
+                        <div class="space-y-3">
+                            ${stats.tasks.filter(t => !t.completed).slice(0, 4).map(t => `
+                                <div class="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/5">
+                                    <div class="w-2 h-2 rounded-full ${t.priority === 'high' ? 'bg-red-400' : 'bg-ochre-400'}"></div>
+                                    <div class="flex-1">
+                                        <p class="text-sm text-white">${t.title}</p>
+                                        <p class="text-xs text-luxury-500">${t.event} • Due ${t.due}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="font-serif text-xl text-white font-light mb-4">Upcoming Schedule</h3>
+                        <div class="space-y-3">
+                            ${stats.events.filter(e => e.status === 'active' || e.status === 'planning').slice(0, 3).map(e => `
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 rounded-lg bg-white/5 border border-white/10 flex flex-col items-center justify-center text-center">
+                                        <span class="text-[10px] text-luxury-500 uppercase">${new Date(e.date).toLocaleString('default', {month: 'short'})}</span>
+                                        <span class="text-lg font-serif text-white leading-none">${new Date(e.date).getDate()}</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm text-white font-medium">${e.name}</p>
+                                        <p class="text-xs text-luxury-500">${e.time} • ${e.venue}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
                     </div>
                 </div>
             `;
@@ -516,24 +580,35 @@
             const isEditable = !appState.isDemo;
             return `
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="font-serif text-2xl text-white font-light">Venue Directory</h3>
-                    ${isEditable ? `
-                        <button onclick="addVenue()" class="luxury-button px-4 py-2 rounded-full text-sm">Add Venue</button>
-                    ` : '<span class="text-xs text-luxury-500 border border-white/10 px-3 py-1 rounded-full">Demo Mode - View Only</span>'}
+                    <div>
+                        <h3 class="font-serif text-2xl text-white font-light">Venue Directory</h3>
+                        <p class="text-xs text-luxury-400 mt-1">Manage event spaces and locations</p>
+                    </div>
+                    ${isEditable ? `<button onclick="addVenue()" class="luxury-button px-4 py-2 rounded-full text-sm">Add Venue</button>` : '<span class="text-xs text-luxury-500 border border-white/10 px-3 py-1 rounded-full">Demo Mode</span>'}
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     ${appState.data.venues.map(v => `
-                        <div class="glass-card rounded-2xl overflow-hidden ${isEditable ? 'cursor-pointer' : ''}" onclick="${isEditable ? `editVenue(${v.id})` : ''}">
+                        <div class="glass-card rounded-2xl overflow-hidden group ${isEditable ? 'cursor-pointer' : ''}" onclick="${isEditable ? `editVenue(${v.id})` : ''}">
                             <div class="h-48 overflow-hidden relative">
-                                <img src="${v.image}" class="w-full h-full object-cover grayscale ${isEditable ? 'group-hover:grayscale-0' : ''} transition duration-500" alt="${v.name}">
-                                <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-transparent"></div>
+                                <img src="${v.image}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 ${isEditable ? 'grayscale group-hover:grayscale-0' : 'grayscale'}" alt="${v.name}">
+                                <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent"></div>
+                                <div class="absolute top-4 right-4">
+                                    <span class="px-2 py-1 bg-black/50 backdrop-blur-sm rounded text-[10px] text-white border border-white/10">${v.upcoming} upcoming</span>
+                                </div>
                                 <div class="absolute bottom-0 left-0 right-0 p-4">
-                                    <h4 class="font-serif text-lg text-white">${v.name}</h4>
-                                    <p class="text-xs text-luxury-400">Capacity: ${v.capacity}</p>
+                                    <h4 class="font-serif text-lg text-white leading-tight">${v.name}</h4>
+                                    <p class="text-xs text-luxury-400 mt-1">Capacity: ${v.capacity} guests</p>
                                 </div>
                             </div>
-                            <div class="p-4 flex flex-wrap gap-2">
-                                ${v.features.map(f => `<span class="text-xs text-luxury-400 bg-white/5 px-2 py-1 rounded border border-white/5">${f}</span>`).join('')}
+                            <div class="p-4">
+                                <div class="flex flex-wrap gap-2 mb-3">
+                                    ${v.features.slice(0, 3).map(f => `<span class="text-[10px] text-luxury-400 bg-white/5 px-2 py-1 rounded border border-white/5">${f}</span>`).join('')}
+                                    ${v.features.length > 3 ? `<span class="text-[10px] text-luxury-500">+${v.features.length - 3}</span>` : ''}
+                                </div>
+                                <div class="flex items-center justify-between pt-3 border-t border-white/5">
+                                    <span class="text-xs text-luxury-500">${v.address || 'New York'}</span>
+                                    <span class="text-xs text-ochre-400 font-medium">${v.price || '$5,000/day'}</span>
+                                </div>
                             </div>
                         </div>
                     `).join('')}
@@ -543,81 +618,276 @@
 
         function renderCategories() {
             const isEditable = !appState.isDemo;
+            const colors = {
+                ochre: 'from-ochre-500/20 to-ochre-500/5 border-ochre-500/30 text-ochre-300',
+                blue: 'from-blue-500/20 to-blue-500/5 border-blue-500/30 text-blue-300',
+                purple: 'from-purple-500/20 to-purple-500/5 border-purple-500/30 text-purple-300',
+                green: 'from-green-500/20 to-green-500/5 border-green-500/30 text-green-300',
+                rose: 'from-rose-500/20 to-rose-500/5 border-rose-500/30 text-rose-300'
+            };
+            
             return `
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="font-serif text-2xl text-white font-light">Contact Categories</h3>
-                    ${isEditable ? `
-                        <button onclick="addCategory()" class="luxury-button px-4 py-2 rounded-full text-sm">New Category</button>
-                    ` : '<span class="text-xs text-luxury-500 border border-white/10 px-3 py-1 rounded-full">Demo Mode - View Only</span>'}
+                    <div>
+                        <h3 class="font-serif text-2xl text-white font-light">Contact Categories</h3>
+                        <p class="text-xs text-luxury-400 mt-1">Organize guests and manage segments</p>
+                    </div>
+                    ${isEditable ? `<button onclick="addCategory()" class="luxury-button px-4 py-2 rounded-full text-sm">New Category</button>` : '<span class="text-xs text-luxury-500 border border-white/10 px-3 py-1 rounded-full">Demo Mode</span>'}
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     ${appState.data.categories.map(c => `
-                        <div class="glass-card rounded-xl p-6 ${isEditable ? 'cursor-pointer hover:border-ochre-500/30' : ''}" onclick="${isEditable ? `editCategory(${c.id})` : ''}">
-                            <div class="flex justify-between items-start mb-2">
-                                <h4 class="font-serif text-lg text-white">${c.name}</h4>
-                                <span class="text-xs text-ochre-400 bg-ochre-500/10 px-2 py-1 rounded">${c.contacts?.length || 0} contacts</span>
+                        <div class="glass-card rounded-xl p-6 bg-gradient-to-br ${colors[c.color] || colors.ochre} ${isEditable ? 'cursor-pointer hover:border-opacity-60' : ''}" onclick="${isEditable ? `editCategory(${c.id})` : ''}">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="w-10 h-10 rounded-full bg-black/20 flex items-center justify-center text-xl">${c.icon || '👥'}</div>
+                                <span class="text-xs bg-black/20 px-2 py-1 rounded-full">${c.contacts?.length || 0} contacts</span>
                             </div>
-                            <p class="text-sm text-luxury-400">${c.description || 'No description'}</p>
+                            <h4 class="font-serif text-xl text-white mb-2">${c.name}</h4>
+                            <p class="text-sm text-luxury-300/80 mb-4">${c.description}</p>
+                            <div class="flex -space-x-2">
+                                ${c.contacts?.slice(0, 4).map(idx => {
+                                    const contact = appState.data.attendees[idx];
+                                    return contact ? `<div class="w-8 h-8 rounded-full bg-gradient-to-br from-luxury-700 to-luxury-900 border-2 border-[#0a0a0a] flex items-center justify-center text-xs font-serif text-white" title="${contact.name}">${contact.name.split(' ').map(n => n[0]).join('')}</div>` : '';
+                                }).join('')}
+                                ${c.contacts?.length > 4 ? `<div class="w-8 h-8 rounded-full bg-black/30 border-2 border-[#0a0a0a] flex items-center justify-center text-xs text-luxury-400">+${c.contacts.length - 4}</div>` : ''}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="glass-card rounded-2xl p-6 mt-6">
+                    <h3 class="font-serif text-xl text-white font-light mb-6">All Contacts</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="text-xs text-luxury-400 uppercase border-b border-white/5">
+                                <tr><th class="pb-3 font-normal">Name</th><th class="pb-3 font-normal hidden sm:table-cell">Event</th><th class="pb-3 font-normal">Type</th><th class="pb-3 font-normal text-right">Status</th></tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5">
+                                ${appState.data.attendees.map(a => `
+                                    <tr class="hover:bg-white/[0.02]">
+                                        <td class="py-3">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-ochre-600/30 to-luxury-800/30 border border-white/10 flex items-center justify-center text-xs font-serif text-white">${a.name.split(' ').map(n => n[0]).join('')}</div>
+                                                <div>
+                                                    <div class="text-sm text-white font-medium">${a.name}</div>
+                                                    <div class="text-xs text-luxury-500">${a.email}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 text-luxury-400 hidden sm:table-cell text-sm">${a.event}</td>
+                                        <td class="py-3"><span class="text-xs text-ochre-300 bg-ochre-500/10 px-2 py-1 rounded">${a.type}</span></td>
+                                        <td class="py-3 text-right"><span class="text-xs ${a.status === 'confirmed' ? 'text-green-400' : a.status === 'pending' ? 'text-amber-400' : 'text-red-400'}">${a.status}</span></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderWorkflow() {
+            const tracks = ['Setup', 'Sessions', 'Catering', 'Network'];
+            const timelineItems = appState.data.timeline || [];
+            
+            return `
+                <div class="glass-card rounded-2xl p-6 border-ochre-500/20 bg-gradient-to-r from-ochre-900/10 to-transparent mb-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <p class="text-xs text-ochre-400 tracking-widest uppercase mb-1">Live Event Tracker</p>
+                            <h3 class="font-serif text-2xl text-white font-light">Annual Tech Summit 2026</h3>
+                            <p class="text-sm text-luxury-400 mt-1">February 15, 2026 • Day of Event</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="text-right">
+                                <div class="text-3xl font-serif text-white font-light" id="clock">09:42</div>
+                                <div class="text-xs text-luxury-500 uppercase tracking-widest">Current Time</div>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-ochre-500/20 border border-ochre-500/50 flex items-center justify-center">
+                                <div class="w-3 h-3 bg-ochre-500 rounded-full animate-pulse"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <div class="flex justify-between text-xs text-luxury-500 mb-2">
+                            <span>Event Progress</span>
+                            <span>45%</span>
+                        </div>
+                        <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-ochre-600 to-ochre-400 rounded-full" style="width: 45%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl overflow-hidden">
+                    <div class="p-4 border-b border-white/5 bg-white/[0.02] flex items-center justify-between">
+                        <h3 class="font-serif text-lg text-white font-light">Timeline Editor</h3>
+                        <div class="flex gap-2">
+                            <button onclick="addTimelineBlock()" class="luxury-button px-3 py-1.5 rounded text-xs ${appState.isDemo ? 'opacity-50 cursor-not-allowed' : ''}" ${appState.isDemo ? 'disabled' : ''}>Add Block</button>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-container" style="height: 320px;">
+                        <div class="time-ruler flex" style="min-width: 960px;">
+                            ${[8,9,10,11,12,13,14,15,16,17,18,19,20].map(h => `
+                                <div class="time-mark">${h}:00</div>
+                            `).join('')}
+                        </div>
+                        
+                        <div style="min-width: 960px; position: relative;" class="pt-2">
+                            <div class="timeline-cursor" style="left: 280px;"></div>
+                            
+                            ${tracks.map((track, trackIdx) => `
+                                <div class="timeline-track">
+                                    <div class="absolute left-0 top-0 bottom-0 w-24 border-r border-white/5 bg-black/20 flex items-center px-3">
+                                        <span class="text-xs text-luxury-400 uppercase tracking-wider">${track}</span>
+                                    </div>
+                                    ${timelineItems.filter(t => t.track === track).map(item => {
+                                        const left = 96 + ((item.start - 480) / 60) * 64;
+                                        const width = (item.duration / 60) * 64;
+                                        const statusColors = {
+                                            completed: 'bg-green-500/20 border-green-500/40',
+                                            active: 'bg-ochre-500/30 border-ochre-500',
+                                            pending: 'bg-white/5 border-white/20'
+                                        };
+                                        return `<div class="timeline-item ${statusColors[item.status]}" style="left: ${left}px; width: ${width}px;" onclick="editTimelineItem(${item.id})">
+                                            <span class="truncate font-medium">${item.name}</span>
+                                        </div>`;
+                                    }).join('')}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                    <div class="glass-card rounded-xl p-4 border-l-2 border-green-500">
+                        <p class="text-xs text-luxury-400 uppercase mb-1">Completed</p>
+                        <p class="text-2xl font-serif text-white">${timelineItems.filter(t => t.status === 'completed').length}</p>
+                    </div>
+                    <div class="glass-card rounded-xl p-4 border-l-2 border-ochre-500">
+                        <p class="text-xs text-luxury-400 uppercase mb-1">In Progress</p>
+                        <p class="text-2xl font-serif text-white">${timelineItems.filter(t => t.status === 'active').length}</p>
+                    </div>
+                    <div class="glass-card rounded-xl p-4 border-l-2 border-blue-500">
+                        <p class="text-xs text-luxury-400 uppercase mb-1">Pending</p>
+                        <p class="text-2xl font-serif text-white">${timelineItems.filter(t => t.status === 'pending').length}</p>
+                    </div>
+                    <div class="glass-card rounded-xl p-4 border-l-2 border-white/20">
+                        <p class="text-xs text-luxury-400 uppercase mb-1">Staff On-site</p>
+                        <p class="text-2xl font-serif text-white">12</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCalendar() {
+            const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const today = new Date();
+            
+            return `
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-serif text-2xl text-white font-light">February 2026</h3>
+                    <div class="flex gap-2">
+                        <button class="p-2 rounded-lg border border-white/10 hover:border-ochre-500/50 text-luxury-400 hover:text-white transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg></button>
+                        <button class="p-2 rounded-lg border border-white/10 hover:border-ochre-500/50 text-luxury-400 hover:text-white transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg></button>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="grid grid-cols-7 gap-2 mb-4">
+                        ${weekDays.map(d => `<div class="text-center text-xs text-luxury-500 uppercase py-2">${d}</div>`).join('')}
+                    </div>
+                    <div class="grid grid-cols-7 gap-2">
+                        ${Array.from({length: 35}, (_, i) => {
+                            const day = i - 5;
+                            const isToday = day === today.getDate();
+                            const hasEvent = appState.data.events.some(e => new Date(e.date).getDate() === day && new Date(e.date).getMonth() === 1);
+                            return `<div class="aspect-square rounded-lg flex items-center justify-center text-sm relative cursor-pointer hover:bg-white/5 transition ${isToday ? 'bg-ochre-500/20 border border-ochre-500/50 text-ochre-200' : 'text-luxury-300'} ${day < 1 || day > 28 ? 'opacity-30' : ''}">
+                                ${day > 0 && day <= 31 ? day : ''}
+                                ${hasEvent ? '<div class="absolute bottom-1 w-1 h-1 bg-ochre-500 rounded-full"></div>' : ''}
+                            </div>`;
+                        }).join('')}
+                    </div>
+                </div>
+
+                <div class="mt-6 space-y-3">
+                    <h4 class="font-serif text-lg text-white font-light mb-4">Upcoming This Week</h4>
+                    ${appState.data.events.filter(e => e.status !== 'completed').slice(0, 3).map(e => `
+                        <div class="glass-card rounded-xl p-4 flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-lg bg-white/5 border border-white/10 flex flex-col items-center justify-center">
+                                <span class="text-[10px] text-luxury-500 uppercase">${new Date(e.date).toLocaleString('default', {month: 'short'})}</span>
+                                <span class="text-xl font-serif text-white">${new Date(e.date).getDate()}</span>
+                            </div>
+                            <div class="flex-1">
+                                <h5 class="font-serif text-white text-lg">${e.name}</h5>
+                                <p class="text-xs text-luxury-400">${e.time} • ${e.venue}</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-xs border ${e.status === 'active' ? 'border-ochre-500/30 text-ochre-200' : 'border-white/10 text-luxury-400'}">${e.status}</span>
                         </div>
                     `).join('')}
                 </div>
             `;
         }
 
-        function renderWorkflow() {
-            return `
-                <div class="glass-card rounded-2xl p-6 border-ochre-500/20 bg-gradient-to-r from-ochre-900/10 to-transparent mb-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs text-ochre-400 tracking-widest uppercase mb-1">Event Day Tracker</p>
-                            <h3 class="font-serif text-2xl text-white font-light">Live Timeline</h3>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-3xl font-serif text-white font-light" id="clock">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                        </div>
-                    </div>
-                    <div class="mt-4 h-2 bg-white/5 rounded-full overflow-hidden">
-                        <div class="h-full bg-ochre-500 rounded-full" style="width: ${Math.random() * 60 + 20}%"></div>
-                    </div>
-                </div>
-                
-                <div class="glass-card rounded-2xl p-6">
-                    <h3 class="font-serif text-lg text-white font-light mb-4">Schedule Blocks</h3>
-                    <div class="space-y-3">
-                        ${appState.data.events.map((e, i) => `
-                            <div class="flex items-center gap-4 p-4 bg-white/5 rounded-lg border border-white/5">
-                                <div class="w-2 h-12 rounded-full ${i === 0 ? 'bg-ochre-500' : 'bg-white/20'}"></div>
-                                <div class="flex-1">
-                                    <h4 class="font-serif text-white">${e.name}</h4>
-                                    <p class="text-xs text-luxury-400">${e.time} • ${e.venue}</p>
-                                </div>
-                                <span class="text-xs text-luxury-500">${e.status}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        function addVenue() {
-            if (appState.isDemo) return;
-            const name = prompt('Venue name:');
-            if (name) {
-                appState.data.venues.push({ id: Date.now(), name, capacity: 100, image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&h=400&fit=crop', features: [] });
-                renderView('venues');
-                showToast('Venue added');
+        function initCharts() {
+            if (document.getElementById('performanceChart')) {
+                new Chart(document.getElementById('performanceChart'), {
+                    type: 'line',
+                    data: {
+                        labels: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
+                        datasets: [{
+                            label: 'Attendees',
+                            data: [320, 450, 380, 520, 480, 650],
+                            borderColor: '#b8925e',
+                            backgroundColor: 'rgba(184, 146, 94, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }, {
+                            label: 'Revenue (k)',
+                            data: [45, 62, 58, 85, 72, 95],
+                            borderColor: '#f5f5f0',
+                            borderDash: [5, 5],
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#7a6e5d', font: { size: 10 } } },
+                            x: { grid: { display: false }, ticks: { color: '#7a6e5d', font: { size: 10 } } }
+                        }
+                    }
+                });
+            }
+            
+            if (document.getElementById('typeChart')) {
+                new Chart(document.getElementById('typeChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Conference', 'Corporate', 'Social', 'Meeting'],
+                        datasets: [{
+                            data: [3, 2, 1, 2],
+                            backgroundColor: ['#b8925e', '#3b82f6', '#a855f7', '#22c55e'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '70%',
+                        plugins: { legend: { display: false } }
+                    }
+                });
             }
         }
 
-        function addCategory() {
-            if (appState.isDemo) return;
-            const name = prompt('Category name:');
-            if (name) {
-                appState.data.categories.push({ id: Date.now(), name, description: '', color: 'ochre', contacts: [] });
-                renderView('categories');
-                showToast('Category created');
-            }
-        }
+        function addVenue() { if (appState.isDemo) return; const name = prompt('Venue name:'); if (name) { appState.data.venues.push({ id: Date.now(), name, capacity: 100, image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&h=400&fit=crop', features: [] }); renderView('venues'); showToast('Venue added'); } }
+        function addCategory() { if (appState.isDemo) return; const name = prompt('Category name:'); if (name) { appState.data.categories.push({ id: Date.now(), name, description: '', color: 'ochre', contacts: [], icon: '👥' }); renderView('categories'); showToast('Category created'); } }
+        function addTimelineBlock() { if (appState.isDemo) return; showToast('Timeline editing available in personal mode'); }
+        function editTimelineItem(id) { console.log('Edit timeline item', id); }
 
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -632,14 +902,15 @@
             toast.classList.add('show');
             if (type === 'error') toast.style.background = 'rgba(239, 68, 68, 0.9)';
             else toast.style.background = 'rgba(184,146,94,0.95)';
-            
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // Clock update
         setInterval(() => {
             const clock = document.getElementById('clock');
-            if (clock) clock.textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            if (clock) {
+                const now = new Date();
+                clock.textContent = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            }
         }, 60000);
     </script>
 </body>
