@@ -3,1685 +3,1052 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atelier Director Suite — Event Logistics & Personnel Coordination</title>
+    <title>Atelier — Event Direction & Management</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         :root {
             --bg-primary: #0a0a0a;
-            --bg-secondary: #141414;
-            --bg-tertiary: #1e1e1e;
-            --border: #2a2a2a;
-            --text-primary: #f5f5f5;
-            --text-secondary: #888;
-            --text-muted: #555;
-            --accent: #c9a961;
-            --accent-hover: #dbbc7a;
-            --accent-soft: rgba(201, 169, 97, 0.1);
-            --success: #4ade80;
-            --warning: #fbbf24;
-            --error: #f87171;
-            --info: #60a5fa;
-            --role-client: #60a5fa;
-            --role-vendor: #a855f7;
-            --role-staff: #4ade80;
-            --role-admin: #fbbf24;
+            --bg-secondary: #151515;
+            --bg-tertiary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --border: rgba(255, 255, 255, 0.1);
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        /* Navigation */
-        .nav {
+        /* STATUS INDICATOR */
+        .status {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 64px;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-        }
-
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-        }
-
-        .nav-logo {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, var(--accent) 0%, #b8956a 100%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            color: var(--bg-primary);
-            font-size: 20px;
-        }
-
-        .nav-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .nav-context {
-            font-size: 12px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 2px;
-        }
-
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .mode-switch {
-            display: flex;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 4px;
-            gap: 4px;
-        }
-
-        .mode-btn {
-            padding: 6px 16px;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            font-size: 13px;
-            cursor: pointer;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
             border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        .mode-btn:hover { color: var(--text-primary); }
-        .mode-btn.active {
-            background: var(--accent);
-            color: var(--bg-primary);
-            font-weight: 600;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: var(--bg-secondary);
-            color: var(--text-primary);
             font-size: 14px;
+            font-weight: 500;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .status:not(:empty) {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .status.success {
+            background: var(--success);
+            color: white;
+        }
+
+        .status.error {
+            background: var(--error);
+            color: white;
+        }
+
+        .status.info {
+            background: var(--accent);
+            color: white;
+        }
+
+        .status.warning {
+            background: var(--warning);
+            color: black;
+        }
+
+        /* HEADER */
+        header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .brand span {
+            color: var(--accent);
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
             cursor: pointer;
+            font-size: 14px;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 0.5rem;
         }
 
-        .btn:hover {
-            border-color: var(--accent);
+        button:hover:not(:disabled) {
+            background: var(--bg-tertiary);
+            border-color: rgba(255, 255, 255, 0.2);
             transform: translateY(-1px);
         }
 
-        .btn-primary {
+        button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        button.primary {
             background: var(--accent);
-            color: var(--bg-primary);
             border-color: var(--accent);
-            font-weight: 600;
         }
 
-        .btn-primary:hover {
+        button.primary:hover:not(:disabled) {
             background: var(--accent-hover);
-            box-shadow: 0 0 20px rgba(201, 169, 97, 0.3);
+            border-color: var(--accent-hover);
         }
 
-        .btn-sm { padding: 6px 12px; font-size: 13px; }
-        .btn-ghost { background: transparent; border-color: transparent; }
-        .btn-icon {
-            width: 36px;
-            height: 36px;
-            padding: 0;
-            justify-content: center;
+        button.danger {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--error);
+            color: var(--error);
         }
 
-        /* Layout */
-        .app {
-            margin-top: 64px;
+        button.danger:hover:not(:disabled) {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        /* VIEW TOGGLE */
+        .view-toggle {
             display: flex;
-            min-height: calc(100vh - 64px);
-        }
-
-        .sidebar {
-            width: 260px;
             background: var(--bg-secondary);
-            border-right: 1px solid var(--border);
-            position: fixed;
-            height: calc(100vh - 64px);
-            overflow-y: auto;
+            border-radius: 8px;
+            padding: 4px;
+            border: 1px solid var(--border);
         }
 
-        .sidebar-section {
-            padding: 20px;
+        .view-btn {
+            background: transparent;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 13px;
+            opacity: 0.6;
+        }
+
+        .view-btn.active {
+            background: var(--bg-tertiary);
+            opacity: 1;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* MAIN LAYOUT */
+        main {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .mode-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .mode-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mode-card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .mode-card.selected {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(59, 130, 246, 0.1) 100%);
+        }
+
+        .mode-card.selected::after {
+            content: 'Selected';
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent);
+        }
+
+        .mode-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .mode-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .mode-card ul {
+            list-style: none;
+            font-size: 0.9rem;
+        }
+
+        .mode-card li {
+            padding: 0.4rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-secondary);
+        }
+
+        .mode-card li::before {
+            content: '•';
+            position: absolute;
+            left: 0.5rem;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* WORKSPACE AREA */
+        .workspace {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            min-height: 600px;
+        }
+
+        .workspace-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding-bottom: 1rem;
             border-bottom: 1px solid var(--border);
         }
 
-        .sidebar-title {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            font-weight: 700;
+        .workspace-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            flex: 1;
         }
 
-        .nav-item {
-            padding: 10px 12px;
+        .workspace-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* TIMELINE CONTAINER */
+        #event-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .timeline-event {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            transition: all 0.2s;
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .timeline-event:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            gap: 1rem;
+        }
+
+        .event-title-input {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+            flex: 1;
+            padding: 0.25rem;
+            margin: -0.25rem;
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        .event-title-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .event-delete-btn {
+            background: rgba(239, 68, 68, 0.1);
+            border: none;
+            color: var(--error);
+            width: 32px;
+            height: 32px;
             border-radius: 6px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
-            color: var(--text-secondary);
+            justify-content: center;
+            font-size: 18px;
+            opacity: 0.6;
             transition: all 0.2s;
-            margin-bottom: 4px;
+            flex-shrink: 0;
         }
 
-        .nav-item:hover {
-            background: var(--bg-tertiary);
+        .event-delete-btn:hover {
+            opacity: 1;
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .event-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .event-select, .event-time-input {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
             color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            min-width: 140px;
         }
 
-        .nav-item.active {
-            background: var(--accent-soft);
-            color: var(--accent);
-            border-left: 3px solid var(--accent);
-        }
-
-        .nav-icon { font-size: 18px; }
-
-        .main-content {
-            flex: 1;
-            margin-left: 260px;
-            padding: 32px;
-        }
-
-        /* Views */
-        .view { display: none; animation: fadeIn 0.3s ease; }
-        .view.active { display: block; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Header */
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 32px;
-        }
-
-        .page-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 32px;
-            margin-bottom: 8px;
-        }
-
-        .page-subtitle { color: var(--text-secondary); font-size: 16px; }
-
-        /* Event Cards */
-        .event-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-
-        .event-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .event-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-4px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .event-header {
-            padding: 20px;
-            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .event-type-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 12px;
-            background: var(--accent-soft);
-            color: var(--accent);
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-        }
-
-        .event-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
-        .event-date { color: var(--text-secondary); font-size: 14px; }
-
-        .event-body { padding: 20px; }
-
-        .event-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .event-stat {
-            text-align: center;
-        }
-
-        .event-stat-value {
-            font-family: 'Playfair Display', serif;
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        .event-stat-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-top: 4px;
-        }
-
-        .progress-bar {
-            height: 6px;
-            background: var(--bg-tertiary);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 12px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--accent);
-            border-radius: 3px;
-            transition: width 0.3s;
-        }
-
-        .event-footer {
-            padding: 12px 20px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .avatar-group {
-            display: flex;
-        }
-
-        .avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--bg-primary);
-            border: 2px solid var(--bg-secondary);
-            margin-left: -8px;
-        }
-
-        .avatar:first-child { margin-left: 0; }
-
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-confirmed { background: rgba(74, 222, 128, 0.1); color: var(--success); }
-        .status-pending { background: rgba(251, 191, 36, 0.1); color: var(--warning); }
-        .status-planning { background: rgba(96, 165, 250, 0.1); color: var(--info); }
-
-        /* Personnel Table */
-        .personnel-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .person-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            transition: all 0.2s;
-        }
-
-        .person-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-2px);
-        }
-
-        .person-header {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-
-        .person-avatar {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent) 0%, #b8956a 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Playfair Display', serif;
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--bg-primary);
-        }
-
-        .person-info { flex: 1; }
-        .person-name { font-weight: 600; font-size: 16px; margin-bottom: 2px; }
-        .person-role {
-            font-size: 13px;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .role-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
-
-        .person-meta {
-            display: flex;
-            gap: 16px;
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid var(--border);
-        }
-
-        /* Task Boards */
-        .board-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            overflow-x: auto;
-        }
-
-        .board-column {
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            min-height: 500px;
-        }
-
-        .board-header {
-            padding: 16px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .board-title {
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .board-count {
-            background: var(--bg-tertiary);
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .board-tasks { padding: 12px; }
-
-        .task-card {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 12px;
-            cursor: move;
-            transition: all 0.2s;
-        }
-
-        .task-card:hover {
-            border-color: var(--accent);
-            transform: translateX(4px);
-        }
-
-        .task-priority {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-
-        .priority-high { background: var(--error); }
-        .priority-medium { background: var(--warning); }
-        .priority-low { background: var(--success); }
-
-        .task-title { font-weight: 500; margin-bottom: 8px; }
-        .task-meta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        /* Timeline */
-        .timeline {
-            position: relative;
-            padding-left: 40px;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 15px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: var(--border);
-        }
-
-        .timeline-item {
-            position: relative;
-            padding: 20px 0;
-            padding-left: 30px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -31px;
-            top: 24px;
-            width: 12px;
-            height: 12px;
-            background: var(--accent);
-            border-radius: 50%;
-            border: 3px solid var(--bg-primary);
-        }
-
-        .timeline-date {
-            font-size: 13px;
-            color: var(--accent);
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .timeline-title { font-weight: 600; margin-bottom: 4px; }
-        .timeline-desc { color: var(--text-secondary); font-size: 14px; }
-
-        /* Vendor Management */
-        .vendor-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .vendor-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-        }
-
-        .vendor-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 16px;
-        }
-
-        .vendor-name { font-weight: 600; font-size: 18px; }
-        .vendor-type {
-            font-size: 12px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .vendor-status {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        /* Client Portal */
-        .portal-header {
-            background: linear-gradient(135deg, var(--accent-soft) 0%, transparent 100%);
-            border: 1px solid var(--accent);
-            border-radius: 12px;
-            padding: 32px;
-            margin-bottom: 32px;
-        }
-
-        .portal-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .portal-subtitle { color: var(--text-secondary); }
-
-        .milestone-track {
-            display: flex;
-            justify-content: space-between;
-            margin: 32px 0;
-            position: relative;
-        }
-
-        .milestone-track::before {
-            content: '';
-            position: absolute;
-            top: 20px;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--bg-tertiary);
-            z-index: 0;
-        }
-
-        .milestone {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            z-index: 1;
-            flex: 1;
-        }
-
-        .milestone-dot {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: var(--bg-tertiary);
-            border: 3px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            margin-bottom: 8px;
-        }
-
-        .milestone.completed .milestone-dot {
-            background: var(--success);
-            border-color: var(--success);
-        }
-
-        .milestone.active .milestone-dot {
-            background: var(--accent);
-            border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(201, 169, 97, 0.4);
-        }
-
-        .milestone-label {
-            font-size: 12px;
-            text-align: center;
-            color: var(--text-secondary);
-        }
-
-        /* Dashboard Widgets */
-        .widget-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 32px;
-        }
-
-        .widget {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-        }
-
-        .widget-label {
-            font-size: 12px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-
-        .widget-value {
-            font-family: 'Playfair Display', serif;
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        .widget-change {
-            font-size: 13px;
-            color: var(--success);
-            margin-top: 4px;
-        }
-
-        /* Forms */
-        .form-group { margin-bottom: 20px; }
-        .form-label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-secondary);
-        }
-
-        .form-input, .form-select, .form-textarea {
-            width: 100%;
-            padding: 12px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
+        .event-select:focus, .event-time-input:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-soft);
         }
 
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .event-notes {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            min-height: 60px;
+            line-height: 1.5;
+        }
 
-        /* Modal */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(4px);
-            z-index: 2000;
+        .event-notes:empty:before {
+            content: 'Add notes...';
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .event-notes:focus {
+            outline: none;
+            border-color: var(--accent);
+            color: var(--text-primary);
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* FILE INPUT HIDDEN */
+        #file-input {
             display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
         }
 
-        .modal-overlay.active { display: flex; }
-
-        .modal {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow: hidden;
+        /* DRAG AND DROP */
+        body.drag-over .workspace {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.05);
         }
 
-        .modal-header {
-            padding: 24px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-body { padding: 24px; overflow-y: auto; }
-        .modal-footer {
-            padding: 20px 24px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-
-        /* Activity Feed */
-        .activity-feed {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-        }
-
-        .activity-item {
-            display: flex;
-            gap: 16px;
-            padding: 16px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .activity-item:last-child { border-bottom: none; }
-
-        .activity-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--accent-soft);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .activity-content { flex: 1; }
-        .activity-text { margin-bottom: 4px; }
-        .activity-time { font-size: 13px; color: var(--text-muted); }
-
-        /* Notifications */
-        .toast-container {
+        body.drag-over::after {
+            content: 'Drop file to import';
             position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 3000;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .toast {
-            background: var(--bg-secondary);
-            border-left: 4px solid var(--accent);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--accent);
+            color: white;
+            padding: 1rem 2rem;
             border-radius: 8px;
-            padding: 16px 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            animation: slideIn 0.3s ease;
-            min-width: 300px;
+            font-weight: 600;
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
         }
 
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .sidebar { transform: translateX(-100%); }
-            .main-content { margin-left: 0; }
-            .widget-grid { grid-template-columns: repeat(2, 1fr); }
-            .board-container { grid-template-columns: repeat(2, 1fr); }
-        }
-
+        /* MOHILE VIEW STYLES */
         @media (max-width: 768px) {
-            .event-grid { grid-template-columns: 1fr; }
-            .widget-grid { grid-template-columns: 1fr; }
-            .board-container { grid-template-columns: 1fr; }
+            header {
+                padding: 1rem;
+            }
+
+            main {
+                padding: 1rem;
+            }
+
+            .mode-selector {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .workspace {
+                padding: 1rem;
+                min-height: 400px;
+            }
+
+            .event-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .event-select, .event-time-input {
+                width: 100%;
+            }
+
+            .status {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                text-align: center;
+            }
+
+            .view-desktop .mobile-hide {
+                display: none;
+            }
+        }
+
+        /* VIEW MODE SPECIFIC */
+        .view-mobile .desktop-only {
+            display: none;
+        }
+
+        .view-desktop .mobile-only {
+            display: none;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* UTILITY */
+        .hidden {
+            display: none !important;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .gap-1 {
+            gap: 0.5rem;
+        }
+
+        .items-center {
+            align-items: center;
         }
     </style>
-<base target="_blank">
 </head>
-<body>
-    <!-- Navigation -->
-    <nav class="nav">
-        <div class="nav-brand" onclick="showView('dashboard')">
-            <div class="nav-logo">A</div>
-            <div>
-                <div class="nav-title">Atelier Director Suite</div>
-                <div class="nav-context">Event Logistics & Personnel Coordination</div>
+<body class="view-desktop">
+
+    <div class="status" id="status"></div>
+    <input type="file" id="file-input" accept=".json,.ems,.ems.json,application/json">
+
+    <header>
+        <div class="brand">
+            Atelier <span>—</span> Event Direction
+        </div>
+        
+        <div class="toolbar">
+            <button id="undo-btn" title="Undo (Ctrl+Z)">↶ Undo</button>
+            <button id="redo-btn" title="Redo (Ctrl+Shift+Z)">↷ Redo</button>
+            <div class="view-toggle">
+                <button class="view-btn active" data-view="desktop">Desktop</button>
+                <button class="view-btn" data-view="mobile">Mobile</button>
             </div>
         </div>
+    </header>
 
-        <div class="nav-actions">
-            <div class="mode-switch">
-                <button class="mode-btn active" onclick="switchMode('director')" id="modeDirector">Director</button>
-                <button class="mode-btn" onclick="switchMode('client')" id="modeClient">Client Portal</button>
-            </div>
-            <button class="btn btn-icon" onclick="showNotifications()">🔔</button>
-            <div style="width: 32px; height: 32px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--bg-primary);">D</div>
-        </div>
-    </nav>
-
-    <div class="app">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-section">
-                <div class="sidebar-title">Events</div>
-                <div class="nav-item active" onclick="showView('dashboard')">
-                    <span class="nav-icon">📊</span>
-                    <span>Dashboard</span>
-                </div>
-                <div class="nav-item" onclick="showView('events')">
-                    <span class="nav-icon">🎭</span>
-                    <span>All Events</span>
-                </div>
-                <div class="nav-item" onclick="showView('calendar')">
-                    <span class="nav-icon">📅</span>
-                    <span>Calendar</span>
-                </div>
+    <main>
+        <!-- Mode Selection Cards -->
+        <section class="mode-selector">
+            <div class="mode-card selected" data-view="desktop" onclick="switchView('desktop')">
+                <h3>🖥️ Desktop Experience</h3>
+                <p>Full featured dashboard with file management</p>
+                <ul>
+                    <li>Save & load workspace files</li>
+                    <li>Advanced timeline editing</li>
+                    <li>Multi-track workflow visualization</li>
+                    <li>Comprehensive analytics</li>
+                </ul>
             </div>
 
-            <div class="sidebar-section">
-                <div class="sidebar-title">Coordination</div>
-                <div class="nav-item" onclick="showView('personnel')">
-                    <span class="nav-icon">👥</span>
-                    <span>Personnel</span>
-                </div>
-                <div class="nav-item" onclick="showView('tasks')">
-                    <span class="nav-icon">✓</span>
-                    <span>Task Boards</span>
-                </div>
-                <div class="nav-item" onclick="showView('vendors')">
-                    <span class="nav-icon">🤝</span>
-                    <span>Vendors</span>
-                </div>
-                <div class="nav-item" onclick="showView('venues')">
-                    <span class="nav-icon">🏛️</span>
-                    <span>Venues</span>
+            <div class="mode-card" data-view="mobile" onclick="switchView('mobile')">
+                <h3>📱 Mobile Experience</h3>
+                <p>Optimized for on-the-go event management</p>
+                <ul>
+                    <li>Import workspace files</li>
+                    <li>Touch-optimized workflow</li>
+                    <li>Quick status updates</li>
+                    <li>Streamlined interface</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Workspace Area -->
+        <section class="workspace">
+            <div class="workspace-header">
+                <div class="workspace-title">Event Timeline</div>
+                <div class="workspace-actions">
+                    <button onclick="document.getElementById('file-input').click()">
+                        📁 Load File
+                    </button>
+                    <button onclick="exportWorkspace()" class="primary">
+                        💾 Save File
+                    </button>
+                    <button onclick="addNewEvent()" class="primary">
+                        + Add Event
+                    </button>
                 </div>
             </div>
 
-            <div class="sidebar-section">
-                <div class="sidebar-title">Operations</div>
-                <div class="nav-item" onclick="showView('timeline')">
-                    <span class="nav-icon">⏱️</span>
-                    <span>Event Timeline</span>
-                </div>
-                <div class="nav-item" onclick="showView('documents')">
-                    <span class="nav-icon">📄</span>
-                    <span>Documents</span>
-                </div>
-                <div class="nav-item" onclick="showView('budget')">
-                    <span class="nav-icon">💰</span>
-                    <span>Budget</span>
+            <div id="event-list">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📋</div>
+                    <h3>No events yet</h3>
+                    <p>Click "Add Event" to start building your timeline, or load an existing workspace file.</p>
                 </div>
             </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- DIRECTOR DASHBOARD -->
-            <div class="view active" id="dashboardView">
-                <div class="page-header">
-                    <div>
-                        <h1 class="page-title">Director Dashboard</h1>
-                        <p class="page-subtitle">Event logistics overview and coordination hub</p>
-                    </div>
-                    <button class="btn btn-primary" onclick="createEvent()">+ New Event</button>
-                </div>
-
-                <div class="widget-grid">
-                    <div class="widget">
-                        <div class="widget-label">Active Events</div>
-                        <div class="widget-value">12</div>
-                        <div class="widget-change">+3 this month</div>
-                    </div>
-                    <div class="widget">
-                        <div class="widget-label">Personnel Assigned</div>
-                        <div class="widget-value">48</div>
-                        <div class="widget-change">8 available</div>
-                    </div>
-                    <div class="widget">
-                        <div class="widget-label">Pending Tasks</div>
-                        <div class="widget-value">23</div>
-                        <div class="widget-change">5 high priority</div>
-                    </div>
-                    <div class="widget">
-                        <div class="widget-label">Vendor Contracts</div>
-                        <div class="widget-value">16</div>
-                        <div class="widget-change">2 pending signature</div>
-                    </div>
-                </div>
-
-                <h2 style="font-family: 'Playfair Display', serif; margin-bottom: 20px;">Active Events</h2>
-                <div class="event-grid">
-                    <div class="event-card" onclick="openEvent(1)">
-                        <div class="event-header">
-                            <div class="event-type-badge">🎭 Corporate Gala</div>
-                            <div class="event-title">Meridian Annual Gala 2024</div>
-                            <div class="event-date">March 15, 2024 • Grand Ballroom</div>
-                        </div>
-                        <div class="event-body">
-                            <div class="event-stats">
-                                <div class="event-stat">
-                                    <div class="event-stat-value">24</div>
-                                    <div class="event-stat-label">Staff</div>
-                                </div>
-                                <div class="event-stat">
-                                    <div class="event-stat-value">8</div>
-                                    <div class="event-stat-label">Vendors</div>
-                                </div>
-                                <div class="event-stat">
-                                    <div class="event-stat-value">85%</div>
-                                    <div class="event-stat-label">Ready</div>
-                                </div>
-                            </div>
-                            <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;">Event Progress</div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 85%"></div>
-                            </div>
-                        </div>
-                        <div class="event-footer">
-                            <div class="avatar-group">
-                                <div class="avatar">SM</div>
-                                <div class="avatar">JC</div>
-                                <div class="avatar">+4</div>
-                            </div>
-                            <span class="status-badge status-confirmed">Confirmed</span>
-                        </div>
-                    </div>
-
-                    <div class="event-card" onclick="openEvent(2)">
-                        <div class="event-header">
-                            <div class="event-type-badge">🎵 Music Festival</div>
-                            <div class="event-title">Riverfront Jazz Festival</div>
-                            <div class="event-date">April 22-24, 2024 • Riverside Park</div>
-                        </div>
-                        <div class="event-body">
-                            <div class="event-stats">
-                                <div class="event-stat">
-                                    <div class="event-stat-value">64</div>
-                                    <div class="event-stat-label">Staff</div>
-                                </div>
-                                <div class="event-stat">
-                                    <div class="event-stat-value">12</div>
-                                    <div class="event-stat-label">Vendors</div>
-                                </div>
-                                <div class="event-stat">
-                                    <div class="event-stat-value">62%</div>
-                                    <div class="event-stat-label">Ready</div>
-                                </div>
-                            </div>
-                            <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;">Event Progress</div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 62%"></div>
-                            </div>
-                        </div>
-                        <div class="event-footer">
-                            <div class="avatar-group">
-                                <div class="avatar">TK</div>
-                                <div class="avatar">ML</div>
-                                <div class="avatar">+8</div>
-                            </div>
-                            <span class="status-badge status-planning">Planning</span>
-                        </div>
-                    </div>
-
-                    <div class="event-card" onclick="openEvent(3)">
-                        <div class="event-header">
-                            <div class="event-type-badge">💼 Conference</div>
-                            <div class="event-title">Tech Summit 2024</div>
-                            <div class="event-date">May 8, 2024 • Convention Center</div>
-                        </div>
-                        <div class="event-body">
-                            <div class="event-stats">
-                                <div class="event-stat">
-                                    <div class="event-stat-value">18</div>
-                                    <div class="event-stat-label">Staff</div>
-                                </div>
-                                <div class="event-stat">
-                                    <div class="event-stat-value">6</div>
-                                    <div class="event-stat-label">Vendors</div>
-                                </div>
-                                <div class="event-stat">
-                                    <div class="event-stat-value">45%</div>
-                                    <div class="event-stat-label">Ready</div>
-                                </div>
-                            </div>
-                            <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;">Event Progress</div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 45%"></div>
-                            </div>
-                        </div>
-                        <div class="event-footer">
-                            <div class="avatar-group">
-                                <div class="avatar">AP</div>
-                                <div class="avatar">RJ</div>
-                                <div class="avatar">+3</div>
-                            </div>
-                            <span class="status-badge status-planning">Planning</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
-                    <div class="activity-feed">
-                        <h3 style="margin-bottom: 16px; font-family: 'Playfair Display', serif;">Recent Activity</h3>
-                        <div class="activity-item">
-                            <div class="activity-icon">📋</div>
-                            <div class="activity-content">
-                                <div class="activity-text"><strong>Sarah M.</strong> completed vendor contract with <strong>Elite Catering</strong></div>
-                                <div class="activity-time">10 minutes ago</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-icon">👤</div>
-                            <div class="activity-content">
-                                <div class="activity-text"><strong>James C.</strong> was assigned to <strong>Meridian Annual Gala</strong></div>
-                                <div class="activity-time">32 minutes ago</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-icon">✓</div>
-                            <div class="activity-content">
-                                <div class="activity-text"><strong>Task completed:</strong> Finalize venue insurance requirements</div>
-                                <div class="activity-time">1 hour ago</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-icon">💰</div>
-                            <div class="activity-content">
-                                <div class="activity-text"><strong>Budget updated:</strong> AV equipment deposit paid ($12,500)</div>
-                                <div class="activity-time">2 hours ago</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style="background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 20px;">
-                        <h3 style="margin-bottom: 16px; font-family: 'Playfair Display', serif;">Quick Actions</h3>
-                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <button class="btn" style="justify-content: flex-start;">📧 Send Update to All Clients</button>
-                            <button class="btn" style="justify-content: flex-start;">📄 Generate Staff Schedule</button>
-                            <button class="btn" style="justify-content: flex-start;">📊 Export Vendor Report</button>
-                            <button class="btn" style="justify-content: flex-start;">⚠️ View Risk Alerts (2)</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PERSONNEL VIEW -->
-            <div class="view" id="personnelView">
-                <div class="page-header">
-                    <div>
-                        <h1 class="page-title">Personnel Management</h1>
-                        <p class="page-subtitle">Staff assignment, roles, and availability</p>
-                    </div>
-                    <div style="display: flex; gap: 12px;">
-                        <button class="btn">Import CSV</button>
-                        <button class="btn btn-primary" onclick="addPerson()">+ Add Personnel</button>
-                    </div>
-                </div>
-
-                <div style="display: flex; gap: 12px; margin-bottom: 24px;">
-                    <button class="btn btn-sm active">All</button>
-                    <button class="btn btn-sm">Available</button>
-                    <button class="btn btn-sm">Assigned</button>
-                    <button class="btn btn-sm">On Leave</button>
-                </div>
-
-                <div class="personnel-grid">
-                    <div class="person-card">
-                        <div class="person-header">
-                            <div class="person-avatar">SM</div>
-                            <div class="person-info">
-                                <div class="person-name">Sarah Mitchell</div>
-                                <div class="person-role">
-                                    <span class="role-dot" style="background: var(--role-admin)"></span>
-                                    Event Coordinator
-                                </div>
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
-                            <span class="status-badge status-confirmed">Available</span>
-                            <span style="font-size: 12px; color: var(--text-muted);">3 events</span>
-                        </div>
-                        <div class="person-meta">
-                            <span>📧 sarah@atelier.com</span>
-                            <span>📱 (555) 123-4567</span>
-                        </div>
-                    </div>
-
-                    <div class="person-card">
-                        <div class="person-header">
-                            <div class="person-avatar" style="background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);">JC</div>
-                            <div class="person-info">
-                                <div class="person-name">James Chen</div>
-                                <div class="person-role">
-                                    <span class="role-dot" style="background: var(--role-staff)"></span>
-                                    AV Technician
-                                </div>
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
-                            <span class="status-badge" style="background: rgba(251, 191, 36, 0.1); color: var(--warning);">Assigned</span>
-                            <span style="font-size: 12px; color: var(--text-muted);">Meridian Gala</span>
-                        </div>
-                        <div class="person-meta">
-                            <span>📧 james@atelier.com</span>
-                            <span>📱 (555) 234-5678</span>
-                        </div>
-                    </div>
-
-                    <div class="person-card">
-                        <div class="person-header">
-                            <div class="person-avatar" style="background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);">EP</div>
-                            <div class="person-info">
-                                <div class="person-name">Elena Perez</div>
-                                <div class="person-role">
-                                    <span class="role-dot" style="background: var(--role-staff)"></span>
-                                    Catering Lead
-                                </div>
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
-                            <span class="status-badge status-confirmed">Available</span>
-                            <span style="font-size: 12px; color: var(--text-muted);">5 events</span>
-                        </div>
-                        <div class="person-meta">
-                            <span>📧 elena@atelier.com</span>
-                            <span>📱 (555) 345-6789</span>
-                        </div>
-                    </div>
-
-                    <div class="person-card">
-                        <div class="person-header">
-                            <div class="person-avatar" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);">MR</div>
-                            <div class="person-info">
-                                <div class="person-name">Marcus Rodriguez</div>
-                                <div class="person-role">
-                                    <span class="role-dot" style="background: var(--role-staff)"></span>
-                                    Security Lead
-                                </div>
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
-                            <span class="status-badge" style="background: rgba(248, 113, 113, 0.1); color: var(--error);">On Leave</span>
-                            <span style="font-size: 12px; color: var(--text-muted);">Until Mar 20</span>
-                        </div>
-                        <div class="person-meta">
-                            <span>📧 marcus@atelier.com</span>
-                            <span>📱 (555) 456-7890</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TASK BOARD VIEW -->
-            <div class="view" id="tasksView">
-                <div class="page-header">
-                    <div>
-                        <h1 class="page-title">Task Coordination</h1>
-                        <p class="page-subtitle">Event logistics and deliverables tracking</p>
-                    </div>
-                    <button class="btn btn-primary" onclick="addTask()">+ New Task</button>
-                </div>
-
-                <div class="board-container">
-                    <div class="board-column">
-                        <div class="board-header">
-                            <div class="board-title">📋 Backlog</div>
-                            <div class="board-count">12</div>
-                        </div>
-                        <div class="board-tasks">
-                            <div class="task-card">
-                                <div style="margin-bottom: 8px;"><span class="task-priority priority-high"></span><span style="font-size: 12px; color: var(--text-muted);">Meridian Gala</span></div>
-                                <div class="task-title">Confirm final headcount with caterer</div>
-                                <div class="task-meta">
-                                    <span>Due Mar 10</span>
-                                    <span>👤 SM</span>
-                                </div>
-                            </div>
-                            <div class="task-card">
-                                <div style="margin-bottom: 8px;"><span class="task-priority priority-medium"></span><span style="font-size: 12px; color: var(--text-muted);">Jazz Festival</span></div>
-                                <div class="task-title">Submit permits to city council</div>
-                                <div class="task-meta">
-                                    <span>Due Mar 15</span>
-                                    <span>👤 TK</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="board-column">
-                        <div class="board-header">
-                            <div class="board-title">🔄 In Progress</div>
-                            <div class="board-count">8</div>
-                        </div>
-                        <div class="board-tasks">
-                            <div class="task-card">
-                                <div style="margin-bottom: 8px;"><span class="task-priority priority-high"></span><span style="font-size: 12px; color: var(--text-muted);">Meridian Gala</span></div>
-                                <div class="task-title">Coordinate vendor load-in schedule</div>
-                                <div class="task-meta">
-                                    <span>Due Mar 8</span>
-                                    <span>👤 JC</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="board-column">
-                        <div class="board-header">
-                            <div class="board-title">👀 Review</div>
-                            <div class="board-count">5</div>
-                        </div>
-                        <div class="board-tasks">
-                            <div class="task-card">
-                                <div style="margin-bottom: 8px;"><span class="task-priority priority-low"></span><span style="font-size: 12px; color: var(--text-muted);">Tech Summit</span></div>
-                                <div class="task-title">Finalize signage design</div>
-                                <div class="task-meta">
-                                    <span>Due Mar 12</span>
-                                    <span>👤 AP</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="board-column">
-                        <div class="board-header">
-                            <div class="board-title">✅ Complete</div>
-                            <div class="board-count">24</div>
-                        </div>
-                        <div class="board-tasks">
-                            <div class="task-card" style="opacity: 0.6;">
-                                <div style="margin-bottom: 8px;"><span style="font-size: 12px; color: var(--success);">✓ Done</span></div>
-                                <div class="task-title">Venue walkthrough completed</div>
-                                <div class="task-meta">
-                                    <span>Mar 1</span>
-                                    <span>👤 SM</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TIMELINE VIEW -->
-            <div class="view" id="timelineView">
-                <div class="page-header">
-                    <div>
-                        <h1 class="page-title">Event Logistics Timeline</h1>
-                        <p class="page-subtitle">Critical milestones and deliverables</p>
-                    </div>
-                    <button class="btn btn-primary">+ Add Milestone</button>
-                </div>
-
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-date">March 1, 2024</div>
-                        <div class="timeline-title">Initial Planning Phase Complete</div>
-                        <div class="timeline-desc">Event brief finalized, budget approved, core team assigned. Venue deposit paid and date secured.</div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">March 8, 2024</div>
-                        <div class="timeline-title">Vendor Contracts Deadline</div>
-                        <div class="timeline-desc">All vendor agreements must be signed. Includes catering, AV, security, and décor.</div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">March 12, 2024</div>
-                        <div class="timeline-title">Final Headcount Due</div>
-                        <div class="timeline-desc">Client to confirm final attendance numbers. Critical for catering and seating arrangements.</div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">March 15, 2024 • Event Day</div>
-                        <div class="timeline-title">Meridian Annual Gala</div>
-                        <div class="timeline-desc">6:00 PM - Guest arrival | 7:00 PM - Dinner service | 9:00 PM - Awards ceremony | 11:00 PM - Event conclusion</div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">March 16, 2024</div>
-                        <div class="timeline-title">Post-Event Review</div>
-                        <div class="timeline-desc">Vendor payment processing, equipment return, client debrief, and team retrospective.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- VENDOR MANAGEMENT -->
-            <div class="view" id="vendorsView">
-                <div class="page-header">
-                    <div>
-                        <h1 class="page-title">Vendor Network</h1>
-                        <p class="page-subtitle">Contractors, suppliers, and partner management</p>
-                    </div>
-                    <button class="btn btn-primary" onclick="addVendor()">+ Add Vendor</button>
-                </div>
-
-                <div class="vendor-grid">
-                    <div class="vendor-card">
-                        <div class="vendor-header">
-                            <div>
-                                <div class="vendor-name">Elite Catering Co.</div>
-                                <div class="vendor-type">Catering & Beverage</div>
-                            </div>
-                            <span class="vendor-status status-confirmed">Active</span>
-                        </div>
-                        <div style="margin: 16px 0; padding: 12px; background: var(--bg-tertiary); border-radius: 8px;">
-                            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Contract Value</div>
-                            <div style="font-size: 20px; font-weight: 600; color: var(--accent);">$45,000</div>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; font-size: 13px;">
-                            <span style="color: var(--text-secondary);">📧 contact@elitecatering.com</span>
-                            <span style="color: var(--text-secondary);">📱 (555) 867-5309</span>
-                        </div>
-                    </div>
-
-                    <div class="vendor-card">
-                        <div class="vendor-header">
-                            <div>
-                                <div class="vendor-name">Premier AV Solutions</div>
-                                <div class="vendor-type">Audio/Visual & Lighting</div>
-                            </div>
-                            <span class="vendor-status status-confirmed">Active</span>
-                        </div>
-                        <div style="margin: 16px 0; padding: 12px; background: var(--bg-tertiary); border-radius: 8px;">
-                            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Contract Value</div>
-                            <div style="font-size: 20px; font-weight: 600; color: var(--accent);">$28,500</div>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; font-size: 13px;">
-                            <span style="color: var(--text-secondary);">📧 bookings@premierav.com</span>
-                            <span style="color: var(--text-secondary);">📱 (555) 234-5678</span>
-                        </div>
-                    </div>
-
-                    <div class="vendor-card">
-                        <div class="vendor-header">
-                            <div>
-                                <div class="vendor-name">SecurityFirst Services</div>
-                                <div class="vendor-type">Security & Crowd Management</div>
-                            </div>
-                            <span class="vendor-status status-pending">Pending</span>
-                        </div>
-                        <div style="margin: 16px 0; padding: 12px; background: var(--bg-tertiary); border-radius: 8px;">
-                            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Contract Value</div>
-                            <div style="font-size: 20px; font-weight: 600; color: var(--text-secondary);">$12,000</div>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; font-size: 13px;">
-                            <span style="color: var(--text-secondary);">📧 events@securityfirst.com</span>
-                            <span style="color: var(--text-secondary);">📱 (555) 876-5432</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- CLIENT PORTAL VIEW -->
-            <div class="view" id="clientView">
-                <div class="portal-header">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                        <div>
-                            <div style="font-size: 13px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Client Portal</div>
-                            <h1 class="portal-title">Meridian Annual Gala 2024</h1>
-                            <p class="portal-subtitle">March 15, 2024 • Grand Ballroom • 6:00 PM</p>
-                        </div>
-                        <span class="status-badge status-confirmed" style="font-size: 16px; padding: 8px 20px;">On Track</span>
-                    </div>
-
-                    <div class="milestone-track">
-                        <div class="milestone completed">
-                            <div class="milestone-dot">✓</div>
-                            <div class="milestone-label">Planning</div>
-                        </div>
-                        <div class="milestone completed">
-                            <div class="milestone-dot">✓</div>
-                            <div class="milestone-label">Contracts</div>
-                        </div>
-                        <div class="milestone completed">
-                            <div class="milestone-dot">✓</div>
-                            <div class="milestone-label">Design</div>
-                        </div>
-                        <div class="milestone active">
-                            <div class="milestone-dot">●</div>
-                            <div class="milestone-label">Preparation</div>
-                        </div>
-                        <div class="milestone">
-                            <div class="milestone-dot"></div>
-                            <div class="milestone-label">Event Day</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
-                    <div>
-                        <div style="background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
-                            <h3 style="margin-bottom: 16px; font-family: 'Playfair Display', serif;">Event Progress</h3>
-                            <div style="margin-bottom: 20px;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                    <span style="font-size: 14px;">Overall Completion</span>
-                                    <span style="font-weight: 600; color: var(--accent);">85%</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 85%"></div>
-                                </div>
-                            </div>
-
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                                <div style="padding: 16px; background: var(--bg-tertiary); border-radius: 8px;">
-                                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Catering</div>
-                                    <div style="font-weight: 600; color: var(--success);">Confirmed ✓</div>
-                                </div>
-                                <div style="padding: 16px; background: var(--bg-tertiary); border-radius: 8px;">
-                                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">AV Equipment</div>
-                                    <div style="font-weight: 600; color: var(--success);">Confirmed ✓</div>
-                                </div>
-                                <div style="padding: 16px; background: var(--bg-tertiary); border-radius: 8px;">
-                                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Décor & Design</div>
-                                    <div style="font-weight: 600; color: var(--warning);">In Progress</div>
-                                </div>
-                                <div style="padding: 16px; background: var(--bg-tertiary); border-radius: 8px;">
-                                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Guest List</div>
-                                    <div style="font-weight: 600; color: var(--accent);">Due Mar 12</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div style="background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 24px;">
-                            <h3 style="margin-bottom: 16px; font-family: 'Playfair Display', serif;">Recent Updates</h3>
-                            <div class="activity-feed" style="background: transparent; border: none; padding: 0;">
-                                <div class="activity-item" style="padding-left: 0;">
-                                    <div class="activity-icon">📋</div>
-                                    <div class="activity-content">
-                                        <div class="activity-text">Final menu selections confirmed with Elite Catering</div>
-                                        <div class="activity-time">2 hours ago</div>
-                                    </div>
-                                </div>
-                                <div class="activity-item" style="padding-left: 0;">
-                                    <div class="activity-icon">🎨</div>
-                                    <div class="activity-content">
-                                        <div class="activity-text">Floral arrangements mockup approved</div>
-                                        <div class="activity-time">Yesterday</div>
-                                    </div>
-                                </div>
-                                <div class="activity-item" style="padding-left: 0;">
-                                    <div class="activity-icon">📅</div>
-                                    <div class="activity-content">
-                                        <div class="activity-text">Vendor load-in schedule finalized for March 14</div>
-                                        <div class="activity-time">2 days ago</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div style="background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
-                            <h3 style="margin-bottom: 16px; font-family: 'Playfair Display', serif;">Your Team</h3>
-                            <div style="display: flex; flex-direction: column; gap: 12px;">
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <div class="person-avatar" style="width: 40px; height: 40px; font-size: 16px;">SM</div>
-                                    <div>
-                                        <div style="font-weight: 500; font-size: 14px;">Sarah Mitchell</div>
-                                        <div style="font-size: 12px; color: var(--text-muted);">Event Lead</div>
-                                    </div>
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <div class="person-avatar" style="width: 40px; height: 40px; font-size: 16px; background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);">JC</div>
-                                    <div>
-                                        <div style="font-weight: 500; font-size: 14px;">James Chen</div>
-                                        <div style="font-size: 12px; color: var(--text-muted);">Technical Director</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <button class="btn" style="width: 100%; margin-top: 16px;">📧 Contact Team</button>
-                        </div>
-
-                        <div style="background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 24px;">
-                            <h3 style="margin-bottom: 16px; font-family: 'Playfair Display', serif;">Documents</h3>
-                            <div style="display: flex; flex-direction: column; gap: 8px;">
-                                <div style="padding: 12px; background: var(--bg-tertiary); border-radius: 8px; cursor: pointer;">
-                                    <div style="font-weight: 500; font-size: 14px;">Event Proposal</div>
-                                    <div style="font-size: 12px; color: var(--text-muted);">PDF • Viewed 2 days ago</div>
-                                </div>
-                                <div style="padding: 12px; background: var(--bg-tertiary); border-radius: 8px; cursor: pointer;">
-                                    <div style="font-weight: 500; font-size: 14px;">Vendor Contracts</div>
-                                    <div style="font-size: 12px; color: var(--text-muted);">3 documents • Signed</div>
-                                </div>
-                                <div style="padding: 12px; background: var(--bg-tertiary); border-radius: 8px; cursor: pointer;">
-                                    <div style="font-weight: 500; font-size: 14px;">Floor Plan</div>
-                                    <div style="font-size: 12px; color: var(--text-muted);">PDF • Updated yesterday</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
+        </section>
+    </main>
 
     <script>
-        // App State
-        const AppState = {
-            mode: 'director', // 'director' or 'client'
-            currentView: 'dashboard'
-        };
+        // ATELIER EMS CORE FUNCTIONALITY
+        // Vanilla JS | LocalStorage | JSON Only
 
-        // View Management
-        function showView(viewName) {
-            // Hide all views
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-
-            // Update nav items
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-
-            // Map view names to IDs
-            const viewMap = {
-                'dashboard': 'dashboardView',
-                'events': 'dashboardView', // Same as dashboard for now
-                'personnel': 'personnelView',
-                'tasks': 'tasksView',
-                'timeline': 'timelineView',
-                'vendors': 'vendorsView',
-                'client': 'clientView'
+        (function() {
+            'use strict';
+            
+            // CONFIG
+            const CONFIG = {
+                STORAGE_KEY: 'atelier_workspace',
+                AUTOSAVE_DELAY: 1000,
+                MAX_HISTORY: 50,
+                FILE_EXTENSION: '.ems.json'
             };
 
-            // Show selected view
-            if (viewMap[viewName]) {
-                document.getElementById(viewMap[viewName]).classList.add('active');
-            }
-
-            // Update sidebar active state
-            const navMap = {
-                'dashboard': 0,
-                'events': 1,
-                'personnel': 2,
-                'tasks': 3,
-                'vendors': 4
+            // STATE MANAGEMENT
+            const State = {
+                data: {
+                    version: '1.0',
+                    created: new Date().toISOString(),
+                    modified: new Date().toISOString(),
+                    events: [],
+                    tracks: ['Main Stage', 'Audio', 'Lighting', 'Security', 'Catering'],
+                    settings: { view: 'desktop', zoom: 1 }
+                },
+                history: [],
+                future: [],
+                autoSaveTimer: null,
+                isDirty: false
             };
 
-            if (navMap[viewName] !== undefined) {
-                document.querySelectorAll('.nav-item')[navMap[viewName]].classList.add('active');
+            // DOM ELEMENTS
+            const $ = (sel) => document.querySelector(sel);
+            const $$ = (sel) => document.querySelectorAll(sel);
+            
+            const elements = {
+                status: $('#status'),
+                fileInput: $('#file-input'),
+                undoBtn: $('#undo-btn'),
+                redoBtn: $('#redo-btn'),
+                eventList: $('#event-list')
+            };
+
+            // UTILITY FUNCTIONS
+            const deepClone = (obj) => JSON.parse(JSON.stringify(obj));
+            const generateId = () => 'evt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            const formatTime = (date) => {
+                if (!date) return '12:00';
+                const d = new Date(date);
+                return d.toTimeString().slice(0, 5);
+            };
+            
+            const showStatus = (msg, type = 'info') => {
+                if (!elements.status) return;
+                elements.status.textContent = msg;
+                elements.status.className = `status ${type}`;
+                setTimeout(() => {
+                    elements.status.textContent = '';
+                }, 3000);
+            };
+
+            // STORAGE ENGINE
+            const Storage = {
+                save: () => {
+                    try {
+                        State.data.modified = new Date().toISOString();
+                        localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(State.data));
+                        State.isDirty = false;
+                        showStatus('Auto-saved to browser', 'success');
+                        return true;
+                    } catch (e) {
+                        if (e.name === 'QuotaExceededError') {
+                            showStatus('Storage full! Export to file.', 'error');
+                        } else {
+                            showStatus('Save failed', 'error');
+                        }
+                        return false;
+                    }
+                },
+
+                load: () => {
+                    try {
+                        const saved = localStorage.getItem(CONFIG.STORAGE_KEY);
+                        if (saved) {
+                            const parsed = JSON.parse(saved);
+                            if (validateWorkspace(parsed)) {
+                                State.data = parsed;
+                                return true;
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Load error:', e);
+                    }
+                    return false;
+                }
+            };
+
+            // VALIDATION
+            function validateWorkspace(data) {
+                if (!data || typeof data !== 'object') return false;
+                if (!Array.isArray(data.events)) return false;
+                if (!Array.isArray(data.tracks)) return false;
+                if (data.__proto__ || data.constructor !== Object) return false;
+                return true;
             }
-        }
 
-        // Mode Switch (Director vs Client)
-        function switchMode(mode) {
-            AppState.mode = mode;
+            // HISTORY
+            const History = {
+                push: () => {
+                    if (State.history.length >= CONFIG.MAX_HISTORY) State.history.shift();
+                    State.history.push(deepClone(State.data));
+                    State.future = [];
+                    updateHistoryButtons();
+                },
 
-            // Update buttons
-            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(mode === 'director' ? 'modeDirector' : 'modeClient').classList.add('active');
+                undo: () => {
+                    if (State.history.length === 0) return;
+                    State.future.push(deepClone(State.data));
+                    State.data = State.history.pop();
+                    renderAll();
+                    updateHistoryButtons();
+                    showStatus('Undo');
+                    Storage.save();
+                },
 
-            // Update sidebar visibility
-            const sidebar = document.getElementById('sidebar');
-            if (mode === 'client') {
-                sidebar.style.display = 'none';
-                document.querySelector('.main-content').style.marginLeft = '0';
-                showView('client');
+                redo: () => {
+                    if (State.future.length === 0) return;
+                    State.history.push(deepClone(State.data));
+                    State.data = State.future.pop();
+                    renderAll();
+                    updateHistoryButtons();
+                    showStatus('Redo');
+                    Storage.save();
+                }
+            };
+
+            function updateHistoryButtons() {
+                if (elements.undoBtn) elements.undoBtn.disabled = State.history.length === 0;
+                if (elements.redoBtn) elements.redoBtn.disabled = State.future.length === 0;
+            }
+
+            // FILE I/O
+            window.exportWorkspace = () => {
+                const blob = new Blob([JSON.stringify(State.data, null, 2)], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                const timestamp = new Date().toISOString().split('T')[0];
+                a.href = url;
+                a.download = `atelier_${timestamp}${CONFIG.FILE_EXTENSION}`;
+                
+                if (navigator.userAgent.match(/iPad|iPhone|iPod/) && !navigator.MSStream) {
+                    showStatus('Opening in new tab...', 'info');
+                    a.target = '_blank';
+                    const newWindow = window.open(url);
+                    if (!newWindow) showStatus('Popup blocked! Use Save File button.', 'error');
+                } else {
+                    a.click();
+                    showStatus('File downloaded', 'success');
+                }
+                
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            };
+
+            const importFile = (file) => {
+                if (!file) return;
+                if (file.size > 10 * 1024 * 1024) {
+                    showStatus('File too large (max 10MB)', 'error');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (!validateWorkspace(data)) {
+                            showStatus('Invalid workspace file', 'error');
+                            return;
+                        }
+                        History.push();
+                        State.data = data;
+                        renderAll();
+                        Storage.save();
+                        showStatus(`Loaded: ${file.name}`, 'success');
+                    } catch (err) {
+                        showStatus('Invalid JSON file', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+
+            // AUTO-SAVE
+            const AutoSave = {
+                trigger: () => {
+                    State.isDirty = true;
+                    if (State.autoSaveTimer) clearTimeout(State.autoSaveTimer);
+                    State.autoSaveTimer = setTimeout(() => {
+                        if (State.isDirty) Storage.save();
+                    }, CONFIG.AUTOSAVE_DELAY);
+                }
+            };
+
+            // TIMELINE
+            window.addNewEvent = () => {
+                History.push();
+                const newEvent = {
+                    id: generateId(),
+                    title: 'New Event',
+                    start: new Date().toISOString(),
+                    duration: 60,
+                    track: State.data.tracks[0] || 'Main Stage',
+                    type: 'standard',
+                    notes: ''
+                };
+                State.data.events.push(newEvent);
+                renderEventToDOM(newEvent);
+                updateHistoryButtons();
+                AutoSave.trigger();
+                
+                // Clear empty state if present
+                const emptyState = elements.eventList.querySelector('.empty-state');
+                if (emptyState) emptyState.remove();
+            };
+
+            window.deleteEvent = (id) => {
+                if (!confirm('Delete this event?')) return;
+                History.push();
+                State.data.events = State.data.events.filter(e => e.id !== id);
+                renderAll();
+                AutoSave.trigger();
+            };
+
+            const updateEvent = (id, updates) => {
+                const evt = State.data.events.find(e => e.id === id);
+                if (evt) {
+                    Object.assign(evt, updates);
+                    AutoSave.trigger();
+                    return true;
+                }
+                return false;
+            };
+
+            // RENDERING
+            function renderAll() {
+                if (!elements.eventList) return;
+                elements.eventList.innerHTML = '';
+                
+                if (State.data.events.length === 0) {
+                    elements.eventList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📋</div>
+                            <h3>No events yet</h3>
+                            <p>Click "Add Event" to start building your timeline, or load an existing workspace file.</p>
+                        </div>
+                    `;
+                } else {
+                    State.data.events.forEach(renderEventToDOM);
+                }
+                updateHistoryButtons();
+            }
+
+            function renderEventToDOM(evt) {
+                const div = document.createElement('div');
+                div.className = 'timeline-event';
+                div.dataset.id = evt.id;
+                
+                const startTime = formatTime(evt.start);
+                const endDate = new Date(new Date(evt.start).getTime() + (evt.duration * 60000));
+                const endTime = formatTime(endDate);
+                
+                div.innerHTML = `
+                    <div class="event-header">
+                        <input type="text" class="event-title-input" value="${evt.title}" placeholder="Event Title">
+                        <button class="event-delete-btn" onclick="deleteEvent('${evt.id}')" title="Delete event">×</button>
+                    </div>
+                    <div class="event-meta">
+                        <select class="event-select event-track">
+                            ${State.data.tracks.map(t => `<option value="${t}" ${t === evt.track ? 'selected' : ''}>${t}</option>`).join('')}
+                        </select>
+                        <input type="time" class="event-time-input event-start" value="${startTime}">
+                        <span style="color: var(--text-secondary);">→</span>
+                        <input type="time" class="event-time-input event-end" value="${endTime}">
+                    </div>
+                    <div class="event-notes" contenteditable="true" placeholder="Add notes...">${evt.notes || ''}</div>
+                `;
+                
+                // Event listeners
+                const titleInput = div.querySelector('.event-title-input');
+                titleInput.addEventListener('change', (e) => {
+                    History.push();
+                    updateEvent(evt.id, {title: e.target.value});
+                });
+                
+                const trackSelect = div.querySelector('.event-track');
+                trackSelect.addEventListener('change', (e) => {
+                    History.push();
+                    updateEvent(evt.id, {track: e.target.value});
+                });
+                
+                const startInput = div.querySelector('.event-start');
+                startInput.addEventListener('change', (e) => {
+                    History.push();
+                    const [hours, mins] = e.target.value.split(':');
+                    const newDate = new Date();
+                    newDate.setHours(hours, mins, 0);
+                    updateEvent(evt.id, {start: newDate.toISOString()});
+                });
+                
+                const endInput = div.querySelector('.event-end');
+                endInput.addEventListener('change', (e) => {
+                    History.push();
+                    const start = new Date(evt.start);
+                    const [endHours, endMins] = e.target.value.split(':');
+                    const endDate = new Date();
+                    endDate.setHours(endHours, endMins, 0);
+                    
+                    // If end is before start, assume next day
+                    if (endDate < start) endDate.setDate(endDate.getDate() + 1);
+                    
+                    const duration = (endDate - start) / 60000;
+                    updateEvent(evt.id, {duration: Math.max(15, duration)});
+                });
+                
+                const notesDiv = div.querySelector('.event-notes');
+                notesDiv.addEventListener('blur', () => {
+                    updateEvent(evt.id, {notes: notesDiv.innerText});
+                });
+                
+                elements.eventList.appendChild(div);
+            }
+
+            // VIEW SWITCHING
+            window.switchView = (mode) => {
+                document.body.className = `view-${mode}`;
+                State.data.settings.view = mode;
+                
+                // Update cards
+                $$('.mode-card').forEach(card => {
+                    card.classList.toggle('selected', card.dataset.view === mode);
+                });
+                
+                // Update toggle buttons
+                $$('.view-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.view === mode);
+                });
+                
+                Storage.save();
+            };
+
+            // INIT
+            function init() {
+                // Load or init
+                if (!Storage.load()) {
+                    Storage.save();
+                }
+                
+                renderAll();
+                
+                // View toggle buttons
+                $$('.view-btn').forEach(btn => {
+                    btn.addEventListener('click', () => switchView(btn.dataset.view));
+                });
+                
+                // File input
+                elements.fileInput.addEventListener('change', (e) => {
+                    if (e.target.files[0]) {
+                        importFile(e.target.files[0]);
+                        e.target.value = '';
+                    }
+                });
+                
+                // History buttons
+                if (elements.undoBtn) {
+                    elements.undoBtn.addEventListener('click', History.undo);
+                }
+                if (elements.redoBtn) {
+                    elements.redoBtn.addEventListener('click', History.redo);
+                }
+                
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+                        e.preventDefault();
+                        if (e.shiftKey) {
+                            History.redo();
+                        } else {
+                            History.undo();
+                        }
+                    }
+                });
+                
+                // Drag & drop
+                document.addEventListener('dragover', (e) => {
+                    if (e.dataTransfer.types.includes('Files')) {
+                        e.preventDefault();
+                        document.body.classList.add('drag-over');
+                    }
+                });
+                
+                document.addEventListener('dragleave', () => {
+                    document.body.classList.remove('drag-over');
+                });
+                
+                document.addEventListener('drop', (e) => {
+                    document.body.classList.remove('drag-over');
+                    const file = e.dataTransfer.files[0];
+                    if (file && (file.type === 'application/json' || file.name.endsWith('.json') || file.name.endsWith('.ems'))) {
+                        e.preventDefault();
+                        importFile(file);
+                    }
+                });
+                
+                // Before unload
+                window.addEventListener('beforeunload', (e) => {
+                    if (State.isDirty) {
+                        e.preventDefault();
+                        e.returnValue = '';
+                    }
+                });
+                
+                // Global access
+                window.EMS = {
+                    state: State,
+                    addEvent: window.addNewEvent,
+                    deleteEvent: window.deleteEvent,
+                    export: window.exportWorkspace
+                };
+                
+                console.log('🎛️ Atelier EMS initialized');
+                console.log('Commands: EMS.addEvent(), EMS.export(), EMS.state');
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
             } else {
-                sidebar.style.display = 'block';
-                document.querySelector('.main-content').style.marginLeft = '260px';
-                showView('dashboard');
+                init();
             }
-
-            showToast(mode === 'client' ? 'Switched to Client Portal' : 'Switched to Director Mode', 'info');
-        }
-
-        // Actions
-        function createEvent() {
-            showToast('Create Event dialog would open', 'info');
-        }
-
-        function openEvent(id) {
-            showToast(`Opening event ${id}`, 'info');
-        }
-
-        function addPerson() {
-            showToast('Add Personnel dialog would open', 'info');
-        }
-
-        function addTask() {
-            showToast('Add Task dialog would open', 'info');
-        }
-
-        function addVendor() {
-            showToast('Add Vendor dialog would open', 'info');
-        }
-
-        function showNotifications() {
-            showToast('No new notifications', 'info');
-        }
-
-        // Toast System
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.style.borderLeftColor = type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--error)' : 'var(--accent)';
-            toast.innerHTML = `<span>${message}</span>`;
-            container.appendChild(toast);
-
-            setTimeout(() => toast.remove(), 3000);
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            showToast('Atelier Director Suite loaded', 'success');
-        });
+        })();
     </script>
 </body>
 </html>
