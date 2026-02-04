@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Bar Calculator - Whisper Workshop</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
@@ -537,7 +537,6 @@
                 width: 100%;
                 overflow-x: hidden;
                 -webkit-text-size-adjust: 100%;
-                touch-action: manipulation;
             }
 
             /* Ensure all media respects viewport */
@@ -770,6 +769,7 @@
         }
 
     </style>
+<base target="_blank">
 <base target="_blank">
 <base target="_blank">
 </head>
@@ -1324,6 +1324,10 @@
                 ice: parseFloat(document.getElementById('iceCost').value) || 0
             };
             return Object.values(costs).some(c => c > 0);
+        }
+    </script>
+</body>
+</html>urn Object.values(costs).some(c => c > 0);
         }
     </script>
 </body>
