@@ -143,12 +143,12 @@
         }
 
         .container { 
-    max-width: 1200px; 
-    margin: 0 auto; 
-    padding: 3rem 2rem;
-    width: 100%;
-    box-sizing: border-box; 
-}
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 3rem 2rem;
+            width: 100%;
+            box-sizing: border-box; 
+        }
 
         header {
             text-align: center;
@@ -529,28 +529,242 @@
             }
         }
 
+        /* ==================== MOBILE UX FIXES ==================== */
         
-        /* Mobile Optimizations */
+        /* 1. DRINKING PERCENTAGE - Mobile Stacked Layout */
+        @media (max-width: 640px) {
+            .slider-label {
+                display: grid;
+                grid-template-columns: 1fr auto 1fr;
+                gap: 0.5rem;
+                align-items: center;
+            }
+            
+            .slider-label span:first-child {
+                text-align: left;
+            }
+            
+            .slider-label span:last-child {
+                text-align: right;
+            }
+            
+            #drinkPctDisplay {
+                background: var(--accent);
+                color: white;
+                padding: 0.25rem 0.75rem;
+                border-radius: 12px;
+                font-weight: 600;
+            }
+        }
+
+        /* 2. EXPANDABLE PRICING SECTION */
+        .pricing-toggle-btn {
+            display: none;
+            width: 100%;
+            padding: 0.875rem 1.5rem;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--border-strong);
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 1rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .pricing-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--accent);
+        }
+
+        .pricing-toggle-btn::after {
+            content: "▼";
+            margin-left: 0.5rem;
+            font-size: 0.7em;
+            transition: transform 0.3s ease;
+        }
+
+        .pricing-toggle-btn.expanded::after {
+            transform: rotate(180deg);
+        }
+
+        @media (max-width: 640px) {
+            .pricing-toggle-btn {
+                display: block;
+            }
+
+            .cost-grid {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.4s ease, margin-top 0.4s ease;
+                margin-top: 0;
+            }
+
+            .cost-grid.expanded {
+                max-height: 800px;
+                margin-top: 1rem;
+            }
+
+            .cost-grid.collapsed {
+                display: none;
+            }
+        }
+
+        /* 3. BREAKDOWN CARDS (Mobile Only) - Table converts to cards */
+        @media (max-width: 640px) {
+            .breakdown-table {
+                display: none;
+            }
+
+            .breakdown-cards {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+                margin-top: 1rem;
+            }
+
+            .breakdown-card {
+                background: rgba(255, 255, 255, 0.4);
+                border: 1px solid var(--border);
+                border-radius: 6px;
+                padding: 1rem;
+                transition: all 0.3s ease;
+            }
+
+            .breakdown-card:hover {
+                background: rgba(255, 255, 255, 0.7);
+                border-color: rgba(139, 115, 85, 0.3);
+            }
+
+            .breakdown-card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 0.75rem;
+                padding-bottom: 0.5rem;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .breakdown-card-title {
+                font-family: 'Cormorant Garamond', serif;
+                font-size: 1.2em;
+                font-weight: 600;
+                color: var(--text);
+            }
+
+            .breakdown-card-servings {
+                font-family: 'Cormorant Garamond', serif;
+                font-size: 1.3em;
+                font-weight: 600;
+                color: var(--accent);
+            }
+
+            .breakdown-card-details {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0.5rem;
+                font-size: 0.85em;
+            }
+
+            .breakdown-card-detail {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .breakdown-card-detail-label {
+                font-size: 0.75em;
+                color: var(--text-light);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                margin-bottom: 0.25rem;
+            }
+
+            .breakdown-card-detail-value {
+                color: var(--text);
+                font-weight: 500;
+            }
+        }
+
+        @media (min-width: 641px) {
+            .breakdown-cards {
+                display: none;
+            }
+            
+            .breakdown-table {
+                display: table;
+            }
+        }
+
+        /* 4. STICKY RECALCULATE BUTTON */
+        .sticky-recalculate {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(228, 228, 220, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            z-index: 99;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 640px) {
+            .sticky-recalculate {
+                display: block;
+            }
+
+            .container {
+                padding-bottom: 5rem; /* Space for sticky button */
+            }
+
+            .sticky-recalculate-btn {
+                width: 100%;
+                padding: 1rem;
+                background: var(--text);
+                color: var(--bg);
+                border: 1px solid var(--text);
+                border-radius: 6px;
+                font-family: 'Inter', sans-serif;
+                font-size: 0.9rem;
+                font-weight: 500;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+
+            .sticky-recalculate-btn:active {
+                transform: scale(0.98);
+            }
+        }
+
+        /* Preserve existing mobile optimizations */
         @media (max-width: 768px) {
-            /* Fix viewport zoom issues */
             html, body {
                 width: 100%;
                 overflow-x: hidden;
                 -webkit-text-size-adjust: 100%;
             }
 
-            /* Ensure all media respects viewport */
             img, video, iframe, table {
                 max-width: 100%;
                 height: auto;
             }
 
-            /* Prevent zoom on input focus */
             input, select, button {
                 font-size: 16px !important;
             }
 
-            /* Better touch targets */
             .category-toggle {
                 min-height: 80px;
                 padding: 1.25rem;
@@ -560,7 +774,6 @@
                 transform: scale(0.98);
             }
 
-            /* Larger slider thumb */
             input[type="range"]::-webkit-slider-thumb {
                 width: 28px;
                 height: 28px;
@@ -570,19 +783,11 @@
                 height: 8px;
             }
 
-            /* Stacked cost grid */
-            .cost-grid {
-                grid-template-columns: 1fr;
-                gap: 0.75rem;
-            }
-
-            /* Better button sizing */
             .btn {
                 padding: 1rem 1.5rem;
                 min-height: 48px;
             }
 
-            /* Adjusted header */
             header {
                 padding: 2rem 1rem;
             }
@@ -591,45 +796,31 @@
                 font-size: 1.75rem;
             }
 
-            /* Better table scrolling */
-            .breakdown-table {
-                display: block;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            /* Result cards stack */
             .results-panel > div[style*="grid-template-columns"] {
                 grid-template-columns: 1fr !important;
             }
 
-            /* Input panel spacing */
             .input-panel, .results-panel {
                 padding: 1.25rem;
             }
 
-            /* Form group spacing */
             .form-group {
                 margin-bottom: 1.25rem;
             }
 
-            /* Drink categories */
             .drink-categories {
                 gap: 0.5rem;
             }
 
-            /* Cost section */
             .cost-section {
                 margin-top: 1.25rem;
                 padding-top: 1.25rem;
             }
 
-            /* Total cost card */
             .total-cost-value {
                 font-size: 2rem;
             }
 
-            /* Data controls */
             .data-controls {
                 padding: 1rem;
             }
@@ -644,12 +835,10 @@
                 text-align: center;
             }
 
-            /* File input wrapper full width */
             .file-input-wrapper {
                 width: 100%;
             }
 
-            /* Better nav on mobile */
             .nav-header {
                 padding: 15px 0;
             }
@@ -662,12 +851,10 @@
                 font-size: 0.8rem;
             }
 
-            /* Prevent horizontal overflow */
             body {
                 overflow-x: hidden;
             }
 
-            /* Touch feedback for buttons */
             .btn-primary:active {
                 transform: scale(0.98);
             }
@@ -676,7 +863,6 @@
                 transform: scale(0.98);
             }
 
-            /* Guest sync banner */
             .guest-sync {
                 flex-direction: column;
                 text-align: center;
@@ -684,7 +870,6 @@
             }
         }
 
-        /* Extra small devices */
         @media (max-width: 380px) {
             .container {
                 padding: 0.75rem;
@@ -716,7 +901,6 @@
             }
         }
 
-        /* Landscape mode optimization */
         @media (max-height: 500px) and (orientation: landscape) {
             .splash-content {
                 transform: scale(0.8);
@@ -732,30 +916,21 @@
             }
         }
 
-        /* Touch device optimizations */
         @media (pointer: coarse) {
-            /* Larger touch targets */
             input[type="range"]::-webkit-slider-thumb {
                 width: 32px;
                 height: 32px;
             }
 
-            /* Remove hover effects on touch */
             .category-toggle:hover {
                 transform: none;
             }
 
-            .tool-card:hover {
-                transform: none;
-            }
-
-            /* Add active states */
             .category-toggle:active {
                 background: rgba(139, 115, 85, 0.15);
             }
         }
 
-        /* Safe area for notched phones */
         @supports (padding: max(0px)) {
             .container {
                 padding-left: max(1rem, env(safe-area-inset-left));
@@ -769,6 +944,7 @@
         }
 
     </style>
+<base target="_blank">
 <base target="_blank">
 <base target="_blank">
 <base target="_blank">
@@ -869,7 +1045,8 @@
                     <!-- Cost Estimation Section -->
                     <div class="cost-section">
                         <label>Pricing Estimates (per unit)</label>
-                        <div class="cost-grid">
+                        <button class="pricing-toggle-btn" id="pricingToggleBtn" onclick="togglePricing()">Enter Pricing Estimates</button>
+                        <div class="cost-grid" id="costGrid">
                             <div class="cost-input-group">
                                 <label>Beer (case of 24)</label>
                                 <input type="number" id="beerCost" placeholder="35" value="35" min="0" step="0.01" onchange="calculate()">
@@ -934,6 +1111,9 @@
                         <tbody id="breakdownBody"></tbody>
                     </table>
 
+                    <!-- Mobile Card Layout for Breakdown -->
+                    <div class="breakdown-cards" id="breakdownCards"></div>
+
                     <!-- Total Cost Display -->
                     <div class="total-cost-card" id="totalCostCard" style="display: none;">
                         <div class="total-cost-label">Estimated Total Cost</div>
@@ -957,6 +1137,14 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Sticky Recalculate Button for Mobile -->
+        <div class="sticky-recalculate">
+            <button class="sticky-recalculate-btn" onclick="scrollToInputs()">
+                <span>↑</span>
+                <span>Adjust Parameters</span>
+            </button>
         </div>
     </div>
 
@@ -1068,6 +1256,24 @@
             });
 
             calculate();
+        }
+
+        function togglePricing() {
+            const btn = document.getElementById('pricingToggleBtn');
+            const grid = document.getElementById('costGrid');
+            
+            btn.classList.toggle('expanded');
+            grid.classList.toggle('expanded');
+            
+            if (grid.classList.contains('expanded')) {
+                btn.textContent = 'Hide Pricing Estimates';
+            } else {
+                btn.textContent = 'Enter Pricing Estimates';
+            }
+        }
+
+        function scrollToInputs() {
+            document.querySelector('.input-panel').scrollIntoView({ behavior: 'smooth' });
         }
 
         function calculate() {
@@ -1192,6 +1398,7 @@
             const iceTotalCost = iceLbs * costs.ice;
             totalCost += iceTotalCost;
 
+            // Update table (desktop)
             document.getElementById('breakdownBody').innerHTML = breakdown.map(b => `
                 <tr>
                     <td><strong>${b.type}</strong></td>
@@ -1199,6 +1406,26 @@
                     <td>${b.container}</td>
                     <td>${b.units}</td>
                 </tr>
+            `).join('');
+
+            // Update cards (mobile)
+            document.getElementById('breakdownCards').innerHTML = breakdown.map(b => `
+                <div class="breakdown-card">
+                    <div class="breakdown-card-header">
+                        <span class="breakdown-card-title">${b.type}</span>
+                        <span class="breakdown-card-servings">${b.servings}</span>
+                    </div>
+                    <div class="breakdown-card-details">
+                        <div class="breakdown-card-detail">
+                            <span class="breakdown-card-detail-label">Container</span>
+                            <span class="breakdown-card-detail-value">${b.container}</span>
+                        </div>
+                        <div class="breakdown-card-detail">
+                            <span class="breakdown-card-detail-label">Units</span>
+                            <span class="breakdown-card-detail-value">${b.units}</span>
+                        </div>
+                    </div>
+                </div>
             `).join('');
 
             document.getElementById('iceAmount').textContent = iceLbs;
@@ -1324,10 +1551,6 @@
                 ice: parseFloat(document.getElementById('iceCost').value) || 0
             };
             return Object.values(costs).some(c => c > 0);
-        }
-    </script>
-</body>
-</html>urn Object.values(costs).some(c => c > 0);
         }
     </script>
 </body>
