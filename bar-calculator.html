@@ -3,382 +3,1031 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bar Calculator - Event Planner Suite</title>
+    <title>Bar Calculator - Whisper Workshop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #ef4444;
-            --secondary: #f59e0b;
-            --success: #10b981;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
+            --bg: #e4e4dc;
+            --card: rgba(255, 255, 255, 0.5);
+            --card-hover: rgba(255, 255, 255, 0.9);
+            --text: #3d3d3d;
+            --text-light: #666;
+            --accent: #8b7355;
+            --accent-light: rgba(139, 115, 85, 0.1);
+            --border: rgba(61, 61, 61, 0.1);
+            --border-strong: rgba(61, 61, 61, 0.2);
+            --success: #5a7c5a;
         }
-        
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
+            min-height: 100vh;
         }
-        
-        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-        
+
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        #splash-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .splash-content {
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.95);
+            animation: logoFadeIn 1s ease-out forwards;
+        }
+
+        .splash-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3em;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .splash-tagline {
+            font-size: 0.9em;
+            color: var(--text-light);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        @keyframes logoFadeIn {
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        #main-content {
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        #main-content.visible {
+            opacity: 1;
+        }
+
+        /* Navigation Header */
+        .nav-header {
+            background: rgba(255, 255, 255, 0.4);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5em;
+            font-weight: 500;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.85em;
+            font-weight: 400;
+            letter-spacing: 0.03em;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-link:hover {
+            color: #6b5a45;
+            transform: translateX(-3px);
+        }
+
+        .nav-link::before {
+            content: "←";
+            font-size: 0.9em;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 3rem 2rem; }
+
         header {
             text-align: center;
-            margin-bottom: 2.5rem;
-            padding: 2rem;
-            background: linear-gradient(135deg, var(--primary), #dc2626);
-            border-radius: 16px;
-            color: white;
+            margin-bottom: 3rem;
+            padding: 3rem 2rem;
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 8px;
         }
-        
+
+        header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5em;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-light);
+            font-size: 0.95em;
+            letter-spacing: 0.05em;
+        }
+
         .calculator-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1.5rem;
             margin-bottom: 1.5rem;
         }
-        
+
         @media (max-width: 968px) {
             .calculator-grid { grid-template-columns: 1fr; }
         }
-        
+
         .input-panel, .results-panel {
             background: var(--card);
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
         }
-        
+
+        .input-panel:hover, .results-panel:hover {
+            background: var(--card-hover);
+            border-color: rgba(139, 115, 85, 0.3);
+        }
+
         .form-group { margin-bottom: 1.5rem; }
-        
-        label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; }
-        
+
+        label { 
+            display: block; 
+            font-weight: 500; 
+            margin-bottom: 0.5rem; 
+            color: var(--text);
+            font-size: 0.9em;
+            letter-spacing: 0.02em;
+        }
+
         .input-row {
             display: flex;
             align-items: center;
             gap: 1rem;
             margin-bottom: 0.5rem;
         }
-        
-        input[type="number"], select {
+
+        input[type="number"], select, input[type="text"] {
             padding: 0.75rem;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
+            border: 1px solid var(--border-strong);
+            border-radius: 6px;
+            font-size: 0.95rem;
             width: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s ease;
         }
-        
+
+        input[type="number"]:focus, select:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
         .slider-group {
             margin-bottom: 1rem;
         }
-        
+
         .slider-label {
             display: flex;
             justify-content: space-between;
             margin-bottom: 0.5rem;
-            font-size: 0.875rem;
+            font-size: 0.8em;
+            color: var(--text-light);
         }
-        
+
         input[type="range"] {
             width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: #e2e8f0;
+            height: 4px;
+            border-radius: 2px;
+            background: var(--border-strong);
             outline: none;
+            -webkit-appearance: none;
         }
-        
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
         .drink-categories {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .category-toggle {
+            background: rgba(255, 255, 255, 0.4);
+            padding: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            text-align: center;
+        }
+
+        .category-toggle:hover { 
+            background: rgba(255, 255, 255, 0.8); 
+            transform: translateY(-2px);
+        }
+
+        .category-toggle.active {
+            background: rgba(139, 115, 85, 0.1);
+            border-color: var(--accent);
+        }
+
+        .category-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .category-name { 
+            font-weight: 500; 
+            font-size: 0.9em;
+            color: var(--text);
+        }
+        .category-pct { font-size: 0.8rem; color: var(--accent); font-weight: 500; }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.4);
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            border-left: 2px solid var(--accent);
+            transition: all 0.3s ease;
+        }
+
+        .result-card:hover {
+            background: rgba(255, 255, 255, 0.7);
+            transform: translateX(3px);
+        }
+
+        .result-title {
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .result-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .result-sub {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+            font-style: italic;
+        }
+
+        .breakdown-table {
+            width: 100%;
+            margin-top: 1rem;
+            border-collapse: collapse;
+        }
+
+        .breakdown-table th {
+            text-align: left;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.6);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-light);
+            font-weight: 500;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .breakdown-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9em;
+        }
+
+        .amount-cell {
+            font-weight: 600;
+            color: var(--accent);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1em;
+        }
+
+        .btn {
+            padding: 0.875rem 1.5rem;
+            border: 1px solid var(--border-strong);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.02em;
+        }
+
+        .btn-primary { 
+            background: var(--text); 
+            color: var(--bg); 
+            border-color: var(--text);
+            width: 100%; 
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary { 
+            background: rgba(255, 255, 255, 0.6); 
+            color: var(--text); 
+            border: 1px solid var(--border-strong); 
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--accent);
+        }
+
+        .ice-warning {
+            background: rgba(139, 115, 85, 0.08);
+            border-left: 2px solid var(--accent);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.9em;
+        }
+
+        .data-controls {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .guest-sync {
+            background: rgba(90, 124, 90, 0.1);
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--success);
+            font-size: 0.85rem;
+            border: 1px solid rgba(90, 124, 90, 0.2);
+        }
+
+        /* Cost Section */
+        .cost-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .cost-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
             margin-top: 1rem;
         }
-        
-        .category-toggle {
-            background: #f1f5f9;
-            padding: 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 2px solid transparent;
+
+        .cost-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
         }
-        
-        .category-toggle:hover { background: #e2e8f0; }
-        .category-toggle.active {
-            background: #fee2e2;
-            border-color: var(--primary);
+
+        .cost-input-group label {
+            font-size: 0.8em;
+            color: var(--text-light);
+            margin-bottom: 0;
         }
-        
-        .category-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
-        .category-name { font-weight: 600; }
-        .category-pct { font-size: 0.875rem; color: #64748b; }
-        
-        .result-card {
-            background: #f8fafc;
+
+        .cost-input-group input {
+            font-size: 0.9em;
+        }
+
+        .total-cost-card {
+            background: var(--accent-light);
+            border: 1px solid rgba(139, 115, 85, 0.3);
+            border-radius: 6px;
             padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            border-left: 4px solid var(--primary);
+            margin-top: 1.5rem;
+            text-align: center;
         }
-        
-        .result-title {
-            font-size: 0.875rem;
+
+        .total-cost-label {
+            font-size: 0.8em;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #64748b;
+            letter-spacing: 0.1em;
+            color: var(--accent);
             margin-bottom: 0.5rem;
         }
-        
-        .result-value {
-            font-size: 2rem;
-            font-weight: 700;
+
+        .total-cost-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5em;
+            font-weight: 600;
             color: var(--text);
-            font-family: 'Courier New', monospace;
         }
-        
-        .result-sub {
-            font-size: 0.875rem;
-            color: #64748b;
-            margin-top: 0.25rem;
-        }
-        
-        .breakdown-table {
-            width: 100%;
-            margin-top: 1rem;
-        }
-        
-        .breakdown-table th {
-            text-align: left;
-            padding: 0.75rem;
-            background: #f1f5f9;
-            font-size: 0.875rem;
-            text-transform: uppercase;
-        }
-        
-        .breakdown-table td {
-            padding: 0.75rem;
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .amount-cell {
-            font-family: 'Courier New', monospace;
-            font-weight: 600;
-            color: var(--primary);
-        }
-        
-        .btn {
-            padding: 0.875rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .btn-primary { background: var(--primary); color: white; width: 100%; }
-        .btn-secondary { background: #f1f5f9; color: #475569; border: 2px solid var(--border); }
-        
-        .ice-warning {
-            background: #dbeafe;
-            border-left: 4px solid #3b82f6;
-            padding: 1rem;
-            margin-top: 1rem;
-            border-radius: 0 8px 8px 0;
-        }
-        
-        .data-controls {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: #f1f5f9;
-            border-radius: 12px;
+
+        /* Import/Export Controls */
+        .io-controls {
             display: flex;
-            gap: 1rem;
+            gap: 0.75rem;
             flex-wrap: wrap;
         }
-        
-        .guest-sync {
-            background: #ecfdf5;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #065f46;
-            font-size: 0.875rem;
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
         }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .sync-status {
+            font-size: 0.8em;
+            color: var(--success);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        @media print {
+            .nav-header, .data-controls, #splash-screen { display: none !important; }
+            body { background: white; }
+            .input-panel, .results-panel { 
+                background: white; 
+                border: 1px solid #ddd;
+                break-inside: avoid;
+            }
+        }
+
+        
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            /* Prevent zoom on input focus */
+            input, select, button {
+                font-size: 16px !important;
+            }
+
+            /* Better touch targets */
+            .category-toggle {
+                min-height: 80px;
+                padding: 1.25rem;
+            }
+
+            .category-toggle:active {
+                transform: scale(0.98);
+            }
+
+            /* Larger slider thumb */
+            input[type="range"]::-webkit-slider-thumb {
+                width: 28px;
+                height: 28px;
+            }
+
+            input[type="range"] {
+                height: 8px;
+            }
+
+            /* Stacked cost grid */
+            .cost-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            /* Better button sizing */
+            .btn {
+                padding: 1rem 1.5rem;
+                min-height: 48px;
+            }
+
+            /* Adjusted header */
+            header {
+                padding: 2rem 1rem;
+            }
+
+            header h1 {
+                font-size: 1.75rem;
+            }
+
+            /* Better table scrolling */
+            .breakdown-table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* Result cards stack */
+            .results-panel > div[style*="grid-template-columns"] {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* Input panel spacing */
+            .input-panel, .results-panel {
+                padding: 1.25rem;
+            }
+
+            /* Form group spacing */
+            .form-group {
+                margin-bottom: 1.25rem;
+            }
+
+            /* Drink categories */
+            .drink-categories {
+                gap: 0.5rem;
+            }
+
+            /* Cost section */
+            .cost-section {
+                margin-top: 1.25rem;
+                padding-top: 1.25rem;
+            }
+
+            /* Total cost card */
+            .total-cost-value {
+                font-size: 2rem;
+            }
+
+            /* Data controls */
+            .data-controls {
+                padding: 1rem;
+            }
+
+            .io-controls {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .io-controls .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            /* File input wrapper full width */
+            .file-input-wrapper {
+                width: 100%;
+            }
+
+            /* Better nav on mobile */
+            .nav-header {
+                padding: 15px 0;
+            }
+
+            .nav-brand {
+                font-size: 1.25rem;
+            }
+
+            .nav-link {
+                font-size: 0.8rem;
+            }
+
+            /* Prevent horizontal overflow */
+            body {
+                overflow-x: hidden;
+            }
+
+            /* Touch feedback for buttons */
+            .btn-primary:active {
+                transform: scale(0.98);
+            }
+
+            .btn-secondary:active {
+                transform: scale(0.98);
+            }
+
+            /* Guest sync banner */
+            .guest-sync {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.25rem;
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 380px) {
+            .container {
+                padding: 0.75rem;
+            }
+
+            .splash-logo {
+                font-size: 2rem;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            .result-value {
+                font-size: 1.75rem;
+            }
+
+            .category-toggle {
+                padding: 1rem;
+                min-height: 70px;
+            }
+
+            .category-icon {
+                font-size: 1.25rem;
+            }
+
+            .category-name {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Landscape mode optimization */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .splash-content {
+                transform: scale(0.8);
+            }
+
+            header {
+                padding: 1.5rem 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .input-panel, .results-panel {
+                padding: 1rem;
+            }
+        }
+
+        /* Touch device optimizations */
+        @media (pointer: coarse) {
+            /* Larger touch targets */
+            input[type="range"]::-webkit-slider-thumb {
+                width: 32px;
+                height: 32px;
+            }
+
+            /* Remove hover effects on touch */
+            .category-toggle:hover {
+                transform: none;
+            }
+
+            .tool-card:hover {
+                transform: none;
+            }
+
+            /* Add active states */
+            .category-toggle:active {
+                background: rgba(139, 115, 85, 0.15);
+            }
+        }
+
+        /* Safe area for notched phones */
+        @supports (padding: max(0px)) {
+            .container {
+                padding-left: max(1rem, env(safe-area-inset-left));
+                padding-right: max(1rem, env(safe-area-inset-right));
+            }
+
+            .nav-container {
+                padding-left: max(1rem, env(safe-area-inset-left));
+                padding-right: max(1rem, env(safe-area-inset-right));
+            }
+        }
+
     </style>
+<base target="_blank">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🍸 Bar Calculator</h1>
-            <p>Calculate beverage quantities based on guest count and duration</p>
-        </header>
-        
-        <div class="calculator-grid">
-            <div class="input-panel">
-                <div class="guest-sync" id="guestSync" style="display: none;">
-                    <span>✓</span>
-                    <span>Synced with Guest List: <strong id="syncedCount">0</strong> confirmed guests</span>
-                </div>
-                
-                <div class="form-group">
-                    <label>Number of Guests</label>
-                    <input type="number" id="guestCount" value="100" min="1" onchange="calculate()">
-                </div>
-                
-                <div class="form-group">
-                    <label>Event Duration (hours)</label>
-                    <input type="number" id="duration" value="5" min="1" max="12" onchange="calculate()">
-                </div>
-                
-                <div class="form-group">
-                    <label>Drinking Percentage</label>
-                    <div class="slider-group">
-                        <div class="slider-label">
-                            <span>Light Drinkers (50%)</span>
-                            <span id="drinkPctDisplay">75%</span>
-                            <span>Heavy Drinkers (100%)</span>
-                        </div>
-                        <input type="range" id="drinkingPct" min="50" max="100" value="75" oninput="updateSlider(this.value); calculate()">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Bar Type</label>
-                    <select id="barType" onchange="calculate()">
-                        <option value="full">Full Open Bar (Beer, Wine, Spirits)</option>
-                        <option value="beerwine">Beer & Wine Only</option>
-                        <option value="beer">Beer Only</option>
-                        <option value="wine">Wine Only</option>
-                        <option value="signature">Signature Cocktails + Beer/Wine</option>
-                        <option value="premium">Premium Top-Shelf</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>Drink Distribution</label>
-                    <div class="drink-categories">
-                        <div class="category-toggle active" id="cat-beer" onclick="toggleCategory('beer')">
-                            <div class="category-icon">🍺</div>
-                            <div class="category-name">Beer</div>
-                            <div class="category-pct" id="pct-beer">30%</div>
-                        </div>
-                        <div class="category-toggle active" id="cat-wine" onclick="toggleCategory('wine')">
-                            <div class="category-icon">🍷</div>
-                            <div class="category-name">Wine</div>
-                            <div class="category-pct" id="pct-wine">40%</div>
-                        </div>
-                        <div class="category-toggle active" id="cat-spirits" onclick="toggleCategory('spirits')">
-                            <div class="category-icon">🥃</div>
-                            <div class="category-name">Spirits</div>
-                            <div class="category-pct" id="pct-spirits">20%</div>
-                        </div>
-                        <div class="category-toggle active" id="cat-nonalc" onclick="toggleCategory('nonalc')">
-                            <div class="category-icon">🥤</div>
-                            <div class="category-name">Non-Alc</div>
-                            <div class="category-pct" id="pct-nonalc">10%</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <button class="btn btn-primary" onclick="calculate()">Recalculate</button>
-            </div>
-            
-            <div class="results-panel">
-                <div class="result-card">
-                    <div class="result-title">Total Drinks Needed</div>
-                    <div class="result-value" id="totalDrinks">0</div>
-                    <div class="result-sub">Based on industry standard consumption rates</div>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <div class="result-card" style="border-left-color: #f59e0b;">
-                        <div class="result-title">Drinks Per Person</div>
-                        <div class="result-value" id="drinksPerPerson">0</div>
-                    </div>
-                    <div class="result-card" style="border-left-color: #10b981;">
-                        <div class="result-title">First Hour</div>
-                        <div class="result-value" id="firstHour">0</div>
-                        <div class="result-sub">2 drinks/guest</div>
-                    </div>
-                </div>
-                
-                <h3 style="margin: 1.5rem 0 1rem; color: var(--primary);">Detailed Breakdown</h3>
-                
-                <table class="breakdown-table">
-                    <thead>
-                        <tr>
-                            <th>Beverage Type</th>
-                            <th>Servings</th>
-                            <th>Container Size</th>
-                            <th>Units to Buy</th>
-                        </tr>
-                    </thead>
-                    <tbody id="breakdownBody"></tbody>
-                </table>
-                
-                <div class="ice-warning">
-                    <strong>❄️ Ice Requirements:</strong> Plan for <span id="iceAmount">0</span> lbs of ice (1.5 lbs per guest) plus 20% buffer for cooling.
-                </div>
-            </div>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo">Whisper Workshop</div>
+            <div style="font-family: 'Cormorant Garamond', serif; font-size: 1.75em; color: #8b7355; margin: 15px 0; font-weight: 500; letter-spacing: 0.05em;">Bar Calculator</div>
+            <div class="splash-tagline">Professional Event Planning Suite</div>
         </div>
-        
-        <div class="data-controls">
-            <button class="btn btn-secondary" onclick="window.print()">🖨️ Print List</button>
-            <button class="btn btn-secondary" onclick="exportCalc()">📥 Save Calculation</button>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <!-- Navigation Header -->
+        <nav class="nav-header">
+            <div class="nav-container">
+                <a href="https://whisperworkshop.com/nav.html" class="nav-brand">Bar Calculator</a>
+                <a href="https://whisperworkshop.com/nav.html" class="nav-link">Return to Atelier</a>
+            </div>
+        </nav>
+
+        <div class="container">
+            <header>
+                <h1 style="font-family: 'Cormorant Garamond', serif; font-size: 2.5em; font-weight: 500; color: #3d3d3d; margin-bottom: 10px;">Bar Calculator</h1>
+                <p style="font-size: 0.95em; color: #666; letter-spacing: 0.05em;">Beverage quantities & costs for your event</p>
+            </header>
+
+            <div class="calculator-grid">
+                <div class="input-panel">
+                    <div class="guest-sync" id="guestSync" style="display: none;">
+                        <span>✓</span>
+                        <span>Synced with Guest List: <strong id="syncedCount">0</strong> confirmed guests</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Number of Guests</label>
+                        <input type="number" id="guestCount" value="100" min="1" onchange="calculate()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Event Duration (hours)</label>
+                        <input type="number" id="duration" value="5" min="1" max="12" onchange="calculate()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Drinking Percentage</label>
+                        <div class="slider-group">
+                            <div class="slider-label">
+                                <span>Light (50%)</span>
+                                <span id="drinkPctDisplay">75%</span>
+                                <span>Heavy (100%)</span>
+                            </div>
+                            <input type="range" id="drinkingPct" min="50" max="100" value="75" oninput="updateSlider(this.value); calculate()">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Bar Type</label>
+                        <select id="barType" onchange="calculate()">
+                            <option value="full">Full Open Bar (Beer, Wine, Spirits)</option>
+                            <option value="beerwine">Beer & Wine Only</option>
+                            <option value="beer">Beer Only</option>
+                            <option value="wine">Wine Only</option>
+                            <option value="signature">Signature Cocktails + Beer/Wine</option>
+                            <option value="premium">Premium Top-Shelf</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Drink Distribution</label>
+                        <div class="drink-categories">
+                            <div class="category-toggle active" id="cat-beer" onclick="toggleCategory('beer')">
+                                <div class="category-icon">🍺</div>
+                                <div class="category-name">Beer</div>
+                                <div class="category-pct" id="pct-beer">30%</div>
+                            </div>
+                            <div class="category-toggle active" id="cat-wine" onclick="toggleCategory('wine')">
+                                <div class="category-icon">🍷</div>
+                                <div class="category-name">Wine</div>
+                                <div class="category-pct" id="pct-wine">40%</div>
+                            </div>
+                            <div class="category-toggle active" id="cat-spirits" onclick="toggleCategory('spirits')">
+                                <div class="category-icon">🥃</div>
+                                <div class="category-name">Spirits</div>
+                                <div class="category-pct" id="pct-spirits">20%</div>
+                            </div>
+                            <div class="category-toggle active" id="cat-nonalc" onclick="toggleCategory('nonalc')">
+                                <div class="category-icon">🥤</div>
+                                <div class="category-name">Non-Alc</div>
+                                <div class="category-pct" id="pct-nonalc">10%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cost Estimation Section -->
+                    <div class="cost-section">
+                        <label>Pricing Estimates (per unit)</label>
+                        <div class="cost-grid">
+                            <div class="cost-input-group">
+                                <label>Beer (case of 24)</label>
+                                <input type="number" id="beerCost" placeholder="35" value="35" min="0" step="0.01" onchange="calculate()">
+                            </div>
+                            <div class="cost-input-group">
+                                <label>Wine (bottle)</label>
+                                <input type="number" id="wineCost" placeholder="15" value="15" min="0" step="0.01" onchange="calculate()">
+                            </div>
+                            <div class="cost-input-group">
+                                <label>Spirits (750ml)</label>
+                                <input type="number" id="spiritsCost" placeholder="25" value="25" min="0" step="0.01" onchange="calculate()">
+                            </div>
+                            <div class="cost-input-group">
+                                <label>Non-Alc (liter)</label>
+                                <input type="number" id="nonalcCost" placeholder="2" value="2" min="0" step="0.01" onchange="calculate()">
+                            </div>
+                            <div class="cost-input-group">
+                                <label>Mixers (liter)</label>
+                                <input type="number" id="mixerCost" placeholder="1.5" value="1.5" min="0" step="0.01" onchange="calculate()">
+                            </div>
+                            <div class="cost-input-group">
+                                <label>Ice (per lb)</label>
+                                <input type="number" id="iceCost" placeholder="0.5" value="0.5" min="0" step="0.01" onchange="calculate()">
+                            </div>
+                        </div>
+                        <div class="sync-status" id="costSync">Enter prices to see cost estimates</div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="calculate()" style="margin-top: 1.5rem;">Recalculate</button>
+                </div>
+
+                <div class="results-panel">
+                    <div class="result-card">
+                        <div class="result-title">Total Drinks Needed</div>
+                        <div class="result-value" id="totalDrinks">0</div>
+                        <div class="result-sub">Based on industry standard consumption rates</div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="result-card" style="border-left-color: var(--accent);">
+                            <div class="result-title">Drinks Per Person</div>
+                            <div class="result-value" id="drinksPerPerson">0</div>
+                        </div>
+                        <div class="result-card" style="border-left-color: var(--success);">
+                            <div class="result-title">First Hour</div>
+                            <div class="result-value" id="firstHour">0</div>
+                            <div class="result-sub">2 drinks/guest</div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 1.5rem 0 1rem; font-family: 'Cormorant Garamond', serif; color: var(--accent); font-weight: 600;">Detailed Breakdown</h3>
+
+                    <table class="breakdown-table">
+                        <thead>
+                            <tr>
+                                <th>Beverage Type</th>
+                                <th>Servings</th>
+                                <th>Container</th>
+                                <th>Units to Buy</th>
+                            </tr>
+                        </thead>
+                        <tbody id="breakdownBody"></tbody>
+                    </table>
+
+                    <!-- Total Cost Display -->
+                    <div class="total-cost-card" id="totalCostCard" style="display: none;">
+                        <div class="total-cost-label">Estimated Total Cost</div>
+                        <div class="total-cost-value" id="totalCostValue">$0</div>
+                    </div>
+
+                    <div class="ice-warning">
+                        <strong>❄️ Ice Requirements:</strong> Plan for <span id="iceAmount">0</span> lbs of ice (1.5 lbs per guest) plus 20% buffer for cooling.
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-controls">
+                <div class="io-controls">
+                    <button class="btn btn-secondary" onclick="window.print()">🖨️ Print List</button>
+                    <button class="btn btn-secondary" onclick="exportCalc()">📥 Export JSON</button>
+                    <div class="file-input-wrapper">
+                        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import JSON</button>
+                        <input type="file" id="importFile" accept=".json" onchange="importCalc(event)">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
+        // Storage key for cross-tool integration
+        const STORAGE_KEY = 'event_bar_v1';
+
         let categories = {
             beer: true,
             wine: true,
             spirits: true,
             nonalc: true
         };
-        
+
         let percentages = {
             beer: 30,
             wine: 40,
             spirits: 20,
             nonalc: 10
         };
-        
+
+        let currentCalculation = null;
+
+        // Splash screen initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            const splash = document.getElementById('splash-screen');
+            const mainContent = document.getElementById('main-content');
+
+            setTimeout(function() {
+                splash.classList.add('fade-out');
+                mainContent.classList.add('visible');
+
+                setTimeout(function() {
+                    splash.style.display = 'none';
+                }, 800);
+            }, 1500);
+
+            init();
+        });
+
         function init() {
-            // Try to sync with guest list
-            const stored = localStorage.getItem('event_guests_v1');
-            if (stored) {
-                const guests = JSON.parse(stored);
-                const confirmed = guests.filter(g => g.rsvp === 'confirmed').length;
-                if (confirmed > 0) {
-                    document.getElementById('guestCount').value = confirmed;
-                    document.getElementById('syncedCount').textContent = confirmed;
-                    document.getElementById('guestSync').style.display = 'flex';
+            // Try to sync with guest list from Guest List tool
+            const storedGuests = localStorage.getItem('event_guests_v1');
+            if (storedGuests) {
+                try {
+                    const guests = JSON.parse(storedGuests);
+                    const confirmed = guests.filter(g => g.rsvp === 'confirmed').length;
+                    if (confirmed > 0) {
+                        document.getElementById('guestCount').value = confirmed;
+                        document.getElementById('syncedCount').textContent = confirmed;
+                        document.getElementById('guestSync').style.display = 'flex';
+                    }
+                } catch(e) {
+                    console.log('Guest sync error:', e);
                 }
             }
+
+            // Try to load saved bar calculation
+            const savedCalc = localStorage.getItem(STORAGE_KEY);
+            if (savedCalc) {
+                try {
+                    const data = JSON.parse(savedCalc);
+                    if (data.inputs) {
+                        document.getElementById('guestCount').value = data.inputs.guests || 100;
+                        document.getElementById('duration').value = data.inputs.duration || 5;
+                        document.getElementById('drinkingPct').value = data.inputs.drinkingPct || 75;
+                        document.getElementById('barType').value = data.inputs.barType || 'full';
+
+                        // Restore cost inputs if present
+                        if (data.inputs.costs) {
+                            document.getElementById('beerCost').value = data.inputs.costs.beer || 35;
+                            document.getElementById('wineCost').value = data.inputs.costs.wine || 15;
+                            document.getElementById('spiritsCost').value = data.inputs.costs.spirits || 25;
+                            document.getElementById('nonalcCost').value = data.inputs.costs.nonalc || 2;
+                            document.getElementById('mixerCost').value = data.inputs.costs.mixer || 1.5;
+                            document.getElementById('iceCost').value = data.inputs.costs.ice || 0.5;
+                        }
+
+                        updateSlider(data.inputs.drinkingPct || 75);
+                    }
+                } catch(e) {
+                    console.log('Bar data load error:', e);
+                }
+            }
+
             calculate();
         }
-        
+
         function updateSlider(val) {
             document.getElementById('drinkPctDisplay').textContent = val + '%';
         }
-        
+
         function toggleCategory(cat) {
             categories[cat] = !categories[cat];
             document.getElementById(`cat-${cat}`).classList.toggle('active', categories[cat]);
-            
+
             // Recalculate percentages
             const activeCount = Object.values(categories).filter(x => x).length;
             const basePct = Math.floor(100 / activeCount);
             const remainder = 100 - (basePct * activeCount);
-            
+
             Object.keys(categories).forEach((key, idx) => {
                 if (categories[key]) {
                     percentages[key] = basePct + (idx === 0 ? remainder : 0);
@@ -387,25 +1036,35 @@
                     percentages[key] = 0;
                 }
             });
-            
+
             calculate();
         }
-        
+
         function calculate() {
             const guests = parseInt(document.getElementById('guestCount').value) || 0;
             const hours = parseInt(document.getElementById('duration').value) || 1;
             const drinkingPct = parseInt(document.getElementById('drinkingPct').value) / 100;
             const barType = document.getElementById('barType').value;
-            
+
+            // Get cost inputs
+            const costs = {
+                beer: parseFloat(document.getElementById('beerCost').value) || 0,
+                wine: parseFloat(document.getElementById('wineCost').value) || 0,
+                spirits: parseFloat(document.getElementById('spiritsCost').value) || 0,
+                nonalc: parseFloat(document.getElementById('nonalcCost').value) || 0,
+                mixer: parseFloat(document.getElementById('mixerCost').value) || 0,
+                ice: parseFloat(document.getElementById('iceCost').value) || 0
+            };
+
             // Industry standard: 2 drinks first hour, 1 per hour after
             const firstHourDrinks = guests * 2 * drinkingPct;
             const subsequentDrinks = guests * (hours - 1) * 1 * drinkingPct;
             const totalDrinks = Math.ceil(firstHourDrinks + subsequentDrinks);
-            
+
             document.getElementById('totalDrinks').textContent = totalDrinks.toLocaleString();
-            document.getElementById('drinksPerPerson').textContent = (totalDrinks / guests).toFixed(1);
+            document.getElementById('drinksPerPerson').textContent = guests > 0 ? (totalDrinks / guests).toFixed(1) : '0';
             document.getElementById('firstHour').textContent = Math.ceil(firstHourDrinks);
-            
+
             // Adjust for bar type
             let typeMultipliers = { beer: 1, wine: 1, spirits: 1, nonalc: 1 };
             if (barType === 'beerwine') {
@@ -421,67 +1080,88 @@
                 percentages.wine = 90;
                 percentages.nonalc = 10;
             } else if (barType === 'signature') {
-                typeMultipliers.spirits = 0.5; // Less spirits, more signature (calculated as wine)
+                typeMultipliers.spirits = 0.5;
             }
-            
-            // Calculate breakdown
+
+            // Calculate breakdown and costs
             const breakdown = [];
-            
+            let totalCost = 0;
+
             if (categories.beer && typeMultipliers.beer > 0) {
                 const beerServings = Math.ceil(totalDrinks * (percentages.beer / 100));
-                const beerCases = Math.ceil(beerServings / 24); // 24 bottles per case
+                const beerCases = Math.ceil(beerServings / 24);
+                const beerTotalCost = beerCases * costs.beer;
+                totalCost += beerTotalCost;
                 breakdown.push({
                     type: 'Beer',
                     servings: beerServings,
                     container: 'bottles/cans',
-                    units: beerCases + ' cases (24pk)'
+                    units: beerCases + ' cases (24pk)',
+                    cost: beerTotalCost
                 });
             }
-            
+
             if (categories.wine && typeMultipliers.wine > 0) {
                 const wineServings = Math.ceil(totalDrinks * (percentages.wine / 100));
-                const wineBottles = Math.ceil(wineServings / 5); // 5 glasses per bottle
+                const wineBottles = Math.ceil(wineServings / 5);
+                const wineTotalCost = wineBottles * costs.wine;
+                totalCost += wineTotalCost;
                 breakdown.push({
                     type: 'Wine',
                     servings: wineServings,
                     container: 'glasses',
-                    units: wineBottles + ' bottles'
+                    units: wineBottles + ' bottles',
+                    cost: wineTotalCost
                 });
             }
-            
+
             if (categories.spirits && typeMultipliers.spirits > 0) {
                 const spiritsServings = Math.ceil(totalDrinks * (percentages.spirits / 100));
-                const spiritBottles = Math.ceil(spiritsServings / 17); // 17 drinks per 750ml
+                const spiritBottles = Math.ceil(spiritsServings / 17);
+                const spiritsTotalCost = spiritBottles * costs.spirits;
+                totalCost += spiritsTotalCost;
                 breakdown.push({
                     type: 'Spirits',
                     servings: spiritsServings,
                     container: 'mixed drinks',
-                    units: spiritBottles + ' bottles (750ml)'
+                    units: spiritBottles + ' bottles (750ml)',
+                    cost: spiritsTotalCost
                 });
             }
-            
+
             if (categories.nonalc) {
-                const nonAlcServings = Math.ceil(totalDrinks * (percentages.nonalc / 100)) + (guests * 0.5); // Extra for non-drinkers
-                const sodaLiters = Math.ceil(nonAlcServings * 0.5); // 500ml per serving
+                const nonAlcServings = Math.ceil(totalDrinks * (percentages.nonalc / 100)) + (guests * 0.5);
+                const sodaLiters = Math.ceil(nonAlcServings * 0.5);
+                const nonalcTotalCost = sodaLiters * costs.nonalc;
+                totalCost += nonalcTotalCost;
                 breakdown.push({
                     type: 'Non-Alcoholic',
                     servings: nonAlcServings,
                     container: 'servings',
-                    units: sodaLiters + ' liters soda/juice'
+                    units: sodaLiters + ' liters soda/juice',
+                    cost: nonalcTotalCost
                 });
             }
-            
+
             // Add mixers for spirits
             if (categories.spirits && typeMultipliers.spirits > 0) {
-                const mixerLiters = Math.ceil(totalDrinks * 0.1); // 100ml mixer per drink
+                const mixerLiters = Math.ceil(totalDrinks * 0.1);
+                const mixerTotalCost = mixerLiters * costs.mixer;
+                totalCost += mixerTotalCost;
                 breakdown.push({
                     type: 'Mixers',
                     servings: '-',
                     container: '-',
-                    units: mixerLiters + ' liters (tonic, soda, juice)'
+                    units: mixerLiters + ' liters (tonic, soda, juice)',
+                    cost: mixerTotalCost
                 });
             }
-            
+
+            // Ice calculation and cost
+            const iceLbs = Math.ceil(guests * 1.5 * 1.2);
+            const iceTotalCost = iceLbs * costs.ice;
+            totalCost += iceTotalCost;
+
             document.getElementById('breakdownBody').innerHTML = breakdown.map(b => `
                 <tr>
                     <td><strong>${b.type}</strong></td>
@@ -490,36 +1170,131 @@
                     <td>${b.units}</td>
                 </tr>
             `).join('');
-            
-            // Ice calculation
-            const iceLbs = Math.ceil(guests * 1.5 * 1.2); // 1.5 lbs per guest, 20% buffer
+
             document.getElementById('iceAmount').textContent = iceLbs;
-        }
-        
-        function exportCalc() {
-            const data = {
+
+            // Update cost display
+            const hasCosts = Object.values(costs).some(c => c > 0);
+            if (hasCosts) {
+                document.getElementById('totalCostCard').style.display = 'block';
+                document.getElementById('totalCostValue').textContent = '$' + totalCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                document.getElementById('costSync').textContent = 'Cost estimates updated based on current pricing';
+            } else {
+                document.getElementById('totalCostCard').style.display = 'none';
+                document.getElementById('costSync').textContent = 'Enter prices above to see cost estimates';
+            }
+
+            // Save to localStorage for cross-tool integration
+            currentCalculation = {
                 timestamp: new Date().toISOString(),
                 inputs: {
-                    guests: document.getElementById('guestCount').value,
-                    duration: document.getElementById('duration').value,
-                    drinkingPct: document.getElementById('drinkingPct').value,
-                    barType: document.getElementById('barType').value
+                    guests: guests,
+                    duration: hours,
+                    drinkingPct: (drinkingPct * 100).toString(),
+                    barType: barType,
+                    costs: costs,
+                    categories: categories,
+                    percentages: percentages
                 },
                 results: {
-                    totalDrinks: document.getElementById('totalDrinks').textContent,
-                    iceLbs: document.getElementById('iceAmount').textContent
+                    totalDrinks: totalDrinks,
+                    iceLbs: iceLbs,
+                    totalCost: totalCost,
+                    breakdown: breakdown
                 }
             };
-            
-            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(currentCalculation));
+        }
+
+        function exportCalc() {
+            if (!currentCalculation) {
+                calculate();
+            }
+
+            const blob = new Blob([JSON.stringify(currentCalculation, null, 2)], {type: 'application/json'});
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = `bar_calc_${new Date().toISOString().split('T')[0]}.json`;
             a.click();
+
+            document.getElementById('costSync').textContent = 'Calculation exported successfully';
+            setTimeout(() => {
+                document.getElementById('costSync').textContent = hasCosts() ? 'Cost estimates updated' : 'Enter prices to see estimates';
+            }, 2000);
         }
-        
-        init();
+
+        function importCalc(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+
+                    if (data.inputs) {
+                        document.getElementById('guestCount').value = data.inputs.guests || 100;
+                        document.getElementById('duration').value = data.inputs.duration || 5;
+                        document.getElementById('drinkingPct').value = data.inputs.drinkingPct || 75;
+                        document.getElementById('barType').value = data.inputs.barType || 'full';
+
+                        if (data.inputs.costs) {
+                            document.getElementById('beerCost').value = data.inputs.costs.beer || 0;
+                            document.getElementById('wineCost').value = data.inputs.costs.wine || 0;
+                            document.getElementById('spiritsCost').value = data.inputs.costs.spirits || 0;
+                            document.getElementById('nonalcCost').value = data.inputs.costs.nonalc || 0;
+                            document.getElementById('mixerCost').value = data.inputs.costs.mixer || 0;
+                            document.getElementById('iceCost').value = data.inputs.costs.ice || 0;
+                        }
+
+                        if (data.inputs.categories) {
+                            categories = data.inputs.categories;
+                            Object.keys(categories).forEach(key => {
+                                document.getElementById(`cat-${key}`).classList.toggle('active', categories[key]);
+                            });
+                        }
+
+                        if (data.inputs.percentages) {
+                            percentages = data.inputs.percentages;
+                            Object.keys(percentages).forEach(key => {
+                                if (document.getElementById(`pct-${key}`)) {
+                                    document.getElementById(`pct-${key}`).textContent = percentages[key] + '%';
+                                }
+                            });
+                        }
+
+                        updateSlider(data.inputs.drinkingPct || 75);
+                        calculate();
+
+                        document.getElementById('costSync').textContent = 'Calculation imported successfully';
+                        setTimeout(() => {
+                            document.getElementById('costSync').textContent = hasCosts() ? 'Cost estimates updated' : 'Enter prices to see estimates';
+                        }, 2000);
+                    }
+                } catch (err) {
+                    alert('Error importing file. Please ensure it is a valid JSON file from Bar Calculator.');
+                    console.error('Import error:', err);
+                }
+            };
+            reader.readAsText(file);
+
+            // Reset file input
+            event.target.value = '';
+        }
+
+        function hasCosts() {
+            const costs = {
+                beer: parseFloat(document.getElementById('beerCost').value) || 0,
+                wine: parseFloat(document.getElementById('wineCost').value) || 0,
+                spirits: parseFloat(document.getElementById('spiritsCost').value) || 0,
+                nonalc: parseFloat(document.getElementById('nonalcCost').value) || 0,
+                mixer: parseFloat(document.getElementById('mixerCost').value) || 0,
+                ice: parseFloat(document.getElementById('iceCost').value) || 0
+            };
+            return Object.values(costs).some(c => c > 0);
+        }
     </script>
 </body>
 </html>
