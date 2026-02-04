@@ -529,7 +529,246 @@
             }
         }
 
-        /* ==================== MOBILE UX FIXES ==================== */
+        
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            /* Fix viewport zoom issues */
+            html, body {
+                width: 100%;
+                overflow-x: hidden;
+                -webkit-text-size-adjust: 100%;
+            }
+
+            /* Ensure all media respects viewport */
+            img, video, iframe, table {
+                max-width: 100%;
+                height: auto;
+            }
+
+            /* Prevent zoom on input focus */
+            input, select, button {
+                font-size: 16px !important;
+            }
+
+            /* Better touch targets */
+            .category-toggle {
+                min-height: 80px;
+                padding: 1.25rem;
+            }
+
+            .category-toggle:active {
+                transform: scale(0.98);
+            }
+
+            /* Larger slider thumb */
+            input[type="range"]::-webkit-slider-thumb {
+                width: 28px;
+                height: 28px;
+            }
+
+            input[type="range"] {
+                height: 8px;
+            }
+
+            /* Stacked cost grid */
+            .cost-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            /* Better button sizing */
+            .btn {
+                padding: 1rem 1.5rem;
+                min-height: 48px;
+            }
+
+            /* Adjusted header */
+            header {
+                padding: 2rem 1rem;
+            }
+
+            header h1 {
+                font-size: 1.75rem;
+            }
+
+            /* Better table scrolling */
+            .breakdown-table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* Result cards stack */
+            .results-panel > div[style*="grid-template-columns"] {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* Input panel spacing */
+            .input-panel, .results-panel {
+                padding: 1.25rem;
+            }
+
+            /* Form group spacing */
+            .form-group {
+                margin-bottom: 1.25rem;
+            }
+
+            /* Drink categories */
+            .drink-categories {
+                gap: 0.5rem;
+            }
+
+            /* Cost section */
+            .cost-section {
+                margin-top: 1.25rem;
+                padding-top: 1.25rem;
+            }
+
+            /* Total cost card */
+            .total-cost-value {
+                font-size: 2rem;
+            }
+
+            /* Data controls */
+            .data-controls {
+                padding: 1rem;
+            }
+
+            .io-controls {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .io-controls .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            /* File input wrapper full width */
+            .file-input-wrapper {
+                width: 100%;
+            }
+
+            /* Better nav on mobile */
+            .nav-header {
+                padding: 15px 0;
+            }
+
+            .nav-brand {
+                font-size: 1.25rem;
+            }
+
+            .nav-link {
+                font-size: 0.8rem;
+            }
+
+            /* Prevent horizontal overflow */
+            body {
+                overflow-x: hidden;
+            }
+
+            /* Touch feedback for buttons */
+            .btn-primary:active {
+                transform: scale(0.98);
+            }
+
+            .btn-secondary:active {
+                transform: scale(0.98);
+            }
+
+            /* Guest sync banner */
+            .guest-sync {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.25rem;
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 380px) {
+            .container {
+                padding: 0.75rem;
+            }
+
+            .splash-logo {
+                font-size: 2rem;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            .result-value {
+                font-size: 1.75rem;
+            }
+
+            .category-toggle {
+                padding: 1rem;
+                min-height: 70px;
+            }
+
+            .category-icon {
+                font-size: 1.25rem;
+            }
+
+            .category-name {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Landscape mode optimization */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .splash-content {
+                transform: scale(0.8);
+            }
+
+            header {
+                padding: 1.5rem 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .input-panel, .results-panel {
+                padding: 1rem;
+            }
+        }
+
+        /* Touch device optimizations */
+        @media (pointer: coarse) {
+            /* Larger touch targets */
+            input[type="range"]::-webkit-slider-thumb {
+                width: 32px;
+                height: 32px;
+            }
+
+            /* Remove hover effects on touch */
+            .category-toggle:hover {
+                transform: none;
+            }
+
+            .tool-card:hover {
+                transform: none;
+            }
+
+            /* Add active states */
+            .category-toggle:active {
+                background: rgba(139, 115, 85, 0.15);
+            }
+        }
+
+        /* Safe area for notched phones */
+        @supports (padding: max(0px)) {
+            .container {
+                padding-left: max(1rem, env(safe-area-inset-left));
+                padding-right: max(1rem, env(safe-area-inset-right));
+            }
+
+            .nav-container {
+                padding-left: max(1rem, env(safe-area-inset-left));
+                padding-right: max(1rem, env(safe-area-inset-right));
+            }
+        }
+
+        /* ==================== MOBILE UX FIXES - ADDED ONLY THESE ==================== */
         
         /* 1. DRINKING PERCENTAGE - Mobile Stacked Layout */
         @media (max-width: 640px) {
@@ -745,201 +984,6 @@
 
             .sticky-recalculate-btn:active {
                 transform: scale(0.98);
-            }
-        }
-
-        /* Preserve existing mobile optimizations */
-        @media (max-width: 768px) {
-            html, body {
-                width: 100%;
-                overflow-x: hidden;
-                -webkit-text-size-adjust: 100%;
-            }
-
-            img, video, iframe, table {
-                max-width: 100%;
-                height: auto;
-            }
-
-            input, select, button {
-                font-size: 16px !important;
-            }
-
-            .category-toggle {
-                min-height: 80px;
-                padding: 1.25rem;
-            }
-
-            .category-toggle:active {
-                transform: scale(0.98);
-            }
-
-            input[type="range"]::-webkit-slider-thumb {
-                width: 28px;
-                height: 28px;
-            }
-
-            input[type="range"] {
-                height: 8px;
-            }
-
-            .btn {
-                padding: 1rem 1.5rem;
-                min-height: 48px;
-            }
-
-            header {
-                padding: 2rem 1rem;
-            }
-
-            header h1 {
-                font-size: 1.75rem;
-            }
-
-            .results-panel > div[style*="grid-template-columns"] {
-                grid-template-columns: 1fr !important;
-            }
-
-            .input-panel, .results-panel {
-                padding: 1.25rem;
-            }
-
-            .form-group {
-                margin-bottom: 1.25rem;
-            }
-
-            .drink-categories {
-                gap: 0.5rem;
-            }
-
-            .cost-section {
-                margin-top: 1.25rem;
-                padding-top: 1.25rem;
-            }
-
-            .total-cost-value {
-                font-size: 2rem;
-            }
-
-            .data-controls {
-                padding: 1rem;
-            }
-
-            .io-controls {
-                flex-direction: column;
-                width: 100%;
-            }
-
-            .io-controls .btn {
-                width: 100%;
-                text-align: center;
-            }
-
-            .file-input-wrapper {
-                width: 100%;
-            }
-
-            .nav-header {
-                padding: 15px 0;
-            }
-
-            .nav-brand {
-                font-size: 1.25rem;
-            }
-
-            .nav-link {
-                font-size: 0.8rem;
-            }
-
-            body {
-                overflow-x: hidden;
-            }
-
-            .btn-primary:active {
-                transform: scale(0.98);
-            }
-
-            .btn-secondary:active {
-                transform: scale(0.98);
-            }
-
-            .guest-sync {
-                flex-direction: column;
-                text-align: center;
-                gap: 0.25rem;
-            }
-        }
-
-        @media (max-width: 380px) {
-            .container {
-                padding: 0.75rem;
-            }
-
-            .splash-logo {
-                font-size: 2rem;
-            }
-
-            header h1 {
-                font-size: 1.5rem;
-            }
-
-            .result-value {
-                font-size: 1.75rem;
-            }
-
-            .category-toggle {
-                padding: 1rem;
-                min-height: 70px;
-            }
-
-            .category-icon {
-                font-size: 1.25rem;
-            }
-
-            .category-name {
-                font-size: 0.8rem;
-            }
-        }
-
-        @media (max-height: 500px) and (orientation: landscape) {
-            .splash-content {
-                transform: scale(0.8);
-            }
-
-            header {
-                padding: 1.5rem 1rem;
-                margin-bottom: 1.5rem;
-            }
-
-            .input-panel, .results-panel {
-                padding: 1rem;
-            }
-        }
-
-        @media (pointer: coarse) {
-            input[type="range"]::-webkit-slider-thumb {
-                width: 32px;
-                height: 32px;
-            }
-
-            .category-toggle:hover {
-                transform: none;
-            }
-
-            .category-toggle:active {
-                background: rgba(139, 115, 85, 0.15);
-            }
-        }
-
-        @supports (padding: max(0px)) {
-            .container {
-                padding-left: max(1rem, env(safe-area-inset-left));
-                padding-right: max(1rem, env(safe-area-inset-right));
-            }
-
-            .nav-container {
-                padding-left: max(1rem, env(safe-area-inset-left));
-                padding-right: max(1rem, env(safe-area-inset-right));
             }
         }
 
