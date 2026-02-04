@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floor Plan Designer - Event Planner Suite</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow: hidden;
+        }
+        
+        .app-container {
+            display: grid;
+            grid-template-columns: 280px 1fr 280px;
+            height: 100vh;
+        }
+        
+        @media (max-width: 1200px) {
+            .app-container { grid-template-columns: 250px 1fr; }
+            .properties-panel { display: none; position: fixed; right: 0; top: 0; height: 100vh; z-index: 100; box-shadow: -4px 0 12px rgba(0,0,0,0.1); }
+            .properties-panel.active { display: block; }
+        }
+        
+        .toolbar {
+            background: var(--card);
+            border-right: 1px solid var(--border);
+            padding: 1rem;
+            overflow-y: auto;
+        }
+        
+        .canvas-container {
+            background: #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #canvas {
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            cursor: crosshair;
+        }
+        
+        .properties-panel {
+            background: var(--card);
+            border-left: 1px solid var(--border);
+            padding: 1rem;
+            overflow-y: auto;
+        }
+        
+        .tool-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .tool-section:last-child { border-bottom: none; }
+        
+        h3 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            margin-bottom: 0.75rem;
+        }
+        
+        .shape-btn {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: #f1f5f9;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.2s;
+        }
+        
+        .shape-btn:hover { background: #e2e8f0; }
+        .shape-btn.active { border-color: var(--primary); background: #e0e7ff; }
+        
+        .shape-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 4px;
+        }
+        
+        .room-dims {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.875rem;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 0.5rem;
+        }
+        
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: #f1f5f9; color: #475569; border: 2px solid var(--border); }
+        .btn-danger { background: #fee2e2; color: var(--danger); }
+        .btn-sm { padding: 0.5rem; font-size: 0.75rem; }
+        
+        .zoom-controls {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            background: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        
+        .zoom-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f1f5f9;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        
+        .info-overlay {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(255,255,255,0.95);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            font-size: 0.875rem;
+        }
+        
+        .prop-group { margin-bottom: 1rem; }
+        .prop-group label { display: block; font-size: 0.75rem; color: #64748b; margin-bottom: 0.25rem; }
+        
+        .layer-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: #f1f5f9;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .layer-visibility {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .color-picker {
+            display: flex;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+        }
+        
+        .color-swatch {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .color-swatch:hover { transform: scale(1.1); }
+        .color-swatch.active { border-color: var(--text); }
+        
+        .measurement-mode {
+            background: #fef3c7;
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        .measurement-mode.active { display: block; }
+        
+        header {
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        header h1 { font-size: 1.25rem; }
+        
+        @media print {
+            .toolbar, .properties-panel, .zoom-controls { display: none; }
+            .canvas-container { width: 100vw; height: 100vh; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="toolbar">
+            <header>
+                <h1>📐 Floor Plan Designer</h1>
+                <p style="font-size: 0.875rem; opacity: 0.9;">2D Room Layout Tool</p>
+            </header>
+            
+            <div class="tool-section" style="margin-top: 1rem;">
+                <h3>Room Setup</h3>
+                <div class="prop-group">
+                    <label>Room Width (ft)</label>
+                    <input type="number" id="roomWidth" value="60" min="10" max="200" onchange="updateRoom()">
+                </div>
+                <div class="prop-group">
+                    <label>Room Length (ft)</label>
+                    <input type="number" id="roomLength" value="40" min="10" max="200" onchange="updateRoom()">
+                </div>
+                <button class="btn btn-secondary" onclick="resetView()">Reset View</button>
+            </div>
+            
+            <div class="tool-section">
+                <h3>Furniture & Objects</h3>
+                <button class="shape-btn active" onclick="setTool('select')" id="tool-select">
+                    <span class="shape-icon" style="background: #64748b;">↖</span>
+                    <span>Select/Move</span>
+                </button>
+                <button class="shape-btn" onclick="setTool('table-round')" id="tool-table-round">
+                    <span class="shape-icon" style="background: #8b5cf6; border-radius: 50%;">●</span>
+                    <span>Round Table (60")</span>
+                </button>
+                <button class="shape-btn" onclick="setTool('table-rect')" id="tool-table-rect">
+                    <span class="shape-icon" style="background: #ec4899;">▭</span>
+                    <span>Rectangular Table</span>
+                </button>
+                <button class="shape-btn" onclick="setTool('chair')" id="tool-chair">
+                    <span class="shape-icon" style="background: #f59e0b; clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);">🪑</span>
+                    <span>Chair</span>
+                </button>
+                <button class="shape-btn" onclick="setTool('stage')" id="tool-stage">
+                    <span class="shape-icon" style="background: #10b981;">▰</span>
+                    <span>Stage/Dance Floor</span>
+                </button>
+                <button class="shape-btn" onclick="setTool('bar')" id="tool-bar">
+                    <span class="shape-icon" style="background: #ef4444;">▂</span>
+                    <span>Bar</span>
+                </button>
+                <button class="shape-btn" onclick="setTool('wall')" id="tool-wall">
+                    <span class="shape-icon" style="background: #1e293b; height: 4px; margin: 14px 0;">—</span>
+                    <span>Wall/Divider</span>
+                </button>
+                <button class="shape-btn" onclick="setTool('measure')" id="tool-measure">
+                    <span class="shape-icon" style="background: #06b6d4;">📏</span>
+                    <span>Measure Tool</span>
+                </button>
+            </div>
+            
+            <div class="tool-section">
+                <h3>Load from Seating Chart</h3>
+                <button class="btn btn-primary" onclick="importFromSeating()">Import Tables</button>
+                <p style="font-size: 0.75rem; color: #64748b; margin-top: 0.5rem;">Imports tables from Seating Chart tool</p>
+            </div>
+            
+            <div class="tool-section">
+                <h3>Actions</h3>
+                <button class="btn btn-danger" onclick="deleteSelected()">Delete Selected</button>
+                <button class="btn btn-secondary" onclick="clearAll()">Clear All Objects</button>
+                <button class="btn btn-secondary" onclick="duplicateSelected()">Duplicate</button>
+            </div>
+            
+            <div class="tool-section">
+                <h3>Export</h3>
+                <button class="btn btn-primary" onclick="exportPlan()">Save Plan (JSON)</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importPlan(this)">
+                <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Load Plan</button>
+                <button class="btn btn-secondary" onclick="exportImage()">Export PNG</button>
+            </div>
+        </div>
+        
+        <div class="canvas-container">
+            <canvas id="canvas" width="1200" height="800"></canvas>
+            
+            <div class="info-overlay">
+                <div id="cursorPos">0, 0 ft</div>
+                <div id="selectionInfo" style="margin-top: 0.5rem; color: #64748b; font-size: 0.75rem;">No selection</div>
+            </div>
+            
+            <div class="zoom-controls">
+                <button class="zoom-btn" onclick="zoom(-0.1)">-</button>
+                <span id="zoomDisplay" style="padding: 0 0.5rem;">100%</span>
+                <button class="zoom-btn" onclick="zoom(0.1)">+</button>
+                <button class="zoom-btn" onclick="resetZoom()" style="font-size: 0.75rem;">Fit</button>
+            </div>
+            
+            <div class="measurement-mode" id="measureMode">
+                <strong>Measurement Mode:</strong> Click and drag to measure distance
+            </div>
+        </div>
+        
+        <div class="properties-panel" id="propPanel">
+            <h3 style="margin-top: 0;">Properties</h3>
+            <div id="noSelection" style="color: #64748b; font-size: 0.875rem; padding: 2rem 0; text-align: center;">
+                Select an object to edit properties
+            </div>
+            
+            <div id="propEditor" style="display: none;">
+                <div class="prop-group">
+                    <label>Object Type</label>
+                    <input type="text" id="propType" readonly>
+                </div>
+                
+                <div class="prop-group">
+                    <label>Label</label>
+                    <input type="text" id="propLabel" onchange="updateObject()">
+                </div>
+                
+                <div class="prop-group">
+                    <label>Width (ft)</label>
+                    <input type="number" id="propWidth" step="0.5" onchange="updateObject()">
+                </div>
+                
+                <div class="prop-group">
+                    <label>Length (ft)</label>
+                    <input type="number" id="propLength" step="0.5" onchange="updateObject()">
+                </div>
+                
+                <div class="prop-group">
+                    <label>Rotation (°)</label>
+                    <input type="range" id="propRotation" min="0" max="360" step="15" oninput="updateObject()">
+                </div>
+                
+                <div class="prop-group">
+                    <label>Color</label>
+                    <div class="color-picker" id="colorPicker"></div>
+                </div>
+                
+                <div class="prop-group">
+                    <label>Position</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                        <input type="number" id="propX" step="0.5" onchange="updateObject()">
+                        <input type="number" id="propY" step="0.5" onchange="updateObject()">
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" onclick="bringToFront()">Bring to Front</button>
+                <button class="btn btn-secondary" onclick="sendToBack()">Send to Back</button>
+            </div>
+            
+            <div class="tool-section" style="margin-top: 2rem;">
+                <h3>Layers</h3>
+                <div id="layerList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'event_floorplan_v1';
+        const PIXELS_PER_FOOT = 10;
+        const COLORS = ['#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#06b6d4', '#6366f1', '#84cc16', '#1e293b'];
+        
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let room = { width: 60, length: 40 };
+        let objects = [];
+        let selectedId = null;
+        let currentTool = 'select';
+        let zoom = 1;
+        let offset = { x: 50, y: 50 };
+        let isDragging = false;
+        let dragStart = { x: 0, y: 0 };
+        let lastMouse = { x: 0, y: 0 };
+        let measureStart = null;
+        
+        function init() {
+            loadPlan();
+            setupCanvas();
+            setupColorPicker();
+            animate();
+        }
+        
+        function setupCanvas() {
+            // Handle high DPI
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            canvas.style.width = rect.width + 'px';
+            canvas.style.height = rect.height + 'px';
+            
+            canvas.addEventListener('mousedown', handleMouseDown);
+            canvas.addEventListener('mousemove', handleMouseMove);
+            canvas.addEventListener('mouseup', handleMouseUp);
+            canvas.addEventListener('wheel', handleWheel, { passive: false });
+            canvas.addEventListener('dblclick', handleDoubleClick);
+        }
+        
+        function setupColorPicker() {
+            const picker = document.getElementById('colorPicker');
+            picker.innerHTML = COLORS.map(c => 
+                `<div class="color-swatch" style="background: ${c}" onclick="setColor('${c}')"></div>`
+            ).join('');
+        }
+        
+        function updateRoom() {
+            room.width = parseFloat(document.getElementById('roomWidth').value) || 60;
+            room.length = parseFloat(document.getElementById('roomLength').value) || 40;
+            draw();
+        }
+        
+        function setTool(tool) {
+            currentTool = tool;
+            document.querySelectorAll('.shape-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tool-${tool}`)?.classList.add('active');
+            
+            document.getElementById('measureMode').classList.toggle('active', tool === 'measure');
+        }
+        
+        function screenToWorld(sx, sy) {
+            return {
+                x: (sx - offset.x) / (PIXELS_PER_FOOT * zoom),
+                y: (sy - offset.y) / (PIXELS_PER_FOOT * zoom)
+            };
+        }
+        
+        function worldToScreen(wx, wy) {
+            return {
+                x: wx * PIXELS_PER_FOOT * zoom + offset.x,
+                y: wy * PIXELS_PER_FOOT * zoom + offset.y
+            };
+        }
+        
+        function handleMouseDown(e) {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            const worldPos = screenToWorld(mouseX, mouseY);
+            
+            if (currentTool === 'measure') {
+                measureStart = worldPos;
+                isDragging = true;
+                return;
+            }
+            
+            if (currentTool === 'select') {
+                // Check for object selection (reverse order for top-first)
+                for (let i = objects.length - 1; i >= 0; i--) {
+                    const obj = objects[i];
+                    if (hitTest(worldPos.x, worldPos.y, obj)) {
+                        selectedId = obj.id;
+                        isDragging = true;
+                        dragStart = { x: worldPos.x - obj.x, y: worldPos.y - obj.y };
+                        updateProperties();
+                        draw();
+                        return;
+                    }
+                }
+                selectedId = null;
+                updateProperties();
+                
+                // Pan start
+                isDragging = true;
+                dragStart = { x: mouseX - offset.x, y: mouseY - offset.y };
+            } else {
+                // Create new object
+                createObject(currentTool, worldPos.x, worldPos.y);
+            }
+            
+            draw();
+        }
+        
+        function handleMouseMove(e) {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            const worldPos = screenToWorld(mouseX, mouseY);
+            
+            lastMouse = worldPos;
+            document.getElementById('cursorPos').textContent = 
+                `${worldPos.x.toFixed(1)}, ${worldPos.y.toFixed(1)} ft`;
+            
+            if (!isDragging) return;
+            
+            if (currentTool === 'measure') {
+                draw();
+                // Draw measurement line
+                const start = worldToScreen(measureStart.x, measureStart.y);
+                const end = worldToScreen(worldPos.x, worldPos.y);
+                
+                ctx.save();
+                ctx.strokeStyle = '#06b6d4';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(start.x, start.y);
+                ctx.lineTo(end.x, end.y);
+                ctx.stroke();
+                
+                const dist = Math.hypot(worldPos.x - measureStart.x, worldPos.y - measureStart.y);
+                ctx.fillStyle = '#06b6d4';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.fillText(`${dist.toFixed(1)} ft`, (start.x + end.x) / 2, (start.y + end.y) / 2 - 10);
+                ctx.restore();
+                return;
+            }
+            
+            if (currentTool === 'select' && selectedId) {
+                const obj = objects.find(o => o.id === selectedId);
+                if (obj) {
+                    obj.x = worldPos.x - dragStart.x;
+                    obj.y = worldPos.y - dragStart.y;
+                    updateProperties();
+                }
+            } else if (currentTool === 'select') {
+                offset.x = mouseX - dragStart.x;
+                offset.y = mouseY - dragStart.y;
+            }
+            
+            draw();
+        }
+        
+        function handleMouseUp(e) {
+            if (currentTool === 'measure' && measureStart) {
+                const rect = canvas.getBoundingClientRect();
+                const worldPos = screenToWorld(e.clientX - rect.left, e.clientY - rect.top);
+                const dist = Math.hypot(worldPos.x - measureStart.x, worldPos.y - measureStart.y);
+                alert(`Distance: ${dist.toFixed(2)} feet`);
+                measureStart = null;
+            }
+            isDragging = false;
+            savePlan();
+        }
+        
+        function handleWheel(e) {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? -0.1 : 0.1;
+            zoom = Math.max(0.5, Math.min(3, zoom + delta));
+            document.getElementById('zoomDisplay').textContent = Math.round(zoom * 100) + '%';
+            draw();
+        }
+        
+        function handleDoubleClick(e) {
+            if (currentTool === 'select' && selectedId) {
+                const obj = objects.find(o => o.id === selectedId);
+                if (obj) {
+                    const label = prompt('Enter label:', obj.label || '');
+                    if (label !== null) obj.label = label;
+                    savePlan();
+                    draw();
+                }
+            }
+        }
+        
+        function hitTest(x, y, obj) {
+            const cos = Math.cos(-obj.rotation * Math.PI / 180);
+            const sin = Math.sin(-obj.rotation * Math.PI / 180);
+            const dx = x - obj.x;
+            const dy = y - obj.y;
+            const localX = dx * cos - dy * sin;
+            const localY = dx * sin + dy * cos;
+            
+            return Math.abs(localX) <= obj.width / 2 && Math.abs(localY) <= obj.length / 2;
+        }
+        
+        function createObject(type, x, y) {
+            const defaults = {
+                'table-round': { width: 5, length: 5, rotation: 0, color: '#8b5cf6', shape: 'circle' },
+                'table-rect': { width: 6, length: 3, rotation: 0, color: '#ec4899', shape: 'rect' },
+                'chair': { width: 1.5, length: 1.5, rotation: 0, color: '#f59e0b', shape: 'chair' },
+                'stage': { width: 12, length: 8, rotation: 0, color: '#10b981', shape: 'rect' },
+                'bar': { width: 8, length: 2.5, rotation: 0, color: '#ef4444', shape: 'rect' },
+                'wall': { width: 0.5, length: 10, rotation: 0, color: '#1e293b', shape: 'wall' }
+            };
+            
+            const def = defaults[type];
+            if (!def) return;
+            
+            objects.push({
+                id: Date.now(),
+                type,
+                x, y,
+                ...def,
+                label: ''
+            });
+            
+            savePlan();
+            setTool('select');
+            draw();
+        }
+        
+        function draw() {
+            // Clear
+            ctx.fillStyle = '#e2e8f0';
+            ctx.fillRect(0, 0, canvas.width / window.devicePixelRatio, canvas.height / window.devicePixelRatio);
+            
+            // Draw room
+            const roomScreen = {
+                x: offset.x,
+                y: offset.y,
+                w: room.width * PIXELS_PER_FOOT * zoom,
+                h: room.length * PIXELS_PER_FOOT * zoom
+            };
+            
+            ctx.fillStyle = 'white';
+            ctx.fillRect(roomScreen.x, roomScreen.y, roomScreen.w, roomScreen.h);
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(roomScreen.x, roomScreen.y, roomScreen.w, roomScreen.h);
+            
+            // Draw grid
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            for (let x = 0; x <= room.width; x += 5) {
+                const sx = offset.x + x * PIXELS_PER_FOOT * zoom;
+                ctx.beginPath();
+                ctx.moveTo(sx, offset.y);
+                ctx.lineTo(sx, offset.y + roomScreen.h);
+                ctx.stroke();
+            }
+            for (let y = 0; y <= room.length; y += 5) {
+                const sy = offset.y + y * PIXELS_PER_FOOT * zoom;
+                ctx.beginPath();
+                ctx.moveTo(offset.x, sy);
+                ctx.lineTo(offset.x + roomScreen.w, sy);
+                ctx.stroke();
+            }
+            
+            // Draw objects
+            objects.forEach(obj => {
+                const screen = worldToScreen(obj.x, obj.y);
+                const w = obj.width * PIXELS_PER_FOOT * zoom;
+                const h = obj.length * PIXELS_PER_FOOT * zoom;
+                
+                ctx.save();
+                ctx.translate(screen.x, screen.y);
+                ctx.rotate(obj.rotation * Math.PI / 180);
+                
+                // Shadow
+                ctx.shadowColor = 'rgba(0,0,0,0.2)';
+                ctx.shadowBlur = 4;
+                ctx.shadowOffsetY = 2;
+                
+                // Object body
+                ctx.fillStyle = obj.color;
+                if (obj.shape === 'circle') {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, w / 2, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (obj.shape === 'chair') {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, w / 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                    ctx.beginPath();
+                    ctx.arc(0, -h / 4, w / 4, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (obj.shape === 'wall') {
+                    ctx.fillRect(-w / 2, -h / 2, w, h);
+                    ctx.strokeStyle = '#0f172a';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(-w / 2, -h / 2, w, h);
+                } else {
+                    ctx.beginPath();
+                    ctx.roundRect(-w / 2, -h / 2, w, h, 4);
+                    ctx.fill();
+                }
+                
+                ctx.shadowColor = 'transparent';
+                
+                // Selection highlight
+                if (obj.id === selectedId) {
+                    ctx.strokeStyle = '#06b6d4';
+                    ctx.lineWidth = 3;
+                    ctx.setLineDash([5, 5]);
+                    if (obj.shape === 'circle') {
+                        ctx.beginPath();
+                        ctx.arc(0, 0, w / 2 + 5, 0, Math.PI * 2);
+                        ctx.stroke();
+                    } else {
+                        ctx.strokeRect(-w / 2 - 3, -h / 2 - 3, w + 6, h + 6);
+                    }
+                    ctx.setLineDash([]);
+                }
+                
+                // Label
+                if (obj.label) {
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 12px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(obj.label, 0, 0);
+                }
+                
+                ctx.restore();
+            });
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+        }
+        
+        function updateProperties() {
+            const obj = objects.find(o => o.id === selectedId);
+            const noSel = document.getElementById('noSelection');
+            const editor = document.getElementById('propEditor');
+            
+            if (!obj) {
+                noSel.style.display = 'block';
+                editor.style.display = 'none';
+                document.getElementById('selectionInfo').textContent = 'No selection';
+                return;
+            }
+            
+            noSel.style.display = 'none';
+            editor.style.display = 'block';
+            
+            document.getElementById('propType').value = obj.type;
+            document.getElementById('propLabel').value = obj.label || '';
+            document.getElementById('propWidth').value = obj.width;
+            document.getElementById('propLength').value = obj.length;
+            document.getElementById('propRotation').value = obj.rotation;
+            document.getElementById('propX').value = obj.x.toFixed(1);
+            document.getElementById('propY').value = obj.y.toFixed(1);
+            
+            // Update color picker
+            document.querySelectorAll('.color-swatch').forEach(swatch => {
+                swatch.classList.toggle('active', swatch.style.background === obj.color);
+            });
+            
+            document.getElementById('selectionInfo').textContent = 
+                `${obj.type} at ${obj.x.toFixed(1)}, ${obj.y.toFixed(1)}`;
+        }
+        
+        function updateObject() {
+            const obj = objects.find(o => o.id === selectedId);
+            if (!obj) return;
+            
+            obj.label = document.getElementById('propLabel').value;
+            obj.width = parseFloat(document.getElementById('propWidth').value) || obj.width;
+            obj.length = parseFloat(document.getElementById('propLength').value) || obj.length;
+            obj.rotation = parseInt(document.getElementById('propRotation').value) || 0;
+            obj.x = parseFloat(document.getElementById('propX').value) || obj.x;
+            obj.y = parseFloat(document.getElementById('propY').value) || obj.y;
+            
+            savePlan();
+            draw();
+        }
+        
+        function setColor(color) {
+            const obj = objects.find(o => o.id === selectedId);
+            if (obj) {
+                obj.color = color;
+                updateObject();
+            }
+        }
+        
+        function deleteSelected() {
+            if (!selectedId) return;
+            objects = objects.filter(o => o.id !== selectedId);
+            selectedId = null;
+            updateProperties();
+            savePlan();
+            draw();
+        }
+        
+        function duplicateSelected() {
+            const obj = objects.find(o => o.id === selectedId);
+            if (!obj) return;
+            
+            objects.push({
+                ...obj,
+                id: Date.now(),
+                x: obj.x + 2,
+                y: obj.y + 2
+            });
+            savePlan();
+            draw();
+        }
+        
+        function bringToFront() {
+            const idx = objects.findIndex(o => o.id === selectedId);
+            if (idx > -1) {
+                const obj = objects.splice(idx, 1)[0];
+                objects.push(obj);
+                savePlan();
+                draw();
+            }
+        }
+        
+        function sendToBack() {
+            const idx = objects.findIndex(o => o.id === selectedId);
+            if (idx > -1) {
+                const obj = objects.splice(idx, 1)[0];
+                objects.unshift(obj);
+                savePlan();
+                draw();
+            }
+        }
+        
+        function importFromSeating() {
+            const stored = localStorage.getItem('event_seating_v1');
+            if (!stored) {
+                alert('No seating chart data found');
+                return;
+            }
+            
+            const data = JSON.parse(stored);
+            if (!data.tables || data.tables.length === 0) {
+                alert('No tables in seating chart');
+                return;
+            }
+            
+            // Import tables as round tables
+            data.tables.forEach((table, i) => {
+                const type = TABLE_TYPES[table.type];
+                objects.push({
+                    id: Date.now() + i,
+                    type: 'table-round',
+                    x: 10 + (i % 5) * 8,
+                    y: 10 + Math.floor(i / 5) * 8,
+                    width: type.width / 12, // Convert inches to feet approximation
+                    length: type.height / 12,
+                    rotation: 0,
+                    color: '#8b5cf6',
+                    shape: 'circle',
+                    label: `Table ${i + 1}`
+                });
+            });
+            
+            savePlan();
+            draw();
+            alert(`Imported ${data.tables.length} tables`);
+        }
+        
+        function zoom(delta) {
+            zoom = Math.max(0.5, Math.min(3, zoom + delta));
+            document.getElementById('zoomDisplay').textContent = Math.round(zoom * 100) + '%';
+            draw();
+        }
+        
+        function resetZoom() {
+            zoom = 1;
+            offset = { x: 50, y: 50 };
+            document.getElementById('zoomDisplay').textContent = '100%';
+            draw();
+        }
+        
+        function resetView() {
+            offset = { x: 50, y: 50 };
+            zoom = 1;
+            draw();
+        }
+        
+        function savePlan() {
+            const data = { room, objects, timestamp: new Date().toISOString() };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+        
+        function loadPlan() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                const data = JSON.parse(stored);
+                room = data.room || room;
+                objects = data.objects || [];
+                
+                document.getElementById('roomWidth').value = room.width;
+                document.getElementById('roomLength').value = room.length;
+            }
+        }
+        
+        function exportPlan() {
+            const data = { room, objects, timestamp: new Date().toISOString() };
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `floorplan_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+        
+        function importPlan(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (confirm(`Load floor plan with ${data.objects?.length || 0} objects?`)) {
+                        room = data.room || room;
+                        objects = data.objects || [];
+                        document.getElementById('roomWidth').value = room.width;
+                        document.getElementById('roomLength').value = room.length;
+                        savePlan();
+                        draw();
+                    }
+                } catch (err) {
+                    alert('Invalid floor plan file');
+                }
+            };
+            reader.readAsText(file);
+            input.value = '';
+        }
+        
+        function exportImage() {
+            const link = document.createElement('a');
+            link.download = `floorplan_${new Date().toISOString().split('T')[0]}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        function clearAll() {
+            if (!confirm('Clear all objects?')) return;
+            objects = [];
+            selectedId = null;
+            savePlan();
+            updateProperties();
+            draw();
+        }
+        
+        init();
+    </script>
+</body>
+</html>

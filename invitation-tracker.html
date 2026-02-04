@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitation Tracker - Event Planner Suite</title>
+    <style>
+        :root {
+            --primary: #14b8a6;
+            --secondary: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 16px;
+            color: white;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .metric-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .metric-value { font-size: 2.5rem; font-weight: 700; color: var(--primary); }
+        .metric-label { color: #64748b; font-size: 0.875rem; text-transform: uppercase; }
+        
+        .progress-section {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .progress-bar {
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            margin-top: 0.5rem;
+        }
+        
+        .progress-segment {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+        
+        .segment-sent { background: #3b82f6; }
+        .segment-opened { background: #8b5cf6; }
+        .segment-responded { background: var(--success); }
+        .segment-bounced { background: var(--danger); }
+        
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .kanban-column {
+            background: var(--card);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .column-header {
+            padding: 1rem;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .column-sent { background: #dbeafe; color: #1e40af; }
+        .column-opened { background: #e0e7ff; color: #3730a3; }
+        .column-responded { background: #dcfce7; color: #166534; }
+        .column-bounced { background: #fee2e2; color: #991b1b; }
+        
+        .column-count {
+            background: rgba(255,255,255,0.5);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+        }
+        
+        .column-content {
+            padding: 1rem;
+            min-height: 200px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .invitation-card {
+            background: #f8fafc;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            cursor: grab;
+            transition: all 0.2s;
+        }
+        
+        .invitation-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        
+        .invitation-card.dragging { opacity: 0.5; }
+        
+        .guest-name { font-weight: 600; margin-bottom: 0.25rem; }
+        .guest-email { font-size: 0.875rem; color: #64748b; margin-bottom: 0.5rem; word-break: break-all; }
+        
+        .status-dots {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #e2e8f0;
+        }
+        
+        .status-dot.active { background: var(--success); }
+        .status-dot.pending { background: var(--warning); }
+        
+        .timestamp {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 0.5rem;
+        }
+        
+        .batch-actions {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr auto;
+            gap: 1rem;
+            align-items: end;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row { grid-template-columns: 1fr; }
+        }
+        
+        input, select {
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            width: 100%;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: #f1f5f9; color: #475569; border: 2px solid var(--border); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-warning { background: var(--warning); color: white; }
+        .btn-sm { padding: 0.5rem 1rem; font-size: 0.75rem; }
+        
+        .reminder-scheduler {
+            background: #fef3c7;
+            border-left: 4px solid var(--warning);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0 8px 8px 0;
+            display: none;
+        }
+        
+        .reminder-scheduler.active { display: block; }
+        
+        .data-controls {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f1f5f9;
+            border-radius: 12px;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .stats-detail {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+        
+        .stat-number { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        .stat-desc { font-size: 0.75rem; color: #64748b; margin-top: 0.25rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📨 Invitation Tracker</h1>
+            <p>Monitor sent, opened, and responded invitations with automated reminders</p>
+        </header>
+        
+        <div class="dashboard">
+            <div class="metric-card">
+                <div class="metric-value" id="totalInvites">0</div>
+                <div class="metric-label">Total Invitations</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="openRate">0%</div>
+                <div class="metric-label">Open Rate</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="responseRate">0%</div>
+                <div class="metric-label">Response Rate</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="daysToEvent">0</div>
+                <div class="metric-label">Days to Event</div>
+            </div>
+        </div>
+        
+        <div class="progress-section">
+            <h3 style="margin-bottom: 0.5rem;">Invitation Pipeline</h3>
+            <div class="progress-bar" id="pipelineBar"></div>
+            <div class="stats-detail" id="pipelineStats"></div>
+        </div>
+        
+        <div class="batch-actions">
+            <h3 style="margin-bottom: 1rem; color: var(--primary);">Batch Actions</h3>
+            <div class="form-row">
+                <input type="text" id="bulkEmails" placeholder="Enter email addresses (comma separated)">
+                <select id="templateSelect">
+                    <option value="standard">Standard Invitation</option>
+                    <option value="formal">Formal Invitation</option>
+                    <option value="casual">Casual/Friendly</option>
+                    <option value="reminder">Reminder Template</option>
+                    <option value="final">Final Call</option>
+                </select>
+                <button class="btn btn-primary" onclick="sendBatch()">📤 Send Invitations</button>
+            </div>
+            <button class="btn btn-secondary" style="margin-top: 0.5rem;" onclick="syncWithGuests()">🔄 Sync with Guest List</button>
+            
+            <div class="reminder-scheduler" id="reminderBox">
+                <strong>📅 Schedule Reminder</strong>
+                <p style="font-size: 0.875rem; margin: 0.5rem 0;">Send follow-up to non-responders on:</p>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <input type="date" id="reminderDate">
+                    <select id="reminderType">
+                        <option value="gentle">Gentle Reminder</option>
+                        <option value="urgent">Urgent (1 week left)</option>
+                        <option value="final">Final Notice</option>
+                    </select>
+                    <button class="btn btn-warning" onclick="scheduleReminder()">Schedule</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="kanban-board">
+            <div class="kanban-column">
+                <div class="column-header column-sent">
+                    <span>📤 Sent</span>
+                    <span class="column-count" id="count-sent">0</span>
+                </div>
+                <div class="column-content" id="col-sent" ondrop="drop(event, 'sent')" ondragover="allowDrop(event)"></div>
+            </div>
+            
+            <div class="kanban-column">
+                <div class="column-header column-opened">
+                    <span>👀 Opened</span>
+                    <span class="column-count" id="count-opened">0</span>
+                </div>
+                <div class="column-content" id="col-opened" ondrop="drop(event, 'opened')" ondragover="allowDrop(event)"></div>
+            </div>
+            
+            <div class="kanban-column">
+                <div class="column-header column-responded">
+                    <span>✅ Responded</span>
+                    <span class="column-count" id="count-responded">0</span>
+                </div>
+                <div class="column-content" id="col-responded" ondrop="drop(event, 'responded')" ondragover="allowDrop(event)"></div>
+            </div>
+            
+            <div class="kanban-column">
+                <div class="column-header column-bounced">
+                    <span>❌ Bounced/Failed</span>
+                    <span class="column-count" id="count-bounced">0</span>
+                </div>
+                <div class="column-content" id="col-bounced" ondrop="drop(event, 'bounced')" ondragover="allowDrop(event)"></div>
+            </div>
+        </div>
+        
+        <div class="data-controls">
+            <button class="btn btn-primary" onclick="exportData()">📥 Export Report</button>
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ Print Status</button>
+            <button class="btn btn-success" onclick="markAllOpened()">Mark All Opened</button>
+            <button class="btn btn-warning" onclick="toggleReminders()">📅 Schedule Reminders</button>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'event_invitations_v1';
+        let invitations = [];
+        let eventDate = null;
+        
+        const TEMPLATES = {
+            standard: { name: 'Standard Invitation', subject: "You're Invited!" },
+            formal: { name: 'Formal Invitation', subject: "The honor of your presence is requested" },
+            casual: { name: 'Casual Invitation', subject: "Party time! 🎉" },
+            reminder: { name: 'Gentle Reminder', subject: "Reminder: Event coming up!" },
+            final: { name: 'Final Call', subject: "Last chance to RSVP" }
+        };
+        
+        function init() {
+            loadData();
+            loadEventDate();
+            render();
+            checkReminders();
+        }
+        
+        function loadEventDate() {
+            const timeline = localStorage.getItem('event_timeline_v1');
+            if (timeline) {
+                const data = JSON.parse(timeline);
+                if (data.eventInfo?.date) {
+                    eventDate = new Date(data.eventInfo.date);
+                    const daysLeft = Math.ceil((eventDate - new Date()) / (1000 * 60 * 60 * 24));
+                    document.getElementById('daysToEvent').textContent = Math.max(0, daysLeft);
+                }
+            }
+        }
+        
+        function syncWithGuests() {
+            const stored = localStorage.getItem('event_guests_v1');
+            if (!stored) {
+                alert('No guest list found');
+                return;
+            }
+            
+            const guests = JSON.parse(stored);
+            let added = 0;
+            
+            guests.forEach(g => {
+                const email = g.email;
+                if (!email) return;
+                
+                const exists = invitations.find(inv => inv.email === email);
+                if (!exists) {
+                    invitations.push({
+                        id: Date.now() + added,
+                        email: email,
+                        name: `${g.firstName} ${g.lastName}`,
+                        status: 'pending',
+                        sentAt: null,
+                        openedAt: null,
+                        respondedAt: null,
+                        template: 'standard',
+                        rsvpStatus: g.rsvp || 'no-response'
+                    });
+                    added++;
+                }
+            });
+            
+            saveData();
+            render();
+            alert(`Synced ${added} new invitations from guest list`);
+        }
+        
+        function sendBatch() {
+            const emails = document.getElementById('bulkEmails').value.split(',').map(e => e.trim()).filter(e => e);
+            const template = document.getElementById('templateSelect').value;
+            
+            if (emails.length === 0) {
+                alert('Please enter email addresses');
+                return;
+            }
+            
+            emails.forEach((email, i) => {
+                setTimeout(() => {
+                    const existing = invitations.find(inv => inv.email === email);
+                    if (existing) {
+                        existing.status = 'sent';
+                        existing.sentAt = new Date().toISOString();
+                        existing.template = template;
+                    } else {
+                        invitations.push({
+                            id: Date.now() + i,
+                            email: email,
+                            name: email.split('@')[0],
+                            status: 'sent',
+                            sentAt: new Date().toISOString(),
+                            openedAt: null,
+                            respondedAt: null,
+                            template: template,
+                            rsvpStatus: 'no-response'
+                        });
+                    }
+                    saveData();
+                    render();
+                }, i * 100);
+            });
+            
+            document.getElementById('bulkEmails').value = '';
+            alert(`Sending ${emails.length} invitations...`);
+        }
+        
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+        
+        function drag(ev, id) {
+            ev.dataTransfer.setData("id", id);
+            ev.target.classList.add('dragging');
+        }
+        
+        function drop(ev, newStatus) {
+            ev.preventDefault();
+            const id = parseInt(ev.dataTransfer.getData("id"));
+            const inv = invitations.find(i => i.id === id);
+            
+            if (inv) {
+                inv.status = newStatus;
+                if (newStatus === 'opened' && !inv.openedAt) inv.openedAt = new Date().toISOString();
+                if (newStatus === 'responded' && !inv.respondedAt) inv.respondedAt = new Date().toISOString();
+                saveData();
+                render();
+            }
+            
+            document.querySelectorAll('.invitation-card').forEach(c => c.classList.remove('dragging'));
+        }
+        
+        function render() {
+            const cols = {
+                sent: document.getElementById('col-sent'),
+                opened: document.getElementById('col-opened'),
+                responded: document.getElementById('col-responded'),
+                bounced: document.getElementById('col-bounced')
+            };
+            
+            const counts = { sent: 0, opened: 0, responded: 0, bounced: 0 };
+            
+            // Clear columns
+            Object.values(cols).forEach(col => col.innerHTML = '');
+            
+            invitations.forEach(inv => {
+                counts[inv.status]++;
+                
+                const card = document.createElement('div');
+                card.className = 'invitation-card';
+                card.draggable = true;
+                card.ondragstart = (e) => drag(e, inv.id);
+                
+                const sentDate = inv.sentAt ? new Date(inv.sentAt).toLocaleDateString() : 'Not sent';
+                const responseBadge = inv.rsvpStatus === 'confirmed' ? '✅' : 
+                                     inv.rsvpStatus === 'declined' ? '❌' : 
+                                     inv.rsvpStatus === 'pending' ? '⏳' : '○';
+                
+                card.innerHTML = `
+                    <div class="guest-name">${responseBadge} ${inv.name}</div>
+                    <div class="guest-email">${inv.email}</div>
+                    <div style="font-size: 0.75rem; color: #64748b;">
+                        Template: ${TEMPLATES[inv.template]?.name || inv.template}
+                    </div>
+                    <div class="status-dots">
+                        <span class="status-dot ${inv.sentAt ? 'active' : ''}" title="Sent"></span>
+                        <span class="status-dot ${inv.openedAt ? 'active' : ''}" title="Opened"></span>
+                        <span class="status-dot ${inv.respondedAt ? 'active' : ''} ${inv.rsvpStatus === 'pending' ? 'pending' : ''}" title="Responded"></span>
+                    </div>
+                    ${inv.sentAt ? `<div class="timestamp">Sent: ${sentDate}</div>` : ''}
+                `;
+                
+                cols[inv.status].appendChild(card);
+            });
+            
+            // Update counts
+            Object.keys(counts).forEach(key => {
+                document.getElementById(`count-${key}`).textContent = counts[key];
+            });
+            
+            // Update dashboard
+            document.getElementById('totalInvites').textContent = invitations.length;
+            
+            const total = invitations.length;
+            const opened = invitations.filter(i => i.openedAt || i.status === 'opened' || i.status === 'responded').length;
+            const responded = invitations.filter(i => i.rsvpStatus !== 'no-response').length;
+            
+            document.getElementById('openRate').textContent = total ? Math.round((opened / total) * 100) + '%' : '0%';
+            document.getElementById('responseRate').textContent = total ? Math.round((responded / total) * 100) + '%' : '0%';
+            
+            // Update pipeline bar
+            const pipeline = document.getElementById('pipelineBar');
+            const pipelineStats = document.getElementById('pipelineStats');
+            
+            if (total === 0) {
+                pipeline.innerHTML = '<div style="width: 100%; text-align: center; line-height: 40px; color: #64748b;">No invitations sent yet</div>';
+            } else {
+                const sentPct = (counts.sent / total) * 100;
+                const openedPct = (counts.opened / total) * 100;
+                const respondedPct = (counts.responded / total) * 100;
+                const bouncedPct = (counts.bounced / total) * 100;
+                
+                pipeline.innerHTML = `
+                    ${counts.sent > 0 ? `<div class="progress-segment segment-sent" style="width: ${sentPct}%">${counts.sent}</div>` : ''}
+                    ${counts.opened > 0 ? `<div class="progress-segment segment-opened" style="width: ${openedPct}%">${counts.opened}</div>` : ''}
+                    ${counts.responded > 0 ? `<div class="progress-segment segment-responded" style="width: ${respondedPct}%">${counts.responded}</div>` : ''}
+                    ${counts.bounced > 0 ? `<div class="progress-segment segment-bounced" style="width: ${bouncedPct}%">${counts.bounced}</div>` : ''}
+                `;
+            }
+            
+            pipelineStats.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-number" style="color: #3b82f6;">${counts.sent}</div>
+                    <div class="stat-desc">Awaiting Open</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" style="color: #8b5cf6;">${counts.opened}</div>
+                    <div class="stat-desc">Viewed Only</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" style="color: var(--success);">${counts.responded}</div>
+                    <div class="stat-desc">Completed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" style="color: var(--danger);">${counts.bounced}</div>
+                    <div class="stat-desc">Failed/DNS</div>
+                </div>
+            `;
+        }
+        
+        function toggleReminders() {
+            document.getElementById('reminderBox').classList.toggle('active');
+        }
+        
+        function scheduleReminder() {
+            const date = document.getElementById('reminderDate').value;
+            const type = document.getElementById('reminderType').value;
+            
+            if (!date) {
+                alert('Please select a date');
+                return;
+            }
+            
+            // In real implementation, this would schedule an actual email
+            const nonResponders = invitations.filter(i => i.status !== 'responded');
+            alert(`Scheduled ${type} reminder for ${date} to ${nonResponders.length} non-responders`);
+            
+            document.getElementById('reminderBox').classList.remove('active');
+        }
+        
+        function checkReminders() {
+            // Auto-check for reminders needed
+            if (!eventDate) return;
+            
+            const daysLeft = Math.ceil((eventDate - new Date()) / (1000 * 60 * 60 * 24));
+            const nonResponders = invitations.filter(i => i.status !== 'responded').length;
+            
+            if (daysLeft <= 7 && nonResponders > 0) {
+                // Could show automated reminder suggestion
+            }
+        }
+        
+        function markAllOpened() {
+            if (!confirm('Mark all sent invitations as opened?')) return;
+            invitations.forEach(inv => {
+                if (inv.status === 'sent') {
+                    inv.status = 'opened';
+                    if (!inv.openedAt) inv.openedAt = new Date().toISOString();
+                }
+            });
+            saveData();
+            render();
+        }
+        
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(invitations));
+        }
+        
+        function loadData() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) invitations = JSON.parse(stored);
+        }
+        
+        function exportData() {
+            const data = {
+                invitations,
+                stats: {
+                    total: invitations.length,
+                    sent: invitations.filter(i => i.status === 'sent').length,
+                    opened: invitations.filter(i => i.status === 'opened').length,
+                    responded: invitations.filter(i => i.status === 'responded').length,
+                    bounced: invitations.filter(i => i.status === 'bounced').length
+                },
+                exportedAt: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `invitation_report_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+        
+        init();
+    </script>
+</body>
+</html>
