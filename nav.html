@@ -267,6 +267,10 @@
             color: #888;
             font-size: 0.85em;
             font-weight: 300;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
         }
 
         .version-badge {
@@ -277,9 +281,30 @@
             border-radius: 20px;
             font-size: 0.75em;
             font-weight: 500;
-            margin-top: 15px;
             letter-spacing: 0.05em;
             border: 1px solid rgba(139, 115, 85, 0.2);
+        }
+
+        .atelier-link {
+            color: #8b7355;
+            text-decoration: none;
+            font-size: 0.85em;
+            font-weight: 400;
+            letter-spacing: 0.03em;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .atelier-link:hover {
+            color: #6b5a45;
+            transform: translateX(-3px);
+        }
+
+        .atelier-link::before {
+            content: "←";
+            font-size: 0.9em;
         }
 
         @media (max-width: 600px) {
@@ -292,6 +317,7 @@
             .tool-card { padding: 18px 16px; }
         }
     </style>
+<base target="_blank">
 <base target="_blank">
 </head>
 <body>
@@ -348,15 +374,6 @@
             <div class="tools-section">
                 <h2>Event Planning Tools</h2>
                 <div class="tools-grid">
-                    <a href="https://whisperworkshop.com/index.html" target="_blank" class="tool-card">
-                        <div class="tool-icon">🏠</div>
-                        <div class="tool-info">
-                            <div class="tool-name">Atelier</div>
-                            <div class="tool-desc">WhisperWorkshop</div>
-                        </div>
-                        <span class="external-indicator">↗</span>
-                    </a>
-
                     <a href="https://whisperworkshop.com/bar-calculator.html" target="_blank" class="tool-card">
                         <div class="tool-icon">🍸</div>
                         <div class="tool-info">
@@ -468,7 +485,7 @@
             </div>
 
             <div class="footer">
-                <p>All tools open in new tabs • whisperworkshop.com</p>
+                <a href="https://whisperworkshop.com/index.html" class="atelier-link">Return to Atelier</a>
                 <span class="version-badge">v2.0 Enterprise Suite</span>
             </div>
         </div>
