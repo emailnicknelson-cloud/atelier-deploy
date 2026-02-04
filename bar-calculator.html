@@ -773,8 +773,8 @@
             <div class="calculator-grid">
                 <div class="input-panel">
                     <div class="guest-sync" id="guestSync" style="display: none;">
-                        <span>✓</span>
-                        <span>Synced with Guest List: <strong id="syncedCount">0</strong> confirmed guests</span>
+                        <span style="font-family: 'Cormorant Garamond', serif; color: var(--success); font-weight: 600;">Synced</span>
+                        <span>Guest List: <strong id="syncedCount">0</strong> confirmed</span>
                     </div>
 
                     <div class="form-group">
@@ -815,22 +815,22 @@
                         <label>Drink Distribution</label>
                         <div class="drink-categories">
                             <div class="category-toggle active" id="cat-beer" onclick="toggleCategory('beer')">
-                                <div class="category-icon">🍺</div>
+                                <div class="category-icon" style="font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; font-weight: 600; color: var(--accent);">B</div>
                                 <div class="category-name">Beer</div>
                                 <div class="category-pct" id="pct-beer">30%</div>
                             </div>
                             <div class="category-toggle active" id="cat-wine" onclick="toggleCategory('wine')">
-                                <div class="category-icon">🍷</div>
+                                <div class="category-icon" style="font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; font-weight: 600; color: var(--accent);">W</div>
                                 <div class="category-name">Wine</div>
                                 <div class="category-pct" id="pct-wine">40%</div>
                             </div>
                             <div class="category-toggle active" id="cat-spirits" onclick="toggleCategory('spirits')">
-                                <div class="category-icon">🥃</div>
+                                <div class="category-icon" style="font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; font-weight: 600; color: var(--accent);">S</div>
                                 <div class="category-name">Spirits</div>
                                 <div class="category-pct" id="pct-spirits">20%</div>
                             </div>
                             <div class="category-toggle active" id="cat-nonalc" onclick="toggleCategory('nonalc')">
-                                <div class="category-icon">🥤</div>
+                                <div class="category-icon" style="font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; font-weight: 600; color: var(--accent);">N</div>
                                 <div class="category-name">Non-Alc</div>
                                 <div class="category-pct" id="pct-nonalc">10%</div>
                             </div>
@@ -912,17 +912,18 @@
                     </div>
 
                     <div class="ice-warning">
-                        <strong>❄️ Ice Requirements:</strong> Plan for <span id="iceAmount">0</span> lbs of ice (1.5 lbs per guest) plus 20% buffer for cooling.
+                        <strong style="font-family: 'Cormorant Garamond', serif; font-size: 1.1em;">Ice Requirements</strong><br>
+                        Plan for <span id="iceAmount">0</span> lbs of ice (1.5 lbs per guest) plus 20% buffer for cooling.
                     </div>
                 </div>
             </div>
 
             <div class="data-controls">
                 <div class="io-controls">
-                    <button class="btn btn-secondary" onclick="window.print()">🖨️ Print List</button>
-                    <button class="btn btn-secondary" onclick="exportCalc()">📥 Export JSON</button>
+                    <button class="btn btn-secondary" onclick="window.print()">Print List</button>
+                    <button class="btn btn-secondary" onclick="exportCalc()">Export JSON</button>
                     <div class="file-input-wrapper">
-                        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import JSON</button>
+                        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Import JSON</button>
                         <input type="file" id="importFile" accept=".json" onchange="importCalc(event)">
                     </div>
                 </div>
