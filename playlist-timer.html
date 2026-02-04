@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlist Timer - Event Planner Suite</title>
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 16px;
+            color: white;
+        }
+        
+        .event-sync {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-value { font-size: 2rem; font-weight: 700; color: var(--primary); font-family: 'Courier New', monospace; }
+        .stat-label { color: #64748b; font-size: 0.875rem; text-transform: uppercase; }
+        
+        .playlist-builder {
+            background: var(--card);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .builder-header {
+            background: #f1f5f9;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .song-form {
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 1rem;
+            align-items: end;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row { grid-template-columns: 1fr; }
+        }
+        
+        .song-list {
+            padding: 1.5rem;
+        }
+        
+        .song-item {
+            display: grid;
+            grid-template-columns: auto 1fr auto auto auto auto;
+            gap: 1rem;
+            align-items: center;
+            padding: 1rem;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            cursor: grab;
+            transition: all 0.2s;
+        }
+        
+        .song-item:hover { border-color: var(--primary); transform: translateX(4px); }
+        .song-item.dragging { opacity: 0.5; }
+        
+        .drag-handle { color: #cbd5e1; cursor: grab; padding: 0.5rem; }
+        
+        .song-info { display: flex; flex-direction: column; }
+        .song-title { font-weight: 600; color: var(--text); }
+        .song-artist { font-size: 0.875rem; color: #64748b; }
+        .song-genre { font-size: 0.75rem; color: var(--primary); margin-top: 0.25rem; }
+        
+        .duration-badge {
+            background: #e0e7ff;
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+        }
+        
+        .time-slot {
+            background: #f1f5f9;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: #f1f5f9; color: #475569; border: 2px solid var(--border); }
+        .btn-danger { background: #fee2e2; color: var(--danger); padding: 0.5rem; }
+        
+        input, select {
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            width: 100%;
+        }
+        
+        .mood-presets {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        
+        .mood-btn {
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .mood-btn:hover { border-color: var(--primary); background: #f5f3ff; }
+        
+        .segment-divider {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            margin: 1rem -1.5rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .data-controls {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f1f5f9;
+            border-radius: 12px;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .warning-box {
+            background: #fef3c7;
+            border-left: 4px solid var(--warning);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0 8px 8px 0;
+            display: none;
+        }
+        
+        .warning-box.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎵 Playlist Timer</h1>
+            <p>Build event soundtracks with precise timing for seamless transitions</p>
+        </header>
+        
+        <div class="event-sync">
+            <strong>Sync with Timeline:</strong>
+            <select id="timelineSelect" onchange="syncWithTimeline()">
+                <option value="">-- Select Event Timeline --</option>
+            </select>
+            <span id="syncStatus" style="color: #64748b; font-size: 0.875rem;"></span>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalSongs">0</div>
+                <div class="stat-label">Songs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalDuration">00:00</div>
+                <div class="stat-label">Total Length</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avgDuration">00:00</div>
+                <div class="stat-label">Avg. Song</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="endTime">--:--</div>
+                <div class="stat-label">Est. End Time</div>
+            </div>
+        </div>
+        
+        <div class="warning-box" id="overageWarning">
+            <strong>⚠️ Timing Alert:</strong> Your playlist exceeds the available time slot by <span id="overageAmount"></span>. Consider removing songs or adjusting durations.
+        </div>
+        
+        <div class="playlist-builder">
+            <div class="builder-header">
+                <h3 style="color: var(--primary);">Playlist Builder</h3>
+                <button class="btn btn-secondary" onclick="clearPlaylist()">Clear All</button>
+            </div>
+            
+            <div class="song-form">
+                <div class="mood-presets">
+                    <span style="font-size: 0.875rem; color: #64748b; margin-right: 0.5rem;">Quick Add:</span>
+                    <button class="mood-btn" onclick="addPreset('cocktail')">🍸 Cocktail Hour</button>
+                    <button class="mood-btn" onclick="addPreset('dinner')">🍽️ Dinner Jazz</button>
+                    <button class="mood-btn" onclick="addPreset('dance')">💃 Dance Party</button>
+                    <button class="mood-btn" onclick="addPreset('slow')">🕯️ Slow Songs</button>
+                    <button class="mood-btn" onclick="addPreset('last')">🎉 Last Dance</button>
+                </div>
+                
+                <div class="form-row">
+                    <input type="text" id="songTitle" placeholder="Song Title">
+                    <input type="text" id="songArtist" placeholder="Artist">
+                    <select id="songDuration">
+                        <option value="180">3:00</option>
+                        <option value="210">3:30</option>
+                        <option value="240" selected>4:00</option>
+                        <option value="270">4:30</option>
+                        <option value="300">5:00</option>
+                        <option value="custom">Custom...</option>
+                    </select>
+                    <input type="number" id="customDuration" placeholder="Seconds" style="display: none;">
+                    <select id="songGenre">
+                        <option value="Pop">Pop</option>
+                        <option value="Rock">Rock</option>
+                        <option value="Jazz">Jazz</option>
+                        <option value="Classical">Classical</option>
+                        <option value="R&B">R&B</option>
+                        <option value="Country">Country</option>
+                        <option value="Electronic">Electronic</option>
+                        <option value="Hip Hop">Hip Hop</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="addSong()">➕ Add Song</button>
+                </div>
+            </div>
+            
+            <div class="song-list" id="songList"></div>
+        </div>
+        
+        <div class="data-controls">
+            <button class="btn btn-primary" onclick="exportPlaylist()">📥 Export Playlist</button>
+            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importPlaylist(this)">
+            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import</button>
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ Print Playlist</button>
+            <button class="btn btn-secondary" onclick="shareWithDJ()">📧 Share with DJ</button>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'event_playlist_v1';
+        let songs = [];
+        let eventStartTime = null;
+        let eventDuration = null; // in minutes
+        
+        const PRESETS = {
+            cocktail: [
+                { title: "Feeling Good", artist: "Nina Simone", duration: 180, genre: "Jazz" },
+                { title: "Put Your Records On", artist: "Corinne Bailey Rae", duration: 204, genre: "Pop" },
+                { title: "The Way You Look Tonight", artist: "Frank Sinatra", duration: 195, genre: "Jazz" }
+            ],
+            dinner: [
+                { title: "What a Wonderful World", artist: "Louis Armstrong", duration: 139, genre: "Jazz" },
+                { title: "La Vie En Rose", artist: "Édith Piaf", duration: 184, genre: "Classical" },
+                { title: "Can't Help Falling in Love", artist: "Elvis Presley", duration: 182, genre: "Pop" }
+            ],
+            dance: [
+                { title: "Shut Up and Dance", artist: "WALK THE MOON", duration: 199, genre: "Pop" },
+                { title: "Uptown Funk", artist: "Mark Ronson ft. Bruno Mars", duration: 270, genre: "Funk" },
+                { title: "Dancing Queen", artist: "ABBA", duration: 230, genre: "Disco" }
+            ],
+            slow: [
+                { title: "Perfect", artist: "Ed Sheeran", duration: 263, genre: "Pop" },
+                { title: "All of Me", artist: "John Legend", duration: 269, genre: "R&B" },
+                { title: "At Last", artist: "Etta James", duration: 182, genre: "R&B" }
+            ],
+            last: [
+                { title: "Don't Stop Believin'", artist: "Journey", duration: 250, genre: "Rock" },
+                { title: "Closing Time", artist: "Semisonic", duration: 208, genre: "Rock" },
+                { title: "Time of My Life", artist: "Bill Medley & Jennifer Warnes", duration: 285, genre: "Pop" }
+            ]
+        };
+        
+        function init() {
+            loadPlaylist();
+            loadTimelines();
+            
+            document.getElementById('songDuration').addEventListener('change', (e) => {
+                document.getElementById('customDuration').style.display = 
+                    e.target.value === 'custom' ? 'block' : 'none';
+            });
+        }
+        
+        function loadTimelines() {
+            const stored = localStorage.getItem('event_timeline_v1');
+            if (stored) {
+                const data = JSON.parse(stored);
+                const select = document.getElementById('timelineSelect');
+                
+                if (data.eventInfo?.startTime) {
+                    const option = document.createElement('option');
+                    option.value = JSON.stringify(data.eventInfo);
+                    option.textContent = `Event: ${data.eventInfo.date} at ${data.eventInfo.startTime}`;
+                    select.appendChild(option);
+                }
+            }
+        }
+        
+        function syncWithTimeline() {
+            const select = document.getElementById('timelineSelect');
+            if (!select.value) {
+                eventStartTime = null;
+                eventDuration = null;
+                document.getElementById('syncStatus').textContent = '';
+                render();
+                return;
+            }
+            
+            const info = JSON.parse(select.value);
+            eventStartTime = info.startTime;
+            
+            // Calculate total duration from timeline items
+            const timeline = JSON.parse(localStorage.getItem('event_timeline_v1'));
+            if (timeline?.items) {
+                eventDuration = timeline.items.reduce((sum, item) => sum + item.duration + item.buffer, 0);
+            }
+            
+            document.getElementById('syncStatus').textContent = 
+                `Synced: Start ${eventStartTime}, Duration ${Math.floor(eventDuration / 60)}h ${eventDuration % 60}m`;
+            render();
+        }
+        
+        function addSong() {
+            const title = document.getElementById('songTitle').value.trim();
+            const artist = document.getElementById('songArtist').value.trim();
+            const genre = document.getElementById('songGenre').value;
+            
+            let duration = document.getElementById('songDuration').value;
+            if (duration === 'custom') {
+                duration = parseInt(document.getElementById('customDuration').value) || 240;
+            } else {
+                duration = parseInt(duration);
+            }
+            
+            if (!title) {
+                alert('Please enter a song title');
+                return;
+            }
+            
+            songs.push({
+                id: Date.now(),
+                title,
+                artist,
+                duration,
+                genre,
+                notes: ''
+            });
+            
+            savePlaylist();
+            render();
+            clearForm();
+        }
+        
+        function addPreset(type) {
+            const preset = PRESETS[type];
+            if (preset) {
+                preset.forEach((song, i) => {
+                    setTimeout(() => {
+                        songs.push({
+                            id: Date.now() + i,
+                            ...song
+                        });
+                        savePlaylist();
+                        render();
+                    }, i * 10);
+                });
+            }
+        }
+        
+        function clearForm() {
+            document.getElementById('songTitle').value = '';
+            document.getElementById('songArtist').value = '';
+            document.getElementById('songDuration').value = '240';
+            document.getElementById('customDuration').value = '';
+            document.getElementById('customDuration').style.display = 'none';
+        }
+        
+        function deleteSong(id) {
+            songs = songs.filter(s => s.id !== id);
+            savePlaylist();
+            render();
+        }
+        
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        function formatClockTime(date) {
+            return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+        }
+        
+        function render() {
+            const list = document.getElementById('songList');
+            let currentTime = eventStartTime ? new Date(`2000-01-01T${eventStartTime}`) : null;
+            
+            let totalSeconds = 0;
+            
+            list.innerHTML = songs.map((song, index) => {
+                totalSeconds += song.duration;
+                
+                let timeDisplay = '';
+                if (currentTime) {
+                    const startStr = formatClockTime(currentTime);
+                    currentTime = new Date(currentTime.getTime() + song.duration * 1000);
+                    const endStr = formatClockTime(currentTime);
+                    timeDisplay = `<span class="time-slot">${startStr} - ${endStr}</span>`;
+                }
+                
+                // Check for segment transitions (every 45 mins)
+                const isSegmentStart = index > 0 && (totalSeconds - song.duration) % 2700 < song.duration;
+                
+                return `
+                ${isSegmentStart ? '<div class="segment-divider"><span>~ 45 Minute Block ~</span></div>' : ''}
+                <div class="song-item" draggable="true" data-id="${song.id}" data-index="${index}">
+                    <div class="drag-handle">⋮⋮</div>
+                    <div class="song-info">
+                        <div class="song-title">${song.title}</div>
+                        <div class="song-artist">${song.artist || 'Unknown Artist'}</div>
+                        <span class="song-genre">${song.genre}</span>
+                    </div>
+                    <span class="duration-badge">${formatTime(song.duration)}</span>
+                    ${timeDisplay}
+                    <button class="btn btn-danger" onclick="deleteSong(${song.id})">×</button>
+                </div>
+                `;
+            }).join('');
+            
+            // Update stats
+            document.getElementById('totalSongs').textContent = songs.length;
+            document.getElementById('totalDuration').textContent = formatTime(totalSeconds);
+            document.getElementById('avgDuration').textContent = 
+                songs.length ? formatTime(Math.round(totalSeconds / songs.length)) : '00:00';
+            
+            // Calculate end time
+            if (eventStartTime && currentTime) {
+                document.getElementById('endTime').textContent = formatClockTime(currentTime);
+                
+                // Check for overage
+                if (eventDuration && totalSeconds > eventDuration * 60) {
+                    const overage = totalSeconds - (eventDuration * 60);
+                    document.getElementById('overageWarning').classList.add('active');
+                    document.getElementById('overageAmount').textContent = formatTime(overage);
+                } else {
+                    document.getElementById('overageWarning').classList.remove('active');
+                }
+            } else {
+                document.getElementById('endTime').textContent = '--:--';
+            }
+            
+            // Setup drag and drop
+            setupDragDrop();
+        }
+        
+        function setupDragDrop() {
+            const items = document.querySelectorAll('.song-item');
+            let draggedItem = null;
+            
+            items.forEach(item => {
+                item.addEventListener('dragstart', (e) => {
+                    draggedItem = item;
+                    item.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+                
+                item.addEventListener('dragend', () => {
+                    item.classList.remove('dragging');
+                });
+                
+                item.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    if (item === draggedItem) return;
+                    
+                    const rect = item.getBoundingClientRect();
+                    const midY = rect.top + rect.height / 2;
+                    
+                    if (e.clientY < midY) {
+                        item.parentNode.insertBefore(draggedItem, item);
+                    } else {
+                        item.parentNode.insertBefore(draggedItem, item.nextSibling);
+                    }
+                });
+                
+                item.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    // Update songs array based on new order
+                    const newOrder = Array.from(document.querySelectorAll('.song-item')).map(el => 
+                        parseInt(el.dataset.id)
+                    );
+                    songs = newOrder.map(id => songs.find(s => s.id === id));
+                    savePlaylist();
+                    render();
+                });
+            });
+        }
+        
+        function savePlaylist() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(songs));
+        }
+        
+        function loadPlaylist() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                songs = JSON.parse(stored);
+                render();
+            }
+        }
+        
+        function exportPlaylist() {
+            const data = {
+                playlist: songs,
+                stats: {
+                    totalSongs: songs.length,
+                    totalDuration: songs.reduce((sum, s) => sum + s.duration, 0),
+                    created: new Date().toISOString()
+                }
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `playlist_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+        
+        function importPlaylist(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.playlist && confirm(`Import ${data.playlist.length} songs?`)) {
+                        songs = [...songs, ...data.playlist];
+                        savePlaylist();
+                        render();
+                    }
+                } catch (err) {
+                    alert('Invalid playlist file');
+                }
+            };
+            reader.readAsText(file);
+            input.value = '';
+        }
+        
+        function clearPlaylist() {
+            if (!confirm('Clear entire playlist?')) return;
+            songs = [];
+            savePlaylist();
+            render();
+        }
+        
+        function shareWithDJ() {
+            const playlistText = songs.map((s, i) => 
+                `${i + 1}. ${s.title} - ${s.artist} (${formatTime(s.duration)}) [${s.genre}]`
+            ).join('\n');
+            
+            const totalDuration = formatTime(songs.reduce((sum, s) => sum + s.duration, 0));
+            
+            const emailBody = `Hi DJ,
+
+Here's the playlist for the event:
+
+${playlistText}
+
+Total: ${songs.length} songs, ${totalDuration} runtime
+
+Please let me know if you have any questions!
+
+Thanks!`;
+            
+            window.location.href = `mailto:?subject=Event Playlist (${songs.length} songs)&body=${encodeURIComponent(emailBody)}`;
+        }
+        
+        init();
+    </script>
+</body>
+</html>

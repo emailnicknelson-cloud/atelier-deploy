@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Planner - Event Planner Suite</title>
+    <style>
+        :root {
+            --primary: #f59e0b;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--primary), #ea580c);
+            border-radius: 16px;
+            color: white;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .metric-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .metric-value { font-size: 2rem; font-weight: 700; color: var(--primary); }
+        .metric-label { color: #64748b; font-size: 0.875rem; text-transform: uppercase; }
+        
+        .alert-box {
+            background: #fef3c7;
+            border-left: 4px solid var(--primary);
+            padding: 1rem 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+        
+        .alert-box.active { display: flex; align-items: center; gap: 0.75rem; }
+        
+        .dietary-legend {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--card);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .dietary-tag {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .course-section {
+            background: var(--card);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        
+        .course-header {
+            background: linear-gradient(90deg, var(--primary), #fbbf24);
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .course-content { padding: 1.5rem; }
+        
+        .menu-item {
+            background: #f8fafc;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: grid;
+            grid-template-columns: 1fr auto auto auto auto;
+            gap: 1rem;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        
+        .menu-item:hover { border-color: var(--primary); }
+        
+        @media (max-width: 768px) {
+            .menu-item { grid-template-columns: 1fr; }
+        }
+        
+        .item-name { font-weight: 600; }
+        .item-desc { font-size: 0.875rem; color: #64748b; margin-top: 0.25rem; }
+        
+        .dietary-icons { display: flex; gap: 0.25rem; }
+        .dietary-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            cursor: help;
+        }
+        
+        .veg { background: #dcfce7; color: #166534; }
+        .vegan { background: #d1fae5; color: #065f46; }
+        .gf { background: #fef3c7; color: #92400e; }
+        .df { background: #dbeafe; color: #1e40af; }
+        .nut-free { background: #fce7f3; color: #be185d; }
+        
+        .portion-calc {
+            background: #f1f5f9;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); }
+        
+        .btn-secondary { background: #f1f5f9; color: #475569; border: 2px solid var(--border); }
+        .btn-danger { background: #fee2e2; color: var(--danger); }
+        .btn-sm { padding: 0.5rem 1rem; font-size: 0.75rem; }
+        
+        .add-item-form {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed var(--border);
+        }
+        
+        @media (max-width: 968px) {
+            .add-item-form { grid-template-columns: 1fr; }
+        }
+        
+        input, select, textarea {
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+        
+        .checkbox-item:hover { border-color: var(--primary); }
+        .checkbox-item input { width: auto; }
+        
+        .shopping-list {
+            background: var(--card);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .shopping-category {
+            margin-bottom: 1.5rem;
+        }
+        
+        .shopping-category h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .shopping-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .data-controls {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f1f5f9;
+            border-radius: 12px;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍽️ Menu Planner</h1>
+            <p>Design courses, calculate portions, and accommodate dietary restrictions</p>
+        </header>
+        
+        <div class="dashboard">
+            <div class="metric-card">
+                <div class="metric-value" id="guestCount">0</div>
+                <div class="metric-label">Total Guests</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="dietaryCount">0</div>
+                <div class="metric-label">Dietary Restrictions</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="totalCourses">0</div>
+                <div class="metric-label">Menu Items</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="estCost">$0</div>
+                <div class="metric-label">Est. Food Cost</div>
+            </div>
+        </div>
+        
+        <div class="alert-box" id="dietaryAlert">
+            <span style="font-size: 1.25rem;">⚠️</span>
+            <div>
+                <strong>Dietary Alert</strong>
+                <div id="alertDetails" style="font-size: 0.875rem; margin-top: 0.25rem;"></div>
+            </div>
+        </div>
+        
+        <div class="dietary-legend">
+            <span style="font-weight: 600; margin-right: 0.5rem;">Dietary Icons:</span>
+            <span class="dietary-tag veg">🥬 Veg</span>
+            <span class="dietary-tag vegan">🌱 Vegan</span>
+            <span class="dietary-tag gf">🌾 GF</span>
+            <span class="dietary-tag df">🥛 DF</span>
+            <span class="dietary-tag nut-free">🥜 Nut-Free</span>
+        </div>
+        
+        <div id="coursesContainer"></div>
+        
+        <button class="btn btn-primary" style="width: 100%; margin-bottom: 2rem;" onclick="addCourse()">➕ Add New Course</button>
+        
+        <div class="shopping-list">
+            <h3 style="margin-bottom: 1rem; color: var(--primary);">🛒 Auto-Generated Shopping List</h3>
+            <div id="shoppingList"></div>
+        </div>
+        
+        <div class="data-controls">
+            <button class="btn btn-primary" onclick="exportData()">📥 Export Menu</button>
+            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(this)">
+            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import Menu</button>
+            <button class="btn btn-secondary" onclick="generatePDF()">📄 Print Menu</button>
+            <button class="btn btn-danger" onclick="clearAll()">🗑️ Clear All</button>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'event_menu_v1';
+        const COURSES = ['Appetizers', 'Salads', 'Main Course', 'Sides', 'Desserts', 'Beverages', 'Late Night'];
+        
+        let menuData = {
+            courses: [],
+            guests: 0,
+            dietaryGuests: {}
+        };
+        
+        function init() {
+            loadGuestsFromStorage();
+            loadMenu();
+        }
+        
+        function loadGuestsFromStorage() {
+            const stored = localStorage.getItem('event_guests_v1');
+            if (stored) {
+                const guests = JSON.parse(stored);
+                const confirmed = guests.filter(g => g.rsvp === 'confirmed');
+                menuData.guests = confirmed.length;
+                
+                // Count dietary restrictions
+                const dietary = {};
+                confirmed.forEach(g => {
+                    g.dietary.forEach(d => {
+                        dietary[d] = (dietary[d] || 0) + 1;
+                        if (g.plusOne && g.plusOne !== 'Pending') {
+                            dietary[d] = (dietary[d] || 0) + 1;
+                        }
+                    });
+                });
+                menuData.dietaryGuests = dietary;
+            }
+            updateDashboard();
+        }
+        
+        function updateDashboard() {
+            document.getElementById('guestCount').textContent = menuData.guests;
+            const dietaryTotal = Object.values(menuData.dietaryGuests).reduce((a, b) => a + b, 0);
+            document.getElementById('dietaryCount').textContent = dietaryTotal;
+            document.getElementById('totalCourses').textContent = menuData.courses.reduce((sum, c) => sum + c.items.length, 0);
+            
+            // Estimate cost (rough industry standard: $75-150 per person for full service)
+            const costPerPerson = 85;
+            document.getElementById('estCost').textContent = '$' + (menuData.guests * costPerPerson).toLocaleString();
+            
+            // Check for dietary coverage
+            checkDietaryCoverage();
+        }
+        
+        function checkDietaryCoverage() {
+            const alert = document.getElementById('dietaryAlert');
+            const details = document.getElementById('alertDetails');
+            const issues = [];
+            
+            Object.entries(menuData.dietaryGuests).forEach(([restriction, count]) => {
+                if (count > 0) {
+                    // Check if any menu item accommodates this
+                    const accommodated = menuData.courses.some(c => 
+                        c.items.some(i => i.dietary.includes(restriction))
+                    );
+                    if (!accommodated) {
+                        issues.push(`${count} guest(s) need ${restriction} options`);
+                    }
+                }
+            });
+            
+            if (issues.length > 0) {
+                alert.classList.add('active');
+                details.textContent = issues.join(', ');
+            } else {
+                alert.classList.remove('active');
+            }
+        }
+        
+        function addCourse() {
+            const name = prompt('Course name:', 'New Course');
+            if (!name) return;
+            
+            menuData.courses.push({
+                id: Date.now(),
+                name,
+                items: []
+            });
+            saveMenu();
+            render();
+        }
+        
+        function deleteCourse(id) {
+            if (!confirm('Delete this course and all its items?')) return;
+            menuData.courses = menuData.courses.filter(c => c.id !== id);
+            saveMenu();
+            render();
+        }
+        
+        function addItem(courseId) {
+            const course = menuData.courses.find(c => c.id === courseId);
+            if (!course) return;
+            
+            const name = document.getElementById(`item-name-${courseId}`).value.trim();
+            if (!name) return;
+            
+            const description = document.getElementById(`item-desc-${courseId}`).value.trim();
+            const dietary = Array.from(document.querySelectorAll(`input[name="diet-${courseId}"]:checked`)).map(cb => cb.value);
+            const basePortion = parseInt(document.getElementById(`item-portion-${courseId}`).value) || 1;
+            const unit = document.getElementById(`item-unit-${courseId}`).value;
+            
+            course.items.push({
+                id: Date.now(),
+                name,
+                description,
+                dietary,
+                basePortion,
+                unit
+            });
+            
+            // Clear form
+            document.getElementById(`item-name-${courseId}`).value = '';
+            document.getElementById(`item-desc-${courseId}`).value = '';
+            document.querySelectorAll(`input[name="diet-${courseId}"]`).forEach(cb => cb.checked = false);
+            
+            saveMenu();
+            render();
+        }
+        
+        function deleteItem(courseId, itemId) {
+            const course = menuData.courses.find(c => c.id === courseId);
+            if (course) {
+                course.items = course.items.filter(i => i.id !== itemId);
+                saveMenu();
+                render();
+            }
+        }
+        
+        function calculatePortions(item) {
+            // Industry standards for catering multipliers
+            const baseCount = menuData.guests;
+            let multiplier = 1;
+            
+            if (item.dietary.length === 0) {
+                // Regular item: 1.5x for buffer
+                multiplier = 1.5;
+            } else {
+                // Dietary-specific: calculate based on restriction count
+                const targetGuests = item.dietary.reduce((sum, diet) => {
+                    return sum + (menuData.dietaryGuests[diet] || 0);
+                }, 0);
+                if (targetGuests > 0) {
+                    multiplier = 1.3; // 30% buffer for specialty items
+                    return {
+                        count: Math.ceil(targetGuests * multiplier),
+                        note: `For ${item.dietary.join(', ')} guests`
+                    };
+                }
+            }
+            
+            return {
+                count: Math.ceil(baseCount * multiplier),
+                note: 'Full service with 50% buffer'
+            };
+        }
+        
+        function render() {
+            const container = document.getElementById('coursesContainer');
+            
+            container.innerHTML = menuData.courses.map(course => `
+                <div class="course-section">
+                    <div class="course-header">
+                        <h3>${course.name}</h3>
+                        <button class="btn btn-sm" style="background: rgba(255,255,255,0.2); color: white;" onclick="deleteCourse(${course.id})">Delete Course</button>
+                    </div>
+                    <div class="course-content">
+                        ${course.items.map(item => {
+                            const portions = calculatePortions(item);
+                            return `
+                            <div class="menu-item">
+                                <div>
+                                    <div class="item-name">${item.name}</div>
+                                    ${item.description ? `<div class="item-desc">${item.description}</div>` : ''}
+                                    <div class="dietary-icons" style="margin-top: 0.5rem;">
+                                        ${item.dietary.includes('Vegetarian') ? '<span class="dietary-icon veg" title="Vegetarian">V</span>' : ''}
+                                        ${item.dietary.includes('Vegan') ? '<span class="dietary-icon vegan" title="Vegan">VG</span>' : ''}
+                                        ${item.dietary.includes('Gluten-Free') ? '<span class="dietary-icon gf" title="Gluten-Free">GF</span>' : ''}
+                                        ${item.dietary.includes('Dairy-Free') ? '<span class="dietary-icon df" title="Dairy-Free">DF</span>' : ''}
+                                        ${item.dietary.includes('Nut Allergy') ? '<span class="dietary-icon nut-free" title="Nut-Free">NF</span>' : ''}
+                                    </div>
+                                </div>
+                                <div class="portion-calc">
+                                    ${portions.count} ${item.unit}<br>
+                                    <small style="color: #64748b;">${portions.note}</small>
+                                </div>
+                                <button class="btn btn-danger btn-sm" onclick="deleteItem(${course.id}, ${item.id})">Delete</button>
+                            </div>
+                            `;
+                        }).join('')}
+                        
+                        <div class="add-item-form">
+                            <input type="text" id="item-name-${course.id}" placeholder="Item name (e.g., Caesar Salad)" required>
+                            <input type="text" id="item-desc-${course.id}" placeholder="Description">
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="number" id="item-portion-${course.id}" placeholder="Qty" value="1" style="width: 60px;">
+                                <select id="item-unit-${course.id}" style="width: 100px;">
+                                    <option value="servings">servings</option>
+                                    <option value="lbs">lbs</option>
+                                    <option value="pieces">pieces</option>
+                                    <option value="gallons">gallons</option>
+                                    <option value="trays">trays</option>
+                                    <option value="bottles">bottles</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" onclick="addItem(${course.id})">Add Item</button>
+                        </div>
+                        <div class="checkbox-group" style="margin-top: 0.5rem;">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="diet-${course.id}" value="Vegetarian"> 🥬 Vegetarian
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="diet-${course.id}" value="Vegan"> 🌱 Vegan
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="diet-${course.id}" value="Gluten-Free"> 🌾 Gluten-Free
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="diet-${course.id}" value="Dairy-Free"> 🥛 Dairy-Free
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="diet-${course.id}" value="Nut Allergy"> 🥜 Nut-Free
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            renderShoppingList();
+            updateDashboard();
+        }
+        
+        function renderShoppingList() {
+            const container = document.getElementById('shoppingList');
+            
+            // Aggregate all items by unit type
+            const aggregated = {};
+            
+            menuData.courses.forEach(course => {
+                course.items.forEach(item => {
+                    const portions = calculatePortions(item);
+                    const key = `${item.name} (${item.unit})`;
+                    if (!aggregated[key]) {
+                        aggregated[key] = { ...item, total: 0 };
+                    }
+                    aggregated[key].total += portions.count;
+                });
+            });
+            
+            if (Object.keys(aggregated).length === 0) {
+                container.innerHTML = '<p style="color: #64748b;">Add menu items to generate shopping list...</p>';
+                return;
+            }
+            
+            // Group by unit type
+            const byUnit = {};
+            Object.values(aggregated).forEach(item => {
+                if (!byUnit[item.unit]) byUnit[item.unit] = [];
+                byUnit[item.unit].push(item);
+            });
+            
+            container.innerHTML = Object.entries(byUnit).map(([unit, items]) => `
+                <div class="shopping-category">
+                    <h4>${unit.charAt(0).toUpperCase() + unit.slice(1)}</h4>
+                    ${items.map(item => `
+                        <div class="shopping-item">
+                            <span>${item.name}</span>
+                            <strong>${Math.ceil(item.total)} ${unit}</strong>
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+        }
+        
+        function saveMenu() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(menuData));
+        }
+        
+        function loadMenu() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                menuData = JSON.parse(stored);
+                render();
+            } else {
+                // Initialize with default courses
+                menuData.courses = COURSES.map((name, i) => ({
+                    id: Date.now() + i,
+                    name,
+                    items: []
+                }));
+                render();
+            }
+        }
+        
+        function exportData() {
+            const blob = new Blob([JSON.stringify(menuData, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `menu_plan_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+        
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (confirm(`Import menu with ${data.courses?.length || 0} courses?`)) {
+                        menuData = data;
+                        saveMenu();
+                        render();
+                    }
+                } catch (err) {
+                    alert('Invalid file');
+                }
+            };
+            reader.readAsText(file);
+            input.value = '';
+        }
+        
+        function generatePDF() {
+            window.print();
+        }
+        
+        function clearAll() {
+            if (!confirm('Clear entire menu?')) return;
+            menuData.courses = COURSES.map((name, i) => ({
+                id: Date.now() + i,
+                name,
+                items: []
+            }));
+            saveMenu();
+            render();
+        }
+        
+        init();
+    </script>
+</body>
+</html>

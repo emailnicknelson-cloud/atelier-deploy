@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bar Calculator - Event Planner Suite</title>
+    <style>
+        :root {
+            --primary: #ef4444;
+            --secondary: #f59e0b;
+            --success: #10b981;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--primary), #dc2626);
+            border-radius: 16px;
+            color: white;
+        }
+        
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        @media (max-width: 968px) {
+            .calculator-grid { grid-template-columns: 1fr; }
+        }
+        
+        .input-panel, .results-panel {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        
+        .form-group { margin-bottom: 1.5rem; }
+        
+        label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: #475569; }
+        
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        input[type="number"], select {
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            width: 100%;
+        }
+        
+        .slider-group {
+            margin-bottom: 1rem;
+        }
+        
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e2e8f0;
+            outline: none;
+        }
+        
+        .drink-categories {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .category-toggle {
+            background: #f1f5f9;
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        .category-toggle:hover { background: #e2e8f0; }
+        .category-toggle.active {
+            background: #fee2e2;
+            border-color: var(--primary);
+        }
+        
+        .category-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .category-name { font-weight: 600; }
+        .category-pct { font-size: 0.875rem; color: #64748b; }
+        
+        .result-card {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .result-title {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .result-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text);
+            font-family: 'Courier New', monospace;
+        }
+        
+        .result-sub {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+        
+        .breakdown-table {
+            width: 100%;
+            margin-top: 1rem;
+        }
+        
+        .breakdown-table th {
+            text-align: left;
+            padding: 0.75rem;
+            background: #f1f5f9;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+        }
+        
+        .breakdown-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .amount-cell {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .btn {
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary { background: var(--primary); color: white; width: 100%; }
+        .btn-secondary { background: #f1f5f9; color: #475569; border: 2px solid var(--border); }
+        
+        .ice-warning {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .data-controls {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f1f5f9;
+            border-radius: 12px;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .guest-sync {
+            background: #ecfdf5;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #065f46;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍸 Bar Calculator</h1>
+            <p>Calculate beverage quantities based on guest count and duration</p>
+        </header>
+        
+        <div class="calculator-grid">
+            <div class="input-panel">
+                <div class="guest-sync" id="guestSync" style="display: none;">
+                    <span>✓</span>
+                    <span>Synced with Guest List: <strong id="syncedCount">0</strong> confirmed guests</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>Number of Guests</label>
+                    <input type="number" id="guestCount" value="100" min="1" onchange="calculate()">
+                </div>
+                
+                <div class="form-group">
+                    <label>Event Duration (hours)</label>
+                    <input type="number" id="duration" value="5" min="1" max="12" onchange="calculate()">
+                </div>
+                
+                <div class="form-group">
+                    <label>Drinking Percentage</label>
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span>Light Drinkers (50%)</span>
+                            <span id="drinkPctDisplay">75%</span>
+                            <span>Heavy Drinkers (100%)</span>
+                        </div>
+                        <input type="range" id="drinkingPct" min="50" max="100" value="75" oninput="updateSlider(this.value); calculate()">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Bar Type</label>
+                    <select id="barType" onchange="calculate()">
+                        <option value="full">Full Open Bar (Beer, Wine, Spirits)</option>
+                        <option value="beerwine">Beer & Wine Only</option>
+                        <option value="beer">Beer Only</option>
+                        <option value="wine">Wine Only</option>
+                        <option value="signature">Signature Cocktails + Beer/Wine</option>
+                        <option value="premium">Premium Top-Shelf</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Drink Distribution</label>
+                    <div class="drink-categories">
+                        <div class="category-toggle active" id="cat-beer" onclick="toggleCategory('beer')">
+                            <div class="category-icon">🍺</div>
+                            <div class="category-name">Beer</div>
+                            <div class="category-pct" id="pct-beer">30%</div>
+                        </div>
+                        <div class="category-toggle active" id="cat-wine" onclick="toggleCategory('wine')">
+                            <div class="category-icon">🍷</div>
+                            <div class="category-name">Wine</div>
+                            <div class="category-pct" id="pct-wine">40%</div>
+                        </div>
+                        <div class="category-toggle active" id="cat-spirits" onclick="toggleCategory('spirits')">
+                            <div class="category-icon">🥃</div>
+                            <div class="category-name">Spirits</div>
+                            <div class="category-pct" id="pct-spirits">20%</div>
+                        </div>
+                        <div class="category-toggle active" id="cat-nonalc" onclick="toggleCategory('nonalc')">
+                            <div class="category-icon">🥤</div>
+                            <div class="category-name">Non-Alc</div>
+                            <div class="category-pct" id="pct-nonalc">10%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" onclick="calculate()">Recalculate</button>
+            </div>
+            
+            <div class="results-panel">
+                <div class="result-card">
+                    <div class="result-title">Total Drinks Needed</div>
+                    <div class="result-value" id="totalDrinks">0</div>
+                    <div class="result-sub">Based on industry standard consumption rates</div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="result-card" style="border-left-color: #f59e0b;">
+                        <div class="result-title">Drinks Per Person</div>
+                        <div class="result-value" id="drinksPerPerson">0</div>
+                    </div>
+                    <div class="result-card" style="border-left-color: #10b981;">
+                        <div class="result-title">First Hour</div>
+                        <div class="result-value" id="firstHour">0</div>
+                        <div class="result-sub">2 drinks/guest</div>
+                    </div>
+                </div>
+                
+                <h3 style="margin: 1.5rem 0 1rem; color: var(--primary);">Detailed Breakdown</h3>
+                
+                <table class="breakdown-table">
+                    <thead>
+                        <tr>
+                            <th>Beverage Type</th>
+                            <th>Servings</th>
+                            <th>Container Size</th>
+                            <th>Units to Buy</th>
+                        </tr>
+                    </thead>
+                    <tbody id="breakdownBody"></tbody>
+                </table>
+                
+                <div class="ice-warning">
+                    <strong>❄️ Ice Requirements:</strong> Plan for <span id="iceAmount">0</span> lbs of ice (1.5 lbs per guest) plus 20% buffer for cooling.
+                </div>
+            </div>
+        </div>
+        
+        <div class="data-controls">
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ Print List</button>
+            <button class="btn btn-secondary" onclick="exportCalc()">📥 Save Calculation</button>
+        </div>
+    </div>
+
+    <script>
+        let categories = {
+            beer: true,
+            wine: true,
+            spirits: true,
+            nonalc: true
+        };
+        
+        let percentages = {
+            beer: 30,
+            wine: 40,
+            spirits: 20,
+            nonalc: 10
+        };
+        
+        function init() {
+            // Try to sync with guest list
+            const stored = localStorage.getItem('event_guests_v1');
+            if (stored) {
+                const guests = JSON.parse(stored);
+                const confirmed = guests.filter(g => g.rsvp === 'confirmed').length;
+                if (confirmed > 0) {
+                    document.getElementById('guestCount').value = confirmed;
+                    document.getElementById('syncedCount').textContent = confirmed;
+                    document.getElementById('guestSync').style.display = 'flex';
+                }
+            }
+            calculate();
+        }
+        
+        function updateSlider(val) {
+            document.getElementById('drinkPctDisplay').textContent = val + '%';
+        }
+        
+        function toggleCategory(cat) {
+            categories[cat] = !categories[cat];
+            document.getElementById(`cat-${cat}`).classList.toggle('active', categories[cat]);
+            
+            // Recalculate percentages
+            const activeCount = Object.values(categories).filter(x => x).length;
+            const basePct = Math.floor(100 / activeCount);
+            const remainder = 100 - (basePct * activeCount);
+            
+            Object.keys(categories).forEach((key, idx) => {
+                if (categories[key]) {
+                    percentages[key] = basePct + (idx === 0 ? remainder : 0);
+                    document.getElementById(`pct-${key}`).textContent = percentages[key] + '%';
+                } else {
+                    percentages[key] = 0;
+                }
+            });
+            
+            calculate();
+        }
+        
+        function calculate() {
+            const guests = parseInt(document.getElementById('guestCount').value) || 0;
+            const hours = parseInt(document.getElementById('duration').value) || 1;
+            const drinkingPct = parseInt(document.getElementById('drinkingPct').value) / 100;
+            const barType = document.getElementById('barType').value;
+            
+            // Industry standard: 2 drinks first hour, 1 per hour after
+            const firstHourDrinks = guests * 2 * drinkingPct;
+            const subsequentDrinks = guests * (hours - 1) * 1 * drinkingPct;
+            const totalDrinks = Math.ceil(firstHourDrinks + subsequentDrinks);
+            
+            document.getElementById('totalDrinks').textContent = totalDrinks.toLocaleString();
+            document.getElementById('drinksPerPerson').textContent = (totalDrinks / guests).toFixed(1);
+            document.getElementById('firstHour').textContent = Math.ceil(firstHourDrinks);
+            
+            // Adjust for bar type
+            let typeMultipliers = { beer: 1, wine: 1, spirits: 1, nonalc: 1 };
+            if (barType === 'beerwine') {
+                typeMultipliers.spirits = 0;
+                percentages.beer = 50;
+                percentages.wine = 50;
+            } else if (barType === 'beer') {
+                typeMultipliers.wine = typeMultipliers.spirits = 0;
+                percentages.beer = 90;
+                percentages.nonalc = 10;
+            } else if (barType === 'wine') {
+                typeMultipliers.beer = typeMultipliers.spirits = 0;
+                percentages.wine = 90;
+                percentages.nonalc = 10;
+            } else if (barType === 'signature') {
+                typeMultipliers.spirits = 0.5; // Less spirits, more signature (calculated as wine)
+            }
+            
+            // Calculate breakdown
+            const breakdown = [];
+            
+            if (categories.beer && typeMultipliers.beer > 0) {
+                const beerServings = Math.ceil(totalDrinks * (percentages.beer / 100));
+                const beerCases = Math.ceil(beerServings / 24); // 24 bottles per case
+                breakdown.push({
+                    type: 'Beer',
+                    servings: beerServings,
+                    container: 'bottles/cans',
+                    units: beerCases + ' cases (24pk)'
+                });
+            }
+            
+            if (categories.wine && typeMultipliers.wine > 0) {
+                const wineServings = Math.ceil(totalDrinks * (percentages.wine / 100));
+                const wineBottles = Math.ceil(wineServings / 5); // 5 glasses per bottle
+                breakdown.push({
+                    type: 'Wine',
+                    servings: wineServings,
+                    container: 'glasses',
+                    units: wineBottles + ' bottles'
+                });
+            }
+            
+            if (categories.spirits && typeMultipliers.spirits > 0) {
+                const spiritsServings = Math.ceil(totalDrinks * (percentages.spirits / 100));
+                const spiritBottles = Math.ceil(spiritsServings / 17); // 17 drinks per 750ml
+                breakdown.push({
+                    type: 'Spirits',
+                    servings: spiritsServings,
+                    container: 'mixed drinks',
+                    units: spiritBottles + ' bottles (750ml)'
+                });
+            }
+            
+            if (categories.nonalc) {
+                const nonAlcServings = Math.ceil(totalDrinks * (percentages.nonalc / 100)) + (guests * 0.5); // Extra for non-drinkers
+                const sodaLiters = Math.ceil(nonAlcServings * 0.5); // 500ml per serving
+                breakdown.push({
+                    type: 'Non-Alcoholic',
+                    servings: nonAlcServings,
+                    container: 'servings',
+                    units: sodaLiters + ' liters soda/juice'
+                });
+            }
+            
+            // Add mixers for spirits
+            if (categories.spirits && typeMultipliers.spirits > 0) {
+                const mixerLiters = Math.ceil(totalDrinks * 0.1); // 100ml mixer per drink
+                breakdown.push({
+                    type: 'Mixers',
+                    servings: '-',
+                    container: '-',
+                    units: mixerLiters + ' liters (tonic, soda, juice)'
+                });
+            }
+            
+            document.getElementById('breakdownBody').innerHTML = breakdown.map(b => `
+                <tr>
+                    <td><strong>${b.type}</strong></td>
+                    <td class="amount-cell">${b.servings}</td>
+                    <td>${b.container}</td>
+                    <td>${b.units}</td>
+                </tr>
+            `).join('');
+            
+            // Ice calculation
+            const iceLbs = Math.ceil(guests * 1.5 * 1.2); // 1.5 lbs per guest, 20% buffer
+            document.getElementById('iceAmount').textContent = iceLbs;
+        }
+        
+        function exportCalc() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                inputs: {
+                    guests: document.getElementById('guestCount').value,
+                    duration: document.getElementById('duration').value,
+                    drinkingPct: document.getElementById('drinkingPct').value,
+                    barType: document.getElementById('barType').value
+                },
+                results: {
+                    totalDrinks: document.getElementById('totalDrinks').textContent,
+                    iceLbs: document.getElementById('iceAmount').textContent
+                }
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `bar_calc_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+        
+        init();
+    </script>
+</body>
+</html>
