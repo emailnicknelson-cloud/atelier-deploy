@@ -1456,7 +1456,7 @@
                         localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(value));
                     }
                 });
-                renderDataGrid();
+                scanLocalStorage();
                 takeSnapshot(); // Mark state as clean
                 showToast("Full event imported successfully", 'success');
                 return;
