@@ -1359,14 +1359,14 @@
                         }
 
                         updateSlider(data.inputs.drinkingPct || 75);
-                        calculate();
+                        calculate(false);
                     }
                 } catch (e) {
                     console.log('Bar data load error:', e);
                 }
             }
 
-            calculate();
+            calculate(false);
         }
 
         function updateSlider(val) {
@@ -1412,7 +1412,7 @@
             document.querySelector('.input-panel').scrollIntoView({ behavior: 'smooth' });
         }
 
-        function calculate() {
+        function calculate(shouldSave = true) {
             const guests = parseInt(document.getElementById('guestCount').value) || 0;
             const hours = parseInt(document.getElementById('duration').value) || 1;
             const drinkingPct = parseInt(document.getElementById('drinkingPct').value) / 100;
@@ -1597,7 +1597,9 @@
                 }
             };
 
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(currentCalculation));
+            if (shouldSave) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(currentCalculation));
+            }
         }
 
         function exportCalc() {
