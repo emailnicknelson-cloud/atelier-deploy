@@ -1,0 +1,41 @@
+{
+    "app": "WhisperWorkshop",
+    "type": "barCalculator",
+    "data": {
+        "inputs": {
+            "guests": 150,
+            "duration": 5,
+            "drinkers": 90,
+            "budget": "moderatre"
+        },
+        "preferences": {
+            "beer": 30,
+            "wine": 40,
+            "liquor": 30
+        },
+        "results": {
+            "totalDrinks": 600,
+            "totalCost": 2450.00,
+            "breakdown": [
+                {
+                    "type": "Beer",
+                    "servings": "180 bottles",
+                    "units": "15 cases",
+                    "cost": 720
+                },
+                {
+                    "type": "Wine",
+                    "servings": "240 glasses",
+                    "units": "48 bottles",
+                    "cost": 1200
+                },
+                {
+                    "type": "Spirits",
+                    "servings": "180 drinks",
+                    "units": "12 bottles",
+                    "cost": 530
+                }
+            ]
+        }
+    }
+}

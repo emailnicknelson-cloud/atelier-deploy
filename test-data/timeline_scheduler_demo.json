@@ -1,0 +1,45 @@
+{
+    "app": "WhisperWorkshop",
+    "type": "timelineScheduler",
+    "data": {
+        "eventInfo": {
+            "date": "2025-06-15",
+            "startTime": "14:00",
+            "endTime": "23:00"
+        },
+        "items": [
+            {
+                "time": "14:00",
+                "duration": 30,
+                "activity": "Ceremony Setup",
+                "vendor": "Florist"
+            },
+            {
+                "time": "15:00",
+                "duration": 60,
+                "activity": "Guest Arrival",
+                "vendor": "Valet"
+            },
+            {
+                "time": "16:00",
+                "duration": 45,
+                "activity": "Ceremony",
+                "vendor": "Officiant"
+            },
+            {
+                "time": "17:00",
+                "duration": 60,
+                "activity": "Cocktail Hour",
+                "vendor": "Caterer"
+            }
+        ],
+        "vendors": [
+            "Florist",
+            "Valet",
+            "Officiant",
+            "Caterer",
+            "DJ",
+            "Photographer"
+        ]
+    }
+}

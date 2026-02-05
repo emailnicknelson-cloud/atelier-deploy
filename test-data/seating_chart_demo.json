@@ -1,0 +1,57 @@
+{
+    "app": "WhisperWorkshop",
+    "type": "seatingChart",
+    "data": {
+        "tables": [
+            {
+                "id": 1,
+                "type": "round",
+                "x": 100,
+                "y": 100,
+                "guests": [
+                    "Guest A",
+                    "Guest B",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ]
+            },
+            {
+                "id": 2,
+                "type": "rect",
+                "x": 300,
+                "y": 100,
+                "guests": [
+                    "Guest C",
+                    "Guest D",
+                    "Guest E",
+                    "Guest F",
+                    null,
+                    null,
+                    null,
+                    null
+                ]
+            }
+        ],
+        "guests": [
+            {
+                "id": 1,
+                "name": "Guest A",
+                "tableId": 1
+            },
+            {
+                "id": 2,
+                "name": "Guest B",
+                "tableId": 1
+            },
+            {
+                "id": 3,
+                "name": "Guest C",
+                "tableId": 2
+            }
+        ]
+    }
+}

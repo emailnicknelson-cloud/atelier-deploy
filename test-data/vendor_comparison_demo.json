@@ -1,0 +1,32 @@
+{
+    "app": "WhisperWorkshop",
+    "type": "vendorComparison",
+    "data": {
+        "category": "Photographer",
+        "weights": {
+            "price": 40,
+            "quality": 40,
+            "value": 20
+        },
+        "quotes": [
+            {
+                "name": "Photo Pro",
+                "price": 2500,
+                "rating": 4.8,
+                "score": 88
+            },
+            {
+                "name": "Snap Master",
+                "price": 3200,
+                "rating": 4.9,
+                "score": 85
+            },
+            {
+                "name": "Budget Lens",
+                "price": 1800,
+                "rating": 3.5,
+                "score": 70
+            }
+        ]
+    }
+}

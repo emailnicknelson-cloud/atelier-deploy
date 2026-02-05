@@ -9,6 +9,21 @@
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap"
         rel="stylesheet">
     <style>
+        :root {
+            --bg: #e4e4dc;
+            --card: rgba(255, 255, 255, 0.5);
+            --card-hover: rgba(255, 255, 255, 0.9);
+            --text: #3d3d3d;
+            --text-light: #666;
+            --accent: #8b7355;
+            --accent-light: rgba(139, 115, 85, 0.1);
+            --border: rgba(61, 61, 61, 0.1);
+            --border-strong: rgba(61, 61, 61, 0.2);
+            --success: #5a7c5a;
+            --danger: #b95d5d;
+            --warning: #cc9933;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -17,10 +32,10 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #e4e4dc;
+            background: var(--bg);
             min-height: 100vh;
             padding: 60px 20px;
-            color: #3d3d3d;
+            color: var(--text);
             line-height: 1.6;
         }
 
@@ -911,26 +926,279 @@
 
         // Render data preview
         function renderDataPreview(tool) {
-            if (tool.key === "barCalculator" && tool.data.results) {
-                return `
-                        <div class="data-row">
-                            <span class="data-label">Total Drinks Needed</span>
-                            <span class="data-value">${tool.data.results.totalDrinks}</span>
-                        </div>
-                        <div class="data-row">
-                            <span class="data-label">Estimated Total Cost</span>
-                            <span class="data-value">$${tool.data.results.totalCost?.toFixed(2)}</span>
-                        </div>
-                        <div class="data-row">
-                            <span class="data-label">Number of Guests</span>
-                            <span class="data-value">${tool.data.inputs?.guests}</span>
-                        </div>
-                    `;
-            } else if ((tool.key === "floorPlanDesigner" || tool.key === "seatingChart") && tool.data.objects) {
-                return renderFloorPlanSVG(tool.data);
+            if (!tool.data) return '<div class="data-row">No data</div>';
+
+            const { key, data } = tool;
+
+            if (key === "barCalculator" && data.results) {
+                return renderBarCalc(data);
+            } else if (key === "budgetCalculator" && (data.summary || data.categories)) {
+                return renderBudgetCalc(data);
+            } else if ((key === "floorPlanDesigner") && data.objects) {
+                return renderFloorPlanSVG(data);
+            } else if (key === "seatingChart" && (data.tables || data.objects)) {
+                if (data.tables) return renderSeatingChart(data);
+                return renderFloorPlanSVG(data);
+            } else if (key === "guestList" && (data.stats || Array.isArray(data))) {
+                return renderGuestList(data);
+            } else if (key === "gratuityCalculator" && data.totals) {
+                return renderGratuityCalc(data);
+            } else if (key === "invitationTracker" && data.stats) {
+                return renderInvitationTracker(data);
+            } else if (key === "menuPlanner" && data.courses) {
+                return renderMenuPlanner(data);
+            } else if (key === "playlistTimer" && data.info) {
+                return renderPlaylistTimer(data);
+            } else if (key === "rainPlanCalculator") {
+                return renderRainPlan(data);
+            } else if (key === "timelineScheduler" && (data.items || data.eventInfo)) {
+                return renderTimeline(data);
+            } else if (key === "vendorComparison" && data.quotes) {
+                return renderVendorComp(data);
             }
 
-            return `<pre style="font-size: 0.75rem; overflow: auto; max-height: 160px; background: #f0f0f0; padding: 0.75rem; border-radius: 0.25rem;">${JSON.stringify(tool.data, null, 2)}</pre>`;
+            return `<pre style="font-size: 0.75rem; overflow: auto; max-height: 160px; background: #f0f0f0; padding: 0.75rem; border-radius: 0.25rem;">${JSON.stringify(data, null, 2)}</pre>`;
+        }
+
+        // --- VISUALIZATION HELPERS ---
+
+        function renderBarCalc(data) {
+            const total = data.results.totalDrinks || 1;
+            const breakdown = Array.isArray(data.results.breakdown) ? data.results.breakdown : [];
+
+            const getCount = (str) => {
+                const item = breakdown.find(b => b.type.toLowerCase().includes(str));
+                return item ? parseInt(item.servings) : 0;
+            };
+
+            const beer = getCount('beer');
+            const wine = getCount('wine');
+            const liquor = getCount('spirits');
+
+            return `
+                <div class="data-row">
+                    <span class="data-label">Total Drinks</span>
+                    <span class="data-value">${data.results.totalDrinks}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Est. Cost</span>
+                    <span class="data-value">$${data.results.totalCost?.toFixed(2)}</span>
+                </div>
+                <div style="margin-top:0.5rem; display:flex; gap:4px; height:8px; border-radius:4px; overflow:hidden;">
+                    <div style="width:${(beer / total) * 100}%; background:var(--warning);" title="Beer"></div>
+                    <div style="width:${(wine / total) * 100}%; background:var(--danger);" title="Wine"></div>
+                    <div style="width:${(liquor / total) * 100}%; background:var(--text);" title="Liquor"></div>
+                </div>
+            `;
+        }
+
+        function renderBudgetCalc(data) {
+            const spent = data.summary?.totalSpent || 0;
+            const total = data.summary?.totalBudget || 1;
+            const pct = Math.min(100, (spent / total) * 100);
+            const color = pct > 100 ? 'var(--danger)' : 'var(--success)';
+
+            return `
+                <div class="data-row">
+                    <span class="data-label">Budget Status</span>
+                    <span class="data-value">$${spent.toLocaleString()} / $${total.toLocaleString()}</span>
+                </div>
+                <div style="background:rgba(0,0,0,0.05); height:8px; border-radius:4px; margin-top:0.5rem; overflow:hidden;">
+                    <div style="width:${pct}%; height:100%; background:${color};"></div>
+                </div>
+                <div style="margin-top:0.5rem; font-size:0.75rem; color:#666;">
+                    ${Object.keys(data.categories || {}).length} categories tracked
+                </div>
+            `;
+        }
+
+        function renderGuestList(data) {
+            let stats = data.stats;
+            if (!stats && Array.isArray(data)) {
+                // Calculate stats from array
+                stats = {
+                    total: data.length,
+                    accepted: data.filter(g => g.rsvp === 'accepted').length,
+                    declined: data.filter(g => g.rsvp === 'declined').length
+                };
+            }
+            if (!stats) return '<div class="data-row">Invalid Guest Data</div>';
+
+            return `
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; text-align:center;">
+                    <div style="background:#f9fafb; padding:0.5rem; border-radius:4px;">
+                        <div style="font-weight:600; font-size:1.1rem;">${stats.total || 0}</div>
+                        <div style="font-size:0.7rem; color:#666;">GUESTS</div>
+                    </div>
+                    <div style="background:var(--success); color:white; padding:0.5rem; border-radius:4px;">
+                        <div style="font-weight:600; font-size:1.1rem;">${stats.accepted || 0}</div>
+                        <div style="font-size:0.7rem; opacity:0.9;">CONFIRMED</div>
+                    </div>
+                </div>
+                 <div class="data-row" style="margin-top:0.5rem;">
+                    <span class="data-label">Pending RSVP</span>
+                    <span class="data-value">${(stats.total || 0) - (stats.accepted || 0) - (stats.declined || 0)}</span>
+                </div>
+            `;
+        }
+
+        function renderGratuityCalc(data) {
+            return `
+                <div class="data-row">
+                    <span class="data-label">Total to Tip</span>
+                    <span class="data-value">$${data.totals.planned}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Already Paid</span>
+                    <span class="data-value" style="color:var(--success);">$${data.totals.paid}</span>
+                </div>
+                <div class="data-row" style="border-top:1px dashed #ddd; padding-top:0.5rem; margin-top:0.25rem;">
+                    <span class="data-label">Remaining</span>
+                    <span class="data-value" style="color:var(--danger);">$${data.totals.remaining}</span>
+                </div>
+            `;
+        }
+
+        function renderInvitationTracker(data) {
+            const { sent, opened, responded } = data.stats;
+            const total = sent || 1;
+            return `
+                <div class="data-row">
+                    <span class="data-label">Pipeline</span>
+                    <span class="data-value">${Math.round(responded / total * 100)}% Response</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:4px; margin-top:0.5rem;">
+                    <div style="flex:1; height:4px; background:var(--accent);" title="Sent"></div>
+                    <div style="width:8px; height:8px; border-radius:50%; background:${opened > 0 ? 'var(--accent)' : '#ddd'};"></div>
+                    <div style="flex:1; height:4px; background:${opened > 0 ? 'var(--accent)' : '#ddd'};"></div>
+                    <div style="width:8px; height:8px; border-radius:50%; background:${responded > 0 ? 'var(--accent)' : '#ddd'};"></div>
+                     <div style="flex:1; height:4px; background:${responded > 0 ? 'var(--accent)' : '#ddd'};"></div>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#666; margin-top:0.25rem;">
+                    <span>Sent (${sent})</span>
+                    <span>Opened</span>
+                    <span>Replied</span>
+                </div>
+            `;
+        }
+
+        function renderMenuPlanner(data) {
+            const counts = data.dietary || {};
+            const dietTags = Object.entries(counts)
+                .map(([k, v]) => v > 0 ? `<span style="font-size:0.65rem; background:#eee; padding:2px 4px; border-radius:3px; margin-right:4px;">${k.substring(0, 3).toUpperCase()}:${v}</span>` : '')
+                .join('');
+
+            return `
+                 <div class="data-row">
+                    <span class="data-label">Service Style</span>
+                    <span class="data-value">${data.eventInfo?.style || 'N/A'}</span>
+                </div>
+                <div style="margin-top:0.5rem;">
+                    <strong style="font-size:0.75rem; color:#666;">MENU COURSES:</strong>
+                     <div style="font-size:0.85rem;">${data.courses.map(c => c.name).join(' • ')}</div>
+                </div>
+                <div style="margin-top:0.5rem; display:flex; gap:4px; flex-wrap:wrap;">
+                    ${dietTags}
+                </div>
+            `;
+        }
+
+        function renderPlaylistTimer(data) {
+            const mins = Math.round((data.info.totalDuration || 0) / 60);
+            return `
+                 <div class="data-row">
+                    <span class="data-label">Total Duration</span>
+                    <span class="data-value">${Math.floor(mins / 60)}h ${mins % 60}m</span>
+                </div>
+                 <div class="data-row">
+                    <span class="data-label">Song Count</span>
+                    <span class="data-value">${data.info.songCount} tracks</span>
+                </div>
+                <div style="margin-top:0.5rem; font-size:0.75rem; color:#666;">
+                    Top Moods: ${Object.keys(data.moods || {}).slice(0, 3).join(', ')}
+                </div>
+            `;
+        }
+
+        function renderRainPlan(data) {
+            const prob = data.rainProbability !== undefined ? data.rainProbability : (data.probability || 0);
+            const isHighRisk = prob > 40;
+            return `
+                <div style="display:flex; align-items:center; gap:1rem;">
+                    <div style="font-size:2rem;">${prob > 50 ? '🌧️' : '☀️'}</div>
+                    <div style="flex:1;">
+                        <div class="data-row" style="margin-bottom:0;">
+                            <span class="data-label">Rain Risk</span>
+                            <span class="data-value">${prob}%</span>
+                        </div>
+                         <div style="font-size:0.75rem; color:${isHighRisk ? 'var(--danger)' : 'var(--success)'}; font-weight:600;">
+                            ${isHighRisk ? 'PLAN B ADVISED' : 'PLAN A GO'}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTimeline(data) {
+            const items = data.items || [];
+            return `
+                <div style="margin-bottom:0.5rem; font-size:0.8rem; font-weight:600; color:var(--accent);">
+                    ${data.eventInfo?.date || 'Event Date'}
+                </div>
+                <div style="border-left:2px solid #ddd; padding-left:0.75rem; margin-left:0.25rem;">
+                    ${items.slice(0, 3).map(item => `
+                        <div style="margin-bottom:0.5rem; position:relative;">
+                            <div style="position:absolute; left:-1.1rem; top:0.3rem; width:8px; height:8px; border-radius:50%; background:var(--accent);"></div>
+                            <div style="font-size:0.75rem; font-weight:600;">${item.time}</div>
+                            <div style="font-size:0.8rem;">${item.activity}</div>
+                        </div>
+                    `).join('')}
+                    ${items.length > 3 ? `<div style="font-size:0.7rem; color:#666;">+ ${(items.length - 3)} more events</div>` : ''}
+                </div>
+            `;
+        }
+
+        function renderVendorComp(data) {
+            const quotes = data.quotes || [];
+            const top = quotes.sort((a, b) => (b.score || 0) - (a.score || 0))[0];
+            return `
+                 <div class="data-row">
+                    <span class="data-label">Category</span>
+                    <span class="data-value">${data.category || 'Vendor'}</span>
+                </div>
+                ${top ? `
+                <div style="background:#fdf8f6; padding:0.75rem; border:1px solid #eee; border-radius:4px; margin-top:0.5rem;">
+                    <div style="font-size:0.7rem; color:var(--accent); text-transform:uppercase; font-weight:600;">Top Pick</div>
+                    <div style="font-weight:600; font-family:'Cormorant Garamond', serif; font-size:1.1rem;">${top.name}</div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-top:0.25rem;">
+                        <span>$${top.price}</span>
+                        <span>⭐ ${top.rating} (${top.score}/100)</span>
+                    </div>
+                </div>
+                ` : '<div style="font-size:0.8rem;">No quotes added</div>'}
+            `;
+        }
+
+        function renderSeatingChart(data) {
+            const tables = data.tables || [];
+            const totalGuests = tables.reduce((acc, t) => acc + (t.guests ? t.guests.filter(g => g).length : 0), 0);
+
+            // Simple preview: just text stats + a placeholder visualization
+            return `
+                  <div class="data-row">
+                    <span class="data-label">Total Tables</span>
+                    <span class="data-value">${tables.length}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Seated Guests</span>
+                    <span class="data-value">${totalGuests}</span>
+                </div>
+                <!-- Mini visualization of table distribution -->
+                <div style="margin-top:0.5rem; display:flex; flex-wrap:wrap; gap:4px;">
+                     ${tables.slice(0, 12).map(t => `<div style="width:12px; height:12px; background:var(--accent); border-radius:${t.type.includes('round') ? '50%' : '2px'}; opacity:0.7;" title="Table ${t.id}"></div>`).join('')}
+                     ${tables.length > 12 ? '<span style="font-size:0.7rem; color:#888;">+more</span>' : ''}
+                </div>
+             `;
         }
 
         // Helper to render Floor Plan SVG

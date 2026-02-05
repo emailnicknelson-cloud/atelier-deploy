@@ -1,0 +1,40 @@
+{
+    "app": "WhisperWorkshop",
+    "type": "invitationTracker",
+    "data": {
+        "stats": {
+            "total": 120,
+            "sent": 120,
+            "opened": 115,
+            "responded": 95,
+            "declined": 10,
+            "accepted": 85
+        },
+        "timeline": [
+            {
+                "date": "2025-05-01",
+                "action": "Save the Dates Sent",
+                "count": 120
+            },
+            {
+                "date": "2025-08-01",
+                "action": "Invitations Sent",
+                "count": 120
+            }
+        ],
+        "invitations": [
+            {
+                "id": 1,
+                "name": "Smith Family",
+                "status": "accepted",
+                "partySize": 4
+            },
+            {
+                "id": 2,
+                "name": "Jones Couple",
+                "status": "pending",
+                "partySize": 2
+            }
+        ]
+    }
+}

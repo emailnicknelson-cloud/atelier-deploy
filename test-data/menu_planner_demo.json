@@ -1,0 +1,41 @@
+{
+    "app": "WhisperWorkshop",
+    "type": "menuPlanner",
+    "data": {
+        "eventInfo": {
+            "guestCount": 150,
+            "style": "Plated Dinner"
+        },
+        "courses": [
+            {
+                "name": "Appetizers",
+                "items": [
+                    "Bruschetta",
+                    "Shrimp Cocktail",
+                    "Mini Quiche"
+                ]
+            },
+            {
+                "name": "Main Course",
+                "items": [
+                    "Filet Mignon",
+                    "Salmon with Dill",
+                    "Mushroom Risotto (V)"
+                ]
+            },
+            {
+                "name": "Dessert",
+                "items": [
+                    "Wedding Cake",
+                    "Fruit Tart"
+                ]
+            }
+        ],
+        "dietary": {
+            "vegetarian": 12,
+            "vegan": 5,
+            "glutenFree": 8,
+            "nutAllergy": 2
+        }
+    }
+}

@@ -1,0 +1,36 @@
+{
+    "app": "WhisperWorkshop",
+    "type": "playlistTimer",
+    "data": {
+        "info": {
+            "totalDuration": 13500,
+            "songCount": 45,
+            "eventDuration": 14400
+        },
+        "playlist": [
+            {
+                "title": "First Dance",
+                "artist": "Classic Artist",
+                "duration": 240,
+                "mood": "Romantic"
+            },
+            {
+                "title": "Party Starter",
+                "artist": "Pop Star",
+                "duration": 180,
+                "mood": "Energetic"
+            },
+            {
+                "title": "Slow Jam",
+                "artist": "Jazz Band",
+                "duration": 300,
+                "mood": "Chill"
+            }
+        ],
+        "moods": {
+            "Energetic": 20,
+            "Romantic": 10,
+            "Chill": 15
+        }
+    }
+}

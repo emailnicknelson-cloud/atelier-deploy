@@ -1,0 +1,44 @@
+{
+    "app": "WhisperWorkshop",
+    "type": "gratuityCalculator",
+    "data": {
+        "vendors": [
+            {
+                "role": "Catering Manager",
+                "name": "Sarah",
+                "amount": 200,
+                "status": "unpaid"
+            },
+            {
+                "role": "Head Chef",
+                "name": "Gordon",
+                "amount": 150,
+                "status": "unpaid"
+            },
+            {
+                "role": "Servers (10)",
+                "name": "Team",
+                "amount": 500,
+                "status": "ready"
+            },
+            {
+                "role": "DJ",
+                "name": "Spin Master",
+                "amount": 100,
+                "status": "paid"
+            },
+            {
+                "role": "Officiant",
+                "name": "Rev. Green",
+                "amount": 150,
+                "status": "unpaid"
+            }
+        ],
+        "totals": {
+            "planned": 1100,
+            "paid": 100,
+            "remaining": 1000
+        },
+        "envelopeCount": 5
+    }
+}
