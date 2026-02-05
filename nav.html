@@ -1173,13 +1173,14 @@
                 spent = data.summary.totalSpent || 0;
                 total = data.summary.totalBudget || 0; // Might need a default or fallback
                 categories = Object.keys(data.categories || {}).length;
-            } else if (Array.isArray(data.expenses)) {
-                // Calculate from raw expenses list
-                spent = data.expenses.reduce((acc, item) => acc + (parseFloat(item.actual) || parseFloat(item.estimated) || 0), 0);
-                total = data.expenses.reduce((acc, item) => acc + (parseFloat(item.estimated) || 0), 0); // Use estimated as "budget" if no total budget set
+            } else if (Array.isArray(data.expenses) || Array.isArray(data)) {
+                // Calculate from raw expenses list (either wrapped or direct)
+                const list = Array.isArray(data) ? data : data.expenses;
+                spent = list.reduce((acc, item) => acc + (parseFloat(item.actual) || parseFloat(item.estimated) || 0), 0);
+                total = list.reduce((acc, item) => acc + (parseFloat(item.estimated) || 0), 0); // Use estimated as "budget" if no total budget set
 
                 // Count unique categories
-                const cats = new Set(data.expenses.map(e => e.category).filter(c => c));
+                const cats = new Set(list.map(e => e.category).filter(c => c));
                 categories = cats.size;
             }
 
