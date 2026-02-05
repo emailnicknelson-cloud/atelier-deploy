@@ -595,8 +595,11 @@
                             them below.</p>
                         <div
                             style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                            <button onclick="exportFullEvent()" style="background:var(--accent); color:white;">
+                                <span class="upload-icon">💾</span> Save Full Event
+                            </button>
                             <button onclick="document.getElementById('fileInput').click()">
-                                <span class="upload-icon">📤</span>Choose JSON File
+                                <span class="upload-icon">📤</span> Load Event / Tool
                             </button>
                             <button onclick="scanLocalStorage()"
                                 style="background: #e4e4dc; color: #3d3d3d; border: 1px solid rgba(61,61,61,0.2);">
@@ -1281,6 +1284,19 @@
                 dataPayload = jsonData.data;
             }
             // Heuristics
+            else if (jsonData.type === "fullEvent" && jsonData.data) {
+                // Handle full event import
+                if (confirm(`Import full event? This will overwrite existing data for ${Object.keys(jsonData.data).length} tools.`)) {
+                    Object.entries(jsonData.data).forEach(([key, value]) => {
+                        if (STORAGE_KEYS[key]) {
+                            localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(value));
+                        }
+                    });
+                    scanLocalStorage(); // Refresh grid
+                    showToast("Full event imported successfully", 'success');
+                }
+                return;
+            }
             else if (jsonData.inputs?.barType !== undefined) detectedToolKey = "barCalculator";
             else if (Array.isArray(jsonData) && jsonData.length > 0 && jsonData[0].rsvp) detectedToolKey = "guestList";
             else if (jsonData.items && jsonData.eventInfo) detectedToolKey = "timelineScheduler";
@@ -1373,6 +1389,42 @@
             if (foundCount > 0) {
                 // Optional: showToast(`Synced ${foundCount} tools`, 'info');
             }
+        }
+
+        function exportFullEvent() {
+            const bundle = {
+                app: "WhisperWorkshop",
+                type: "fullEvent",
+                version: "1.0",
+                timestamp: new Date().toISOString(),
+                data: {}
+            };
+
+            let count = 0;
+            for (const [key, storageKey] of Object.entries(STORAGE_KEYS)) {
+                const stored = localStorage.getItem(storageKey);
+                if (stored) {
+                    try {
+                        bundle.data[key] = JSON.parse(stored);
+                        count++;
+                    } catch (e) {
+                        console.error("Failed to bundle", key);
+                    }
+                }
+            }
+
+            if (count === 0) {
+                showToast("No data to save", 'error');
+                return;
+            }
+
+            const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `whisper_event_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            showToast(`Saved ${count} tools to event file`, 'success');
         }
     </script>
 </body>
