@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Bar Calculator - Whisper Workshop</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --bg: #e4e4dc;
@@ -19,7 +22,11 @@
             --success: #5a7c5a;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             font-family: 'Inter', -apple-system, sans-serif;
@@ -76,7 +83,10 @@
         }
 
         @keyframes logoFadeIn {
-            to { opacity: 1; transform: scale(1); }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         #main-content {
@@ -142,12 +152,12 @@
             font-size: 0.9em;
         }
 
-        .container { 
-            max-width: 1200px; 
-            margin: 0 auto; 
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 3rem 2rem;
             width: 100%;
-            box-sizing: border-box; 
+            box-sizing: border-box;
         }
 
         header {
@@ -181,10 +191,13 @@
         }
 
         @media (max-width: 968px) {
-            .calculator-grid { grid-template-columns: 1fr; }
+            .calculator-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
-        .input-panel, .results-panel {
+        .input-panel,
+        .results-panel {
             background: var(--card);
             padding: 2rem;
             border-radius: 8px;
@@ -192,17 +205,20 @@
             transition: all 0.3s ease;
         }
 
-        .input-panel:hover, .results-panel:hover {
+        .input-panel:hover,
+        .results-panel:hover {
             background: var(--card-hover);
             border-color: rgba(139, 115, 85, 0.3);
         }
 
-        .form-group { margin-bottom: 1.5rem; }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
 
-        label { 
-            display: block; 
-            font-weight: 500; 
-            margin-bottom: 0.5rem; 
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
             color: var(--text);
             font-size: 0.9em;
             letter-spacing: 0.02em;
@@ -215,7 +231,9 @@
             margin-bottom: 0.5rem;
         }
 
-        input[type="number"], select, input[type="text"] {
+        input[type="number"],
+        select,
+        input[type="text"] {
             padding: 0.75rem;
             border: 1px solid var(--border-strong);
             border-radius: 6px;
@@ -226,7 +244,9 @@
             transition: all 0.2s ease;
         }
 
-        input[type="number"]:focus, select:focus, input[type="text"]:focus {
+        input[type="number"]:focus,
+        select:focus,
+        input[type="text"]:focus {
             outline: none;
             border-color: var(--accent);
             background: rgba(255, 255, 255, 0.9);
@@ -284,8 +304,8 @@
             text-align: center;
         }
 
-        .category-toggle:hover { 
-            background: rgba(255, 255, 255, 0.8); 
+        .category-toggle:hover {
+            background: rgba(255, 255, 255, 0.8);
             transform: translateY(-2px);
         }
 
@@ -294,13 +314,22 @@
             border-color: var(--accent);
         }
 
-        .category-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
-        .category-name { 
-            font-weight: 500; 
+        .category-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-name {
+            font-weight: 500;
             font-size: 0.9em;
             color: var(--text);
         }
-        .category-pct { font-size: 0.8rem; color: var(--accent); font-weight: 500; }
+
+        .category-pct {
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 500;
+        }
 
         .result-card {
             background: rgba(255, 255, 255, 0.4);
@@ -382,11 +411,11 @@
             letter-spacing: 0.02em;
         }
 
-        .btn-primary { 
-            background: var(--text); 
-            color: var(--bg); 
+        .btn-primary {
+            background: var(--text);
+            color: var(--bg);
             border-color: var(--text);
-            width: 100%; 
+            width: 100%;
         }
 
         .btn-primary:hover {
@@ -396,10 +425,10 @@
             transform: translateY(-1px);
         }
 
-        .btn-secondary { 
-            background: rgba(255, 255, 255, 0.6); 
-            color: var(--text); 
-            border: 1px solid var(--border-strong); 
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.6);
+            color: var(--text);
+            border: 1px solid var(--border-strong);
         }
 
         .btn-secondary:hover {
@@ -520,33 +549,50 @@
         }
 
         @media print {
-            .nav-header, .data-controls, #splash-screen { display: none !important; }
-            body { background: white; }
-            .input-panel, .results-panel { 
-                background: white; 
+
+            .nav-header,
+            .data-controls,
+            #splash-screen {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+            }
+
+            .input-panel,
+            .results-panel {
+                background: white;
                 border: 1px solid #ddd;
                 break-inside: avoid;
             }
         }
 
-        
+
         /* Mobile Optimizations */
         @media (max-width: 768px) {
+
             /* Fix viewport zoom issues */
-            html, body {
+            html,
+            body {
                 width: 100%;
                 overflow-x: hidden;
                 -webkit-text-size-adjust: 100%;
             }
 
             /* Ensure all media respects viewport */
-            img, video, iframe, table {
+            img,
+            video,
+            iframe,
+            table {
                 max-width: 100%;
                 height: auto;
             }
 
             /* Prevent zoom on input focus */
-            input, select, button {
+            input,
+            select,
+            button {
                 font-size: 16px !important;
             }
 
@@ -599,12 +645,13 @@
             }
 
             /* Result cards stack */
-            .results-panel > div[style*="grid-template-columns"] {
+            .results-panel>div[style*="grid-template-columns"] {
                 grid-template-columns: 1fr !important;
             }
 
             /* Input panel spacing */
-            .input-panel, .results-panel {
+            .input-panel,
+            .results-panel {
                 padding: 1.25rem;
             }
 
@@ -727,13 +774,15 @@
                 margin-bottom: 1.5rem;
             }
 
-            .input-panel, .results-panel {
+            .input-panel,
+            .results-panel {
                 padding: 1rem;
             }
         }
 
         /* Touch device optimizations */
         @media (pointer: coarse) {
+
             /* Larger touch targets */
             input[type="range"]::-webkit-slider-thumb {
                 width: 32px;
@@ -769,7 +818,7 @@
         }
 
         /* ==================== MOBILE UX FIXES - ADDED ONLY THESE ==================== */
-        
+
         /* 1. DRINKING PERCENTAGE - Mobile Stacked Layout */
         @media (max-width: 640px) {
             .slider-label {
@@ -778,15 +827,15 @@
                 gap: 0.5rem;
                 align-items: center;
             }
-            
+
             .slider-label span:first-child {
                 text-align: left;
             }
-            
+
             .slider-label span:last-child {
                 text-align: right;
             }
-            
+
             #drinkPctDisplay {
                 background: var(--accent);
                 color: white;
@@ -935,7 +984,7 @@
             .breakdown-cards {
                 display: none;
             }
-            
+
             .breakdown-table {
                 display: table;
             }
@@ -953,7 +1002,7 @@
             padding: 1rem;
             border-top: 1px solid var(--border);
             z-index: 99;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
         }
 
         @media (max-width: 640px) {
@@ -962,7 +1011,8 @@
             }
 
             .container {
-                padding-bottom: 5rem; /* Space for sticky button */
+                padding-bottom: 5rem;
+                /* Space for sticky button */
             }
 
             .sticky-recalculate-btn {
@@ -986,14 +1036,16 @@
                 transform: scale(0.98);
             }
         }
-
     </style>
 </head>
+
 <body>
     <!-- Splash Screen -->
- <div id="splash-screen">
+    <div id="splash-screen">
         <div class="splash-content">
-            <div style="font-family: 'Cormorant Garamond', serif; font-size: 1.75em; color: #8b7355; margin: 15px 0; font-weight: 500; letter-spacing: 0.05em;">Bar Calculator</div>
+            <div
+                style="font-family: 'Cormorant Garamond', serif; font-size: 1.75em; color: #8b7355; margin: 15px 0; font-weight: 500; letter-spacing: 0.05em;">
+                Bar Calculator</div>
             <div class="splash-tagline">Professional Event Planning Suite</div>
         </div>
     </div>
@@ -1004,20 +1056,25 @@
         <nav class="nav-header">
             <div class="nav-container">
                 <a href="https://whisperworkshop.com/nav.html" class="nav-brand">Bar Calculator</a>
-				<a href="https://whisperworkshop.com/nav.html" class="nav-link">Return to Whisper Workshop Tool Suite</a>
+                <a href="https://whisperworkshop.com/nav.html" class="nav-link">Return to Whisper Workshop Tool
+                    Suite</a>
             </div>
         </nav>
 
         <div class="container">
             <header>
-                <h1 style="font-family: 'Cormorant Garamond', serif; font-size: 2.5em; font-weight: 500; color: #3d3d3d; margin-bottom: 10px;">Bar Calculator</h1>
-                <p style="font-size: 0.95em; color: #666; letter-spacing: 0.05em;">Beverage quantities & costs for your event</p>
+                <h1
+                    style="font-family: 'Cormorant Garamond', serif; font-size: 2.5em; font-weight: 500; color: #3d3d3d; margin-bottom: 10px;">
+                    Bar Calculator</h1>
+                <p style="font-size: 0.95em; color: #666; letter-spacing: 0.05em;">Beverage quantities & costs for your
+                    event</p>
             </header>
 
             <div class="calculator-grid">
                 <div class="input-panel">
                     <div class="guest-sync" id="guestSync" style="display: none;">
-                        <span style="font-family: 'Cormorant Garamond', serif; color: var(--success); font-weight: 600;">Synced</span>
+                        <span
+                            style="font-family: 'Cormorant Garamond', serif; color: var(--success); font-weight: 600;">Synced</span>
                         <span>Guest List: <strong id="syncedCount">0</strong> confirmed</span>
                     </div>
 
@@ -1039,7 +1096,8 @@
                                 <span id="drinkPctDisplay">75%</span>
                                 <span>Heavy (100%)</span>
                             </div>
-                            <input type="range" id="drinkingPct" min="50" max="100" value="75" oninput="updateSlider(this.value); calculate()">
+                            <input type="range" id="drinkingPct" min="50" max="100" value="75"
+                                oninput="updateSlider(this.value); calculate()">
                         </div>
                     </div>
 
@@ -1059,22 +1117,30 @@
                         <label>Drink Distribution</label>
                         <div class="drink-categories">
                             <div class="category-toggle active" id="cat-beer" onclick="toggleCategory('beer')">
-                                <div class="category-icon" style="font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; font-weight: 600; color: var(--accent);">B</div>
+                                <div class="category-icon"
+                                    style="font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; font-weight: 600; color: var(--accent);">
+                                    B</div>
                                 <div class="category-name">Beer</div>
                                 <div class="category-pct" id="pct-beer">30%</div>
                             </div>
                             <div class="category-toggle active" id="cat-wine" onclick="toggleCategory('wine')">
-                                <div class="category-icon" style="font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; font-weight: 600; color: var(--accent);">W</div>
+                                <div class="category-icon"
+                                    style="font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; font-weight: 600; color: var(--accent);">
+                                    W</div>
                                 <div class="category-name">Wine</div>
                                 <div class="category-pct" id="pct-wine">40%</div>
                             </div>
                             <div class="category-toggle active" id="cat-spirits" onclick="toggleCategory('spirits')">
-                                <div class="category-icon" style="font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; font-weight: 600; color: var(--accent);">S</div>
+                                <div class="category-icon"
+                                    style="font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; font-weight: 600; color: var(--accent);">
+                                    S</div>
                                 <div class="category-name">Spirits</div>
                                 <div class="category-pct" id="pct-spirits">20%</div>
                             </div>
                             <div class="category-toggle active" id="cat-nonalc" onclick="toggleCategory('nonalc')">
-                                <div class="category-icon" style="font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; font-weight: 600; color: var(--accent);">N</div>
+                                <div class="category-icon"
+                                    style="font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; font-weight: 600; color: var(--accent);">
+                                    N</div>
                                 <div class="category-name">Non-Alc</div>
                                 <div class="category-pct" id="pct-nonalc">10%</div>
                             </div>
@@ -1084,37 +1150,45 @@
                     <!-- Cost Estimation Section -->
                     <div class="cost-section">
                         <label>Pricing Estimates (per unit)</label>
-                        <button class="pricing-toggle-btn" id="pricingToggleBtn" onclick="togglePricing()">Enter Pricing Estimates</button>
+                        <button class="pricing-toggle-btn" id="pricingToggleBtn" onclick="togglePricing()">Enter Pricing
+                            Estimates</button>
                         <div class="cost-grid" id="costGrid">
                             <div class="cost-input-group">
                                 <label>Beer (case of 24)</label>
-                                <input type="number" id="beerCost" placeholder="35" value="35" min="0" step="0.01" onchange="calculate()">
+                                <input type="number" id="beerCost" placeholder="35" value="35" min="0" step="0.01"
+                                    onchange="calculate()">
                             </div>
                             <div class="cost-input-group">
                                 <label>Wine (bottle)</label>
-                                <input type="number" id="wineCost" placeholder="15" value="15" min="0" step="0.01" onchange="calculate()">
+                                <input type="number" id="wineCost" placeholder="15" value="15" min="0" step="0.01"
+                                    onchange="calculate()">
                             </div>
                             <div class="cost-input-group">
                                 <label>Spirits (750ml)</label>
-                                <input type="number" id="spiritsCost" placeholder="25" value="25" min="0" step="0.01" onchange="calculate()">
+                                <input type="number" id="spiritsCost" placeholder="25" value="25" min="0" step="0.01"
+                                    onchange="calculate()">
                             </div>
                             <div class="cost-input-group">
                                 <label>Non-Alc (liter)</label>
-                                <input type="number" id="nonalcCost" placeholder="2" value="2" min="0" step="0.01" onchange="calculate()">
+                                <input type="number" id="nonalcCost" placeholder="2" value="2" min="0" step="0.01"
+                                    onchange="calculate()">
                             </div>
                             <div class="cost-input-group">
                                 <label>Mixers (liter)</label>
-                                <input type="number" id="mixerCost" placeholder="1.5" value="1.5" min="0" step="0.01" onchange="calculate()">
+                                <input type="number" id="mixerCost" placeholder="1.5" value="1.5" min="0" step="0.01"
+                                    onchange="calculate()">
                             </div>
                             <div class="cost-input-group">
                                 <label>Ice (per lb)</label>
-                                <input type="number" id="iceCost" placeholder="0.5" value="0.5" min="0" step="0.01" onchange="calculate()">
+                                <input type="number" id="iceCost" placeholder="0.5" value="0.5" min="0" step="0.01"
+                                    onchange="calculate()">
                             </div>
                         </div>
                         <div class="sync-status" id="costSync">Enter prices to see cost estimates</div>
                     </div>
 
-                    <button class="btn btn-primary" onclick="calculate()" style="margin-top: 1.5rem;">Recalculate</button>
+                    <button class="btn btn-primary" onclick="calculate()"
+                        style="margin-top: 1.5rem;">Recalculate</button>
                 </div>
 
                 <div class="results-panel">
@@ -1136,7 +1210,9 @@
                         </div>
                     </div>
 
-                    <h3 style="margin: 1.5rem 0 1rem; font-family: 'Cormorant Garamond', serif; color: var(--accent); font-weight: 600;">Detailed Breakdown</h3>
+                    <h3
+                        style="margin: 1.5rem 0 1rem; font-family: 'Cormorant Garamond', serif; color: var(--accent); font-weight: 600;">
+                        Detailed Breakdown</h3>
 
                     <table class="breakdown-table">
                         <thead>
@@ -1160,8 +1236,10 @@
                     </div>
 
                     <div class="ice-warning">
-                        <strong style="font-family: 'Cormorant Garamond', serif; font-size: 1.1em;">Ice Requirements</strong><br>
-                        Plan for <span id="iceAmount">0</span> lbs of ice (1.5 lbs per guest) plus 20% buffer for cooling.
+                        <strong style="font-family: 'Cormorant Garamond', serif; font-size: 1.1em;">Ice
+                            Requirements</strong><br>
+                        Plan for <span id="iceAmount">0</span> lbs of ice (1.5 lbs per guest) plus 20% buffer for
+                        cooling.
                     </div>
                 </div>
             </div>
@@ -1171,7 +1249,8 @@
                     <button class="btn btn-secondary" onclick="window.print()">Print List</button>
                     <button class="btn btn-secondary" onclick="exportCalc()">Export JSON</button>
                     <div class="file-input-wrapper">
-                        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Import JSON</button>
+                        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Import
+                            JSON</button>
                         <input type="file" id="importFile" accept=".json" onchange="importCalc(event)">
                     </div>
                 </div>
@@ -1208,15 +1287,15 @@
         let currentCalculation = null;
 
         // Splash screen initialization
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const splash = document.getElementById('splash-screen');
             const mainContent = document.getElementById('main-content');
 
-            setTimeout(function() {
+            setTimeout(function () {
                 splash.classList.add('fade-out');
                 mainContent.classList.add('visible');
 
-                setTimeout(function() {
+                setTimeout(function () {
                     splash.style.display = 'none';
                 }, 800);
             }, 1500);
@@ -1236,7 +1315,7 @@
                         document.getElementById('syncedCount').textContent = confirmed;
                         document.getElementById('guestSync').style.display = 'flex';
                     }
-                } catch(e) {
+                } catch (e) {
                     console.log('Guest sync error:', e);
                 }
             }
@@ -1264,7 +1343,7 @@
 
                         updateSlider(data.inputs.drinkingPct || 75);
                     }
-                } catch(e) {
+                } catch (e) {
                     console.log('Bar data load error:', e);
                 }
             }
@@ -1300,10 +1379,10 @@
         function togglePricing() {
             const btn = document.getElementById('pricingToggleBtn');
             const grid = document.getElementById('costGrid');
-            
+
             btn.classList.toggle('expanded');
             grid.classList.toggle('expanded');
-            
+
             if (grid.classList.contains('expanded')) {
                 btn.textContent = 'Hide Pricing Estimates';
             } else {
@@ -1473,7 +1552,7 @@
             const hasCosts = Object.values(costs).some(c => c > 0);
             if (hasCosts) {
                 document.getElementById('totalCostCard').style.display = 'block';
-                document.getElementById('totalCostValue').textContent = '$' + totalCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                document.getElementById('totalCostValue').textContent = '$' + totalCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 document.getElementById('costSync').textContent = 'Cost estimates updated based on current pricing';
             } else {
                 document.getElementById('totalCostCard').style.display = 'none';
@@ -1508,7 +1587,15 @@
                 calculate();
             }
 
-            const blob = new Blob([JSON.stringify(currentCalculation, null, 2)], {type: 'application/json'});
+            const exportData = {
+                app: "WhisperWorkshop",
+                type: "barCalculator",
+                version: "1.0",
+                timestamp: new Date().toISOString(),
+                data: currentCalculation
+            };
+
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -1526,9 +1613,17 @@
             if (!file) return;
 
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 try {
-                    const data = JSON.parse(e.target.result);
+                    const json = JSON.parse(e.target.result);
+                    let data;
+
+                    // Handle new standard format vs legacy
+                    if (json.app === "WhisperWorkshop" && json.type === "barCalculator") {
+                        data = json.data;
+                    } else {
+                        data = json; // Fallback for legacy files
+                    }
 
                     if (data.inputs) {
                         document.getElementById('guestCount').value = data.inputs.guests || 100;
@@ -1593,4 +1688,5 @@
         }
     </script>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,18 +16,26 @@
             --text: #1e293b;
             --border: #e2e8f0;
         }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
         }
-        
-        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-        
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
         header {
             text-align: center;
             margin-bottom: 2.5rem;
@@ -35,57 +44,79 @@
             border-radius: 16px;
             color: white;
         }
-        
+
         .event-info {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
             margin-bottom: 2rem;
         }
-        
+
         .info-card {
             background: var(--card);
             padding: 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        
-        .info-label { font-size: 0.875rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
-        
-        .info-value { font-size: 1.25rem; font-weight: 700; color: var(--primary); }
-        
+
+        .info-label {
+            font-size: 0.875rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
         .setup-section {
             background: var(--card);
             padding: 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
         }
-        
+
         .form-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
             margin-bottom: 1rem;
         }
-        
-        .form-group { display: flex; flex-direction: column; }
-        
-        label { font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.875rem; }
-        
-        input, select, textarea {
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #475569;
+            font-size: 0.875rem;
+        }
+
+        input,
+        select,
+        textarea {
             padding: 0.75rem;
             border: 2px solid var(--border);
             border-radius: 8px;
             font-size: 1rem;
             font-family: inherit;
         }
-        
-        input:focus, select:focus, textarea:focus {
+
+        input:focus,
+        select:focus,
+        textarea:focus {
             outline: none;
             border-color: var(--primary);
         }
-        
+
         .btn {
             padding: 0.875rem 1.5rem;
             border: none;
@@ -98,22 +129,41 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4); }
-        
-        .btn-secondary { background: #64748b; color: white; }
-        .btn-danger { background: #ef4444; color: white; padding: 0.5rem 1rem; font-size: 0.875rem; }
-        
-        .btn-sm { padding: 0.5rem 1rem; font-size: 0.875rem; }
-        
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: #64748b;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
         .timeline-container {
             background: var(--card);
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
-        
+
         .timeline-header {
             display: grid;
             grid-template-columns: 100px 1fr 120px 150px 100px;
@@ -126,11 +176,13 @@
             letter-spacing: 0.05em;
             color: #475569;
         }
-        
+
         @media (max-width: 768px) {
-            .timeline-header { display: none; }
+            .timeline-header {
+                display: none;
+            }
         }
-        
+
         .timeline-item {
             display: grid;
             grid-template-columns: 100px 1fr 120px 150px 100px;
@@ -140,14 +192,15 @@
             align-items: center;
             transition: all 0.2s;
         }
-        
+
         @media (max-width: 768px) {
             .timeline-item {
                 grid-template-columns: 1fr;
                 gap: 0.5rem;
                 padding: 1.5rem;
             }
-            .timeline-item > div::before {
+
+            .timeline-item>div::before {
                 content: attr(data-label);
                 font-weight: 600;
                 color: #64748b;
@@ -157,22 +210,24 @@
                 margin-bottom: 0.25rem;
             }
         }
-        
-        .timeline-item:hover { background: #f8fafc; }
-        
+
+        .timeline-item:hover {
+            background: #f8fafc;
+        }
+
         .timeline-item.dragging {
             opacity: 0.5;
             background: #e0e7ff;
             border: 2px dashed var(--primary);
         }
-        
+
         .time-display {
             font-family: 'Courier New', monospace;
             font-weight: 700;
             color: var(--primary);
             font-size: 1.125rem;
         }
-        
+
         .duration-badge {
             display: inline-flex;
             align-items: center;
@@ -183,18 +238,18 @@
             font-size: 0.875rem;
             font-weight: 600;
         }
-        
+
         .item-title {
             font-weight: 600;
             color: var(--text);
             margin-bottom: 0.25rem;
         }
-        
+
         .item-desc {
             font-size: 0.875rem;
             color: #64748b;
         }
-        
+
         .vendor-tag {
             display: inline-flex;
             align-items: center;
@@ -206,7 +261,7 @@
             margin-right: 0.25rem;
             margin-bottom: 0.25rem;
         }
-        
+
         .buffer-alert {
             display: inline-flex;
             align-items: center;
@@ -218,7 +273,7 @@
             font-size: 0.75rem;
             margin-left: 0.5rem;
         }
-        
+
         .category-indicator {
             width: 4px;
             height: 100%;
@@ -226,43 +281,63 @@
             left: 0;
             top: 0;
         }
-        
+
         .add-item-form {
             background: #f8fafc;
             padding: 1.5rem;
             border-top: 2px solid var(--border);
         }
-        
+
         .form-grid {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
             gap: 1rem;
             align-items: end;
         }
-        
+
         @media (max-width: 968px) {
-            .form-grid { grid-template-columns: 1fr; }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
         }
-        
+
         .drag-handle {
             cursor: grab;
             color: #94a3b8;
             padding: 0.5rem;
         }
-        
-        .drag-handle:active { cursor: grabbing; }
-        
+
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
         .print-run-sheet {
             display: none;
         }
-        
+
         @media print {
-            .setup-section, .add-item-form, .btn, .drag-handle { display: none !important; }
-            .print-run-sheet { display: block; margin-top: 2rem; }
-            .timeline-container { box-shadow: none; }
-            .timeline-item { break-inside: avoid; }
+
+            .setup-section,
+            .add-item-form,
+            .btn,
+            .drag-handle {
+                display: none !important;
+            }
+
+            .print-run-sheet {
+                display: block;
+                margin-top: 2rem;
+            }
+
+            .timeline-container {
+                box-shadow: none;
+            }
+
+            .timeline-item {
+                break-inside: avoid;
+            }
         }
-        
+
         .conflict-warning {
             background: #fee2e2;
             border-left: 4px solid var(--danger);
@@ -271,9 +346,13 @@
             border-radius: 0 8px 8px 0;
             display: none;
         }
-        
-        .conflict-warning.active { display: flex; align-items: center; gap: 0.75rem; }
-        
+
+        .conflict-warning.active {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
         .data-controls {
             margin-top: 2rem;
             padding: 1.5rem;
@@ -285,21 +364,24 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
             <h1>⏰ Timeline Scheduler</h1>
             <p>Build your perfect event day schedule with drag-and-drop precision</p>
         </header>
-        
+
         <div class="event-info">
             <div class="info-card">
                 <div class="info-label">Event Date</div>
-                <input type="date" id="eventDate" class="info-value" style="width: 100%; font-size: 1rem; padding: 0.5rem;" onchange="saveEventInfo()">
+                <input type="date" id="eventDate" class="info-value"
+                    style="width: 100%; font-size: 1rem; padding: 0.5rem;" onchange="saveEventInfo()">
             </div>
             <div class="info-card">
                 <div class="info-label">Start Time</div>
-                <input type="time" id="startTime" class="info-value" style="width: 100%; font-size: 1rem; padding: 0.5rem;" onchange="saveEventInfo()">
+                <input type="time" id="startTime" class="info-value"
+                    style="width: 100%; font-size: 1rem; padding: 0.5rem;" onchange="saveEventInfo()">
             </div>
             <div class="info-card">
                 <div class="info-label">End Time</div>
@@ -310,7 +392,7 @@
                 <div class="info-value" id="totalDuration">0h 0m</div>
             </div>
         </div>
-        
+
         <div class="conflict-warning" id="conflictWarning">
             <span style="font-size: 1.25rem;">⚠️</span>
             <div>
@@ -318,16 +400,17 @@
                 <div style="font-size: 0.875rem; margin-top: 0.25rem;" id="conflictDetails"></div>
             </div>
         </div>
-        
+
         <div class="setup-section">
             <h3 style="margin-bottom: 1rem; color: var(--primary);">Vendor List (for quick assignment)</h3>
             <div class="form-row">
-                <input type="text" id="vendorInput" placeholder="Add vendor name (e.g., DJ Mike, Catering Co)..." onkeypress="if(event.key==='Enter')addVendor()">
+                <input type="text" id="vendorInput" placeholder="Add vendor name (e.g., DJ Mike, Catering Co)..."
+                    onkeypress="if(event.key==='Enter')addVendor()">
                 <button class="btn btn-secondary" onclick="addVendor()">Add Vendor</button>
             </div>
             <div id="vendorTags" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem;"></div>
         </div>
-        
+
         <div class="timeline-container">
             <div class="timeline-header">
                 <div>Time</div>
@@ -337,7 +420,7 @@
                 <div>Actions</div>
             </div>
             <div id="timelineItems"></div>
-            
+
             <div class="add-item-form">
                 <h3 style="margin-bottom: 1rem; color: var(--primary);">Add Schedule Item</h3>
                 <div class="form-grid">
@@ -351,7 +434,8 @@
                     </div>
                     <div class="form-group">
                         <label>Buffer (min)</label>
-                        <input type="number" id="itemBuffer" value="0" min="0" step="5" title="Transition time after this item">
+                        <input type="number" id="itemBuffer" value="0" min="0" step="5"
+                            title="Transition time after this item">
                     </div>
                     <div class="form-group">
                         <label>Category</label>
@@ -380,17 +464,18 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="print-run-sheet" id="printRunSheet">
             <h2 style="text-align: center; margin-bottom: 1rem;">RUN OF SHOW</h2>
             <p style="text-align: center; color: #64748b; margin-bottom: 2rem;" id="printDate"></p>
             <div id="printContent"></div>
         </div>
-        
+
         <div class="data-controls">
             <button class="btn btn-primary" onclick="exportData()">📥 Export JSON</button>
             <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(this)">
-            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import JSON</button>
+            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import
+                JSON</button>
             <button class="btn btn-secondary" onclick="window.print()">🖨️ Print Run Sheet</button>
             <button class="btn btn-danger" onclick="clearAll()">🗑️ Clear All</button>
         </div>
@@ -403,12 +488,12 @@
             reception: '#f59e0b', meal: '#10b981', speech: '#06b6d4',
             dance: '#ef4444', cleanup: '#78716c'
         };
-        
+
         let items = [];
         let vendors = [];
         let eventInfo = { date: '', startTime: '' };
         let draggedItem = null;
-        
+
         function loadData() {
             const stored = localStorage.getItem(STORAGE_KEY);
             if (stored) {
@@ -417,26 +502,26 @@
                 vendors = data.vendors || [];
                 eventInfo = data.eventInfo || { date: '', startTime: '' };
             }
-            
+
             if (eventInfo.date) document.getElementById('eventDate').value = eventInfo.date;
             if (eventInfo.startTime) document.getElementById('startTime').value = eventInfo.startTime;
-            
+
             renderVendors();
             renderTimeline();
         }
-        
+
         function saveData() {
             const data = { items, vendors, eventInfo };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
             renderTimeline();
         }
-        
+
         function saveEventInfo() {
             eventInfo.date = document.getElementById('eventDate').value;
             eventInfo.startTime = document.getElementById('startTime').value;
             saveData();
         }
-        
+
         function addVendor() {
             const name = document.getElementById('vendorInput').value.trim();
             if (!name) return;
@@ -445,7 +530,7 @@
             saveData();
             renderVendors();
         }
-        
+
         function removeVendor(id) {
             vendors = vendors.filter(v => v.id !== id);
             items.forEach(item => {
@@ -454,22 +539,22 @@
             saveData();
             renderVendors();
         }
-        
+
         function renderVendors() {
             const container = document.getElementById('vendorTags');
             const select = document.getElementById('itemVendor');
-            
+
             container.innerHTML = vendors.map(v => `
                 <span class="vendor-tag" style="background: #e0e7ff; color: var(--primary);">
                     ${v.name}
                     <button onclick="removeVendor(${v.id})" style="background: none; border: none; cursor: pointer; padding: 0; margin-left: 0.25rem;">×</button>
                 </span>
             `).join('');
-            
-            select.innerHTML = '<option value="">-- Select --</option>' + 
+
+            select.innerHTML = '<option value="">-- Select --</option>' +
                 vendors.map(v => `<option value="${v.id}">${v.name}</option>`).join('');
         }
-        
+
         function addItem() {
             const title = document.getElementById('itemTitle').value.trim();
             const duration = parseInt(document.getElementById('itemDuration').value) || 30;
@@ -477,12 +562,12 @@
             const category = document.getElementById('itemCategory').value;
             const vendorId = document.getElementById('itemVendor').value;
             const desc = document.getElementById('itemDesc').value.trim();
-            
+
             if (!title) {
                 alert('Please enter an activity title');
                 return;
             }
-            
+
             const item = {
                 id: Date.now(),
                 title,
@@ -493,17 +578,17 @@
                 vendors: vendorId ? [parseInt(vendorId)] : [],
                 order: items.length
             };
-            
+
             items.push(item);
             saveData();
-            
+
             // Clear form
             document.getElementById('itemTitle').value = '';
             document.getElementById('itemDesc').value = '';
             document.getElementById('itemDuration').value = '30';
             document.getElementById('itemBuffer').value = '0';
         }
-        
+
         function deleteItem(id) {
             if (!confirm('Delete this item?')) return;
             items = items.filter(i => i.id !== id);
@@ -511,44 +596,44 @@
             items.forEach((item, idx) => item.order = idx);
             saveData();
         }
-        
+
         function formatTime(date) {
             return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
         }
-        
+
         function addMinutes(date, minutes) {
             return new Date(date.getTime() + minutes * 60000);
         }
-        
+
         function renderTimeline() {
             const container = document.getElementById('timelineItems');
             const startTimeVal = document.getElementById('startTime').value;
-            
+
             if (!startTimeVal) {
                 container.innerHTML = '<div style="padding: 3rem; text-align: center; color: #64748b;">Please set an event start time above to generate the timeline.</div>';
                 return;
             }
-            
+
             // Sort by order
             items.sort((a, b) => a.order - b.order);
-            
+
             // Calculate times
             let currentTime = new Date(`2000-01-01T${startTimeVal}`);
             const startTime = new Date(currentTime);
-            
+
             items.forEach(item => {
                 item.startTime = new Date(currentTime);
                 item.endTime = addMinutes(currentTime, item.duration);
                 currentTime = addMinutes(item.endTime, item.buffer);
             });
-            
+
             const endTime = items.length > 0 ? items[items.length - 1].endTime : currentTime;
             const totalMinutes = (endTime - startTime) / 60000;
-            
+
             document.getElementById('displayEndTime').textContent = formatTime(endTime);
-            document.getElementById('totalDuration').textContent = 
+            document.getElementById('totalDuration').textContent =
                 `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m`;
-            
+
             // Check for conflicts (same vendor, overlapping times)
             const conflicts = [];
             for (let i = 0; i < items.length; i++) {
@@ -564,7 +649,7 @@
                     }
                 }
             }
-            
+
             const warningEl = document.getElementById('conflictWarning');
             if (conflicts.length > 0) {
                 warningEl.classList.add('active');
@@ -572,17 +657,17 @@
             } else {
                 warningEl.classList.remove('active');
             }
-            
+
             // Render items
             container.innerHTML = items.map((item, index) => {
                 const vendorNames = item.vendors.map(v => {
                     const vendor = vendors.find(x => x.id === v);
                     return vendor ? `<span class="vendor-tag">${vendor.name}</span>` : '';
                 }).join('');
-                
-                const bufferWarning = item.buffer < 5 && index < items.length - 1 ? 
+
+                const bufferWarning = item.buffer < 5 && index < items.length - 1 ?
                     '<span class="buffer-alert">⚡ Tight transition</span>' : '';
-                
+
                 return `
                     <div class="timeline-item" draggable="true" data-id="${item.id}" data-index="${index}" style="position: relative;">
                         <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: ${CATEGORY_COLORS[item.category]};"></div>
@@ -606,7 +691,7 @@
                     </div>
                 `;
             }).join('');
-            
+
             // Setup drag and drop
             container.querySelectorAll('.timeline-item').forEach(el => {
                 el.addEventListener('dragstart', handleDragStart);
@@ -614,11 +699,11 @@
                 el.addEventListener('dragover', handleDragOver);
                 el.addEventListener('drop', handleDrop);
             });
-            
+
             // Update print view
-            document.getElementById('printDate').textContent = 
+            document.getElementById('printDate').textContent =
                 eventInfo.date ? new Date(eventInfo.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '';
-            
+
             document.getElementById('printContent').innerHTML = items.map(item => `
                 <div style="display: flex; gap: 2rem; padding: 0.75rem 0; border-bottom: 1px solid #e2e8f0;">
                     <div style="width: 80px; font-weight: 700;">${formatTime(item.startTime)}</div>
@@ -630,36 +715,36 @@
                 </div>
             `).join('');
         }
-        
+
         function handleDragStart(e) {
             draggedItem = items.find(i => i.id === parseInt(e.target.dataset.id));
             e.target.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
         }
-        
+
         function handleDragEnd(e) {
             e.target.classList.remove('dragging');
         }
-        
+
         function handleDragOver(e) {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
         }
-        
+
         function handleDrop(e) {
             e.preventDefault();
             if (!draggedItem) return;
-            
+
             const targetEl = e.target.closest('.timeline-item');
             if (!targetEl) return;
-            
+
             const targetId = parseInt(targetEl.dataset.id);
             if (targetId === draggedItem.id) return;
-            
+
             const targetItem = items.find(i => i.id === targetId);
             const oldOrder = draggedItem.order;
             const newOrder = targetItem.order;
-            
+
             // Reorder
             items.forEach(item => {
                 if (oldOrder < newOrder) {
@@ -669,27 +754,41 @@
                 }
             });
             draggedItem.order = newOrder;
-            
+
             saveData();
         }
-        
+
         function exportData() {
-            const data = { items, vendors, eventInfo };
-            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const exportData = {
+                app: "WhisperWorkshop",
+                type: "timelineScheduler",
+                version: "1.0",
+                timestamp: new Date().toISOString(),
+                data: { items, vendors, eventInfo }
+            };
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = `timeline_${new Date().toISOString().split('T')[0]}.json`;
             a.click();
         }
-        
+
         function importData(input) {
             const file = input.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
-                    const data = JSON.parse(e.target.result);
+                    const json = JSON.parse(e.target.result);
+                    let data;
+
+                    if (json.app === "WhisperWorkshop" && json.type === "timelineScheduler") {
+                        data = json.data;
+                    } else {
+                        data = json;
+                    }
+
                     if (confirm(`Import ${data.items?.length || 0} timeline items?`)) {
                         items = data.items || [];
                         vendors = [...new Set([...vendors, ...(data.vendors || [])])];
@@ -704,7 +803,7 @@
             reader.readAsText(file);
             input.value = '';
         }
-        
+
         function clearAll() {
             if (!confirm('Clear all timeline data?')) return;
             items = [];
@@ -714,8 +813,9 @@
             renderTimeline();
             renderVendors();
         }
-        
+
         loadData();
     </script>
 </body>
+
 </html>

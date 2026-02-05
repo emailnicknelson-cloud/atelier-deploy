@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,18 +17,26 @@
             --text: #1e293b;
             --border: #e2e8f0;
         }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
         }
-        
-        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-        
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
         header {
             text-align: center;
             margin-bottom: 2.5rem;
@@ -36,7 +45,7 @@
             border-radius: 16px;
             color: white;
         }
-        
+
         .weather-widget {
             background: linear-gradient(135deg, #60a5fa, #3b82f6);
             color: white;
@@ -49,35 +58,35 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
-        
+
         .weather-main {
             display: flex;
             align-items: center;
             gap: 1rem;
         }
-        
+
         .weather-icon {
             font-size: 3rem;
         }
-        
+
         .weather-temp {
             font-size: 2.5rem;
             font-weight: 700;
         }
-        
+
         .weather-desc {
             opacity: 0.9;
         }
-        
+
         .rain-probability {
             text-align: right;
         }
-        
+
         .rain-percent {
             font-size: 2rem;
             font-weight: 700;
         }
-        
+
         .alert-box {
             background: #fee2e2;
             border-left: 4px solid var(--danger);
@@ -86,32 +95,38 @@
             margin-bottom: 1.5rem;
             display: none;
         }
-        
-        .alert-box.active { display: flex; align-items: center; gap: 0.75rem; }
-        
+
+        .alert-box.active {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
         .alert-box.warning {
             background: #fef3c7;
             border-left-color: var(--warning);
         }
-        
+
         .two-column {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
-        
+
         @media (max-width: 968px) {
-            .two-column { grid-template-columns: 1fr; }
+            .two-column {
+                grid-template-columns: 1fr;
+            }
         }
-        
+
         .plan-card {
             background: var(--card);
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
-        
+
         .plan-header {
             padding: 1rem 1.5rem;
             font-weight: 700;
@@ -119,21 +134,28 @@
             justify-content: space-between;
             align-items: center;
         }
-        
-        .plan-a { background: #dcfce7; color: #166534; }
-        .plan-b { background: #dbeafe; color: #1e40af; }
-        
+
+        .plan-a {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .plan-b {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
         .plan-content {
             padding: 1.5rem;
         }
-        
+
         .capacity-indicator {
             display: flex;
             align-items: center;
             gap: 1rem;
             margin-bottom: 1rem;
         }
-        
+
         .capacity-bar {
             flex: 1;
             height: 20px;
@@ -141,21 +163,29 @@
             border-radius: 10px;
             overflow: hidden;
         }
-        
+
         .capacity-fill {
             height: 100%;
             border-radius: 10px;
             transition: width 0.3s ease;
         }
-        
-        .capacity-good { background: var(--success); }
-        .capacity-warning { background: var(--warning); }
-        .capacity-danger { background: var(--danger); }
-        
+
+        .capacity-good {
+            background: var(--success);
+        }
+
+        .capacity-warning {
+            background: var(--warning);
+        }
+
+        .capacity-danger {
+            background: var(--danger);
+        }
+
         .checklist {
             list-style: none;
         }
-        
+
         .checklist li {
             padding: 0.75rem 0;
             border-bottom: 1px solid var(--border);
@@ -163,9 +193,11 @@
             align-items: center;
             gap: 0.75rem;
         }
-        
-        .checklist li:last-child { border-bottom: none; }
-        
+
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+
         .check-box {
             width: 20px;
             height: 20px;
@@ -176,38 +208,47 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .check-box.checked {
             background: var(--success);
             border-color: var(--success);
             color: white;
         }
-        
+
         .tent-calculator {
             background: var(--card);
             padding: 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
         }
-        
+
         .form-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
             margin-bottom: 1rem;
         }
-        
-        .form-group { display: flex; flex-direction: column; }
-        
-        label { font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.875rem; }
-        
-        input, select {
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #475569;
+            font-size: 0.875rem;
+        }
+
+        input,
+        select {
             padding: 0.75rem;
             border: 2px solid var(--border);
             border-radius: 8px;
         }
-        
+
         .btn {
             padding: 0.875rem 1.5rem;
             border: none;
@@ -220,10 +261,18 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-secondary { background: #f1f5f9; color: #475569; border: 2px solid var(--border); }
-        
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 2px solid var(--border);
+        }
+
         .tent-result {
             background: #eff6ff;
             padding: 1rem;
@@ -231,44 +280,55 @@
             margin-top: 1rem;
             display: none;
         }
-        
-        .tent-result.active { display: block; }
-        
+
+        .tent-result.active {
+            display: block;
+        }
+
         .tent-size {
             font-size: 1.5rem;
             font-weight: 700;
             color: var(--primary);
             margin-bottom: 0.5rem;
         }
-        
+
         .cost-comparison {
             background: var(--card);
             padding: 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        
+
         .cost-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 1rem;
             margin-top: 1rem;
         }
-        
+
         .cost-item {
             padding: 1rem;
             background: #f8fafc;
             border-radius: 8px;
             text-align: center;
         }
-        
-        .cost-label { font-size: 0.875rem; color: #64748b; margin-bottom: 0.5rem; }
-        .cost-value { font-size: 1.5rem; font-weight: 700; color: var(--text); }
-        
+
+        .cost-label {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+
+        .cost-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
         .timeline-comparison {
             margin-top: 1.5rem;
         }
-        
+
         .timeline-item {
             display: flex;
             gap: 1rem;
@@ -278,14 +338,14 @@
             margin-bottom: 0.5rem;
             align-items: center;
         }
-        
+
         .time-slot {
             font-family: 'Courier New', monospace;
             font-weight: 600;
             color: var(--primary);
             min-width: 100px;
         }
-        
+
         .data-controls {
             margin-top: 2rem;
             padding: 1.5rem;
@@ -297,13 +357,14 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
             <h1>🌧️ Rain Plan Calculator</h1>
             <p>Backup venue calculations, tent sizing, and weather contingency planning</p>
         </header>
-        
+
         <div class="weather-widget">
             <div class="weather-main">
                 <div class="weather-icon">🌤️</div>
@@ -318,15 +379,16 @@
                 <small style="opacity: 0.8;">Event Date Forecast</small>
             </div>
         </div>
-        
+
         <div class="alert-box" id="rainAlert">
             <span style="font-size: 1.5rem;">⚠️</span>
             <div>
                 <strong>High Rain Risk Detected</strong>
-                <div style="font-size: 0.875rem; margin-top: 0.25rem;">Probability above 40% - Activate Plan B preparations</div>
+                <div style="font-size: 0.875rem; margin-top: 0.25rem;">Probability above 40% - Activate Plan B
+                    preparations</div>
             </div>
         </div>
-        
+
         <div class="two-column">
             <div class="plan-card">
                 <div class="plan-header plan-a">
@@ -361,7 +423,7 @@
                     </ul>
                 </div>
             </div>
-            
+
             <div class="plan-card">
                 <div class="plan-header plan-b">
                     <span>🌧️ Plan B: Indoor/Covered</span>
@@ -396,7 +458,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="tent-calculator">
             <h3 style="margin-bottom: 1rem; color: var(--primary);">⛺ Tent Size Calculator</h3>
             <div class="form-row">
@@ -424,7 +486,7 @@
                 </div>
             </div>
             <button class="btn btn-primary" onclick="calculateTent()">Calculate Tent Requirements</button>
-            
+
             <div class="tent-result" id="tentResult">
                 <div class="tent-size" id="tentSize">40' x 60' Pole Tent</div>
                 <div style="margin-bottom: 0.5rem;">
@@ -438,7 +500,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="cost-comparison">
             <h3 style="margin-bottom: 1rem;">💰 Weather Contingency Cost Analysis</h3>
             <div class="cost-grid">
@@ -460,21 +522,25 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="plan-card" style="margin-top: 1.5rem;">
             <div class="plan-header" style="background: #f1f5f9; color: #475569;">
                 <span>⏰ Timeline Adjustments</span>
             </div>
             <div class="plan-content">
-                <p style="margin-bottom: 1rem; color: #64748b;">Plan B may require timeline adjustments for indoor transitions:</p>
+                <p style="margin-bottom: 1rem; color: #64748b;">Plan B may require timeline adjustments for indoor
+                    transitions:</p>
                 <div class="timeline-comparison" id="timelineCompare">
                     <!-- Populated by JS -->
                 </div>
             </div>
         </div>
-        
+
         <div class="data-controls">
             <button class="btn btn-primary" onclick="exportPlan()">📥 Export Rain Plan</button>
+            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importPlan(this)">
+            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import
+                Plan</button>
             <button class="btn btn-secondary" onclick="printChecklist()">🖨️ Print Checklists</button>
             <button class="btn btn-secondary" onclick="emailVendors()">📧 Notify Vendors</button>
         </div>
@@ -488,14 +554,14 @@
             planB: { capacity: 75, checklist: [] },
             tentSize: null
         };
-        
+
         function init() {
             loadGuestCount();
             calculateTent();
             loadTimeline();
             updateWeatherDisplay();
         }
-        
+
         function loadGuestCount() {
             const guests = localStorage.getItem('event_guests_v1');
             if (guests) {
@@ -505,19 +571,19 @@
                 }
             }
         }
-        
+
         function loadTimeline() {
             const timeline = localStorage.getItem('event_timeline_v1');
             if (timeline) {
                 const data = JSON.parse(timeline);
                 const container = document.getElementById('timelineCompare');
-                
+
                 if (data.items && data.items.length > 0) {
                     container.innerHTML = data.items.slice(0, 5).map(item => {
                         const needsAdjust = ['ceremony', 'cocktail', 'photo'].some(k => item.category.includes(k));
                         return `
                         <div class="timeline-item">
-                            <span class="time-slot">${item.startTime ? new Date(item.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'TBD'}</span>
+                            <span class="time-slot">${item.startTime ? new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'TBD'}</span>
                             <div style="flex: 1;">
                                 <div style="font-weight: 600;">${item.title}</div>
                                 ${needsAdjust ? '<span style="color: var(--warning); font-size: 0.875rem;">⚠️ May need indoor adjustment</span>' : ''}
@@ -531,11 +597,11 @@
                 }
             }
         }
-        
+
         function updateWeatherDisplay() {
             const chance = parseInt(document.getElementById('rainChance').textContent);
             const alert = document.getElementById('rainAlert');
-            
+
             if (chance >= 40) {
                 alert.classList.add('active');
                 document.getElementById('planAStatus').textContent = 'At Risk';
@@ -549,12 +615,12 @@
                 alert.classList.remove('active');
             }
         }
-        
+
         function calculateTent() {
             const guests = parseInt(document.getElementById('tentGuests').value) || 100;
             const style = document.getElementById('tentStyle').value;
             const extras = document.getElementById('tentExtras').value;
-            
+
             // Square feet per person by style
             const sqftPerPerson = {
                 banquet: 12,
@@ -562,16 +628,16 @@
                 cocktail: 8,
                 mixed: 15
             };
-            
+
             let sqftNeeded = guests * sqftPerPerson[style];
-            
+
             // Add extras
             if (extras === 'dance' || extras === 'both') sqftNeeded += 200;
             if (extras === 'stage' || extras === 'both') sqftNeeded += 150;
-            
+
             // Add buffer for aisles, buffet, etc.
             sqftNeeded *= 1.2;
-            
+
             // Calculate tent dimensions (standard sizes)
             const standardSizes = [
                 { name: "20' x 20'", sqft: 400, capacity: 40 },
@@ -583,48 +649,81 @@
                 { name: "40' x 80'", sqft: 3200, capacity: 320 },
                 { name: "60' x 60'", sqft: 3600, capacity: 360 }
             ];
-            
+
             const recommended = standardSizes.find(s => s.sqft >= sqftNeeded) || standardSizes[standardSizes.length - 1];
-            
+
             // Estimate cost ($4-6 per sqft)
             const costLow = Math.round(recommended.sqft * 4 / 100) * 100;
             const costHigh = Math.round(recommended.sqft * 6 / 100) * 100;
-            
+
             document.getElementById('tentSize').textContent = recommended.name + ' Pole Tent';
             document.getElementById('tentCapacity').textContent = `${recommended.capacity} guests`;
             document.getElementById('tentCost').textContent = `$${costLow.toLocaleString()} - $${costHigh.toLocaleString()}`;
             document.getElementById('tentResult').classList.add('active');
-            
+
             // Update cost comparison
             document.getElementById('costPlanB').textContent = '$' + costHigh.toLocaleString();
             document.getElementById('costDeposit').textContent = '$' + Math.round(costLow * 0.1).toLocaleString();
             document.getElementById('costTotal').textContent = '$' + (costHigh + Math.round(costLow * 0.1)).toLocaleString();
-            
+
             planData.tentSize = recommended;
         }
-        
+
         function exportPlan() {
-            const data = {
-                ...planData,
+            const exportData = {
+                app: "WhisperWorkshop",
+                type: "rainPlanCalculator",
+                version: "1.0",
                 timestamp: new Date().toISOString(),
-                weather: {
-                    rainChance: parseInt(document.getElementById('rainChance').textContent),
-                    recommendation: parseInt(document.getElementById('rainChance').textContent) > 40 ? 'Plan B' : 'Plan A'
+                data: {
+                    ...planData,
+                    weather: {
+                        rainChance: parseInt(document.getElementById('rainChance').textContent),
+                        recommendation: parseInt(document.getElementById('rainChance').textContent) > 40 ? 'Plan B' : 'Plan A'
+                    }
                 }
             };
-            
-            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = `rain_plan_${new Date().toISOString().split('T')[0]}.json`;
             a.click();
         }
-        
+
+        function importPlan(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const json = JSON.parse(e.target.result);
+                    let data;
+                    if (json.app === "WhisperWorkshop" && json.type === "rainPlanCalculator") {
+                        data = json.data;
+                    } else {
+                        data = json;
+                    }
+
+                    if (confirm('Import Rain Plan data?')) {
+                        planData = data;
+                        document.getElementById('rainChance').textContent = data.weather?.rainChance + '%' || '15%';
+                        updateWeatherDisplay();
+                        calculateTent();
+                    }
+                } catch (err) {
+                    alert('Invalid file');
+                }
+            };
+            reader.readAsText(file);
+            input.value = '';
+        }
+
         function printChecklist() {
             window.print();
         }
-        
+
         function emailVendors() {
             const plan = parseInt(document.getElementById('rainChance').textContent) > 40 ? 'Plan B (Indoor)' : 'Plan A (Outdoor)';
             const subject = `Weather Update: ${plan} for Event`;
@@ -637,19 +736,20 @@ We are implementing: ${plan}
 Please confirm your contingency preparations.
 
 Thanks!`;
-            
+
             window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         }
-        
+
         // Toggle checkboxes
         document.querySelectorAll('.check-box').forEach(box => {
-            box.addEventListener('click', function() {
+            box.addEventListener('click', function () {
                 this.classList.toggle('checked');
                 this.textContent = this.classList.contains('checked') ? '✓' : '';
             });
         });
-        
+
         init();
     </script>
 </body>
+
 </html>

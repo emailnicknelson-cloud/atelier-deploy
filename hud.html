@@ -546,9 +546,14 @@
                         </h2>
                     </div>
                     <p class="card-description">Upload JSON files exported from Whisper Workshop tools</p>
-                    <div style="margin-top: 1.5rem;">
+                    <div
+                        style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                         <button onclick="document.getElementById('fileInput').click()">
                             <span class="upload-icon">📤</span>Choose JSON File
+                        </button>
+                        <button onclick="scanLocalStorage()"
+                            style="background: #e4e4dc; color: #3d3d3d; border: 1px solid rgba(61,61,61,0.2);">
+                            <span class="upload-icon">🔄</span>Sync from Browser
                         </button>
                     </div>
                     <input type="file" id="fileInput" accept=".json">
@@ -574,9 +579,15 @@
                 <p>Upload JSON files from your Whisper Workshop tools to see all your event planning data visualized
                     here
                 </p>
-                <button onclick="document.getElementById('fileInput').click()">
-                    <span class="upload-icon">📤</span>Upload Your First File
-                </button>
+                <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem;">
+                    <button onclick="document.getElementById('fileInput').click()">
+                        <span class="upload-icon">📤</span>Upload JSON
+                    </button>
+                    <button onclick="scanLocalStorage()"
+                        style="background: white; color: #3d3d3d; border: 1px solid rgba(61,61,61,0.2);">
+                        <span class="upload-icon">🔄</span>Sync Browser Data
+                    </button>
+                </div>
             </div>
         </main>
 
@@ -606,6 +617,21 @@
         { name: "Vendor Comparison", emoji: "🏪", description: "Supplier evaluation", key: "vendorComparison" },
     ];
 
+    const STORAGE_KEYS = {
+        barCalculator: 'event_bar_v1',
+        budgetCalculator: 'event_budget_v1',
+        floorPlanDesigner: 'event_floorplan_v1',
+        guestList: 'event_guests_v1',
+        gratuityCalculator: 'event_gratuity_v1',
+        invitationTracker: 'event_invitations_v1',
+        menuPlanner: 'event_menu_v1',
+        playlistTimer: 'event_playlist_v1',
+        rainPlanCalculator: 'event_rainplan_v1',
+        seatingChart: 'event_seating_v1',
+        timelineScheduler: 'event_timeline_v1',
+        vendorComparison: 'event_vendors_v1'
+    };
+
     // State
     let toolsData = {};
     let selectedTool = null;
@@ -616,14 +642,14 @@
         toolsGrid.innerHTML = TOOL_CONFIGS.map((tool, index) => {
             const isLoaded = !!toolsData[tool.key];
             return `
-                    <div class="tool-card ${isLoaded ? 'loaded' : ''}">
+                    <a href="${tool.key.replace(/([A-Z])/g, '-$1').toLowerCase()}.html" class="tool-card ${isLoaded ? 'loaded' : ''}">
                         <div class="tool-icon">${tool.emoji}</div>
                         <div class="tool-info">
                             <div class="tool-name">${tool.name}</div>
                             <div class="tool-desc">${tool.description}</div>
                         </div>
                         ${isLoaded ? '<div class="badge">✓</div>' : ''}
-                    </div>
+                    </a>
                 `;
         }).join('');
     }
@@ -646,14 +672,17 @@
         dataGrid.innerHTML = Object.entries(toolsData).map(([key, tool]) => {
             const preview = renderDataPreview(tool);
             return `
-                    <div class="card data-card" onclick="toggleDataCard('${key}')">
-                        <div class="card-header">
+                    <div class="card data-card">
+                        <div class="card-header" onclick="toggleDataCard('${key}')">
                             <div style="flex: 1;">
                                 <div class="card-title">
                                     <span class="emoji">${tool.emoji}</span>
                                     <span>${tool.name}</span>
                                 </div>
                                 <p class="card-description">${tool.description}</p>
+                            </div>
+                             <div style="display:flex; gap:0.5rem; align-items:center;">
+                                <button onclick="event.stopPropagation(); clearToolData('${key}')" style="background:none; border:none; cursor:pointer; font-size:1.2rem; color:#aaa;" title="Remove Data">🗑️</button>
                             </div>
                         </div>
                         ${selectedTool === key ? `
@@ -675,9 +704,27 @@
         renderDataGrid();
     }
 
+    function clearToolData(key) {
+        if (confirm(`Remove data for ${toolsData[key].name}?`)) {
+            delete toolsData[key];
+            showToast('Data removed', 'info');
+            renderDataGrid();
+            initializeToolsGrid();
+        }
+    }
+
+    function clearAllData() {
+        if (confirm('Remove all loaded data?')) {
+            toolsData = {};
+            showToast('All data cleared', 'info');
+            renderDataGrid();
+            initializeToolsGrid();
+        }
+    }
+
     // Render data preview
     function renderDataPreview(tool) {
-        if (tool.name === "Bar Calculator" && tool.data.results) {
+        if (tool.key === "barCalculator" && tool.data.results) {
             return `
                     <div class="data-row">
                         <span class="data-label">Total Drinks Needed</span>
@@ -719,36 +766,9 @@
         reader.onload = (e) => {
             try {
                 const jsonData = JSON.parse(e.target?.result);
-
-                let detectedTool = null;
-
-                if (jsonData.inputs?.barType !== undefined) {
-                    detectedTool = "barCalculator";
-                } else if (Array.isArray(jsonData)) {
-                    showToast("Please select the tool type for this data", 'info');
-                    return;
-                } else if (jsonData.timestamp) {
-                    detectedTool = "barCalculator";
-                }
-
-                if (detectedTool) {
-                    const toolConfig = TOOL_CONFIGS.find(t => t.key === detectedTool);
-                    if (toolConfig) {
-                        toolsData[detectedTool] = {
-                            name: toolConfig.name,
-                            emoji: toolConfig.emoji,
-                            description: toolConfig.description,
-                            data: jsonData,
-                            timestamp: jsonData.timestamp || new Date().toISOString(),
-                        };
-                        showToast(`${toolConfig.name} data loaded successfully`, 'success');
-                        renderDataGrid();
-                        initializeToolsGrid();
-                    }
-                } else {
-                    showToast("Could not detect tool type from JSON structure", 'error');
-                }
+                processImport(jsonData);
             } catch (error) {
+                console.error(error);
                 showToast("Invalid JSON file", 'error');
             }
         };
@@ -758,6 +778,77 @@
         event.target.value = '';
     });
 
+    function processImport(jsonData) {
+        let detectedToolKey = null;
+        let dataPayload = jsonData;
+
+        // Standard Wrapper Detection
+        if (jsonData.app === "WhisperWorkshop" && jsonData.type) {
+            detectedToolKey = jsonData.type;
+            dataPayload = jsonData.data;
+        }
+        // Legacy Heuristics
+        else if (jsonData.inputs?.barType !== undefined) {
+            detectedToolKey = "barCalculator";
+        } else if (Array.isArray(jsonData) && jsonData.length > 0 && jsonData[0].rsvp) {
+            detectedToolKey = "guestList";
+        } else if (jsonData.items && jsonData.eventInfo) {
+            detectedToolKey = "timelineScheduler";
+        } else if (Array.isArray(jsonData) && jsonData.length > 0 && jsonData[0].quote) {
+            detectedToolKey = "vendorComparison";
+        }
+
+        if (detectedToolKey) {
+            const toolConfig = TOOL_CONFIGS.find(t => t.key === detectedToolKey);
+            if (toolConfig) {
+                toolsData[detectedToolKey] = {
+                    key: toolConfig.key,
+                    name: toolConfig.name,
+                    emoji: toolConfig.emoji,
+                    description: toolConfig.description,
+                    data: dataPayload,
+                    timestamp: jsonData.timestamp || new Date().toISOString(),
+                };
+                showToast(`${toolConfig.name} data loaded successfully`, 'success');
+                renderDataGrid();
+                initializeToolsGrid();
+            } else {
+                showToast(`Tool type '${detectedToolKey}' not configured yet`, 'error');
+            }
+        } else {
+            showToast("Could not detect tool type from JSON structure", 'error');
+        }
+    }
+
+    function scanLocalStorage() {
+        let foundCount = 0;
+        Object.entries(STORAGE_KEYS).forEach(([toolKey, storageKey]) => {
+            const stored = localStorage.getItem(storageKey);
+            if (stored) {
+                try {
+                    const data = JSON.parse(stored);
+                    // Mock a standard wrapper for consistent processing
+                    const wrapper = {
+                        app: "WhisperWorkshop",
+                        type: toolKey,
+                        timestamp: new Date().toISOString(),
+                        data: data
+                    };
+                    processImport(wrapper);
+                    foundCount++;
+                } catch (e) {
+                    console.error(`Failed to parse storage for ${toolKey}`, e);
+                }
+            }
+        });
+
+        if (foundCount > 0) {
+            showToast(`Synced ${foundCount} tools from browser storage`, 'success');
+        } else {
+            showToast("No data found in browser storage", 'info');
+        }
+    }
+
     // Initialize on load
     window.addEventListener('DOMContentLoaded', () => {
         initializeToolsGrid();
@@ -765,6 +856,11 @@
         // Splash Screen Animation
         const splash = document.getElementById('splash-screen');
         const mainContent = document.getElementById('main-content');
+
+        // Auto-scan on load after a short delay
+        setTimeout(() => {
+            scanLocalStorage();
+        }, 500);
 
         setTimeout(function () {
             splash.classList.add('fade-out');

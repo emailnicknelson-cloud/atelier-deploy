@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,18 +16,26 @@
             --text: #1e293b;
             --border: #e2e8f0;
         }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
         }
-        
-        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-        
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
         header {
             text-align: center;
             margin-bottom: 2.5rem;
@@ -35,48 +44,76 @@
             border-radius: 16px;
             color: white;
         }
-        
+
         .dashboard {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
-        
+
         .metric-card {
             background: var(--card);
             padding: 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             position: relative;
             overflow: hidden;
         }
-        
+
         .metric-card::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; width: 4px; height: 100%;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
         }
-        
-        .metric-card.total::before { background: var(--primary); }
-        .metric-card.spent::before { background: var(--danger); }
-        .metric-card.remaining::before { background: var(--secondary); }
-        .metric-card.per-guest::before { background: var(--warning); }
-        
-        .metric-label { color: #64748b; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
-        
-        .metric-value { font-size: 2rem; font-weight: 700; color: var(--text); }
-        
-        .metric-sub { font-size: 0.875rem; color: #64748b; margin-top: 0.25rem; }
-        
+
+        .metric-card.total::before {
+            background: var(--primary);
+        }
+
+        .metric-card.spent::before {
+            background: var(--danger);
+        }
+
+        .metric-card.remaining::before {
+            background: var(--secondary);
+        }
+
+        .metric-card.per-guest::before {
+            background: var(--warning);
+        }
+
+        .metric-label {
+            color: #64748b;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .metric-sub {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+
         .progress-section {
             background: var(--card);
             padding: 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
         }
-        
+
         .progress-bar {
             height: 32px;
             background: #e2e8f0;
@@ -85,13 +122,13 @@
             display: flex;
             margin-top: 0.5rem;
         }
-        
+
         .progress-segment {
             height: 100%;
             transition: width 0.3s ease;
             position: relative;
         }
-        
+
         .progress-segment:hover::after {
             content: attr(data-label);
             position: absolute;
@@ -103,63 +140,75 @@
             font-weight: 600;
             white-space: nowrap;
         }
-        
+
         .legend {
             display: flex;
             gap: 1.5rem;
             margin-top: 1rem;
             flex-wrap: wrap;
         }
-        
+
         .legend-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             font-size: 0.875rem;
         }
-        
+
         .legend-color {
             width: 16px;
             height: 16px;
             border-radius: 4px;
         }
-        
+
         .form-card {
             background: var(--card);
             padding: 2rem;
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
         }
-        
+
         .form-grid {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr 1fr auto;
             gap: 1rem;
             align-items: end;
         }
-        
+
         @media (max-width: 768px) {
-            .form-grid { grid-template-columns: 1fr; }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
         }
-        
-        .form-group { display: flex; flex-direction: column; }
-        
-        label { font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.875rem; }
-        
-        input, select {
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #475569;
+            font-size: 0.875rem;
+        }
+
+        input,
+        select {
             padding: 0.75rem;
             border: 2px solid var(--border);
             border-radius: 8px;
             font-size: 1rem;
             font-family: inherit;
         }
-        
-        input:focus, select:focus {
+
+        input:focus,
+        select:focus {
             outline: none;
             border-color: var(--primary);
         }
-        
+
         .btn {
             padding: 0.875rem 1.5rem;
             border: none;
@@ -172,23 +221,40 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); }
-        
-        .btn-danger { background: var(--danger); color: white; padding: 0.5rem 1rem; }
-        
-        .btn-secondary { background: #64748b; color: white; }
-        
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            padding: 0.5rem 1rem;
+        }
+
+        .btn-secondary {
+            background: #64748b;
+            color: white;
+        }
+
         .expenses-table {
             background: var(--card);
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        
-        table { width: 100%; border-collapse: collapse; }
-        
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
         th {
             background: #f1f5f9;
             padding: 1rem;
@@ -199,11 +265,16 @@
             font-size: 0.75rem;
             letter-spacing: 0.05em;
         }
-        
-        td { padding: 1rem; border-bottom: 1px solid var(--border); }
-        
-        tr:hover { background: #f8fafc; }
-        
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
         .category-badge {
             display: inline-flex;
             align-items: center;
@@ -213,22 +284,38 @@
             font-size: 0.875rem;
             font-weight: 500;
         }
-        
-        .amount { font-family: 'Courier New', monospace; font-weight: 600; }
-        
-        .amount.negative { color: var(--danger); }
-        
+
+        .amount {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+        }
+
+        .amount.negative {
+            color: var(--danger);
+        }
+
         .variance {
             padding: 0.25rem 0.5rem;
             border-radius: 4px;
             font-size: 0.75rem;
             font-weight: 600;
         }
-        
-        .variance.over { background: #fee2e2; color: var(--danger); }
-        .variance.under { background: #dcfce7; color: #166534; }
-        .variance.equal { background: #e0e7ff; color: var(--secondary); }
-        
+
+        .variance.over {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .variance.under {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .variance.equal {
+            background: #e0e7ff;
+            color: var(--secondary);
+        }
+
         .category-header {
             background: #f8fafc;
             padding: 0.75rem 1rem;
@@ -239,12 +326,12 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .summary-row {
             background: #f1f5f9;
             font-weight: 600;
         }
-        
+
         .controls {
             margin-top: 2rem;
             padding: 1.5rem;
@@ -254,17 +341,20 @@
             gap: 1rem;
             flex-wrap: wrap;
         }
-        
-        input[type="number"] { text-align: right; }
+
+        input[type="number"] {
+            text-align: right;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
             <h1>💰 Budget Calculator</h1>
             <p>Track estimated vs actual spending with automatic variance analysis</p>
         </header>
-        
+
         <div class="dashboard">
             <div class="metric-card total">
                 <div class="metric-label">Total Budget</div>
@@ -287,13 +377,13 @@
                 <div class="metric-sub">Based on confirmed guests</div>
             </div>
         </div>
-        
+
         <div class="progress-section">
             <h3 style="margin-bottom: 1rem;">Budget Allocation</h3>
             <div class="progress-bar" id="progressBar"></div>
             <div class="legend" id="legend"></div>
         </div>
-        
+
         <div class="form-card">
             <h2 style="margin-bottom: 1.5rem; color: var(--primary);">Add Expense Item</h2>
             <div class="form-grid">
@@ -330,7 +420,7 @@
                 <button class="btn btn-primary" onclick="addExpense()">➕ Add</button>
             </div>
         </div>
-        
+
         <div class="expenses-table">
             <table>
                 <thead>
@@ -347,11 +437,12 @@
                 <tbody id="expensesBody"></tbody>
             </table>
         </div>
-        
+
         <div class="controls">
             <button class="btn btn-primary" onclick="exportData()">📥 Export JSON</button>
             <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(this)">
-            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import JSON</button>
+            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import
+                JSON</button>
             <button class="btn btn-secondary" onclick="generateCSV()">📊 Export CSV</button>
             <button class="btn btn-danger" onclick="clearAll()">🗑️ Clear All</button>
         </div>
@@ -366,38 +457,38 @@
             stationery: '#14b8a6', transport: '#f97316',
             gifts: '#84cc16', accommodations: '#0ea5e9', other: '#64748b'
         };
-        
+
         const CATEGORY_NAMES = {
             venue: '🏛️ Venue', catering: '🍽️ Catering', bar: '🍸 Bar',
             photography: '📸 Photo', videography: '🎥 Video', music: '🎵 Music',
             flowers: '💐 Decor', attire: '👗 Attire', stationery: '✉️ Paper',
             transport: '🚗 Transport', gifts: '🎁 Gifts', accommodations: '🏨 Hotel', other: '📋 Other'
         };
-        
+
         let expenses = [];
-        
+
         function loadData() {
             const stored = localStorage.getItem(STORAGE_KEY);
             if (stored) expenses = JSON.parse(stored);
             render();
         }
-        
+
         function saveData() {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
             render();
         }
-        
+
         function addExpense() {
             const item = document.getElementById('itemName').value.trim();
             const category = document.getElementById('category').value;
             const estimated = parseFloat(document.getElementById('estimated').value) || 0;
             const actual = parseFloat(document.getElementById('actual').value) || 0;
-            
+
             if (!item) {
                 alert('Please enter an item name');
                 return;
             }
-            
+
             expenses.push({
                 id: Date.now(),
                 item,
@@ -407,23 +498,23 @@
                 paid: actual > 0,
                 createdAt: new Date().toISOString()
             });
-            
+
             saveData();
             clearForm();
         }
-        
+
         function clearForm() {
             document.getElementById('itemName').value = '';
             document.getElementById('estimated').value = '';
             document.getElementById('actual').value = '';
         }
-        
+
         function deleteExpense(id) {
             if (!confirm('Delete this expense?')) return;
             expenses = expenses.filter(e => e.id !== id);
             saveData();
         }
-        
+
         function togglePaid(id) {
             const e = expenses.find(x => x.id === id);
             if (e) {
@@ -431,14 +522,14 @@
                 saveData();
             }
         }
-        
+
         function formatCurrency(num) {
             return new Intl.NumberFormat('en-US', {
                 style: 'currency',
                 currency: 'USD'
             }).format(num);
         }
-        
+
         function render() {
             // Group by category
             const grouped = {};
@@ -446,30 +537,30 @@
                 if (!grouped[e.category]) grouped[e.category] = [];
                 grouped[e.category].push(e);
             });
-            
+
             // Calculate totals
             let totalEstimated = 0, totalActual = 0;
             const categoryTotals = {};
-            
+
             expenses.forEach(e => {
                 totalEstimated += e.estimated;
                 totalActual += e.actual;
                 if (!categoryTotals[e.category]) categoryTotals[e.category] = 0;
                 categoryTotals[e.category] += e.actual || e.estimated;
             });
-            
+
             // Add 10% contingency
             const totalBudget = totalEstimated * 1.1;
             const remaining = totalBudget - totalActual;
-            
+
             // Update metrics
             document.getElementById('totalBudget').textContent = formatCurrency(totalBudget);
             document.getElementById('totalSpent').textContent = formatCurrency(totalActual);
-            document.getElementById('spentPercent').textContent = totalBudget > 0 ? 
+            document.getElementById('spentPercent').textContent = totalBudget > 0 ?
                 Math.round((totalActual / totalBudget) * 100) + '% of budget' : '0%';
             document.getElementById('remaining').textContent = formatCurrency(remaining);
             document.getElementById('remaining').className = 'metric-value ' + (remaining < 0 ? 'negative' : '');
-            
+
             const statusEl = document.getElementById('remainingStatus');
             if (remaining < 0) {
                 statusEl.textContent = '⚠️ Over Budget!';
@@ -481,20 +572,20 @@
                 statusEl.textContent = '✓ On Track';
                 statusEl.style.color = 'var(--primary)';
             }
-            
+
             // Guest count from localStorage (from guest manager)
             const guests = JSON.parse(localStorage.getItem('event_guests_v1') || '[]');
             const confirmedGuests = guests.filter(g => g.rsvp === 'confirmed').length;
             const costPerGuest = confirmedGuests > 0 ? totalActual / confirmedGuests : 0;
             document.getElementById('costPerGuest').textContent = formatCurrency(costPerGuest);
-            
+
             // Render progress bar
             const progressBar = document.getElementById('progressBar');
             const legend = document.getElementById('legend');
-            
+
             progressBar.innerHTML = '';
             legend.innerHTML = '';
-            
+
             if (totalBudget > 0) {
                 Object.entries(categoryTotals).forEach(([cat, amount]) => {
                     const percent = (amount / totalBudget) * 100;
@@ -504,7 +595,7 @@
                     segment.style.background = CATEGORY_COLORS[cat];
                     segment.dataset.label = `${CATEGORY_NAMES[cat]} ${Math.round(percent)}%`;
                     progressBar.appendChild(segment);
-                    
+
                     const legendItem = document.createElement('div');
                     legendItem.className = 'legend-item';
                     legendItem.innerHTML = `
@@ -513,7 +604,7 @@
                     `;
                     legend.appendChild(legendItem);
                 });
-                
+
                 // Remaining budget segment
                 if (remaining > 0) {
                     const remainingPercent = (remaining / totalBudget) * 100;
@@ -525,16 +616,16 @@
                     progressBar.appendChild(segment);
                 }
             }
-            
+
             // Render table by category
             const tbody = document.getElementById('expensesBody');
             tbody.innerHTML = '';
-            
+
             Object.keys(grouped).sort().forEach(cat => {
                 const catExpenses = grouped[cat];
                 const catEstimated = catExpenses.reduce((sum, e) => sum + e.estimated, 0);
                 const catActual = catExpenses.reduce((sum, e) => sum + e.actual, 0);
-                
+
                 // Category header
                 const headerRow = document.createElement('tr');
                 headerRow.innerHTML = `
@@ -544,14 +635,14 @@
                     </td>
                 `;
                 tbody.appendChild(headerRow);
-                
+
                 // Items
                 catExpenses.forEach(e => {
                     const variance = e.actual - e.estimated;
                     const varianceClass = variance > 0 ? 'over' : variance < 0 ? 'under' : 'equal';
-                    const varianceText = variance > 0 ? `+${formatCurrency(variance)}` : 
-                                        variance < 0 ? formatCurrency(variance) : 'On Budget';
-                    
+                    const varianceText = variance > 0 ? `+${formatCurrency(variance)}` :
+                        variance < 0 ? formatCurrency(variance) : 'On Budget';
+
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td><strong>${e.item}</strong></td>
@@ -568,11 +659,11 @@
                     tbody.appendChild(row);
                 });
             });
-            
+
             if (expenses.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 3rem; color: #94a3b8;">No expenses added yet. Start by adding your first budget item above.</td></tr>';
             }
-            
+
             // Grand total row
             if (expenses.length > 0) {
                 const totalRow = document.createElement('tr');
@@ -589,24 +680,38 @@
                 tbody.appendChild(totalRow);
             }
         }
-        
+
         function exportData() {
-            const dataStr = JSON.stringify(expenses, null, 2);
-            const blob = new Blob([dataStr], {type: 'application/json'});
+            const exportData = {
+                app: "WhisperWorkshop",
+                type: "budgetCalculator",
+                version: "1.0",
+                timestamp: new Date().toISOString(),
+                data: expenses
+            };
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = `event_budget_${new Date().toISOString().split('T')[0]}.json`;
             a.click();
         }
-        
+
         function importData(input) {
             const file = input.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
-                    const imported = JSON.parse(e.target.result);
+                    const json = JSON.parse(e.target.result);
+                    let imported;
+
+                    if (json.app === "WhisperWorkshop" && json.type === "budgetCalculator") {
+                        imported = json.data;
+                    } else {
+                        imported = json;
+                    }
+
                     if (Array.isArray(imported)) {
                         if (confirm(`Import ${imported.length} expenses?`)) {
                             expenses = [...expenses, ...imported];
@@ -620,31 +725,32 @@
             reader.readAsText(file);
             input.value = '';
         }
-        
+
         function generateCSV() {
             const headers = ['Item', 'Category', 'Estimated', 'Actual', 'Variance', 'Status', 'Date'];
             const rows = expenses.map(e => [
-                e.item, e.category, e.estimated, e.actual, 
+                e.item, e.category, e.estimated, e.actual,
                 e.actual - e.estimated, e.paid ? 'Paid' : e.actual > 0 ? 'Unpaid' : 'Pending',
                 new Date(e.createdAt).toLocaleDateString()
             ]);
             const csv = [headers.join(','), ...rows.map(r => r.map(x => `"${x}"`).join(','))].join('\n');
-            const blob = new Blob([csv], {type: 'text/csv'});
+            const blob = new Blob([csv], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = `budget_${new Date().toISOString().split('T')[0]}.csv`;
             a.click();
         }
-        
+
         function clearAll() {
             if (!confirm('Clear all budget data?')) return;
             expenses = [];
             localStorage.removeItem(STORAGE_KEY);
             render();
         }
-        
+
         loadData();
     </script>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,18 +17,26 @@
             --text: #1e293b;
             --border: #e2e8f0;
         }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
         }
-        
-        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
-        
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
         header {
             text-align: center;
             margin-bottom: 2.5rem;
@@ -36,32 +45,41 @@
             border-radius: 16px;
             color: white;
         }
-        
+
         .setup-section {
             background: var(--card);
             padding: 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             margin-bottom: 1.5rem;
         }
-        
+
         .form-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
             margin-bottom: 1rem;
         }
-        
-        .form-group { display: flex; flex-direction: column; }
-        
-        label { font-weight: 600; margin-bottom: 0.5rem; color: #475569; font-size: 0.875rem; }
-        
-        input, select {
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #475569;
+            font-size: 0.875rem;
+        }
+
+        input,
+        select {
             padding: 0.75rem;
             border: 2px solid var(--border);
             border-radius: 8px;
         }
-        
+
         .btn {
             padding: 0.875rem 1.5rem;
             border: none;
@@ -74,26 +92,42 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-secondary { background: #f1f5f9; color: #475569; border: 2px solid var(--border); }
-        .btn-danger { background: #fee2e2; color: var(--danger); }
-        .btn-sm { padding: 0.5rem 1rem; font-size: 0.75rem; }
-        
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 2px solid var(--border);
+        }
+
+        .btn-danger {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+        }
+
         .comparison-table {
             background: var(--card);
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             overflow-x: auto;
             margin-bottom: 2rem;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
             min-width: 800px;
         }
-        
+
         th {
             background: #f1f5f9;
             padding: 1rem;
@@ -103,40 +137,42 @@
             position: sticky;
             top: 0;
         }
-        
+
         td {
             padding: 1rem;
             border-bottom: 1px solid var(--border);
             vertical-align: top;
         }
-        
-        tr:hover { background: #f8fafc; }
-        
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
         .vendor-name {
             font-weight: 700;
             color: var(--primary);
             font-size: 1.125rem;
         }
-        
+
         .vendor-type {
             font-size: 0.75rem;
             color: #64748b;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
-        
+
         .price-tag {
             font-family: 'Courier New', monospace;
             font-size: 1.25rem;
             font-weight: 700;
             color: var(--success);
         }
-        
+
         .rating-stars {
             color: var(--warning);
             font-size: 1.125rem;
         }
-        
+
         .score-badge {
             display: inline-flex;
             align-items: center;
@@ -147,42 +183,65 @@
             font-weight: 700;
             font-size: 1rem;
         }
-        
-        .score-high { background: #dcfce7; color: #166534; }
-        .score-med { background: #fef3c7; color: #92400e; }
-        .score-low { background: #fee2e2; color: #991b1b; }
-        
-        .feature-check { color: var(--success); font-weight: 700; }
-        .feature-x { color: #cbd5e1; }
-        
+
+        .score-high {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .score-med {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .score-low {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .feature-check {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .feature-x {
+            color: #cbd5e1;
+        }
+
         .winner-row {
             background: #ecfdf5 !important;
             border-left: 4px solid var(--success);
         }
-        
+
         .criteria-weights {
             background: #f1f5f9;
             padding: 1rem;
             border-radius: 8px;
             margin-bottom: 1rem;
         }
-        
+
         .weight-slider {
             display: flex;
             align-items: center;
             gap: 1rem;
             margin-bottom: 0.5rem;
         }
-        
-        .weight-slider label { flex: 1; margin: 0; }
-        .weight-slider input[type="range"] { width: 150px; }
-        
+
+        .weight-slider label {
+            flex: 1;
+            margin: 0;
+        }
+
+        .weight-slider input[type="range"] {
+            width: 150px;
+        }
+
         .notes-cell {
             max-width: 200px;
             font-size: 0.875rem;
             color: #64748b;
         }
-        
+
         .data-controls {
             margin-top: 2rem;
             padding: 1.5rem;
@@ -192,21 +251,35 @@
             gap: 1rem;
             flex-wrap: wrap;
         }
-        
+
         @media print {
-            .setup-section, .data-controls, .weight-slider input { display: none; }
-            .comparison-table { box-shadow: none; }
-            .winner-row { background: #f0fdf4 !important; -webkit-print-color-adjust: exact; }
+
+            .setup-section,
+            .data-controls,
+            .weight-slider input {
+                display: none;
+            }
+
+            .comparison-table {
+                box-shadow: none;
+            }
+
+            .winner-row {
+                background: #f0fdf4 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
             <h1>⚖️ Vendor Comparison Matrix</h1>
             <p>Compare quotes side-by-side with weighted scoring</p>
         </header>
-        
+
         <div class="setup-section">
             <h3 style="margin-bottom: 1rem; color: var(--primary);">Add New Vendor Quote</h3>
             <div class="form-row">
@@ -295,9 +368,10 @@
                     <input type="text" id="vendorNotes" placeholder="Specifics, restrictions, special offers...">
                 </div>
             </div>
-            <button class="btn btn-primary" onclick="addVendor()" style="width: 100%;">➕ Add Vendor to Comparison</button>
+            <button class="btn btn-primary" onclick="addVendor()" style="width: 100%;">➕ Add Vendor to
+                Comparison</button>
         </div>
-        
+
         <div class="criteria-weights">
             <h4 style="margin-bottom: 0.5rem;">Scoring Weights (adjust to prioritize)</h4>
             <div class="weight-slider">
@@ -331,7 +405,7 @@
                 <span id="valExp">4</span>
             </div>
         </div>
-        
+
         <div class="comparison-table">
             <table id="comparisonTable">
                 <thead>
@@ -351,7 +425,7 @@
                 <tbody id="vendorList"></tbody>
             </table>
         </div>
-        
+
         <div class="data-controls">
             <button class="btn btn-primary" onclick="exportData()">📥 Export Comparison</button>
             <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(this)">
@@ -368,14 +442,14 @@
             video: '🎥 Videography', music: '🎵 Music', florist: '💐 Florist',
             decor: '🎨 Decor', transport: '🚗 Transport', other: '📋 Other'
         };
-        
+
         let vendors = [];
-        
+
         function init() {
             loadVendors();
             setupWeightListeners();
         }
-        
+
         function setupWeightListeners() {
             ['Price', 'Rating', 'Response', 'Avail', 'Features', 'Exp'].forEach(id => {
                 document.getElementById('weight' + id).addEventListener('input', (e) => {
@@ -383,17 +457,17 @@
                 });
             });
         }
-        
+
         function addVendor() {
             const name = document.getElementById('vendorName').value.trim();
             const category = document.getElementById('vendorCategory').value;
             const price = parseFloat(document.getElementById('vendorPrice').value);
-            
+
             if (!name || !price) {
                 alert('Please enter vendor name and price');
                 return;
             }
-            
+
             const vendor = {
                 id: Date.now(),
                 name,
@@ -413,13 +487,13 @@
                 notes: document.getElementById('vendorNotes').value.trim(),
                 addedAt: new Date().toISOString()
             };
-            
+
             vendors.push(vendor);
             saveVendors();
             render();
             clearForm();
         }
-        
+
         function clearForm() {
             document.getElementById('vendorName').value = '';
             document.getElementById('vendorPrice').value = '';
@@ -427,7 +501,7 @@
             document.getElementById('vendorExp').value = '';
             document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
         }
-        
+
         function calculateScore(v) {
             const weights = {
                 price: parseInt(document.getElementById('weightPrice').value),
@@ -437,53 +511,53 @@
                 features: parseInt(document.getElementById('weightFeatures').value),
                 exp: parseInt(document.getElementById('weightExp').value)
             };
-            
+
             let score = 0;
             let maxScore = 0;
-            
+
             // Price score (inverse - lower is better, normalize to budget comparison)
             const prices = vendors.map(x => x.price);
             const maxPrice = Math.max(...prices, 1);
             const priceScore = (1 - (v.price / maxPrice)) * 100;
             score += priceScore * weights.price;
             maxScore += 100 * weights.price;
-            
+
             // Rating score (out of 5)
             score += (v.rating / 5) * 100 * weights.rating;
             maxScore += 100 * weights.rating;
-            
+
             // Response score
             const responseScores = { excellent: 100, good: 75, fair: 50, poor: 25 };
             score += (responseScores[v.response] || 0) * weights.response;
             maxScore += 100 * weights.response;
-            
+
             // Availability score
             const availScores = { confirmed: 100, hold: 75, checking: 50, unavailable: 0 };
             score += (availScores[v.availability] || 0) * weights.avail;
             maxScore += 100 * weights.avail;
-            
+
             // Features score
             const featureCount = Object.values(v.includes).filter(x => x).length;
             score += (featureCount / 5) * 100 * weights.features;
             maxScore += 100 * weights.features;
-            
+
             // Experience score (cap at 20 years for max score)
             score += (Math.min(v.experience, 20) / 20) * 100 * weights.exp;
             maxScore += 100 * weights.exp;
-            
+
             return Math.round((score / maxScore) * 100);
         }
-        
+
         function render() {
             // Calculate scores and sort
             const scored = vendors.map(v => ({ ...v, score: calculateScore(v) }));
             scored.sort((a, b) => b.score - a.score);
-            
+
             const tbody = document.getElementById('vendorList');
             tbody.innerHTML = scored.map((v, index) => {
                 const isWinner = index === 0 && v.score > 70;
                 const scoreClass = v.score >= 80 ? 'score-high' : v.score >= 60 ? 'score-med' : 'score-low';
-                
+
                 return `
                 <tr class="${isWinner ? 'winner-row' : ''}">
                     <td><strong>#${index + 1}</strong></td>
@@ -499,9 +573,9 @@
                     </td>
                     <td>${v.response.charAt(0).toUpperCase() + v.response.slice(1)}</td>
                     <td>
-                        ${v.availability === 'confirmed' ? '✅ Confirmed' : 
-                          v.availability === 'hold' ? '⏳ Hold' : 
-                          v.availability === 'checking' ? '🔍 Checking' : '❌ No'}
+                        ${v.availability === 'confirmed' ? '✅ Confirmed' :
+                        v.availability === 'hold' ? '⏳ Hold' :
+                            v.availability === 'checking' ? '🔍 Checking' : '❌ No'}
                     </td>
                     <td>
                         ${v.includes.setup ? '<span class="feature-check">✓</span>' : '<span class="feature-x">○</span>'} Setup
@@ -517,18 +591,18 @@
                 `;
             }).join('');
         }
-        
+
         function deleteVendor(id) {
             if (!confirm('Remove this vendor from comparison?')) return;
             vendors = vendors.filter(v => v.id !== id);
             saveVendors();
             render();
         }
-        
+
         function saveVendors() {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(vendors));
         }
-        
+
         function loadVendors() {
             const stored = localStorage.getItem(STORAGE_KEY);
             if (stored) {
@@ -536,23 +610,38 @@
                 render();
             }
         }
-        
+
         function exportData() {
-            const blob = new Blob([JSON.stringify(vendors, null, 2)], {type: 'application/json'});
+            const exportData = {
+                app: "WhisperWorkshop",
+                type: "vendorComparison",
+                version: "1.0",
+                timestamp: new Date().toISOString(),
+                data: vendors
+            };
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = `vendor_comparison_${new Date().toISOString().split('T')[0]}.json`;
             a.click();
         }
-        
+
         function importData(input) {
             const file = input.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
-                    const imported = JSON.parse(e.target.result);
+                    const json = JSON.parse(e.target.result);
+                    let imported;
+
+                    if (json.app === "WhisperWorkshop" && json.type === "vendorComparison") {
+                        imported = json.data;
+                    } else {
+                        imported = json;
+                    }
+
                     if (Array.isArray(imported)) {
                         if (confirm(`Import ${imported.length} vendors?`)) {
                             vendors = [...vendors, ...imported];
@@ -567,15 +656,16 @@
             reader.readAsText(file);
             input.value = '';
         }
-        
+
         function clearAll() {
             if (!confirm('Clear all vendor comparisons?')) return;
             vendors = [];
             localStorage.removeItem(STORAGE_KEY);
             render();
         }
-        
+
         init();
     </script>
 </body>
+
 </html>

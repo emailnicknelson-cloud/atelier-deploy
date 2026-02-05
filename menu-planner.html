@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,18 +16,26 @@
             --text: #1e293b;
             --border: #e2e8f0;
         }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
         }
-        
-        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-        
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
         header {
             text-align: center;
             margin-bottom: 2.5rem;
@@ -35,25 +44,34 @@
             border-radius: 16px;
             color: white;
         }
-        
+
         .dashboard {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
-        
+
         .metric-card {
             background: var(--card);
             padding: 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
-        
-        .metric-value { font-size: 2rem; font-weight: 700; color: var(--primary); }
-        .metric-label { color: #64748b; font-size: 0.875rem; text-transform: uppercase; }
-        
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .metric-label {
+            color: #64748b;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+        }
+
         .alert-box {
             background: #fef3c7;
             border-left: 4px solid var(--primary);
@@ -62,9 +80,13 @@
             margin-bottom: 1.5rem;
             display: none;
         }
-        
-        .alert-box.active { display: flex; align-items: center; gap: 0.75rem; }
-        
+
+        .alert-box.active {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
         .dietary-legend {
             display: flex;
             gap: 1rem;
@@ -73,9 +95,9 @@
             padding: 1rem;
             background: var(--card);
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
-        
+
         .dietary-tag {
             display: flex;
             align-items: center;
@@ -85,15 +107,15 @@
             font-size: 0.875rem;
             font-weight: 500;
         }
-        
+
         .course-section {
             background: var(--card);
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             margin-bottom: 1.5rem;
             overflow: hidden;
         }
-        
+
         .course-header {
             background: linear-gradient(90deg, var(--primary), #fbbf24);
             color: white;
@@ -102,9 +124,11 @@
             justify-content: space-between;
             align-items: center;
         }
-        
-        .course-content { padding: 1.5rem; }
-        
+
+        .course-content {
+            padding: 1.5rem;
+        }
+
         .menu-item {
             background: #f8fafc;
             border: 2px solid var(--border);
@@ -117,17 +141,32 @@
             align-items: center;
             transition: all 0.2s;
         }
-        
-        .menu-item:hover { border-color: var(--primary); }
-        
-        @media (max-width: 768px) {
-            .menu-item { grid-template-columns: 1fr; }
+
+        .menu-item:hover {
+            border-color: var(--primary);
         }
-        
-        .item-name { font-weight: 600; }
-        .item-desc { font-size: 0.875rem; color: #64748b; margin-top: 0.25rem; }
-        
-        .dietary-icons { display: flex; gap: 0.25rem; }
+
+        @media (max-width: 768px) {
+            .menu-item {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .item-name {
+            font-weight: 600;
+        }
+
+        .item-desc {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+
+        .dietary-icons {
+            display: flex;
+            gap: 0.25rem;
+        }
+
         .dietary-icon {
             width: 28px;
             height: 28px;
@@ -138,13 +177,32 @@
             font-size: 0.75rem;
             cursor: help;
         }
-        
-        .veg { background: #dcfce7; color: #166534; }
-        .vegan { background: #d1fae5; color: #065f46; }
-        .gf { background: #fef3c7; color: #92400e; }
-        .df { background: #dbeafe; color: #1e40af; }
-        .nut-free { background: #fce7f3; color: #be185d; }
-        
+
+        .veg {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .vegan {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .gf {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .df {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .nut-free {
+            background: #fce7f3;
+            color: #be185d;
+        }
+
         .portion-calc {
             background: #f1f5f9;
             padding: 0.5rem 1rem;
@@ -152,7 +210,7 @@
             font-family: 'Courier New', monospace;
             font-size: 0.875rem;
         }
-        
+
         .btn {
             padding: 0.75rem 1.5rem;
             border: none;
@@ -165,14 +223,33 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); }
-        
-        .btn-secondary { background: #f1f5f9; color: #475569; border: 2px solid var(--border); }
-        .btn-danger { background: #fee2e2; color: var(--danger); }
-        .btn-sm { padding: 0.5rem 1rem; font-size: 0.75rem; }
-        
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 2px solid var(--border);
+        }
+
+        .btn-danger {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+        }
+
         .add-item-form {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr auto;
@@ -181,29 +258,35 @@
             padding-top: 1rem;
             border-top: 1px dashed var(--border);
         }
-        
+
         @media (max-width: 968px) {
-            .add-item-form { grid-template-columns: 1fr; }
+            .add-item-form {
+                grid-template-columns: 1fr;
+            }
         }
-        
-        input, select, textarea {
+
+        input,
+        select,
+        textarea {
             padding: 0.75rem;
             border: 2px solid var(--border);
             border-radius: 8px;
             font-family: inherit;
         }
-        
-        input:focus, select:focus, textarea:focus {
+
+        input:focus,
+        select:focus,
+        textarea:focus {
             outline: none;
             border-color: var(--primary);
         }
-        
+
         .checkbox-group {
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
         }
-        
+
         .checkbox-item {
             display: flex;
             align-items: center;
@@ -215,36 +298,41 @@
             cursor: pointer;
             font-size: 0.875rem;
         }
-        
-        .checkbox-item:hover { border-color: var(--primary); }
-        .checkbox-item input { width: auto; }
-        
+
+        .checkbox-item:hover {
+            border-color: var(--primary);
+        }
+
+        .checkbox-item input {
+            width: auto;
+        }
+
         .shopping-list {
             background: var(--card);
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             padding: 1.5rem;
             margin-top: 2rem;
         }
-        
+
         .shopping-category {
             margin-bottom: 1.5rem;
         }
-        
+
         .shopping-category h4 {
             color: var(--primary);
             margin-bottom: 0.5rem;
             padding-bottom: 0.5rem;
             border-bottom: 2px solid var(--border);
         }
-        
+
         .shopping-item {
             display: flex;
             justify-content: space-between;
             padding: 0.5rem 0;
             border-bottom: 1px solid #f1f5f9;
         }
-        
+
         .data-controls {
             margin-top: 2rem;
             padding: 1.5rem;
@@ -256,13 +344,14 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
             <h1>🍽️ Menu Planner</h1>
             <p>Design courses, calculate portions, and accommodate dietary restrictions</p>
         </header>
-        
+
         <div class="dashboard">
             <div class="metric-card">
                 <div class="metric-value" id="guestCount">0</div>
@@ -281,7 +370,7 @@
                 <div class="metric-label">Est. Food Cost</div>
             </div>
         </div>
-        
+
         <div class="alert-box" id="dietaryAlert">
             <span style="font-size: 1.25rem;">⚠️</span>
             <div>
@@ -289,7 +378,7 @@
                 <div id="alertDetails" style="font-size: 0.875rem; margin-top: 0.25rem;"></div>
             </div>
         </div>
-        
+
         <div class="dietary-legend">
             <span style="font-weight: 600; margin-right: 0.5rem;">Dietary Icons:</span>
             <span class="dietary-tag veg">🥬 Veg</span>
@@ -298,20 +387,22 @@
             <span class="dietary-tag df">🥛 DF</span>
             <span class="dietary-tag nut-free">🥜 Nut-Free</span>
         </div>
-        
+
         <div id="coursesContainer"></div>
-        
-        <button class="btn btn-primary" style="width: 100%; margin-bottom: 2rem;" onclick="addCourse()">➕ Add New Course</button>
-        
+
+        <button class="btn btn-primary" style="width: 100%; margin-bottom: 2rem;" onclick="addCourse()">➕ Add New
+            Course</button>
+
         <div class="shopping-list">
             <h3 style="margin-bottom: 1rem; color: var(--primary);">🛒 Auto-Generated Shopping List</h3>
             <div id="shoppingList"></div>
         </div>
-        
+
         <div class="data-controls">
             <button class="btn btn-primary" onclick="exportData()">📥 Export Menu</button>
             <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(this)">
-            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import Menu</button>
+            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import
+                Menu</button>
             <button class="btn btn-secondary" onclick="generatePDF()">📄 Print Menu</button>
             <button class="btn btn-danger" onclick="clearAll()">🗑️ Clear All</button>
         </div>
@@ -320,25 +411,25 @@
     <script>
         const STORAGE_KEY = 'event_menu_v1';
         const COURSES = ['Appetizers', 'Salads', 'Main Course', 'Sides', 'Desserts', 'Beverages', 'Late Night'];
-        
+
         let menuData = {
             courses: [],
             guests: 0,
             dietaryGuests: {}
         };
-        
+
         function init() {
             loadGuestsFromStorage();
             loadMenu();
         }
-        
+
         function loadGuestsFromStorage() {
             const stored = localStorage.getItem('event_guests_v1');
             if (stored) {
                 const guests = JSON.parse(stored);
                 const confirmed = guests.filter(g => g.rsvp === 'confirmed');
                 menuData.guests = confirmed.length;
-                
+
                 // Count dietary restrictions
                 const dietary = {};
                 confirmed.forEach(g => {
@@ -353,30 +444,30 @@
             }
             updateDashboard();
         }
-        
+
         function updateDashboard() {
             document.getElementById('guestCount').textContent = menuData.guests;
             const dietaryTotal = Object.values(menuData.dietaryGuests).reduce((a, b) => a + b, 0);
             document.getElementById('dietaryCount').textContent = dietaryTotal;
             document.getElementById('totalCourses').textContent = menuData.courses.reduce((sum, c) => sum + c.items.length, 0);
-            
+
             // Estimate cost (rough industry standard: $75-150 per person for full service)
             const costPerPerson = 85;
             document.getElementById('estCost').textContent = '$' + (menuData.guests * costPerPerson).toLocaleString();
-            
+
             // Check for dietary coverage
             checkDietaryCoverage();
         }
-        
+
         function checkDietaryCoverage() {
             const alert = document.getElementById('dietaryAlert');
             const details = document.getElementById('alertDetails');
             const issues = [];
-            
+
             Object.entries(menuData.dietaryGuests).forEach(([restriction, count]) => {
                 if (count > 0) {
                     // Check if any menu item accommodates this
-                    const accommodated = menuData.courses.some(c => 
+                    const accommodated = menuData.courses.some(c =>
                         c.items.some(i => i.dietary.includes(restriction))
                     );
                     if (!accommodated) {
@@ -384,7 +475,7 @@
                     }
                 }
             });
-            
+
             if (issues.length > 0) {
                 alert.classList.add('active');
                 details.textContent = issues.join(', ');
@@ -392,11 +483,11 @@
                 alert.classList.remove('active');
             }
         }
-        
+
         function addCourse() {
             const name = prompt('Course name:', 'New Course');
             if (!name) return;
-            
+
             menuData.courses.push({
                 id: Date.now(),
                 name,
@@ -405,26 +496,26 @@
             saveMenu();
             render();
         }
-        
+
         function deleteCourse(id) {
             if (!confirm('Delete this course and all its items?')) return;
             menuData.courses = menuData.courses.filter(c => c.id !== id);
             saveMenu();
             render();
         }
-        
+
         function addItem(courseId) {
             const course = menuData.courses.find(c => c.id === courseId);
             if (!course) return;
-            
+
             const name = document.getElementById(`item-name-${courseId}`).value.trim();
             if (!name) return;
-            
+
             const description = document.getElementById(`item-desc-${courseId}`).value.trim();
             const dietary = Array.from(document.querySelectorAll(`input[name="diet-${courseId}"]:checked`)).map(cb => cb.value);
             const basePortion = parseInt(document.getElementById(`item-portion-${courseId}`).value) || 1;
             const unit = document.getElementById(`item-unit-${courseId}`).value;
-            
+
             course.items.push({
                 id: Date.now(),
                 name,
@@ -433,16 +524,16 @@
                 basePortion,
                 unit
             });
-            
+
             // Clear form
             document.getElementById(`item-name-${courseId}`).value = '';
             document.getElementById(`item-desc-${courseId}`).value = '';
             document.querySelectorAll(`input[name="diet-${courseId}"]`).forEach(cb => cb.checked = false);
-            
+
             saveMenu();
             render();
         }
-        
+
         function deleteItem(courseId, itemId) {
             const course = menuData.courses.find(c => c.id === courseId);
             if (course) {
@@ -451,12 +542,12 @@
                 render();
             }
         }
-        
+
         function calculatePortions(item) {
             // Industry standards for catering multipliers
             const baseCount = menuData.guests;
             let multiplier = 1;
-            
+
             if (item.dietary.length === 0) {
                 // Regular item: 1.5x for buffer
                 multiplier = 1.5;
@@ -473,16 +564,16 @@
                     };
                 }
             }
-            
+
             return {
                 count: Math.ceil(baseCount * multiplier),
                 note: 'Full service with 50% buffer'
             };
         }
-        
+
         function render() {
             const container = document.getElementById('coursesContainer');
-            
+
             container.innerHTML = menuData.courses.map(course => `
                 <div class="course-section">
                     <div class="course-header">
@@ -491,8 +582,8 @@
                     </div>
                     <div class="course-content">
                         ${course.items.map(item => {
-                            const portions = calculatePortions(item);
-                            return `
+                const portions = calculatePortions(item);
+                return `
                             <div class="menu-item">
                                 <div>
                                     <div class="item-name">${item.name}</div>
@@ -512,7 +603,7 @@
                                 <button class="btn btn-danger btn-sm" onclick="deleteItem(${course.id}, ${item.id})">Delete</button>
                             </div>
                             `;
-                        }).join('')}
+            }).join('')}
                         
                         <div class="add-item-form">
                             <input type="text" id="item-name-${course.id}" placeholder="Item name (e.g., Caesar Salad)" required>
@@ -550,17 +641,17 @@
                     </div>
                 </div>
             `).join('');
-            
+
             renderShoppingList();
             updateDashboard();
         }
-        
+
         function renderShoppingList() {
             const container = document.getElementById('shoppingList');
-            
+
             // Aggregate all items by unit type
             const aggregated = {};
-            
+
             menuData.courses.forEach(course => {
                 course.items.forEach(item => {
                     const portions = calculatePortions(item);
@@ -571,19 +662,19 @@
                     aggregated[key].total += portions.count;
                 });
             });
-            
+
             if (Object.keys(aggregated).length === 0) {
                 container.innerHTML = '<p style="color: #64748b;">Add menu items to generate shopping list...</p>';
                 return;
             }
-            
+
             // Group by unit type
             const byUnit = {};
             Object.values(aggregated).forEach(item => {
                 if (!byUnit[item.unit]) byUnit[item.unit] = [];
                 byUnit[item.unit].push(item);
             });
-            
+
             container.innerHTML = Object.entries(byUnit).map(([unit, items]) => `
                 <div class="shopping-category">
                     <h4>${unit.charAt(0).toUpperCase() + unit.slice(1)}</h4>
@@ -596,11 +687,11 @@
                 </div>
             `).join('');
         }
-        
+
         function saveMenu() {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(menuData));
         }
-        
+
         function loadMenu() {
             const stored = localStorage.getItem(STORAGE_KEY);
             if (stored) {
@@ -616,23 +707,38 @@
                 render();
             }
         }
-        
+
         function exportData() {
-            const blob = new Blob([JSON.stringify(menuData, null, 2)], {type: 'application/json'});
+            const exportData = {
+                app: "WhisperWorkshop",
+                type: "menuPlanner",
+                version: "1.0",
+                timestamp: new Date().toISOString(),
+                data: menuData
+            };
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = `menu_plan_${new Date().toISOString().split('T')[0]}.json`;
             a.click();
         }
-        
+
         function importData(input) {
             const file = input.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
-                    const data = JSON.parse(e.target.result);
+                    const json = JSON.parse(e.target.result);
+                    let data;
+
+                    if (json.app === "WhisperWorkshop" && json.type === "menuPlanner") {
+                        data = json.data;
+                    } else {
+                        data = json;
+                    }
+
                     if (confirm(`Import menu with ${data.courses?.length || 0} courses?`)) {
                         menuData = data;
                         saveMenu();
@@ -645,11 +751,11 @@
             reader.readAsText(file);
             input.value = '';
         }
-        
+
         function generatePDF() {
             window.print();
         }
-        
+
         function clearAll() {
             if (!confirm('Clear entire menu?')) return;
             menuData.courses = COURSES.map((name, i) => ({
@@ -660,8 +766,9 @@
             saveMenu();
             render();
         }
-        
+
         init();
     </script>
 </body>
+
 </html>

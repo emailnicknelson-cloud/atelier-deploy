@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,18 +15,26 @@
             --text: #1e293b;
             --border: #e2e8f0;
         }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
         }
-        
-        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-        
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
         header {
             text-align: center;
             margin-bottom: 2.5rem;
@@ -34,30 +43,30 @@
             border-radius: 16px;
             color: white;
         }
-        
+
         .summary-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
-        
+
         .summary-card {
             background: var(--card);
             padding: 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             text-align: center;
             border-top: 4px solid var(--gold);
         }
-        
+
         .summary-value {
             font-size: 2.5rem;
             font-weight: 700;
             color: var(--primary);
             font-family: 'Courier New', monospace;
         }
-        
+
         .summary-label {
             color: #64748b;
             font-size: 0.875rem;
@@ -65,15 +74,15 @@
             letter-spacing: 0.05em;
             margin-top: 0.5rem;
         }
-        
+
         .vendor-section {
             background: var(--card);
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             margin-bottom: 1.5rem;
         }
-        
+
         .section-header {
             background: #f1f5f9;
             padding: 1rem 1.5rem;
@@ -83,7 +92,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .vendor-grid {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr 1fr auto;
@@ -92,34 +101,47 @@
             align-items: center;
             border-bottom: 1px solid var(--border);
         }
-        
+
         @media (max-width: 968px) {
-            .vendor-grid { grid-template-columns: 1fr; gap: 0.5rem; }
+            .vendor-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
         }
-        
-        .vendor-grid:last-child { border-bottom: none; }
-        
-        .vendor-name { font-weight: 600; }
-        .vendor-type { font-size: 0.75rem; color: #64748b; text-transform: uppercase; }
-        
+
+        .vendor-grid:last-child {
+            border-bottom: none;
+        }
+
+        .vendor-name {
+            font-weight: 600;
+        }
+
+        .vendor-type {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
         .input-group {
             display: flex;
             flex-direction: column;
         }
-        
+
         .input-group label {
             font-size: 0.75rem;
             color: #64748b;
             margin-bottom: 0.25rem;
         }
-        
-        input[type="number"], select {
+
+        input[type="number"],
+        select {
             padding: 0.5rem;
             border: 2px solid var(--border);
             border-radius: 6px;
             font-family: inherit;
         }
-        
+
         .gratuity-result {
             text-align: right;
             font-family: 'Courier New', monospace;
@@ -127,7 +149,7 @@
             color: var(--primary);
             font-size: 1.125rem;
         }
-        
+
         .method-badge {
             display: inline-block;
             padding: 0.25rem 0.75rem;
@@ -135,51 +157,77 @@
             font-size: 0.75rem;
             font-weight: 600;
         }
-        
-        .method-cash { background: #dcfce7; color: #166534; }
-        .method-check { background: #dbeafe; color: #1e40af; }
-        .method-venmo { background: #e0e7ff; color: #3730a3; }
-        .method-included { background: #fef3c7; color: #92400e; }
-        
+
+        .method-cash {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .method-check {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .method-venmo {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .method-included {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
         .totals-section {
             background: linear-gradient(135deg, #ecfdf5, #d1fae5);
             padding: 1.5rem;
             border-radius: 12px;
             margin-top: 2rem;
         }
-        
+
         .totals-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1.5rem;
         }
-        
+
         .total-item {
             background: white;
             padding: 1rem;
             border-radius: 8px;
         }
-        
-        .total-label { font-size: 0.875rem; color: #64748b; margin-bottom: 0.5rem; }
-        .total-amount { font-size: 1.5rem; font-weight: 700; color: var(--text); }
-        
+
+        .total-label {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+
+        .total-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
         .envelope-preview {
             background: var(--card);
             padding: 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             margin-top: 1.5rem;
         }
-        
+
         .envelope-item {
             display: flex;
             justify-content: space-between;
             padding: 0.75rem 0;
             border-bottom: 1px dashed var(--border);
         }
-        
-        .envelope-item:last-child { border-bottom: none; }
-        
+
+        .envelope-item:last-child {
+            border-bottom: none;
+        }
+
         .btn {
             padding: 0.75rem 1.5rem;
             border: none;
@@ -192,18 +240,30 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-secondary { background: #f1f5f9; color: #475569; border: 2px solid var(--border); }
-        .btn-gold { background: var(--gold); color: #92400e; }
-        
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 2px solid var(--border);
+        }
+
+        .btn-gold {
+            background: var(--gold);
+            color: #92400e;
+        }
+
         .preset-buttons {
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
             margin-bottom: 1rem;
         }
-        
+
         .preset-btn {
             padding: 0.5rem 1rem;
             background: white;
@@ -213,9 +273,12 @@
             font-size: 0.875rem;
             transition: all 0.2s;
         }
-        
-        .preset-btn:hover { border-color: var(--primary); color: var(--primary); }
-        
+
+        .preset-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
         .data-controls {
             margin-top: 2rem;
             padding: 1.5rem;
@@ -225,20 +288,29 @@
             gap: 1rem;
             flex-wrap: wrap;
         }
-        
+
         @media print {
-            .btn, .data-controls, .preset-buttons { display: none; }
-            .vendor-grid { break-inside: avoid; }
+
+            .btn,
+            .data-controls,
+            .preset-buttons {
+                display: none;
+            }
+
+            .vendor-grid {
+                break-inside: avoid;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
             <h1>💰 Gratuity Calculator</h1>
             <p>Calculate tips for all vendors and prepare payment envelopes</p>
         </header>
-        
+
         <div class="summary-cards">
             <div class="summary-card">
                 <div class="summary-value" id="totalGratuity">$0</div>
@@ -257,7 +329,7 @@
                 <div class="summary-label">Of Total Budget</div>
             </div>
         </div>
-        
+
         <div class="preset-buttons">
             <span style="font-size: 0.875rem; color: #64748b; margin-right: 0.5rem;">Quick Presets:</span>
             <button class="preset-btn" onclick="applyPreset('standard')">Standard (15-20%)</button>
@@ -265,13 +337,13 @@
             <button class="preset-btn" onclick="applyPreset('outstanding')">Outstanding (25%+)</button>
             <button class="preset-btn" onclick="applyPreset('flat')">Flat Rates</button>
         </div>
-        
+
         <div class="vendor-section">
             <div class="section-header">
                 <span>Catering & Service Staff</span>
                 <span style="font-size: 0.875rem; color: #64748b;">Recommended: 15-20% of food total</span>
             </div>
-            
+
             <div class="vendor-grid">
                 <div>
                     <div class="vendor-name">Catering Manager</div>
@@ -295,7 +367,7 @@
                 </div>
                 <div class="gratuity-result" id="catering-result">$0</div>
             </div>
-            
+
             <div class="vendor-grid">
                 <div>
                     <div class="vendor-name">Banquet Captain</div>
@@ -315,7 +387,7 @@
                 </div>
                 <div class="gratuity-result" id="captain-result">$200</div>
             </div>
-            
+
             <div class="vendor-grid">
                 <div>
                     <div class="vendor-name">Waitstaff</div>
@@ -337,7 +409,7 @@
                 </div>
                 <div class="gratuity-result" id="server-result">$120</div>
             </div>
-            
+
             <div class="vendor-grid">
                 <div>
                     <div class="vendor-name">Bartenders</div>
@@ -360,13 +432,13 @@
                 <div class="gratuity-result" id="bartender-result">$150</div>
             </div>
         </div>
-        
+
         <div class="vendor-section">
             <div class="section-header">
                 <span>Entertainment & Production</span>
                 <span style="font-size: 0.875rem; color: #64748b;">Flat rates or % of contract</span>
             </div>
-            
+
             <div class="vendor-grid">
                 <div>
                     <div class="vendor-name">DJ / Band Leader</div>
@@ -389,7 +461,7 @@
                 </div>
                 <div class="gratuity-result" id="dj-result">$0</div>
             </div>
-            
+
             <div class="vendor-grid">
                 <div>
                     <div class="vendor-name">Musicians</div>
@@ -412,13 +484,13 @@
                 <div class="gratuity-result" id="musician-result">$160</div>
             </div>
         </div>
-        
+
         <div class="vendor-section">
             <div class="section-header">
                 <span>Transportation & Logistics</span>
                 <span style="font-size: 0.875rem; color: #64748b;">15-20% of total</span>
             </div>
-            
+
             <div class="vendor-grid">
                 <div>
                     <div class="vendor-name">Limousine / Driver</div>
@@ -441,7 +513,7 @@
                 </div>
                 <div class="gratuity-result" id="limo-result">$0</div>
             </div>
-            
+
             <div class="vendor-grid">
                 <div>
                     <div class="vendor-name">Valet Parking</div>
@@ -464,13 +536,13 @@
                 <div class="gratuity-result" id="valet-result">$100</div>
             </div>
         </div>
-        
+
         <div class="vendor-section">
             <div class="section-header">
                 <span>Personal Services</span>
                 <span style="font-size: 0.875rem; color: #64748b;">Flat rates appreciated</span>
             </div>
-            
+
             <div class="vendor-grid">
                 <div>
                     <div class="vendor-name">Photographer</div>
@@ -490,7 +562,7 @@
                 </div>
                 <div class="gratuity-result" id="photo-result">$100</div>
             </div>
-            
+
             <div class="vendor-grid">
                 <div>
                     <div class="vendor-name">Videographer</div>
@@ -510,7 +582,7 @@
                 </div>
                 <div class="gratuity-result" id="video-result">$100</div>
             </div>
-            
+
             <div class="vendor-grid">
                 <div>
                     <div class="vendor-name">Hair & Makeup</div>
@@ -532,7 +604,7 @@
                 </div>
                 <div class="gratuity-result" id="beauty-result">$0</div>
             </div>
-            
+
             <div class="vendor-grid">
                 <div>
                     <div class="vendor-name">Officiant</div>
@@ -552,7 +624,7 @@
                 <div class="gratuity-result" id="officiant-result">$75</div>
             </div>
         </div>
-        
+
         <div class="totals-section">
             <h3 style="margin-bottom: 1rem; color: var(--secondary);">💵 Payment Summary</h3>
             <div class="totals-grid">
@@ -574,12 +646,12 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="envelope-preview">
             <h3 style="margin-bottom: 1rem; color: var(--primary);">✉️ Envelope Preparation List</h3>
             <div id="envelopeList"></div>
         </div>
-        
+
         <div class="data-controls">
             <button class="btn btn-gold" onclick="exportGratuities()">📥 Export List</button>
             <button class="btn btn-secondary" onclick="window.print()">🖨️ Print Envelope List</button>
@@ -602,24 +674,24 @@
             { id: 'beauty', type: 'percent' },
             { id: 'officiant', type: 'flat' }
         ];
-        
+
         function calculate() {
             let total = 0;
             let cashTotal = 0;
             let checkTotal = 0;
             let digitalTotal = 0;
             let envelopeCount = 0;
-            
+
             const envelopeItems = [];
-            
+
             vendors.forEach(vendor => {
                 const contract = parseFloat(document.getElementById(`${vendor.id}-contract`)?.value) || 0;
                 const tip = parseFloat(document.getElementById(`${vendor.id}-tip`)?.value) || 0;
                 const count = parseInt(document.getElementById(`${vendor.id}-count`)?.value) || 1;
                 const method = document.getElementById(`${vendor.id}-method`)?.value || 'cash';
-                
+
                 let amount = 0;
-                
+
                 if (vendor.type === 'percent') {
                     amount = contract * (tip / 100);
                 } else if (vendor.type === 'multiply') {
@@ -627,18 +699,18 @@
                 } else {
                     amount = tip;
                 }
-                
+
                 amount = Math.round(amount);
-                
+
                 document.getElementById(`${vendor.id}-result`).textContent = '$' + amount.toLocaleString();
-                
+
                 if (amount > 0) {
                     total += amount;
-                    
+
                     if (method === 'cash') cashTotal += amount;
                     else if (method === 'check') checkTotal += amount;
                     else if (method === 'venmo') digitalTotal += amount;
-                    
+
                     if (method === 'cash' && vendor.type === 'multiply') {
                         envelopeCount += count;
                         for (let i = 0; i < count; i++) {
@@ -658,16 +730,16 @@
                     }
                 }
             });
-            
+
             document.getElementById('totalGratuity').textContent = '$' + total.toLocaleString();
             document.getElementById('envelopeCount').textContent = envelopeCount;
             document.getElementById('avgTip').textContent = '$' + (envelopeCount > 0 ? Math.round(total / envelopeCount) : 0);
-            
+
             document.getElementById('totalCash').textContent = '$' + cashTotal.toLocaleString();
             document.getElementById('totalChecks').textContent = '$' + checkTotal.toLocaleString();
             document.getElementById('totalDigital').textContent = '$' + digitalTotal.toLocaleString();
             document.getElementById('grandTotal').textContent = '$' + total.toLocaleString();
-            
+
             // Render envelope list
             document.getElementById('envelopeList').innerHTML = envelopeItems.map(item => `
                 <div class="envelope-item">
@@ -675,15 +747,17 @@
                     <strong>$${item.amount}</strong>
                 </div>
             `).join('');
-            
+
             // Calculate % of budget
             const budget = JSON.parse(localStorage.getItem('event_budget_v1') || '[]');
             const totalBudget = budget.reduce((sum, item) => sum + (item.actual || item.estimated), 0);
             if (totalBudget > 0) {
                 document.getElementById('percentOfBudget').textContent = ((total / totalBudget) * 100).toFixed(1) + '%';
             }
+
+            saveData();
         }
-        
+
         function applyPreset(preset) {
             const presets = {
                 standard: { catering: 18, dj: 15, limo: 20, beauty: 20, captain: 200, server: 30, bartender: 75, musician: 40, photo: 100, video: 100, officiant: 75, valet: 2 },
@@ -691,39 +765,44 @@
                 outstanding: { catering: 25, dj: 25, limo: 30, beauty: 30, captain: 500, server: 75, bartender: 150, musician: 100, photo: 300, video: 300, officiant: 200, valet: 5 },
                 flat: { catering: 200, dj: 200, limo: 100, beauty: 100, captain: 200, server: 30, bartender: 75, musician: 40, photo: 100, video: 100, officiant: 75, valet: 2 }
             };
-            
+
             const p = presets[preset];
             Object.keys(p).forEach(key => {
                 const el = document.getElementById(`${key}-tip`);
                 if (el) el.value = p[key];
             });
-            
+
             calculate();
         }
-        
+
         function exportGratuities() {
-            const data = {
+            const exportData = {
+                app: "WhisperWorkshop",
+                type: "gratuityCalculator",
+                version: "1.0",
                 timestamp: new Date().toISOString(),
-                vendors: vendors.map(v => ({
-                    name: v.id,
-                    amount: document.getElementById(`${v.id}-result`)?.textContent || '$0'
-                })),
-                totals: {
-                    cash: document.getElementById('totalCash').textContent,
-                    checks: document.getElementById('totalChecks').textContent,
-                    digital: document.getElementById('totalDigital').textContent,
-                    total: document.getElementById('grandTotal').textContent
+                data: {
+                    vendors: vendors.map(v => ({
+                        name: v.id,
+                        amount: document.getElementById(`${v.id}-result`)?.textContent || '$0'
+                    })),
+                    totals: {
+                        cash: document.getElementById('totalCash').textContent,
+                        checks: document.getElementById('totalChecks').textContent,
+                        digital: document.getElementById('totalDigital').textContent,
+                        total: document.getElementById('grandTotal').textContent
+                    }
                 }
             };
-            
-            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = `gratuities_${new Date().toISOString().split('T')[0]}.json`;
             a.click();
         }
-        
+
         function exportToBudget() {
             const total = document.getElementById('grandTotal').textContent;
             const confirmed = confirm(`Add ${total} to budget as "Gratuities" line item?`);
@@ -741,9 +820,49 @@
                 alert('Added to budget!');
             }
         }
-        
+
+        const STORAGE_KEY = 'event_gratuity_v1';
+
+        function loadData() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                const data = JSON.parse(stored);
+                // Restore inputs
+                vendors.forEach(vendor => {
+                    const tipEl = document.getElementById(`${vendor.id}-tip`);
+                    const countEl = document.getElementById(`${vendor.id}-count`);
+                    const methodEl = document.getElementById(`${vendor.id}-method`);
+                    const contractEl = document.getElementById(`${vendor.id}-contract`);
+
+                    if (data[vendor.id]) {
+                        if (tipEl && data[vendor.id].tip) tipEl.value = data[vendor.id].tip;
+                        if (countEl && data[vendor.id].count) countEl.value = data[vendor.id].count;
+                        if (methodEl && data[vendor.id].method) methodEl.value = data[vendor.id].method;
+                        if (contractEl && data[vendor.id].contract) contractEl.value = data[vendor.id].contract;
+                    }
+                });
+                calculate();
+            }
+        }
+
+        function saveData() {
+            const data = {};
+            vendors.forEach(vendor => {
+                data[vendor.id] = {
+                    tip: document.getElementById(`${vendor.id}-tip`)?.value,
+                    count: document.getElementById(`${vendor.id}-count`)?.value,
+                    method: document.getElementById(`${vendor.id}-method`)?.value,
+                    contract: document.getElementById(`${vendor.id}-contract`)?.value
+                };
+            });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
         // Initialize
-        calculate();
+        loadData();
+        // calculate() is called by loadData or we call it if no data
+        if (!localStorage.getItem(STORAGE_KEY)) calculate();
     </script>
 </body>
+
 </html>

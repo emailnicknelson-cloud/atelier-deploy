@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,9 +16,13 @@
             --text: #1e293b;
             --border: #e2e8f0;
         }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: var(--bg);
@@ -25,9 +30,13 @@
             line-height: 1.6;
             overflow-x: hidden;
         }
-        
-        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
-        
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
         header {
             text-align: center;
             margin-bottom: 2rem;
@@ -36,41 +45,46 @@
             border-radius: 16px;
             color: white;
         }
-        
+
         .app-layout {
             display: grid;
             grid-template-columns: 300px 1fr;
             gap: 2rem;
         }
-        
+
         @media (max-width: 968px) {
-            .app-layout { grid-template-columns: 1fr; }
+            .app-layout {
+                grid-template-columns: 1fr;
+            }
         }
-        
+
         .sidebar {
             background: var(--card);
             border-radius: 12px;
             padding: 1.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             height: fit-content;
         }
-        
+
         .canvas-area {
             background: var(--card);
             border-radius: 12px;
             padding: 1.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             overflow: auto;
         }
-        
+
         .tool-section {
             margin-bottom: 1.5rem;
             padding-bottom: 1.5rem;
             border-bottom: 1px solid var(--border);
         }
-        
-        .tool-section:last-child { border-bottom: none; margin-bottom: 0; }
-        
+
+        .tool-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
         h3 {
             font-size: 0.875rem;
             text-transform: uppercase;
@@ -78,7 +92,7 @@
             color: #64748b;
             margin-bottom: 1rem;
         }
-        
+
         .btn {
             width: 100%;
             padding: 0.75rem;
@@ -94,15 +108,32 @@
             gap: 0.5rem;
             justify-content: center;
         }
-        
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4); }
-        
-        .btn-secondary { background: #f1f5f9; color: #475569; border: 2px solid var(--border); }
-        .btn-secondary:hover { background: #e2e8f0; }
-        
-        .btn-danger { background: #fee2e2; color: var(--danger); }
-        
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-danger {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
         .shape-btn {
             width: 60px;
             height: 60px;
@@ -116,16 +147,23 @@
             justify-content: center;
             font-size: 1.5rem;
         }
-        
-        .shape-btn:hover { border-color: var(--primary); background: #fdf2f8; }
-        .shape-btn.active { border-color: var(--primary); background: #fce7f3; }
-        
+
+        .shape-btn:hover {
+            border-color: var(--primary);
+            background: #fdf2f8;
+        }
+
+        .shape-btn.active {
+            border-color: var(--primary);
+            background: #fce7f3;
+        }
+
         .shape-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 0.5rem;
         }
-        
+
         .guest-pool {
             background: #f1f5f9;
             border-radius: 8px;
@@ -133,7 +171,7 @@
             max-height: 300px;
             overflow-y: auto;
         }
-        
+
         .guest-chip {
             background: white;
             border: 2px solid var(--border);
@@ -147,17 +185,24 @@
             font-size: 0.875rem;
             transition: all 0.2s;
         }
-        
-        .guest-chip:hover { border-color: var(--primary); transform: translateX(4px); }
-        .guest-chip.assigned { opacity: 0.5; background: #f1f5f9; }
-        
+
+        .guest-chip:hover {
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .guest-chip.assigned {
+            opacity: 0.5;
+            background: #f1f5f9;
+        }
+
         .dietary-indicator {
             width: 8px;
             height: 8px;
             border-radius: 50%;
             background: var(--warning);
         }
-        
+
         #canvas {
             border: 2px dashed var(--border);
             background: #fafafa;
@@ -165,33 +210,44 @@
             display: block;
             margin: 0 auto;
         }
-        
-        #canvas.dragging { cursor: grabbing; }
-        
+
+        #canvas.dragging {
+            cursor: grabbing;
+        }
+
         .stats-bar {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
             margin-bottom: 1.5rem;
         }
-        
+
         .stat-box {
             background: #f1f5f9;
             padding: 1rem;
             border-radius: 8px;
             text-align: center;
         }
-        
-        .stat-number { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
-        .stat-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; }
-        
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
         .controls-row {
             display: flex;
             gap: 1rem;
             margin-bottom: 1.5rem;
             flex-wrap: wrap;
         }
-        
+
         .zoom-controls {
             display: flex;
             align-items: center;
@@ -200,7 +256,7 @@
             padding: 0.5rem;
             border-radius: 8px;
         }
-        
+
         .zoom-btn {
             width: 32px;
             height: 32px;
@@ -210,19 +266,24 @@
             cursor: pointer;
             font-weight: 700;
         }
-        
+
         .modal {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
             z-index: 1000;
             align-items: center;
             justify-content: center;
         }
-        
-        .modal.active { display: flex; }
-        
+
+        .modal.active {
+            display: flex;
+        }
+
         .modal-content {
             background: white;
             padding: 2rem;
@@ -230,59 +291,84 @@
             max-width: 400px;
             width: 90%;
         }
-        
-        .form-group { margin-bottom: 1rem; }
-        
-        label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.875rem; }
-        
-        input, select {
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        input,
+        select {
             width: 100%;
             padding: 0.75rem;
             border: 2px solid var(--border);
             border-radius: 8px;
         }
-        
+
         .data-controls {
             margin-top: 1.5rem;
             padding-top: 1.5rem;
             border-top: 1px solid var(--border);
         }
-        
+
         @media print {
-            .sidebar, .controls-row, .data-controls { display: none; }
-            .canvas-area { box-shadow: none; }
-            #canvas { border: 1px solid #000; }
+
+            .sidebar,
+            .controls-row,
+            .data-controls {
+                display: none;
+            }
+
+            .canvas-area {
+                box-shadow: none;
+            }
+
+            #canvas {
+                border: 1px solid #000;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
             <h1>🪑 Seating Chart Builder</h1>
             <p>Drag and drop guests to create the perfect table layout</p>
         </header>
-        
+
         <div class="app-layout">
             <div class="sidebar">
                 <div class="tool-section">
                     <h3>Add Tables</h3>
                     <div class="shape-grid">
-                        <button class="shape-btn active" onclick="setTool('round')" title="Round Table (60in - seats 8)">⚪</button>
-                        <button class="shape-btn" onclick="setTool('round-large')" title="Round Table (72in - seats 10)">⭕</button>
+                        <button class="shape-btn active" onclick="setTool('round')"
+                            title="Round Table (60in - seats 8)">⚪</button>
+                        <button class="shape-btn" onclick="setTool('round-large')"
+                            title="Round Table (72in - seats 10)">⭕</button>
                         <button class="shape-btn" onclick="setTool('rect')" title="Rectangular (seats 8)">▭</button>
-                        <button class="shape-btn" onclick="setTool('rect-long')" title="Long Rectangular (seats 12)">▬</button>
+                        <button class="shape-btn" onclick="setTool('rect-long')"
+                            title="Long Rectangular (seats 12)">▬</button>
                         <button class="shape-btn" onclick="setTool('head')" title="Head Table">👑</button>
                         <button class="shape-btn" onclick="setTool('square')" title="Square (seats 4)">⬜</button>
                     </div>
-                    <button class="btn btn-primary" style="margin-top: 1rem;" onclick="addTable()">➕ Add Selected Table</button>
+                    <button class="btn btn-primary" style="margin-top: 1rem;" onclick="addTable()">➕ Add Selected
+                        Table</button>
                 </div>
-                
+
                 <div class="tool-section">
                     <h3>Unassigned Guests</h3>
                     <div class="guest-pool" id="guestPool"></div>
-                    <button class="btn btn-secondary" onclick="loadGuestsFromStorage()">🔄 Refresh from Guest List</button>
+                    <button class="btn btn-secondary" onclick="loadGuestsFromStorage()">🔄 Refresh from Guest
+                        List</button>
                 </div>
-                
+
                 <div class="tool-section">
                     <h3>Table Stats</h3>
                     <div class="stats-bar">
@@ -300,16 +386,18 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="data-controls">
                     <button class="btn btn-primary" onclick="exportData()">📥 Save Layout</button>
-                    <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(this)">
-                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Load Layout</button>
+                    <input type="file" id="importFile" accept=".json" style="display: none;"
+                        onchange="importData(this)">
+                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Load
+                        Layout</button>
                     <button class="btn btn-secondary" onclick="window.print()">🖨️ Print Chart</button>
                     <button class="btn btn-danger" onclick="clearAll()">🗑️ Clear All</button>
                 </div>
             </div>
-            
+
             <div class="canvas-area">
                 <div class="controls-row">
                     <div class="zoom-controls">
@@ -318,21 +406,25 @@
                         <button class="zoom-btn" onclick="zoom(0.1)">+</button>
                         <button class="zoom-btn" onclick="resetZoom()" style="font-size: 0.75rem;">Reset</button>
                     </div>
-                    <button class="btn btn-secondary" style="width: auto;" onclick="snapToGrid()">⊞ Snap to Grid</button>
-                    <button class="btn btn-secondary" style="width: auto;" onclick="showDietary = !showDietary; draw();">
+                    <button class="btn btn-secondary" style="width: auto;" onclick="snapToGrid()">⊞ Snap to
+                        Grid</button>
+                    <button class="btn btn-secondary" style="width: auto;"
+                        onclick="showDietary = !showDietary; draw();">
                         🥗 Toggle Dietary View
                     </button>
                 </div>
-                
+
                 <canvas id="canvas" width="1000" height="700"></canvas>
-                
-                <div style="margin-top: 1rem; padding: 1rem; background: #f1f5f9; border-radius: 8px; font-size: 0.875rem;">
-                    <strong>Instructions:</strong> Click to add tables • Drag tables to move • Click table to assign guests • Drag guests from sidebar to tables • Double-click guest to remove from table
+
+                <div
+                    style="margin-top: 1rem; padding: 1rem; background: #f1f5f9; border-radius: 8px; font-size: 0.875rem;">
+                    <strong>Instructions:</strong> Click to add tables • Drag tables to move • Click table to assign
+                    guests • Drag guests from sidebar to tables • Double-click guest to remove from table
                 </div>
             </div>
         </div>
     </div>
-    
+
     <div class="modal" id="assignModal">
         <div class="modal-content">
             <h3 style="margin-bottom: 1rem;">Assign Guests to <span id="tableName">Table</span></h3>
@@ -345,7 +437,7 @@
         const STORAGE_KEY = 'event_seating_v1';
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        
+
         let tables = [];
         let guests = [];
         let selectedTool = 'round';
@@ -355,7 +447,7 @@
         let dragTarget = null;
         let dragOffset = { x: 0, y: 0 };
         let selectedTable = null;
-        
+
         const TABLE_TYPES = {
             'round': { name: 'Round (60")', seats: 8, width: 100, height: 100, shape: 'circle' },
             'round-large': { name: 'Round (72")', seats: 10, width: 120, height: 120, shape: 'circle' },
@@ -364,24 +456,24 @@
             'head': { name: 'Head Table', seats: 6, width: 180, height: 60, shape: 'rect', special: true },
             'square': { name: 'Square', seats: 4, width: 80, height: 80, shape: 'rect' }
         };
-        
+
         function init() {
             loadGuestsFromStorage();
             loadLayout();
             setupCanvas();
             draw();
         }
-        
+
         function setupCanvas() {
             canvas.addEventListener('mousedown', handleMouseDown);
             canvas.addEventListener('mousemove', handleMouseMove);
             canvas.addEventListener('mouseup', handleMouseUp);
             canvas.addEventListener('dblclick', handleDoubleClick);
-            
+
             // Prevent context menu on right click for better UX
             canvas.addEventListener('contextmenu', e => e.preventDefault());
         }
-        
+
         function loadGuestsFromStorage() {
             const stored = localStorage.getItem('event_guests_v1');
             if (stored) {
@@ -403,18 +495,18 @@
             updateGuestPool();
             updateStats();
         }
-        
+
         function updateGuestPool() {
             const pool = document.getElementById('guestPool');
             const unassigned = guests.filter(g => !g.tableId);
-            
+
             pool.innerHTML = unassigned.map(g => `
                 <div class="guest-chip ${g.tableId ? 'assigned' : ''}" draggable="true" data-id="${g.id}">
                     ${g.dietary.length > 0 ? '<span class="dietary-indicator" title="' + g.dietary.join(', ') + '"></span>' : ''}
                     <span>${g.name}</span>
                 </div>
             `).join('');
-            
+
             // Setup drag from pool
             pool.querySelectorAll('.guest-chip').forEach(chip => {
                 chip.addEventListener('dragstart', (e) => {
@@ -423,13 +515,13 @@
                 });
             });
         }
-        
+
         function setTool(tool) {
             selectedTool = tool;
             document.querySelectorAll('.shape-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
         }
-        
+
         function addTable() {
             const type = TABLE_TYPES[selectedTool];
             const table = {
@@ -445,12 +537,12 @@
             draw();
             updateStats();
         }
-        
+
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.save();
             ctx.scale(zoomLevel, zoomLevel);
-            
+
             // Draw grid
             ctx.strokeStyle = '#e2e8f0';
             ctx.lineWidth = 1;
@@ -466,30 +558,30 @@
                 ctx.lineTo(canvas.width / zoomLevel, y);
                 ctx.stroke();
             }
-            
+
             // Draw tables
             tables.forEach(table => {
                 const type = TABLE_TYPES[table.type];
-                
+
                 ctx.save();
                 ctx.translate(table.x, table.y);
-                
+
                 // Table shadow
                 ctx.shadowColor = 'rgba(0,0,0,0.1)';
                 ctx.shadowBlur = 10;
                 ctx.shadowOffsetY = 5;
-                
+
                 // Table shape
                 ctx.fillStyle = type.special ? '#fdf2f8' : 'white';
                 ctx.strokeStyle = type.special ? '#ec4899' : '#cbd5e1';
                 ctx.lineWidth = 3;
-                
+
                 if (type.shape === 'circle') {
                     ctx.beginPath();
                     ctx.arc(0, 0, type.width / 2, 0, Math.PI * 2);
                     ctx.fill();
                     ctx.stroke();
-                    
+
                     // Inner circle for large tables
                     if (table.type === 'round-large') {
                         ctx.beginPath();
@@ -499,46 +591,46 @@
                     }
                 } else {
                     ctx.beginPath();
-                    ctx.roundRect(-type.width/2, -type.height/2, type.width, type.height, 8);
+                    ctx.roundRect(-type.width / 2, -type.height / 2, type.width, type.height, 8);
                     ctx.fill();
                     ctx.stroke();
                 }
-                
+
                 ctx.shadowColor = 'transparent';
-                
+
                 // Table number
                 ctx.fillStyle = '#1e293b';
                 ctx.font = 'bold 14px sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(`Table ${tables.indexOf(table) + 1}`, 0, 0);
-                
+
                 // Capacity indicator
                 const seatedCount = table.guests.filter(g => g).length;
                 ctx.font = '11px sans-serif';
                 ctx.fillStyle = seatedCount === type.seats ? 'var(--success)' : '#64748b';
                 ctx.fillText(`${seatedCount}/${type.seats}`, 0, 20);
-                
+
                 // Draw seats and guests
                 drawSeats(table, type);
-                
+
                 ctx.restore();
             });
-            
+
             ctx.restore();
         }
-        
+
         function drawSeats(table, type) {
             const seats = type.seats;
             const radius = type.shape === 'circle' ? type.width / 2 + 25 : Math.max(type.width, type.height) / 2 + 25;
-            
+
             for (let i = 0; i < seats; i++) {
                 const angle = (i / seats) * Math.PI * 2 - Math.PI / 2;
                 const x = Math.cos(angle) * radius;
                 const y = Math.sin(angle) * radius;
-                
+
                 const guest = table.guests[i];
-                
+
                 // Seat circle
                 ctx.beginPath();
                 ctx.arc(x, y, 18, 0, Math.PI * 2);
@@ -547,14 +639,14 @@
                 ctx.strokeStyle = guest ? 'var(--primary)' : '#cbd5e1';
                 ctx.lineWidth = 2;
                 ctx.stroke();
-                
+
                 if (guest) {
                     // Guest initial or icon
                     ctx.fillStyle = '#1e293b';
                     ctx.font = '12px sans-serif';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    
+
                     if (showDietary && guest.dietary.length > 0) {
                         ctx.fillText('🥗', x, y);
                     } else {
@@ -569,7 +661,7 @@
                 }
             }
         }
-        
+
         function getMousePos(e) {
             const rect = canvas.getBoundingClientRect();
             return {
@@ -577,15 +669,15 @@
                 y: (e.clientY - rect.top) / zoomLevel
             };
         }
-        
+
         function handleMouseDown(e) {
             const pos = getMousePos(e);
-            
+
             // Check if clicking on a table
             for (let i = tables.length - 1; i >= 0; i--) {
                 const table = tables[i];
                 const type = TABLE_TYPES[table.type];
-                
+
                 if (type.shape === 'circle') {
                     const dist = Math.hypot(pos.x - table.x, pos.y - table.y);
                     if (dist < type.width / 2) {
@@ -593,15 +685,15 @@
                         return;
                     }
                 } else {
-                    if (pos.x >= table.x - type.width/2 && pos.x <= table.x + type.width/2 &&
-                        pos.y >= table.y - type.height/2 && pos.y <= table.y + type.height/2) {
+                    if (pos.x >= table.x - type.width / 2 && pos.x <= table.x + type.width / 2 &&
+                        pos.y >= table.y - type.height / 2 && pos.y <= table.y + type.height / 2) {
                         startDrag(table, pos);
                         return;
                     }
                 }
             }
         }
-        
+
         function startDrag(table, pos) {
             if (e && e.shiftKey) {
                 // Shift+click to open assign modal
@@ -613,7 +705,7 @@
             dragOffset = { x: pos.x - table.x, y: pos.y - table.y };
             canvas.classList.add('dragging');
         }
-        
+
         function handleMouseMove(e) {
             if (!isDragging || !dragTarget) return;
             const pos = getMousePos(e);
@@ -621,7 +713,7 @@
             dragTarget.y = pos.y - dragOffset.y;
             draw();
         }
-        
+
         function handleMouseUp(e) {
             if (isDragging) {
                 isDragging = false;
@@ -630,21 +722,21 @@
                 saveLayout();
             }
         }
-        
+
         function handleDoubleClick(e) {
             const pos = getMousePos(e);
-            
+
             // Check if double-clicking on a seat
             for (const table of tables) {
                 const type = TABLE_TYPES[table.type];
                 const seats = type.seats;
                 const radius = type.shape === 'circle' ? type.width / 2 + 25 : Math.max(type.width, type.height) / 2 + 25;
-                
+
                 for (let i = 0; i < seats; i++) {
                     const angle = (i / seats) * Math.PI * 2 - Math.PI / 2;
                     const sx = table.x + Math.cos(angle) * radius;
                     const sy = table.y + Math.sin(angle) * radius;
-                    
+
                     const dist = Math.hypot(pos.x - sx, pos.y - sy);
                     if (dist < 20) {
                         if (table.guests[i]) {
@@ -666,15 +758,15 @@
                 }
             }
         }
-        
+
         function openAssignModal(table) {
             selectedTable = table;
             const type = TABLE_TYPES[table.type];
             document.getElementById('tableName').textContent = `Table ${tables.indexOf(table) + 1} (${type.name})`;
-            
+
             const list = document.getElementById('assignList');
             const unassigned = guests.filter(g => !g.tableId);
-            
+
             // Create seat assignment interface
             let html = '<div style="display: grid; gap: 0.5rem;">';
             for (let i = 0; i < type.seats; i++) {
@@ -695,11 +787,11 @@
                 `;
             }
             html += '</div>';
-            
+
             list.innerHTML = html;
             document.getElementById('assignModal').classList.add('active');
         }
-        
+
         function assignGuest(seatIndex, guestId) {
             if (!guestId) return;
             const guest = guests.find(g => g.id === parseInt(guestId));
@@ -709,11 +801,11 @@
                     const prevTable = tables.find(t => t.id === guest.tableId);
                     if (prevTable) prevTable.guests[guest.seatIndex] = null;
                 }
-                
+
                 selectedTable.guests[seatIndex] = guest;
                 guest.tableId = selectedTable.id;
                 guest.seatIndex = seatIndex;
-                
+
                 saveLayout();
                 openAssignModal(selectedTable); // Refresh
                 updateGuestPool();
@@ -721,14 +813,14 @@
                 updateStats();
             }
         }
-        
+
         function unassignGuest(seatIndex) {
             if (selectedTable && selectedTable.guests[seatIndex]) {
                 const guest = selectedTable.guests[seatIndex];
                 guest.tableId = null;
                 guest.seatIndex = null;
                 selectedTable.guests[seatIndex] = null;
-                
+
                 saveLayout();
                 openAssignModal(selectedTable);
                 updateGuestPool();
@@ -736,12 +828,12 @@
                 updateStats();
             }
         }
-        
+
         function closeModal() {
             document.getElementById('assignModal').classList.remove('active');
             selectedTable = null;
         }
-        
+
         function snapToGrid() {
             tables.forEach(table => {
                 table.x = Math.round(table.x / 50) * 50;
@@ -750,19 +842,19 @@
             saveLayout();
             draw();
         }
-        
+
         function zoom(delta) {
             zoomLevel = Math.max(0.5, Math.min(2, zoomLevel + delta));
             document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
             draw();
         }
-        
+
         function resetZoom() {
             zoomLevel = 1;
             document.getElementById('zoomLevel').textContent = '100%';
             draw();
         }
-        
+
         function updateStats() {
             document.getElementById('totalTables').textContent = tables.length;
             const seated = guests.filter(g => g.tableId).length;
@@ -770,12 +862,12 @@
             document.getElementById('seatedGuests').textContent = seated;
             document.getElementById('unseatedGuests').textContent = unseated;
         }
-        
+
         function saveLayout() {
             const data = { tables, guestAssignments: guests.map(g => ({ id: g.id, tableId: g.tableId, seatIndex: g.seatIndex })) };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         }
-        
+
         function loadLayout() {
             const stored = localStorage.getItem(STORAGE_KEY);
             if (stored) {
@@ -797,17 +889,84 @@
                 }
             }
         }
-        
+
         function exportData() {
-            const data = { tables, guests };
-            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const exportData = {
+                app: "WhisperWorkshop",
+                type: "seatingChart",
+                version: "1.0",
+                timestamp: new Date().toISOString(),
+                data: {
+                    tables,
+                    guestAssignments: guests.map(g => ({ id: g.id, tableId: g.tableId, seatIndex: g.seatIndex }))
+                }
+            };
+
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = `seating_chart_${new Date().toISOString().split('T')[0]}.json`;
             a.click();
         }
-        
+
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const json = JSON.parse(e.target.result);
+                    let data;
+                    if (json.app === "WhisperWorkshop" && json.type === "seatingChart") {
+                        data = json.data;
+                    } else {
+                        data = json; // Legacy
+                    }
+
+                    if (confirm('Import seating layout? This will overwrite current arrangement.')) {
+                        tables = data.tables || [];
+                        // Reset current guest assignments
+                        guests.forEach(g => { g.tableId = null; g.seatIndex = null; });
+
+                        // Restore imported assignments
+                        if (data.guestAssignments) {
+                            data.guestAssignments.forEach(assignment => {
+                                const guest = guests.find(g => g.id === assignment.id);
+                                if (guest) {
+                                    guest.tableId = assignment.tableId;
+                                    guest.seatIndex = assignment.seatIndex;
+                                    const table = tables.find(t => t.id === assignment.tableId);
+                                    if (table && assignment.seatIndex !== null) {
+                                        table.guests[assignment.seatIndex] = guest;
+                                    }
+                                }
+                            });
+                        }
+
+                        saveLayout();
+                        updateGuestPool();
+                        draw();
+                        updateStats();
+                    }
+                } catch (err) {
+                    alert('Invalid file');
+                }
+            };
+            reader.readAsText(file);
+            input.value = '';
+        }
+
+        function exportData() {
+            const data = { tables, guests };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `seating_chart_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+
         function importData(input) {
             const file = input.files[0];
             if (!file) return;
@@ -841,7 +1000,7 @@
             reader.readAsText(file);
             input.value = '';
         }
-        
+
         function clearAll() {
             if (!confirm('Clear all tables and seating assignments?')) return;
             tables = [];
@@ -851,20 +1010,20 @@
             draw();
             updateStats();
         }
-        
+
         // Allow dropping guests from sidebar onto canvas
         canvas.addEventListener('dragover', (e) => e.preventDefault());
         canvas.addEventListener('drop', (e) => {
             e.preventDefault();
             const guestId = e.dataTransfer.getData('guestId');
             if (!guestId) return;
-            
+
             const pos = getMousePos(e);
-            
+
             // Find nearest table
             let nearestTable = null;
             let nearestDist = Infinity;
-            
+
             tables.forEach(table => {
                 const dist = Math.hypot(pos.x - table.x, pos.y - table.y);
                 if (dist < nearestDist) {
@@ -872,7 +1031,7 @@
                     nearestTable = table;
                 }
             });
-            
+
             if (nearestTable && nearestDist < 150) {
                 // Find first empty seat
                 const emptyIndex = nearestTable.guests.findIndex(g => !g);
@@ -897,13 +1056,14 @@
                 }
             }
         });
-        
+
         // Close modal on outside click
         document.getElementById('assignModal').addEventListener('click', (e) => {
             if (e.target.id === 'assignModal') closeModal();
         });
-        
+
         init();
     </script>
 </body>
+
 </html>
