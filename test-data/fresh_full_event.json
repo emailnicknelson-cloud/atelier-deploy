@@ -1,0 +1,280 @@
+{
+    "app": "WhisperWorkshop",
+    "type": "fullEvent",
+    "version": "1.0",
+    "timestamp": "2026-06-15T10:00:00.000Z",
+    "order": [
+        "budgetCalculator",
+        "guestList",
+        "timelineScheduler",
+        "vendorComparison",
+        "menuPlanner",
+        "seatingChart",
+        "rainPlanCalculator",
+        "gratuityCalculator",
+        "invitationTracker",
+        "playlistTimer",
+        "barCalculator",
+        "floorPlanDesigner"
+    ],
+    "data": {
+        "budgetCalculator": {
+            "expenses": [
+                {
+                    "id": 1,
+                    "item": "Luxury Tent",
+                    "category": "venue",
+                    "estimated": 5000,
+                    "actual": 5200,
+                    "paid": false
+                },
+                {
+                    "id": 2,
+                    "item": "Gourmet Catering",
+                    "category": "catering",
+                    "estimated": 12000,
+                    "actual": 11500,
+                    "paid": true
+                }
+            ]
+        },
+        "guestList": [
+            {
+                "id": 1,
+                "firstName": "John",
+                "lastName": "Doe",
+                "role": "guest",
+                "rsvp": "accepted",
+                "dietary": "none",
+                "plusOne": true
+            },
+            {
+                "id": 2,
+                "firstName": "Jane",
+                "lastName": "Smith",
+                "role": "vip",
+                "rsvp": "accepted",
+                "dietary": "vegan",
+                "plusOne": false
+            }
+        ],
+        "timelineScheduler": {
+            "eventInfo": {
+                "date": "2026-06-20",
+                "start": "16:00"
+            },
+            "items": [
+                {
+                    "id": 1,
+                    "title": "Ceremony Start",
+                    "startTime": "2026-06-20T16:00:00",
+                    "duration": 30,
+                    "category": "ceremony"
+                },
+                {
+                    "id": 2,
+                    "title": "Cocktail Hour",
+                    "startTime": "2026-06-20T16:30:00",
+                    "duration": 60,
+                    "category": "cocktail"
+                }
+            ]
+        },
+        "vendorComparison": {
+            "category": "Photography",
+            "quotes": [
+                {
+                    "id": 1,
+                    "name": "SnapShot Studio",
+                    "price": 3500,
+                    "rating": 4.8,
+                    "score": 92
+                },
+                {
+                    "id": 2,
+                    "name": "Golden Hour Photos",
+                    "price": 4200,
+                    "rating": 4.9,
+                    "score": 95
+                }
+            ]
+        },
+        "menuPlanner": {
+            "eventInfo": {
+                "style": "Plated Dinner"
+            },
+            "dietary": {
+                "vegan": 1,
+                "gluten-free": 0
+            },
+            "courses": [
+                {
+                    "id": 1,
+                    "name": "Appetizer",
+                    "items": [
+                        {
+                            "name": "Bruschetta",
+                            "unit": "pieces",
+                            "count": 100
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "name": "Main Course",
+                    "items": [
+                        {
+                            "name": "Filet Mignon",
+                            "unit": "plates",
+                            "count": 50
+                        },
+                        {
+                            "name": "Vegan Risotto",
+                            "unit": "plates",
+                            "count": 10
+                        }
+                    ]
+                }
+            ]
+        },
+        "seatingChart": {
+            "tables": [
+                {
+                    "id": 1,
+                    "name": "Head Table",
+                    "type": "rect-8",
+                    "guests": [
+                        1,
+                        2
+                    ]
+                },
+                {
+                    "id": 2,
+                    "name": "Table 2",
+                    "type": "round-10",
+                    "guests": []
+                }
+            ]
+        },
+        "rainPlanCalculator": {
+            "rainChance": 45,
+            "tentGuests": 120,
+            "tentStyle": "mixed",
+            "tentExtras": "both"
+        },
+        "gratuityCalculator": {
+            "vendors": [
+                {
+                    "id": "catering",
+                    "contract": "11500",
+                    "tip": "18",
+                    "count": "1",
+                    "method": "check"
+                },
+                {
+                    "id": "dj",
+                    "contract": "2000",
+                    "tip": "15",
+                    "count": "1",
+                    "method": "cash"
+                }
+            ],
+            "totals": {
+                "planned": "2370",
+                "paid": "300",
+                "remaining": "2070"
+            }
+        },
+        "invitationTracker": {
+            "stats": {
+                "sent": 50,
+                "opened": 45,
+                "responded": 40
+            },
+            "invitations": [
+                {
+                    "id": 1,
+                    "email": "john.doe@example.com",
+                    "status": "responded",
+                    "rsvpStatus": "accepted"
+                },
+                {
+                    "id": 2,
+                    "email": "jane.smith@example.com",
+                    "status": "opened",
+                    "rsvpStatus": "pending"
+                }
+            ]
+        },
+        "playlistTimer": {
+            "info": {
+                "totalDuration": 3600,
+                "songCount": 15
+            },
+            "moods": {
+                "Upbeat": 10,
+                "Slow": 5
+            },
+            "songs": [
+                {
+                    "id": 1,
+                    "title": "Celebration",
+                    "artist": "Kool & The Gang",
+                    "duration": 240,
+                    "genre": "Upbeat"
+                }
+            ]
+        },
+        "barCalculator": {
+            "guestCount": 100,
+            "duration": 5,
+            "drinkers": 90,
+            "totalDrinks": 500,
+            "breakdown": {
+                "wine": 200,
+                "beer": 200,
+                "liquor": 100
+            },
+            "shoppingList": [
+                {
+                    "item": "Red Wine",
+                    "qty": 20,
+                    "unit": "btl"
+                },
+                {
+                    "item": "Vodka",
+                    "qty": 4,
+                    "unit": "L"
+                }
+            ]
+        },
+        "floorPlanDesigner": {
+            "room": {
+                "width": 60,
+                "length": 40
+            },
+            "objects": [
+                {
+                    "id": 1,
+                    "type": "table",
+                    "shape": "circle",
+                    "width": 5,
+                    "length": 5,
+                    "x": 10,
+                    "y": 10,
+                    "color": "#8b7355"
+                },
+                {
+                    "id": 2,
+                    "type": "dancefloor",
+                    "shape": "rect",
+                    "width": 20,
+                    "length": 20,
+                    "x": 30,
+                    "y": 20,
+                    "color": "#e0e0e0"
+                }
+            ]
+        }
+    }
+}
