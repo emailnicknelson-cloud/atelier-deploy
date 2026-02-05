@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Planning Tools HUD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;600;700&family=Segoe+UI:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background-color: #E8E3DC;
+            color: #404040;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'EB Garamond', serif;
+            font-weight: 600;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .container {
+                padding: 0 1.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                padding: 0 2rem;
+            }
+        }
+
+        /* Header */
+        header {
+            border-bottom: 1px solid rgba(127, 215, 0, 0.2);
+            padding: 2rem 0 3rem;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .header-brand .whisper-text {
+            font-size: 1.5rem;
+            font-family: 'EB Garamond', serif;
+        }
+
+        .header-brand .hud-text {
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            color: #808080;
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 3rem;
+            }
+        }
+
+        .header-description {
+            color: #666;
+            max-width: 40rem;
+            font-size: 1.125rem;
+        }
+
+        /* Card Styles */
+        .card {
+            border: 2px dashed #7FD700;
+            border-radius: 0.25rem;
+            background-color: #F5F0E8;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-title .emoji {
+            font-size: 1.75rem;
+        }
+
+        .card-description {
+            color: #666;
+            font-size: 0.875rem;
+        }
+
+        .card-content {
+            font-size: 0.875rem;
+        }
+
+        /* Button Styles */
+        button {
+            background-color: #7FD700;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s ease;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        button:hover {
+            background-color: #6FBF00;
+        }
+
+        button:active {
+            background-color: #5FA500;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            margin-bottom: 3rem;
+        }
+
+        .upload-section .card {
+            padding: 2rem;
+        }
+
+        .upload-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* Data Display Grid */
+        .loaded-data-section {
+            margin-bottom: 3rem;
+        }
+
+        .loaded-data-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .data-card {
+            cursor: pointer;
+        }
+
+        .data-card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .data-card .card-title {
+            margin-bottom: 0.5rem;
+        }
+
+        .data-preview {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(127, 215, 0, 0.2);
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(127, 215, 0, 0.1);
+        }
+
+        .data-row:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            color: #666;
+            font-size: 0.875rem;
+        }
+
+        .data-value {
+            font-weight: 600;
+        }
+
+        .import-timestamp {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(127, 215, 0, 0.2);
+        }
+
+        /* Tools Grid */
+        .tools-section {
+            margin-bottom: 3rem;
+        }
+
+        .tools-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .tool-card {
+            padding: 1.25rem;
+        }
+
+        .tool-card.loaded {
+            border-color: #7FD700;
+            background-color: rgba(127, 215, 0, 0.05);
+        }
+
+        .tool-card .card-title {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tool-card .card-title .emoji {
+            font-size: 1.5rem;
+        }
+
+        .tool-card .card-description {
+            font-size: 0.8rem;
+        }
+
+        .badge {
+            background-color: #7FD700;
+            color: white;
+            width: 1.75rem;
+            height: 1.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.25rem;
+            font-weight: 600;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-state-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: #666;
+            max-width: 28rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background-color: #333;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.25rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+            max-width: 300px;
+        }
+
+        .toast.success {
+            background-color: #7FD700;
+            color: white;
+        }
+
+        .toast.error {
+            background-color: #D32F2F;
+            color: white;
+        }
+
+        .toast.info {
+            background-color: #1976D2;
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        .toast.removing {
+            animation: slideOut 0.3s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .data-grid,
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.875rem;
+            }
+
+            .card-title {
+                font-size: 1.125rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-brand">
+                <span class="whisper-text">whisper</span>
+                <span class="hud-text">HUD</span>
+            </div>
+            <h1>Event Planning Tools</h1>
+            <p class="header-description">
+                Centralized dashboard for all your Whisper Workshop event planning tools. 
+                Import JSON data and visualize everything in one place.
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <span class="emoji">📥</span>
+                        Import Tool Data
+                    </h2>
+                </div>
+                <p class="card-description">Upload JSON files exported from Whisper Workshop tools</p>
+                <div style="margin-top: 1.5rem;">
+                    <button onclick="document.getElementById('fileInput').click()">
+                        <span class="upload-icon">📤</span>Choose JSON File
+                    </button>
+                </div>
+                <input type="file" id="fileInput" accept=".json">
+            </div>
+        </div>
+
+        <!-- Loaded Data Section (Hidden initially) -->
+        <div id="loadedDataSection" class="loaded-data-section" style="display: none;">
+            <h2>Loaded Data</h2>
+            <div id="dataGrid" class="data-grid"></div>
+        </div>
+
+        <!-- Tools Reference Grid -->
+        <div class="tools-section">
+            <h2>Supported Tools</h2>
+            <div id="toolsGrid" class="tools-grid"></div>
+        </div>
+
+        <!-- Empty State (Shown initially) -->
+        <div id="emptyState" class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <h3>No Data Loaded Yet</h3>
+            <p>Upload JSON files from your Whisper Workshop tools to see all your event planning data visualized here</p>
+            <button onclick="document.getElementById('fileInput').click()">
+                <span class="upload-icon">📤</span>Upload Your First File
+            </button>
+        </div>
+    </main>
+
+    <script>
+        // Tool configurations
+        const TOOL_CONFIGS = [
+            { name: "Bar Calculator", emoji: "🍸", description: "Beverage quantities & costs", key: "barCalculator" },
+            { name: "Budget Calculator", emoji: "💰", description: "Financial planning & tracking", key: "budgetCalculator" },
+            { name: "Floor Plan Designer", emoji: "📐", description: "Venue layout visualization", key: "floorPlanDesigner" },
+            { name: "Guest List", emoji: "👥", description: "Manage attendee details", key: "guestList" },
+            { name: "Gratuity Calculator", emoji: "💵", description: "Tip distribution & totals", key: "gratuityCalculator" },
+            { name: "Invitation Tracker", emoji: "💌", description: "RSVP management", key: "invitationTracker" },
+            { name: "Menu Planner", emoji: "🍽️", description: "Catering coordination", key: "menuPlanner" },
+            { name: "Playlist Timer", emoji: "🎵", description: "Music scheduling", key: "playlistTimer" },
+            { name: "Rain Plan Calculator", emoji: "🌧️", description: "Weather contingency planning", key: "rainPlanCalculator" },
+            { name: "Seating Chart Builder", emoji: "🪑", description: "Guest arrangement tool", key: "seatingChart" },
+            { name: "Timeline Scheduler", emoji: "📅", description: "Event day coordination", key: "timelineScheduler" },
+            { name: "Vendor Comparison", emoji: "🏪", description: "Supplier evaluation", key: "vendorComparison" },
+        ];
+
+        // State
+        let toolsData = {};
+        let selectedTool = null;
+
+        // Initialize tools grid
+        function initializeToolsGrid() {
+            const toolsGrid = document.getElementById('toolsGrid');
+            toolsGrid.innerHTML = TOOL_CONFIGS.map((tool, index) => {
+                const isLoaded = !!toolsData[tool.key];
+                return `
+                    <div class="card tool-card ${isLoaded ? 'loaded' : ''}">
+                        <div class="card-header">
+                            <div style="flex: 1;">
+                                <div class="card-title">
+                                    <span class="emoji">${tool.emoji}</span>
+                                    <span>${tool.name}</span>
+                                </div>
+                                <p class="card-description">${tool.description}</p>
+                            </div>
+                            ${isLoaded ? '<div class="badge">✓</div>' : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Render data grid
+        function renderDataGrid() {
+            const dataGrid = document.getElementById('dataGrid');
+            const loadedDataSection = document.getElementById('loadedDataSection');
+            const emptyState = document.getElementById('emptyState');
+
+            if (Object.keys(toolsData).length === 0) {
+                loadedDataSection.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            loadedDataSection.style.display = 'block';
+            emptyState.style.display = 'none';
+
+            dataGrid.innerHTML = Object.entries(toolsData).map(([key, tool]) => {
+                const preview = renderDataPreview(tool);
+                return `
+                    <div class="card data-card" onclick="toggleDataCard('${key}')">
+                        <div class="card-header">
+                            <div style="flex: 1;">
+                                <div class="card-title">
+                                    <span class="emoji">${tool.emoji}</span>
+                                    <span>${tool.name}</span>
+                                </div>
+                                <p class="card-description">${tool.description}</p>
+                            </div>
+                        </div>
+                        ${selectedTool === key ? `
+                            <div class="data-preview">
+                                ${preview}
+                                <div class="import-timestamp">
+                                    Imported: ${new Date(tool.timestamp).toLocaleString()}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Toggle data card details
+        function toggleDataCard(key) {
+            selectedTool = selectedTool === key ? null : key;
+            renderDataGrid();
+        }
+
+        // Render data preview
+        function renderDataPreview(tool) {
+            if (tool.name === "Bar Calculator" && tool.data.results) {
+                return `
+                    <div class="data-row">
+                        <span class="data-label">Total Drinks Needed</span>
+                        <span class="data-value">${tool.data.results.totalDrinks}</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Estimated Total Cost</span>
+                        <span class="data-value">$${tool.data.results.totalCost?.toFixed(2)}</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Number of Guests</span>
+                        <span class="data-value">${tool.data.inputs?.guests}</span>
+                    </div>
+                `;
+            }
+
+            return `<pre style="font-size: 0.75rem; overflow: auto; max-height: 160px; background: #f0f0f0; padding: 0.75rem; border-radius: 0.25rem;">${JSON.stringify(tool.data, null, 2)}</pre>`;
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('removing');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Handle file upload
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const jsonData = JSON.parse(e.target?.result);
+                    
+                    let detectedTool = null;
+                    
+                    if (jsonData.inputs?.barType !== undefined) {
+                        detectedTool = "barCalculator";
+                    } else if (Array.isArray(jsonData)) {
+                        showToast("Please select the tool type for this data", 'info');
+                        return;
+                    } else if (jsonData.timestamp) {
+                        detectedTool = "barCalculator";
+                    }
+                    
+                    if (detectedTool) {
+                        const toolConfig = TOOL_CONFIGS.find(t => t.key === detectedTool);
+                        if (toolConfig) {
+                            toolsData[detectedTool] = {
+                                name: toolConfig.name,
+                                emoji: toolConfig.emoji,
+                                description: toolConfig.description,
+                                data: jsonData,
+                                timestamp: jsonData.timestamp || new Date().toISOString(),
+                            };
+                            showToast(`${toolConfig.name} data loaded successfully`, 'success');
+                            renderDataGrid();
+                            initializeToolsGrid();
+                        }
+                    } else {
+                        showToast("Could not detect tool type from JSON structure", 'error');
+                    }
+                } catch (error) {
+                    showToast("Invalid JSON file", 'error');
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset file input
+            event.target.value = '';
+        });
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeToolsGrid();
+        });
+    </script>
+</body>
+</html>
