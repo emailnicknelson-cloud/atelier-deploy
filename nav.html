@@ -1435,6 +1435,12 @@
                     }
                 }
 
+                // Restore order if present
+                if (jsonData.order && Array.isArray(jsonData.order)) {
+                    toolsOrder = jsonData.order;
+                    saveToolsOrder();
+                }
+
                 Object.entries(jsonData.data).forEach(([key, value]) => {
                     if (STORAGE_KEYS[key]) {
                         localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(value));
@@ -1553,6 +1559,7 @@
                 type: "fullEvent",
                 version: "1.0",
                 timestamp: new Date().toISOString(),
+                order: toolsOrder,
                 data: {}
             };
 
