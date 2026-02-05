@@ -53,12 +53,14 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
+            opacity: 1;
             transition: opacity 0.8s ease-in-out;
         }
 
         #splash-screen.fade-out {
             opacity: 0;
             pointer-events: none;
+            visibility: hidden;
         }
 
         .splash-content {
@@ -551,10 +553,10 @@
                 </div>
 
                 <div class="zoom-controls">
-                    <button class="zoom-btn" onclick="zoom(-0.1)">-</button>
+                    <button class="zoom-btn" onclick="changeZoom(-0.1)">-</button>
                     <span id="zoomDisplay"
                         style="font-family: 'Courier Prime', monospace; font-size: 0.9em; align-self: center;">100%</span>
-                    <button class="zoom-btn" onclick="zoom(0.1)">+</button>
+                    <button class="zoom-btn" onclick="changeZoom(0.1)">+</button>
                     <button class="zoom-btn" onclick="resetZoom()"
                         style="width: auto; padding: 0 0.5rem; font-size: 0.8em; font-weight: 500;">Fit</button>
                 </div>
@@ -618,30 +620,13 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const splash = document.getElementById('splash-screen');
-            const mainContent = document.getElementById('main-content');
-
-            setTimeout(function () {
-                splash.classList.add('fade-out');
-                mainContent.classList.add('visible');
-
-                setTimeout(function () {
-                    splash.style.display = 'none';
-                }, 800);
-            }, 1000);
-
-            init();
-        });
-
+        // Global variables accessible to inline handlers
         const STORAGE_KEY = 'event_floorplan_v1';
         const PIXELS_PER_FOOT = 10;
         // Earthy/Subdued brand colors
         const COLORS = ['#8b7355', '#3d3d3d', '#5a7c5a', '#b95d5d', '#cc9933', '#8b5cf6', '#78716c', '#000000'];
 
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-
+        let canvas, ctx;
         let room = { width: 60, length: 40 };
         let objects = [];
         let selectedId = null;
@@ -652,6 +637,26 @@
         let dragStart = { x: 0, y: 0 };
         let lastMouse = { x: 0, y: 0 };
         let measureStart = null;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const splash = document.getElementById('splash-screen');
+            const mainContent = document.getElementById('main-content');
+
+            // Initialize canvas ref here when DOM is ready
+            canvas = document.getElementById('canvas');
+            ctx = canvas.getContext('2d');
+
+            setTimeout(function () {
+                splash.classList.add('fade-out');
+                mainContent.classList.add('visible');
+
+                setTimeout(function () {
+                    splash.style.display = 'none';
+                }, 800);
+            }, 1500);
+
+            init();
+        });
 
         function init() {
             loadPlan();
@@ -1020,7 +1025,7 @@
 
         function resetZoom() { resetView(); }
 
-        function zoom(delta) {
+        function changeZoom(delta) {
             zoom = Math.max(0.5, Math.min(3, zoom + delta));
             document.getElementById('zoomDisplay').textContent = Math.round(zoom * 100) + '%';
             draw();
