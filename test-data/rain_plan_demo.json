@@ -1,0 +1,23 @@
+{
+    "app": "WhisperWorkshop",
+    "type": "rainPlanCalculator",
+    "version": "1.0",
+    "timestamp": "2024-05-23T08:30:00.000Z",
+    "data": {
+        "eventDate": "2024-06-15",
+        "location": "Outdoor Garden",
+        "guestCount": 150,
+        "planA": {
+            "description": "Garden Ceremony & Reception",
+            "feasibility": "High",
+            "notes": "Requires clear skies."
+        },
+        "planB": {
+            "description": "Tent on the lawn",
+            "tentSize": "40x80",
+            "cost": 3500,
+            "vendor": "ABC Tents"
+        },
+        "weatherTrigger": "40% chance of rain 24h prior"
+    }
+}

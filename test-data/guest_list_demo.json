@@ -1,0 +1,40 @@
+{
+    "app": "WhisperWorkshop",
+    "type": "guestList",
+    "version": "1.0",
+    "timestamp": "2024-05-21T09:15:00.000Z",
+    "data": [
+        {
+            "id": 1,
+            "name": "Alice Smith",
+            "email": "alice@example.com",
+            "rsvp": "accepted",
+            "meal": "chicken",
+            "plusOne": true
+        },
+        {
+            "id": 2,
+            "name": "Bob Jones",
+            "email": "bob@example.com",
+            "rsvp": "pending",
+            "meal": "beef",
+            "plusOne": false
+        },
+        {
+            "id": 3,
+            "name": "Charlie Day",
+            "email": "charlie@example.com",
+            "rsvp": "declined",
+            "meal": "na",
+            "plusOne": false
+        },
+        {
+            "id": 4,
+            "name": "Diana Ross",
+            "email": "diana@example.com",
+            "rsvp": "accepted",
+            "meal": "vegetarian",
+            "plusOne": true
+        }
+    ]
+}

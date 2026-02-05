@@ -1,0 +1,36 @@
+{
+    "app": "WhisperWorkshop",
+    "type": "budgetCalculator",
+    "version": "1.0",
+    "timestamp": "2024-05-22T11:45:00.000Z",
+    "data": {
+        "totalBudget": 25000,
+        "categories": [
+            {
+                "name": "Venue",
+                "budget": 10000,
+                "spent": 10500
+            },
+            {
+                "name": "Catering",
+                "budget": 8000,
+                "spent": 7500
+            },
+            {
+                "name": "Photography",
+                "budget": 3000,
+                "spent": 2800
+            },
+            {
+                "name": "Decor",
+                "budget": 2000,
+                "spent": 1500
+            },
+            {
+                "name": "Music",
+                "budget": 1500,
+                "spent": 1500
+            }
+        ]
+    }
+}
