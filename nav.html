@@ -263,6 +263,216 @@
             font-size: 1.1em;
         }
 
+        /* HUD MERGED STYLES */
+        /* Upload Section */
+        .upload-section {
+            margin-bottom: 3rem;
+        }
+
+        .upload-section .card {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(61, 61, 61, 0.1);
+            border-radius: 6px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .upload-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* Data Display Grid */
+        .loaded-data-section {
+            margin-bottom: 3rem;
+        }
+
+        .loaded-data-section h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #3d3d3d;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .data-card {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(61, 61, 61, 0.1);
+            border-radius: 6px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .data-card:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(139, 115, 85, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(61, 61, 61, 0.08);
+        }
+
+        .data-card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-description {
+            color: #666;
+            font-size: 0.875rem;
+        }
+
+        .data-preview {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(61, 61, 61, 0.15);
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(61, 61, 61, 0.08);
+        }
+
+        .data-row:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            color: #666;
+            font-size: 0.875rem;
+        }
+
+        .data-value {
+            font-weight: 600;
+        }
+
+        .import-timestamp {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(61, 61, 61, 0.15);
+        }
+
+        /* Buttons from HUD */
+        button {
+            background: #8b7355;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        button:hover {
+            background: #6b5a45;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 10px rgba(139, 115, 85, 0.3);
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background-color: #333;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.25rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+            max-width: 300px;
+        }
+
+        .toast.success {
+            background-color: #8b7355;
+        }
+
+        .toast.error {
+            background-color: #D32F2F;
+        }
+
+        .toast.info {
+            background-color: #1976D2;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        .toast.removing {
+            animation: slideOut 0.3s ease;
+        }
+
+        .tool-card.loaded {
+            border-color: rgba(139, 115, 85, 0.4);
+            background: rgba(139, 115, 85, 0.08);
+        }
+
+        .badge {
+            background: #8b7355;
+            color: white;
+            width: 1.75rem;
+            height: 1.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 500;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+            margin-left: auto;
+        }
+
         .footer {
             text-align: center;
             padding-top: 40px;
@@ -357,6 +567,37 @@
             </header>
 
             <div class="suite-overview">
+                <!-- Upload Section (HUD) -->
+                <div class="upload-section" style="margin-bottom: 2rem;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title" style="justify-content: center;">
+                                <span class="emoji">📥</span>
+                                Import Tool Data
+                            </h2>
+                        </div>
+                        <p class="card-description">Upload JSON files exported from Whisper Workshop tools to visualize
+                            them below.</p>
+                        <div
+                            style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                            <button onclick="document.getElementById('fileInput').click()">
+                                <span class="upload-icon">📤</span>Choose JSON File
+                            </button>
+                            <button onclick="scanLocalStorage()"
+                                style="background: #e4e4dc; color: #3d3d3d; border: 1px solid rgba(61,61,61,0.2);">
+                                <span class="upload-icon">🔄</span>Sync from Browser
+                            </button>
+                        </div>
+                        <input type="file" id="fileInput" accept=".json">
+                    </div>
+                </div>
+
+                <!-- Loaded Data Section (HUD - Initially Hidden) -->
+                <div id="loadedDataSection" class="loaded-data-section" style="display: none;">
+                    <h2>Loaded Data</h2>
+                    <div id="dataGrid" class="data-grid"></div>
+                </div>
+
                 <h2>Technical Foundation</h2>
                 <div class="tech-features">
                     <div class="tech-feature">
@@ -402,14 +643,6 @@
                         <div class="tool-info">
                             <div class="tool-name">Atelier Home</div>
                             <div class="tool-desc">Return to welcome screen</div>
-                        </div>
-                    </a>
-
-                    <a href="hud.html" class="tool-card">
-                        <div class="tool-icon">🎛️</div>
-                        <div class="tool-info">
-                            <div class="tool-name">Suite HUD</div>
-                            <div class="tool-desc">Central control dashboard</div>
                         </div>
                     </a>
                 </div>
@@ -547,7 +780,332 @@
                     splash.style.display = 'none';
                 }, 800);
             }, 2000);
+
+            // Initialize HUD features
+            initializeToolsGrid();
+            scanLocalStorage(); // Auto-scan on load
         });
+
+        // --- HUD LOGIC ---
+
+        const STORAGE_KEYS = {
+            barCalculator: 'event_bar_v1',
+            budgetCalculator: 'event_budget_v1',
+            floorPlanDesigner: 'event_floorplan_v1',
+            guestList: 'event_guests_v1',
+            gratuityCalculator: 'event_gratuity_v1',
+            invitationTracker: 'event_invitations_v1',
+            menuPlanner: 'event_menu_v1',
+            playlistTimer: 'event_playlist_v1',
+            rainPlanCalculator: 'event_rainplan_v1',
+            seatingChart: 'event_seating_v1',
+            timelineScheduler: 'event_timeline_v1',
+            vendorComparison: 'event_vendors_v1'
+        };
+
+        // State
+        let toolsData = {};
+        let selectedTool = null;
+
+        // Initialize tools grid badges
+        function initializeToolsGrid() {
+            // This function now just adds badges to existing links in the grid
+            const toolCards = document.querySelectorAll('.tools-grid .tool-card');
+
+            toolCards.forEach(card => {
+                const href = card.getAttribute('href');
+                if (!href || href === 'index.html') return;
+
+                // Find key mapping based on href
+                let key = null;
+                for (const [k, v] of Object.entries(STORAGE_KEYS)) {
+                    // Primitive check: if href contains the tool name roughly
+                    // Actually, let's Map href to key explicitly or just check all keys
+                    // Simpler: Reverse lookup the KEY from the href filename?
+                    // mapping: bar-calculator.html -> barCalculator
+                    const filename = href.replace('.html', '');
+                    // Convert kebab-case to camelCase
+                    const camelKey = filename.replace(/-./g, x => x[1].toUpperCase());
+
+                    if (STORAGE_KEYS[camelKey]) {
+                        key = camelKey;
+                    }
+                }
+
+                // Fallback for seating-chart-builder -> seatingChart mapping
+                if (href === 'seating-chart-builder.html') key = 'seatingChart';
+
+                if (key && toolsData[key]) {
+                    card.classList.add('loaded');
+                    if (!card.querySelector('.badge')) {
+                        card.insertAdjacentHTML('beforeend', '<div class="badge">✓</div>');
+                    }
+                } else {
+                    card.classList.remove('loaded');
+                    const badge = card.querySelector('.badge');
+                    if (badge) badge.remove();
+                }
+            });
+        }
+
+        // Render data grid
+        function renderDataGrid() {
+            const dataGrid = document.getElementById('dataGrid');
+            const loadedDataSection = document.getElementById('loadedDataSection');
+
+            if (Object.keys(toolsData).length === 0) {
+                loadedDataSection.style.display = 'none';
+                return;
+            }
+
+            loadedDataSection.style.display = 'block';
+
+            dataGrid.innerHTML = Object.entries(toolsData).map(([key, tool]) => {
+                const preview = renderDataPreview(tool);
+                // We don't have tool.emoji/name directly in toolsData usually if generic scan?
+                // Wait, scanLocalStorage constructs toolsData.
+                // We need to ensure toolsData has metadata.
+                // We'll rely on the scanLocalStorage to populate metadata.
+
+                return `
+                    <div class="card data-card">
+                        <div class="card-header" onclick="toggleDataCard('${key}')">
+                            <div style="flex: 1;">
+                                <div class="card-title">
+                                    <span class="emoji">${tool.emoji || '📦'}</span>
+                                    <span>${tool.name || key}</span>
+                                </div>
+                                <p class="card-description">${tool.description || 'Imported Data'}</p>
+                            </div>
+                             <div style="display:flex; gap:0.5rem; align-items:center;">
+                                <button onclick="event.stopPropagation(); clearToolData('${key}')" style="background:none; border:none; cursor:pointer; font-size:1.2rem; color:#aaa;" title="Remove Data">🗑️</button>
+                            </div>
+                        </div>
+                        ${selectedTool === key ? `
+                            <div class="data-preview">
+                                ${preview}
+                                <div class="import-timestamp">
+                                    Imported: ${new Date(tool.timestamp).toLocaleString()}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            initializeToolsGrid(); // Update badges
+        }
+
+        function toggleDataCard(key) {
+            selectedTool = selectedTool === key ? null : key;
+            renderDataGrid();
+        }
+
+        function clearToolData(key) {
+            if (confirm(`Remove data for ${toolsData[key].name}?`)) {
+                delete toolsData[key];
+                showToast('Data removed', 'info');
+                renderDataGrid();
+            }
+        }
+
+        // Render data preview
+        function renderDataPreview(tool) {
+            if (tool.key === "barCalculator" && tool.data.results) {
+                return `
+                        <div class="data-row">
+                            <span class="data-label">Total Drinks Needed</span>
+                            <span class="data-value">${tool.data.results.totalDrinks}</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Estimated Total Cost</span>
+                            <span class="data-value">$${tool.data.results.totalCost?.toFixed(2)}</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Number of Guests</span>
+                            <span class="data-value">${tool.data.inputs?.guests}</span>
+                        </div>
+                    `;
+            } else if ((tool.key === "floorPlanDesigner" || tool.key === "seatingChart") && tool.data.objects) {
+                return renderFloorPlanSVG(tool.data);
+            }
+
+            return `<pre style="font-size: 0.75rem; overflow: auto; max-height: 160px; background: #f0f0f0; padding: 0.75rem; border-radius: 0.25rem;">${JSON.stringify(tool.data, null, 2)}</pre>`;
+        }
+
+        // Helper to render Floor Plan SVG
+        function renderFloorPlanSVG(data) {
+            if (!data.room || !data.objects) return '<div class="data-row">Invalid Floor Plan Data</div>';
+
+            const { width, length } = data.room;
+            const padding = 2;
+            const viewBox = `${-padding} ${-padding} ${width + padding * 2} ${length + padding * 2}`;
+
+            const objectsSVG = data.objects.map(obj => {
+                if (obj.shape === 'rect' || obj.shape === 'wall') {
+                    const color = obj.shape === 'wall' ? '#000' : (obj.color || '#8b7355');
+                    const x = obj.x - (obj.width / 2);
+                    const y = obj.y - (obj.length / 2);
+                    return `<rect x="${x}" y="${y}" width="${obj.width}" height="${obj.length}" fill="${color}" stroke="rgba(0,0,0,0.1)" stroke-width="0.2" rx="0.5" />`;
+                } else if (obj.shape === 'circle') {
+                    const color = obj.color || '#8b7355';
+                    const r = obj.width / 2;
+                    return `<circle cx="${obj.x}" cy="${obj.y}" r="${r}" fill="${color}" stroke="rgba(0,0,0,0.1)" stroke-width="0.2" />`;
+                }
+                return '';
+            }).join('');
+
+            return `
+                <div style="width: 100%; aspect-ratio: ${width}/${length}; background: #fff; border: 1px solid #ddd; border-radius: 4px; overflow: hidden;">
+                    <svg viewBox="${viewBox}" style="width: 100%; height: 100%; display: block;">
+                        <!-- Room Background -->
+                        <rect x="0" y="0" width="${width}" height="${length}" fill="#f9f9f9" stroke="#ccc" stroke-width="0.2" />
+                        <!-- Grid -->
+                        <line x1="0" y1="0" x2="${width}" y2="${length}" stroke="#eee" stroke-width="0.1" />
+                        <line x1="0" y1="${length}" x2="${width}" y2="0" stroke="#eee" stroke-width="0.1" />
+                        ${objectsSVG}
+                    </svg>
+                </div>
+                <div style="font-size: 0.75rem; color: #666; margin-top: 0.5rem; text-align: center;">
+                    Room: ${width}' x ${length}' | Objects: ${data.objects.length}
+                </div>
+            `;
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('removing');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Handle file upload
+        document.getElementById('fileInput').addEventListener('change', function (event) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const jsonData = JSON.parse(e.target?.result);
+                    processImport(jsonData);
+                } catch (error) {
+                    console.error(error);
+                    showToast("Invalid JSON file", 'error');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        });
+
+        function processImport(jsonData) {
+            let detectedToolKey = null;
+            let dataPayload = jsonData;
+
+            if (jsonData.app === "WhisperWorkshop" && jsonData.type) {
+                detectedToolKey = jsonData.type;
+                dataPayload = jsonData.data;
+            }
+            // Heuristics
+            else if (jsonData.inputs?.barType !== undefined) detectedToolKey = "barCalculator";
+            else if (Array.isArray(jsonData) && jsonData.length > 0 && jsonData[0].rsvp) detectedToolKey = "guestList";
+            else if (jsonData.items && jsonData.eventInfo) detectedToolKey = "timelineScheduler";
+            else if (Array.isArray(jsonData) && jsonData.length > 0 && jsonData[0].quote) detectedToolKey = "vendorComparison";
+
+            if (detectedToolKey && STORAGE_KEYS[detectedToolKey]) {
+                const toolName = detectedToolKey.replace(/([A-Z])/g, ' $1').trim();
+
+                // Map keys to Emoji/Desc manually since we don't have TOOL_CONFIGS array fully
+                // Or we can rebuild it simply
+                const META = {
+                    barCalculator: { emoji: "🍸", name: "Bar Calculator" },
+                    budgetCalculator: { emoji: "💰", name: "Budget Calculator" },
+                    floorPlanDesigner: { emoji: "📐", name: "Floor Plan Designer" },
+                    guestList: { emoji: "👥", name: "Guest List" },
+                    gratuityCalculator: { emoji: "💵", name: "Gratuity Calculator" },
+                    invitationTracker: { emoji: "💌", name: "Invitation Tracker" },
+                    menuPlanner: { emoji: "🍽️", name: "Menu Planner" },
+                    playlistTimer: { emoji: "🎵", name: "Playlist Timer" },
+                    rainPlanCalculator: { emoji: "🌧️", name: "Rain Plan Calculator" },
+                    seatingChart: { emoji: "🪑", name: "Seating Chart Builder" },
+                    timelineScheduler: { emoji: "📅", name: "Timeline Scheduler" },
+                    vendorComparison: { emoji: "🏪", name: "Vendor Comparison" }
+                };
+
+                const meta = META[detectedToolKey] || { emoji: "📦", name: detectedToolKey };
+
+                toolsData[detectedToolKey] = {
+                    key: detectedToolKey,
+                    name: meta.name,
+                    emoji: meta.emoji,
+                    description: "Imported from file",
+                    timestamp: new Date().toISOString(),
+                    data: dataPayload
+                };
+
+                // Save to localStorage so tool picks it up!
+                try {
+                    localStorage.setItem(STORAGE_KEYS[detectedToolKey], JSON.stringify(dataPayload));
+                    showToast(`Imported ${meta.name} data`, 'success');
+                } catch (e) {
+                    showToast("Error saving to storage", 'error');
+                }
+
+                renderDataGrid();
+            } else {
+                showToast("Unknown file format", 'error');
+            }
+        }
+
+        function scanLocalStorage() {
+            let foundCount = 0;
+            const META = {
+                barCalculator: { emoji: "🍸", name: "Bar Calculator" },
+                budgetCalculator: { emoji: "💰", name: "Budget Calculator" },
+                floorPlanDesigner: { emoji: "📐", name: "Floor Plan Designer" },
+                guestList: { emoji: "👥", name: "Guest List" },
+                gratuityCalculator: { emoji: "💵", name: "Gratuity Calculator" },
+                invitationTracker: { emoji: "💌", name: "Invitation Tracker" },
+                menuPlanner: { emoji: "🍽️", name: "Menu Planner" },
+                playlistTimer: { emoji: "🎵", name: "Playlist Timer" },
+                rainPlanCalculator: { emoji: "🌧️", name: "Rain Plan Calculator" },
+                seatingChart: { emoji: "🪑", name: "Seating Chart Builder" },
+                timelineScheduler: { emoji: "📅", name: "Timeline Scheduler" },
+                vendorComparison: { emoji: "🏪", name: "Vendor Comparison" }
+            };
+
+            for (const [key, storageKey] of Object.entries(STORAGE_KEYS)) {
+                const stored = localStorage.getItem(storageKey);
+                if (stored) {
+                    try {
+                        const data = JSON.parse(stored);
+                        const meta = META[key] || { emoji: "📦", name: key };
+
+                        toolsData[key] = {
+                            key: key,
+                            name: meta.name,
+                            emoji: meta.emoji,
+                            description: "Synced from browser",
+                            timestamp: new Date().toISOString(), // We don't know real timestamp unless stored
+                            data: data
+                        };
+                        foundCount++;
+                    } catch (e) {
+                        console.error("Error parsing", key);
+                    }
+                }
+            }
+            renderDataGrid();
+            if (foundCount > 0) {
+                // Optional: showToast(`Synced ${foundCount} tools`, 'info');
+            }
+        }
     </script>
 </body>
 
