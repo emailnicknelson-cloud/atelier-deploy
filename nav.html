@@ -1610,6 +1610,21 @@
                 showToast("All tool data cleared from browser storage", "success");
             }
         }
+
+        // --- Data Persistence & Safety ---
+        // Prompt user before closing to give chance to save
+        window.addEventListener('beforeunload', (e) => {
+            const hasData = Object.values(STORAGE_KEYS).some(key => localStorage.getItem(key));
+            if (hasData) {
+                e.preventDefault();
+                e.returnValue = ''; // Required for Chrome to show dialog
+            }
+        });
+
+        // Clear data on unload (Session Mode behavior)
+        window.addEventListener('pagehide', () => {
+            Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
+        });
     </script>
 </body>
 
