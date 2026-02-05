@@ -1456,7 +1456,8 @@
                         localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(value));
                     }
                 });
-                scanLocalStorage(); // Refresh grid
+                renderDataGrid();
+                takeSnapshot(); // Mark state as clean
                 showToast("Full event imported successfully", 'success');
                 return;
             }
@@ -1597,6 +1598,8 @@
             a.href = url;
             a.download = `whisper_event_${new Date().toISOString().split('T')[0]}.json`;
             a.click();
+            a.click();
+            takeSnapshot(); // Mark state as clean
             showToast(`Saved ${count} tools to event file`, 'success');
         }
 
@@ -1611,20 +1614,79 @@
             }
         }
 
+
         // --- Data Persistence & Safety ---
-        // Prompt user before closing to give chance to save
-        window.addEventListener('beforeunload', (e) => {
-            const hasData = Object.values(STORAGE_KEYS).some(key => localStorage.getItem(key));
-            if (hasData) {
-                e.preventDefault();
-                e.returnValue = ''; // Required for Chrome to show dialog
+
+        const SNAPSHOT_KEY = '_whisper_snapshot_v1';
+        let isInternalNav = false;
+
+        // Take a snapshot of current data state
+        function takeSnapshot() {
+            const snap = {};
+            Object.values(STORAGE_KEYS).forEach(key => {
+                snap[key] = localStorage.getItem(key);
+            });
+            localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(snap));
+        }
+
+        // Check which tools have changed since last snapshot
+        function getDirtyTools() {
+            const snap = JSON.parse(localStorage.getItem(SNAPSHOT_KEY) || '{}');
+            const dirty = [];
+
+            // Check keys defined in STORAGE_KEYS
+            Object.entries(STORAGE_KEYS).forEach(([toolName, key]) => {
+                const current = localStorage.getItem(key);
+                const saved = snap[key];
+
+                // If both null/empty, it's clean. 
+                // If one exists and other doesn't, or content mismatch -> dirty.
+                if ((current || saved) && current !== saved) {
+                    // Prettify tool name
+                    dirty.push(toolName.replace(/([A-Z])/g, ' $1').trim());
+                }
+            });
+            return dirty;
+        }
+
+        // Mark internal navigation to prevent clearing
+        document.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (link) {
+                const href = link.getAttribute('href');
+                // Check if it's a navigation link (not #, not javascript:, not download)
+                if (href && !href.startsWith('#') && !href.startsWith('javascript:') && !link.hasAttribute('download')) {
+                    isInternalNav = true;
+                }
             }
         });
 
-        // Clear data on unload (Session Mode behavior)
-        window.addEventListener('pagehide', () => {
-            Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
+        // Prompt user before closing if unsaved changes exist
+        window.addEventListener('beforeunload', (e) => {
+            if (isInternalNav) return; // Don't prompt on internal links
+
+            const dirtyTools = getDirtyTools();
+            if (dirtyTools.length > 0) {
+                e.preventDefault();
+                // Note: Modern browsers ignores this custom message, but we set it anyway per specs
+                const msg = `You have unsaved changes in: ${dirtyTools.join(', ')}.`;
+                e.returnValue = msg;
+                return msg;
+            }
         });
+
+        // Clear data on unload ONLY if leaving the app (closing/refreshing), NOT navigating
+        window.addEventListener('pagehide', () => {
+            if (!isInternalNav) {
+                Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
+                localStorage.removeItem(SNAPSHOT_KEY); // Clear snapshot too
+            }
+        });
+
+        // --- Hook into existing flows ---
+        // We override these functions or inject logic?
+        // Better to check if existing functions need updating.
+        // I will append this helper logic, but I need to make sure export/import calls takeSnapshot.
     </script>
 </body>
 
