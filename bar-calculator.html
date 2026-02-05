@@ -1342,7 +1342,24 @@
                             document.getElementById('iceCost').value = data.inputs.costs.ice || 0.5;
                         }
 
+                        if (data.inputs.categories) {
+                            categories = data.inputs.categories;
+                            Object.keys(categories).forEach(key => {
+                                const el = document.getElementById(`cat-${key}`);
+                                if (el) el.classList.toggle('active', categories[key]);
+                            });
+                        }
+
+                        if (data.inputs.percentages) {
+                            percentages = data.inputs.percentages;
+                            Object.keys(percentages).forEach(key => {
+                                const el = document.getElementById(`pct-${key}`);
+                                if (el) el.textContent = percentages[key] + '%';
+                            });
+                        }
+
                         updateSlider(data.inputs.drinkingPct || 75);
+                        calculate();
                     }
                 } catch (e) {
                     console.log('Bar data load error:', e);
