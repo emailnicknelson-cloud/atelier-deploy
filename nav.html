@@ -630,8 +630,16 @@
                                 Import Tool Data
                             </h2>
                         </div>
-                        <p class="card-description">Upload JSON files exported from Whisper Workshop tools to visualize
-                            them below.</p>
+                        <p class="card-description">Manage your venue configuration and save your progress.</p>
+
+                        <!-- Event Name Input -->
+                        <div style="margin: 1rem auto; max-width: 300px; text-align: left;">
+                            <label style="display:block; font-size: 0.75rem; color: #666; margin-bottom: 0.25rem;">EVENT
+                                TITLE</label>
+                            <input type="text" id="eventNameInput" placeholder="e.g. Smith Wedding 2026"
+                                style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-family: inherit;"
+                                onchange="saveEventMetadata()">
+                        </div>
                         <div
                             style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                             <button onclick="exportFullEvent()" style="background:var(--accent); color:white;">
@@ -1466,33 +1474,68 @@
 
         function processImport(jsonData) {
             // Handle Full Event explicitly first
-            if (jsonData.type === "fullEvent" && jsonData.data) {
-                const keysToImport = Object.keys(jsonData.data);
-                const conflicts = keysToImport.filter(key =>
-                    STORAGE_KEYS[key] && localStorage.getItem(STORAGE_KEYS[key])
-                );
+            if (jsonData.type === 'fullEvent' && jsonData.data) {
+                const dataPayload = jsonData.data;
 
-                if (conflicts.length > 0) {
-                    const toolNames = conflicts.map(k => k.replace(/([A-Z])/g, ' $1').trim()); // Prettify
-                    if (!confirm(`⚠️ Warning: This import will overwrite existing data for ${conflicts.length} tools:\n\n• ${toolNames.join('\n• ')}\n\nContinue and overwrite?`)) {
-                        return;
+                // --- VERSION CHECK ---
+                // Check if we have existing data and if this file is older
+                const existingTimestamp = localStorage.getItem('whisper_last_save_time');
+                const fileTimestamp = jsonData.timestamp;
+
+                if (existingTimestamp && fileTimestamp) {
+                    const existingDate = new Date(existingTimestamp);
+                    const fileDate = new Date(fileTimestamp);
+
+                    if (fileDate < existingDate) {
+                        const confirmLoad = confirm(
+                            `WARNING: You are importing an older file!\n\n` +
+                            `File Date: ${fileDate.toLocaleString()}\n` +
+                            `Current Save: ${existingDate.toLocaleString()}\n\n` +
+                            `Do you want to overwrite your newer work with this older backup?`
+                        );
+                        if (!confirmLoad) {
+                            showToast("Import cancelled", 'info');
+                            return;
+                        }
                     }
                 }
 
-                // Restore order if present
+                // Always checking for overwrites if data exists
+                const existingTools = Object.keys(dataPayload).filter(key =>
+                    STORAGE_KEYS[key] && localStorage.getItem(STORAGE_KEYS[key])
+                );
+
+                if (existingTools.length > 0) {
+                    const msg = `This import will overwrite data for ${existingTools.length} tools:\n` +
+                        existingTools.map(t => `- ${t}`).join('\n') +
+                        `\n\nContinue?`;
+                    if (!confirm(msg)) return;
+                }
+
+                // Restore Event Name if present
+                if (jsonData.eventName) {
+                    document.getElementById('eventNameInput').value = jsonData.eventName;
+                    saveEventMetadata();
+                }
+
+                // Track this import as the latest state
+                localStorage.setItem('whisper_last_save_time', fileTimestamp || new Date().toISOString());
+
+                // Restore Tool Order
                 if (jsonData.order && Array.isArray(jsonData.order)) {
                     toolsOrder = jsonData.order;
                     saveToolsOrder();
                 }
 
-                Object.entries(jsonData.data).forEach(([key, value]) => {
+                // Restore Data
+                Object.entries(dataPayload).forEach(([key, value]) => {
                     if (STORAGE_KEYS[key]) {
                         localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(value));
                     }
                 });
                 scanLocalStorage();
                 takeSnapshot(); // Mark state as clean
-                showToast("Full event imported successfully", 'success');
+                showToast(`Imported ${jsonData.eventName || 'Event'}`, 'success');
                 return;
             }
 
@@ -1598,12 +1641,31 @@
             }
         }
 
+        // --- Event Metadata ---
+        function saveEventMetadata() {
+            const name = document.getElementById('eventNameInput').value;
+            localStorage.setItem('whisper_event_name', name);
+        }
+
+        function loadEventMetadata() {
+            const name = localStorage.getItem('whisper_event_name');
+            if (name) document.getElementById('eventNameInput').value = name;
+        }
+
+        // Initialize metadata on load
+        loadEventMetadata();
+
         function exportFullEvent() {
+            const eventName = document.getElementById('eventNameInput').value.trim() || "My_Event";
+            const safeName = eventName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            const timestamp = new Date();
+
             const bundle = {
                 app: "WhisperWorkshop",
                 type: "fullEvent",
-                version: "1.0",
-                timestamp: new Date().toISOString(),
+                version: "1.1", // Bumped version
+                eventName: eventName,
+                timestamp: timestamp.toISOString(),
                 order: toolsOrder,
                 data: {}
             };
@@ -1630,11 +1692,16 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `whisper_event_${new Date().toISOString().split('T')[0]}.json`;
+            // New naming convention: Name_Date_Time.json
+            const dateStr = timestamp.toISOString().split('T')[0];
+            const timeStr = timestamp.toTimeString().split(' ')[0].replace(/:/g, '');
+            a.download = `${safeName}_${dateStr}_${timeStr}.json`;
             a.click();
-            a.click();
+
+            // Update tracking
+            localStorage.setItem('whisper_last_save_time', timestamp.toISOString());
             takeSnapshot(); // Mark state as clean
-            showToast(`Saved ${count} tools to event file`, 'success');
+            showToast(`Saved ${eventName}`, 'success');
         }
 
         function clearStorage() {
