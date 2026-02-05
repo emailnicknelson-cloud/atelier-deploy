@@ -1423,15 +1423,25 @@
         function processImport(jsonData) {
             // Handle Full Event explicitly first
             if (jsonData.type === "fullEvent" && jsonData.data) {
-                if (confirm(`Import full event? This will overwrite existing data for ${Object.keys(jsonData.data).length} tools.`)) {
-                    Object.entries(jsonData.data).forEach(([key, value]) => {
-                        if (STORAGE_KEYS[key]) {
-                            localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(value));
-                        }
-                    });
-                    scanLocalStorage(); // Refresh grid
-                    showToast("Full event imported successfully", 'success');
+                const keysToImport = Object.keys(jsonData.data);
+                const conflicts = keysToImport.filter(key =>
+                    STORAGE_KEYS[key] && localStorage.getItem(STORAGE_KEYS[key])
+                );
+
+                if (conflicts.length > 0) {
+                    const toolNames = conflicts.map(k => k.replace(/([A-Z])/g, ' $1').trim()); // Prettify
+                    if (!confirm(`⚠️ Warning: This import will overwrite existing data for ${conflicts.length} tools:\n\n• ${toolNames.join('\n• ')}\n\nContinue and overwrite?`)) {
+                        return;
+                    }
                 }
+
+                Object.entries(jsonData.data).forEach(([key, value]) => {
+                    if (STORAGE_KEYS[key]) {
+                        localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(value));
+                    }
+                });
+                scanLocalStorage(); // Refresh grid
+                showToast("Full event imported successfully", 'success');
                 return;
             }
 
@@ -1443,19 +1453,6 @@
                 dataPayload = jsonData.data;
             }
             // Heuristics
-            else if (jsonData.type === "fullEvent" && jsonData.data) {
-                // Handle full event import
-                if (confirm(`Import full event? This will overwrite existing data for ${Object.keys(jsonData.data).length} tools.`)) {
-                    Object.entries(jsonData.data).forEach(([key, value]) => {
-                        if (STORAGE_KEYS[key]) {
-                            localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(value));
-                        }
-                    });
-                    scanLocalStorage(); // Refresh grid
-                    showToast("Full event imported successfully", 'success');
-                }
-                return;
-            }
             else if (jsonData.inputs?.barType !== undefined) detectedToolKey = "barCalculator";
             else if (Array.isArray(jsonData) && jsonData.length > 0 && jsonData[0].rsvp) detectedToolKey = "guestList";
             else if (jsonData.items && jsonData.eventInfo) detectedToolKey = "timelineScheduler";
