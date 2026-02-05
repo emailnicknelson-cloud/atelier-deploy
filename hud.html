@@ -739,9 +739,52 @@
                         <span class="data-value">${tool.data.inputs?.guests}</span>
                     </div>
                 `;
+        } else if ((tool.key === "floorPlanDesigner" || tool.key === "seatingChart") && tool.data.objects) {
+            return renderFloorPlanSVG(tool.data);
         }
 
         return `<pre style="font-size: 0.75rem; overflow: auto; max-height: 160px; background: #f0f0f0; padding: 0.75rem; border-radius: 0.25rem;">${JSON.stringify(tool.data, null, 2)}</pre>`;
+    }
+
+    // Helper to render Floor Plan SVG
+    function renderFloorPlanSVG(data) {
+        if (!data.room || !data.objects) return '<div class="data-row">Invalid Floor Plan Data</div>';
+
+        const { width, length } = data.room;
+        // Add some padding for visual comfort
+        const padding = 2;
+        const viewBox = `${-padding} ${-padding} ${width + padding * 2} ${length + padding * 2}`;
+
+        const objectsSVG = data.objects.map(obj => {
+            if (obj.shape === 'rect' || obj.shape === 'wall') {
+                const color = obj.shape === 'wall' ? '#000' : (obj.color || '#8b7355');
+                const x = obj.x - (obj.width / 2); // Center-origin to Top-Left
+                const y = obj.y - (obj.length / 2);
+                return `<rect x="${x}" y="${y}" width="${obj.width}" height="${obj.length}" fill="${color}" stroke="rgba(0,0,0,0.1)" stroke-width="0.2" rx="0.5" />`;
+            } else if (obj.shape === 'circle') {
+                const color = obj.color || '#8b7355';
+                const r = obj.width / 2;
+                return `<circle cx="${obj.x}" cy="${obj.y}" r="${r}" fill="${color}" stroke="rgba(0,0,0,0.1)" stroke-width="0.2" />`;
+            }
+            return '';
+        }).join('');
+
+        return `
+            <div style="width: 100%; aspect-ratio: ${width}/${length}; background: #fff; border: 1px solid #ddd; border-radius: 4px; overflow: hidden;">
+                <svg viewBox="${viewBox}" style="width: 100%; height: 100%; display: block;">
+                    <!-- Room Background -->
+                    <rect x="0" y="0" width="${width}" height="${length}" fill="#f9f9f9" stroke="#ccc" stroke-width="0.2" />
+                    <!-- Grid (Simplified) -->
+                    <line x1="0" y1="0" x2="${width}" y2="${length}" stroke="#eee" stroke-width="0.1" />
+                    <line x1="0" y1="${length}" x2="${width}" y2="0" stroke="#eee" stroke-width="0.1" />
+                    
+                    ${objectsSVG}
+                </svg>
+            </div>
+            <div style="font-size: 0.75rem; color: #666; margin-top: 0.5rem; text-align: center;">
+                Room: ${width}' x ${length}' | Objects: ${data.objects.length}
+            </div>
+        `;
     }
 
     // Show toast notification
