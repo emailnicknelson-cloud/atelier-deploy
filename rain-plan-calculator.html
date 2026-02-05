@@ -831,12 +831,14 @@
             loadGuestCount();
             calculateTent();
             loadTimeline();
+            loadPlan(); // Restore saved state
             updateWeatherDisplay();
         }
 
         function updateRainChance(val) {
             document.getElementById('rainChance').textContent = val + '%';
             updateWeatherDisplay();
+            savePlan();
         }
 
         function loadGuestCount() {
@@ -954,6 +956,7 @@
             document.getElementById('costTotal').textContent = '$' + (costHigh + Math.round(costLow * 0.1)).toLocaleString();
 
             planData.tentSize = recommended;
+            savePlan();
         }
 
         function exportPlan() {
@@ -1019,6 +1022,42 @@
             const body = `Hello Team,\n\nCurrent weather forecast shows ${document.getElementById('rainChance').textContent}% chance of rain.\n\nWe are implementing: ${plan}\n\nPlease confirm your contingency preparations.\n\nThanks!`;
 
             window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        }
+
+        function savePlan() {
+            // Update planData with current input state
+            planData.rainChance = parseInt(document.getElementById('rainChance').textContent) || 0;
+            planData.tentGuests = parseInt(document.getElementById('tentGuests').value) || 100;
+            planData.tentStyle = document.getElementById('tentStyle').value;
+            planData.tentExtras = document.getElementById('tentExtras').value;
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(planData));
+        }
+
+        function loadPlan() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    // Handle wrapped structure
+                    let data = parsed;
+                    if (parsed.app === "WhisperWorkshop" && parsed.type === "rainPlanCalculator") {
+                        data = parsed.data;
+                    }
+
+                    planData = { ...planData, ...data }; // Merge
+
+                    if (planData.rainChance !== undefined) {
+                        document.getElementById('rainChance').textContent = planData.rainChance + '%';
+                        updateWeatherDisplay();
+                    }
+                    if (planData.tentGuests) document.getElementById('tentGuests').value = planData.tentGuests;
+                    if (planData.tentStyle) document.getElementById('tentStyle').value = planData.tentStyle;
+                    if (planData.tentExtras) document.getElementById('tentExtras').value = planData.tentExtras;
+
+                    calculateTent(false); // Calc but don't save immediately to avoid loop, though save is harmless
+                } catch (e) { console.error(e); }
+            }
         }
     </script>
 </body>

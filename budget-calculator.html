@@ -732,7 +732,21 @@
 
         function loadData() {
             const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored) expenses = JSON.parse(stored);
+            if (stored) {
+                try {
+                    const data = JSON.parse(stored);
+                    if (Array.isArray(data)) {
+                        expenses = data;
+                    } else if (data && Array.isArray(data.expenses)) {
+                        expenses = data.expenses;
+                    } else {
+                        expenses = [];
+                    }
+                } catch (e) {
+                    console.error("Failed to load budget data", e);
+                    expenses = [];
+                }
+            }
             render();
         }
 

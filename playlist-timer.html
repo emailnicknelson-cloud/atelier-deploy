@@ -910,7 +910,19 @@
         function loadPlaylist() {
             const stored = localStorage.getItem(STORAGE_KEY);
             if (stored) {
-                songs = JSON.parse(stored);
+                try {
+                    const data = JSON.parse(stored);
+                    if (Array.isArray(data)) {
+                        songs = data;
+                    } else if (data && Array.isArray(data.songs)) {
+                        songs = data.songs;
+                    } else {
+                        songs = [];
+                    }
+                } catch (e) {
+                    console.error("Failed to load playlist", e);
+                    songs = [];
+                }
                 render();
             }
         }

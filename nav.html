@@ -1208,7 +1208,17 @@
         }
 
         function renderInvitationTracker(data) {
-            const { sent, opened, responded } = data.stats;
+            let stats = data.stats;
+            // Calculate stats if missing (e.g. from raw array save)
+            if (!stats) {
+                const invites = Array.isArray(data) ? data : (data.invitations || []);
+                stats = {
+                    sent: invites.filter(i => i.status === 'sent' || i.status === 'opened' || i.status === 'responded').length,
+                    opened: invites.filter(i => i.status === 'opened' || i.status === 'responded' || i.openedAt).length,
+                    responded: invites.filter(i => i.status === 'responded' || i.rsvpStatus !== 'no-response').length
+                };
+            }
+            const { sent, opened, responded } = stats;
             const total = sent || 1;
             return `
                 <div class="data-row">
@@ -1269,7 +1279,7 @@
         }
 
         function renderRainPlan(data) {
-            const prob = data.rainProbability !== undefined ? data.rainProbability : (data.probability || 0);
+            const prob = data.rainChance !== undefined ? data.rainChance : (data.rainProbability !== undefined ? data.rainProbability : (data.probability || 0));
             const isHighRisk = prob > 40;
             return `
                 <div style="display:flex; align-items:center; gap:1rem;">

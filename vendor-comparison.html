@@ -892,7 +892,20 @@
         function loadVendors() {
             const stored = localStorage.getItem(STORAGE_KEY);
             if (stored) {
-                vendors = JSON.parse(stored);
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed)) {
+                        vendors = parsed;
+                    } else if (parsed && parsed.quotes && Array.isArray(parsed.quotes)) {
+                        vendors = parsed.quotes;
+                        // Support structured data properties if needed in future
+                    } else if (parsed) {
+                        vendors = []; // Fallback for invalid structure
+                    }
+                } catch (e) {
+                    console.error('Failed to parse vendors', e);
+                    vendors = [];
+                }
                 render();
             }
         }

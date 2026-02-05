@@ -1002,7 +1002,21 @@
 
         function loadData() {
             const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored) invitations = JSON.parse(stored);
+            if (stored) {
+                try {
+                    const data = JSON.parse(stored);
+                    if (Array.isArray(data)) {
+                        invitations = data;
+                    } else if (data && Array.isArray(data.invitations)) {
+                        invitations = data.invitations;
+                    } else {
+                        invitations = [];
+                    }
+                } catch (e) {
+                    console.error("Failed to load invitations", e);
+                    invitations = [];
+                }
+            }
         }
 
         function exportData() {

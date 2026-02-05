@@ -894,9 +894,11 @@
                     splash.style.display = 'none';
                 }, 800);
             }, 1500);
+            loadData(); // Restore state
             calculate();
         });
 
+        const STORAGE_KEY = 'event_gratuity_v1';
         const vendors = [
             { id: 'catering', type: 'percent' },
             { id: 'captain', type: 'flat' },
@@ -990,6 +992,85 @@
             const totalBudget = budget.reduce((sum, item) => sum + (item.actual || item.estimated), 0);
             if (totalBudget > 0) {
                 document.getElementById('percentOfBudget').textContent = ((total / totalBudget) * 100).toFixed(1) + '%';
+            }
+            saveData();
+        }
+
+        function applyPreset(preset) {
+            const presets = {
+                standard: { catering: 18, dj: 15, limo: 20, beauty: 20, captain: 200, server: 30, bartender: 75, musician: 40, photo: 100, video: 100, officiant: 75, valet: 2 },
+                generous: { catering: 22, dj: 20, limo: 25, beauty: 25, captain: 300, server: 50, bartender: 100, musician: 60, photo: 200, video: 200, officiant: 150, valet: 3 },
+                outstanding: { catering: 25, dj: 25, limo: 30, beauty: 30, captain: 500, server: 75, bartender: 150, musician: 100, photo: 300, video: 300, officiant: 200, valet: 5 },
+                flat: { catering: 200, dj: 200, limo: 100, beauty: 100, captain: 200, server: 30, bartender: 75, musician: 40, photo: 100, video: 100, officiant: 75, valet: 2 }
+            };
+
+            calculate();
+        }
+
+        function saveData() {
+            const data = {
+                vendors: vendors.map(v => ({
+                    id: v.id,
+                    contract: document.getElementById(`${v.id}-contract`)?.value || '',
+                    tip: document.getElementById(`${v.id}-tip`)?.value || '',
+                    count: document.getElementById(`${v.id}-count`)?.value || '1',
+                    method: document.getElementById(`${v.id}-method`)?.value || 'cash'
+                })),
+                totals: {
+                    planned: document.getElementById('grandTotal').textContent.replace('$', '').replace(/,/g, ''),
+                    paid: document.getElementById('totalCash').textContent.replace('$', '').replace(/,/g, ''), // Assuming cash is "paid" or just using cash total for now
+                    remaining: document.getElementById('totalChecks').textContent.replace('$', '').replace(/,/g, '') // Rough mapping for preview
+                }
+            };
+            // Note: The dashboard expects { planned, paid, remaining }.
+            // Gratuity tool has Cash, Check, Digital.
+            // Let's map: Planned = Grand Total. Paid = 0 (usually handled at event). 
+            // Actually, let's just make sure the keys exist.
+            // "Already Paid" in dashboard might not map perfectly. 
+            // let's use: planned = grandTotal, paid = 0, remaining = grandTotal.
+
+            data.totals.planned = document.getElementById('grandTotal').textContent.replace('$', '');
+            data.totals.paid = '0';
+            data.totals.remaining = data.totals.planned;
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        function loadData() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+
+                    // Handle full export object structure
+                    let data = parsed;
+                    if (parsed.data && parsed.data.vendors) {
+                        // This is tricky because the export format (results) is different from the input state needed here.
+                        // The export only has name/amount strings. We ideally want the saved state.
+                        // If we are loading "Full Event" data, it likely contains the input state if we save it that way.
+                        // But if we only have the export format, we can't fully restore.
+                        // HOWEVER, nav.html imports "Full Event" by saving what matches STORAGE_KEYS.
+                        // So if we start saving the input state, we will be able to load it.
+                        // For now, let's assume 'parsed' is the input state object or check for wrapped.
+                        if (parsed.type === 'gratuityCalculator') data = parsed.data; // Use if structured
+                    }
+
+                    if (data.vendors && Array.isArray(data.vendors)) {
+                        data.vendors.forEach(v => {
+                            // Only restore if fields exist (inputs)
+                            const contractEl = document.getElementById(`${v.id}-contract`);
+                            if (contractEl) {
+                                contractEl.value = v.contract;
+                                const tipEl = document.getElementById(`${v.id}-tip`);
+                                if (tipEl) tipEl.value = v.tip;
+                                const countEl = document.getElementById(`${v.id}-count`);
+                                if (countEl) countEl.value = v.count;
+                                const methodEl = document.getElementById(`${v.id}-method`);
+                                if (methodEl) methodEl.value = v.method;
+                            }
+                        });
+                    }
+                } catch (e) { console.error(e); }
             }
         }
 
