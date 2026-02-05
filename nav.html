@@ -359,10 +359,49 @@
             font-size: 0.875rem;
         }
 
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            align-items: start;
+            /* Fixes whitespace issue */
+            margin-top: 1.5rem;
+        }
+
+        .data-card {
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            /* For smooth expansion */
+        }
+
+        .data-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--accent);
+        }
+
         .data-preview {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(61, 61, 61, 0.15);
+            margin-top: 0;
+            padding: 1rem 1.25rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-top: 1px solid rgba(139, 115, 85, 0.1);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .data-row {
@@ -827,7 +866,7 @@
 
         // State
         let toolsData = {};
-        let selectedTool = null;
+        let expandedTools = new Set(); // Changed from single selectedTool to Set
 
         // Initialize tools grid badges
         function initializeToolsGrid() {
@@ -904,7 +943,7 @@
                                 <button onclick="event.stopPropagation(); clearToolData('${key}')" style="background:none; border:none; cursor:pointer; font-size:1.2rem; color:#aaa;" title="Remove Data">🗑️</button>
                             </div>
                         </div>
-                        ${selectedTool === key ? `
+                        ${expandedTools.has(key) ? `
                             <div class="data-preview">
                                 ${preview}
                                 <div class="import-timestamp">
@@ -920,7 +959,11 @@
         }
 
         function toggleDataCard(key) {
-            selectedTool = selectedTool === key ? null : key;
+            if (expandedTools.has(key)) {
+                expandedTools.delete(key);
+            } else {
+                expandedTools.add(key);
+            }
             renderDataGrid();
         }
 
