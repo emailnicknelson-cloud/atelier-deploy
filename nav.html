@@ -877,6 +877,7 @@
 
             if (Object.keys(toolsData).length === 0) {
                 loadedDataSection.style.display = 'none';
+                initializeToolsGrid(); // Ensure badges are cleared
                 return;
             }
 
