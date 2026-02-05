@@ -1111,26 +1111,41 @@
         // --- VISUALIZATION HELPERS ---
 
         function renderBarCalc(data) {
-            const total = data.results.totalDrinks || 1;
-            const breakdown = Array.isArray(data.results.breakdown) ? data.results.breakdown : [];
+            // Handle different data structures (nested results vs flat)
+            const results = data.results || data;
+            const total = results.totalDrinks || 1;
 
-            const getCount = (str) => {
-                const item = breakdown.find(b => b.type.toLowerCase().includes(str));
-                return item ? parseInt(item.servings) : 0;
-            };
+            // Handle breakdown: could be array (old) or object (new/json)
+            let beer = 0, wine = 0, liquor = 0;
 
-            const beer = getCount('beer');
-            const wine = getCount('wine');
-            const liquor = getCount('spirits');
+            const bd = results.breakdown;
+            if (Array.isArray(bd)) {
+                // Array format: [{type:'Beer', servings:150}, ...]
+                const getCount = (str) => {
+                    const item = bd.find(b => b.type.toLowerCase().includes(str));
+                    return item ? parseInt(item.servings) : 0;
+                };
+                beer = getCount('beer');
+                wine = getCount('wine');
+                liquor = getCount('spirits');
+            } else if (typeof bd === 'object' && bd !== null) {
+                // Object format: { beer: 200, wine: 100, liquor: 50 }
+                beer = bd.beer || 0;
+                wine = bd.wine || 0;
+                liquor = (bd.liquor || 0) + (bd.spirits || 0);
+            }
+
+            // Estimate cost if missing (rough heuristic based on common prices)
+            const cost = results.totalCost !== undefined ? results.totalCost : (total * 5); // Fallback $5/drink
 
             return `
                 <div class="data-row">
                     <span class="data-label">Total Drinks</span>
-                    <span class="data-value">${data.results.totalDrinks}</span>
+                    <span class="data-value">${results.totalDrinks || 0}</span>
                 </div>
                 <div class="data-row">
                     <span class="data-label">Est. Cost</span>
-                    <span class="data-value">$${data.results.totalCost?.toFixed(2)}</span>
+                    <span class="data-value">$${parseFloat(cost).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</span>
                 </div>
                 <div style="margin-top:0.5rem; display:flex; gap:4px; height:8px; border-radius:4px; overflow:hidden;">
                     <div style="width:${(beer / total) * 100}%; background:var(--warning);" title="Beer"></div>
@@ -1141,9 +1156,28 @@
         }
 
         function renderBudgetCalc(data) {
-            const spent = data.summary?.totalSpent || 0;
-            const total = data.summary?.totalBudget || 1;
-            const pct = Math.min(100, (spent / total) * 100);
+            let spent = 0;
+            let total = 0;
+            let categories = 0;
+
+            if (data.summary) {
+                // Use pre-calculated summary if available
+                spent = data.summary.totalSpent || 0;
+                total = data.summary.totalBudget || 0; // Might need a default or fallback
+                categories = Object.keys(data.categories || {}).length;
+            } else if (Array.isArray(data.expenses)) {
+                // Calculate from raw expenses list
+                spent = data.expenses.reduce((acc, item) => acc + (parseFloat(item.actual) || parseFloat(item.estimated) || 0), 0);
+                total = data.expenses.reduce((acc, item) => acc + (parseFloat(item.estimated) || 0), 0); // Use estimated as "budget" if no total budget set
+
+                // Count unique categories
+                const cats = new Set(data.expenses.map(e => e.category).filter(c => c));
+                categories = cats.size;
+            }
+
+            // Avoid division by zero
+            const cleanTotal = total || 1;
+            const pct = Math.min(100, (spent / cleanTotal) * 100);
             const color = pct > 100 ? 'var(--danger)' : 'var(--success)';
 
             return `
@@ -1155,7 +1189,7 @@
                     <div style="width:${pct}%; height:100%; background:${color};"></div>
                 </div>
                 <div style="margin-top:0.5rem; font-size:0.75rem; color:#666;">
-                    ${Object.keys(data.categories || {}).length} categories tracked
+                    ${categories} categories tracked
                 </div>
             `;
         }
