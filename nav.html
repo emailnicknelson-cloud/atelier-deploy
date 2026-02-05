@@ -1276,6 +1276,20 @@
         });
 
         function processImport(jsonData) {
+            // Handle Full Event explicitly first
+            if (jsonData.type === "fullEvent" && jsonData.data) {
+                if (confirm(`Import full event? This will overwrite existing data for ${Object.keys(jsonData.data).length} tools.`)) {
+                    Object.entries(jsonData.data).forEach(([key, value]) => {
+                        if (STORAGE_KEYS[key]) {
+                            localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(value));
+                        }
+                    });
+                    scanLocalStorage(); // Refresh grid
+                    showToast("Full event imported successfully", 'success');
+                }
+                return;
+            }
+
             let detectedToolKey = null;
             let dataPayload = jsonData;
 
