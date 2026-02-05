@@ -2,47 +2,351 @@
     "app": "WhisperWorkshop",
     "type": "fullEvent",
     "version": "1.0",
-    "timestamp": "2024-10-25T12:00:00.000Z",
+    "timestamp": "2026-02-05T12:00:00.000Z",
     "data": {
-        "guestList": {
-            "stats": {
-                "total": 5,
-                "accepted": 2,
-                "declined": 1,
-                "pending": 2
+        "barCalculator": {
+            "inputs": {
+                "guests": 150,
+                "duration": 5,
+                "drinkingPct": 75
             },
-            "guests": [
-                {
-                    "id": 1,
-                    "name": "John Doe",
-                    "rsvp": "accepted"
-                },
-                {
-                    "id": 2,
-                    "name": "Jane Smith",
-                    "rsvp": "pending"
-                }
-            ]
+            "results": {
+                "totalDrinks": 600,
+                "totalCost": 2450.00,
+                "breakdown": [
+                    {
+                        "type": "Beer",
+                        "servings": "180 bottles",
+                        "units": "15 cases"
+                    },
+                    {
+                        "type": "Wine",
+                        "servings": "240 glasses",
+                        "units": "48 bottles"
+                    },
+                    {
+                        "type": "Spirits",
+                        "servings": "180 drinks",
+                        "units": "12 bottles"
+                    }
+                ]
+            }
         },
         "budgetCalculator": {
             "summary": {
-                "totalBudget": 5000,
-                "totalSpent": 1200
+                "totalBudget": 50000,
+                "totalSpent": 12500
+            },
+            "categories": {
+                "Venue": 15000,
+                "Catering": 15000,
+                "Attire": 5000
             },
             "expenses": [
                 {
                     "id": 1,
                     "category": "Venue",
                     "item": "Deposit",
-                    "cost": 1000,
+                    "cost": 5000,
                     "paid": true
                 },
                 {
                     "id": 2,
                     "category": "Catering",
                     "item": "Tasting",
-                    "cost": 200,
+                    "cost": 500,
                     "paid": true
+                },
+                {
+                    "id": 3,
+                    "category": "Attire",
+                    "item": "Dress",
+                    "cost": 3000,
+                    "paid": false
+                },
+                {
+                    "id": 4,
+                    "category": "Music",
+                    "item": "Band Deposit",
+                    "cost": 4000,
+                    "paid": true
+                }
+            ]
+        },
+        "floorPlanDesigner": {
+            "room": {
+                "width": 60,
+                "length": 40
+            },
+            "objects": [
+                {
+                    "id": "t1",
+                    "type": "table",
+                    "shape": "circle",
+                    "x": 10,
+                    "y": 10,
+                    "width": 5,
+                    "length": 5,
+                    "color": "#8b7355"
+                },
+                {
+                    "id": "t2",
+                    "type": "table",
+                    "shape": "circle",
+                    "x": 20,
+                    "y": 10,
+                    "width": 5,
+                    "length": 5,
+                    "color": "#8b7355"
+                },
+                {
+                    "id": "dance",
+                    "type": "dancefloor",
+                    "shape": "rect",
+                    "x": 30,
+                    "y": 20,
+                    "width": 15,
+                    "length": 15,
+                    "color": "#e0e0e0"
+                },
+                {
+                    "id": "stage",
+                    "type": "stage",
+                    "shape": "rect",
+                    "x": 30,
+                    "y": 5,
+                    "width": 15,
+                    "length": 4,
+                    "color": "#333"
+                }
+            ]
+        },
+        "guestList": {
+            "stats": {
+                "total": 150,
+                "accepted": 85,
+                "declined": 15,
+                "pending": 50
+            },
+            "guests": [
+                {
+                    "id": 1,
+                    "name": "Alice Johnson",
+                    "rsvp": "accepted",
+                    "party": 2
+                },
+                {
+                    "id": 2,
+                    "name": "Bob Smith",
+                    "rsvp": "declined",
+                    "party": 1
+                },
+                {
+                    "id": 3,
+                    "name": "Charlie Brown",
+                    "rsvp": "pending",
+                    "party": 2
+                }
+            ]
+        },
+        "gratuityCalculator": {
+            "totals": {
+                "planned": 1200,
+                "paid": 400,
+                "remaining": 800
+            },
+            "vendors": [
+                {
+                    "role": "Caterer",
+                    "amount": 500,
+                    "status": "unpaid"
+                },
+                {
+                    "role": "Band",
+                    "amount": 400,
+                    "status": "paid"
+                },
+                {
+                    "role": "Officiant",
+                    "amount": 300,
+                    "status": "unpaid"
+                }
+            ]
+        },
+        "invitationTracker": {
+            "stats": {
+                "sent": 100,
+                "opened": 95,
+                "responded": 80
+            },
+            "invitations": [
+                {
+                    "id": 1,
+                    "recipient": "The Smiths",
+                    "status": "responded"
+                },
+                {
+                    "id": 2,
+                    "recipient": "The Joneses",
+                    "status": "opened"
+                }
+            ]
+        },
+        "menuPlanner": {
+            "eventInfo": {
+                "style": "Plated Dinner"
+            },
+            "courses": [
+                {
+                    "name": "Appetizer: Bruschetta",
+                    "items": [
+                        "Tomato",
+                        "Basil",
+                        "Bread"
+                    ]
+                },
+                {
+                    "name": "Main: Filet Mignon",
+                    "items": [
+                        "Beef",
+                        "Potatoes",
+                        "Asparagus"
+                    ]
+                },
+                {
+                    "name": "Dessert: Tiramisu",
+                    "items": [
+                        "Coffee",
+                        "Mascarpone",
+                        "Ladyfingers"
+                    ]
+                }
+            ],
+            "dietary": {
+                "vegan": 5,
+                "gf": 12,
+                "nut-free": 3
+            }
+        },
+        "playlistTimer": {
+            "info": {
+                "totalDuration": 14400,
+                "songCount": 65
+            },
+            "moods": {
+                "Upbeat": 20,
+                "Romantic": 15,
+                "Dinner": 30
+            },
+            "songs": [
+                {
+                    "title": "At Last",
+                    "artist": "Etta James",
+                    "duration": 180,
+                    "mood": "Romantic"
+                },
+                {
+                    "title": "Uptown Funk",
+                    "artist": "Bruno Mars",
+                    "duration": 270,
+                    "mood": "Upbeat"
+                }
+            ]
+        },
+        "rainPlanCalculator": {
+            "probability": 65,
+            "planA": {
+                "location": "Garden",
+                "cost": 2000
+            },
+            "planB": {
+                "location": "Ballroom",
+                "cost": 3500
+            },
+            "items": [
+                {
+                    "item": "Tent Rental",
+                    "cost": 1500,
+                    "required": true
+                }
+            ]
+        },
+        "seatingChart": {
+            "tables": [
+                {
+                    "id": 1,
+                    "name": "Table 1",
+                    "type": "round-10",
+                    "guests": [
+                        "Alice",
+                        "Bob"
+                    ]
+                },
+                {
+                    "id": 2,
+                    "name": "Table 2",
+                    "type": "long-8",
+                    "guests": [
+                        "Charlie",
+                        "Dave"
+                    ]
+                },
+                {
+                    "id": 3,
+                    "name": "Table 3",
+                    "type": "round-10",
+                    "guests": []
+                }
+            ]
+        },
+        "timelineScheduler": {
+            "eventInfo": {
+                "date": "2026-06-15",
+                "startTime": "16:00"
+            },
+            "items": [
+                {
+                    "time": "16:00",
+                    "activity": "Ceremony Starts",
+                    "duration": 30
+                },
+                {
+                    "time": "16:30",
+                    "activity": "Cocktail Hour",
+                    "duration": 60
+                },
+                {
+                    "time": "17:30",
+                    "activity": "Dinner Service",
+                    "duration": 90
+                },
+                {
+                    "time": "19:00",
+                    "activity": "First Dance",
+                    "duration": 15
+                }
+            ]
+        },
+        "vendorComparison": {
+            "category": "Photographer",
+            "quotes": [
+                {
+                    "name": "Snapshots Inc",
+                    "price": 2500,
+                    "rating": 4.5,
+                    "score": 85
+                },
+                {
+                    "name": "Golden Hour Photo",
+                    "price": 3200,
+                    "rating": 4.9,
+                    "score": 92
+                },
+                {
+                    "name": "Budget Pics",
+                    "price": 1500,
+                    "rating": 3.8,
+                    "score": 60
                 }
             ]
         }
