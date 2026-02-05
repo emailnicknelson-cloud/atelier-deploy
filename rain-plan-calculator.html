@@ -4,18 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rain Plan Calculator - Event Planner Suite</title>
+    <title>Rain Plan Calculator - Whisper Workshop</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Courier+Prime:wght@400;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --primary: #3b82f6;
-            --secondary: #06b6d4;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
+            --bg: #e4e4dc;
+            --card: rgba(255, 255, 255, 0.5);
+            --card-hover: rgba(255, 255, 255, 0.9);
+            --text: #3d3d3d;
+            --text-light: #666;
+            --accent: #8b7355;
+            --accent-light: rgba(139, 115, 85, 0.1);
+            --border: rgba(61, 61, 61, 0.1);
+            --border-strong: rgba(61, 61, 61, 0.2);
+            --success: #5a7c5a;
+            --danger: #b95d5d;
+            --warning: #cc9933;
+            --plan-a-bg: rgba(90, 124, 90, 0.1);
+            --plan-b-bg: rgba(70, 70, 70, 0.1);
         }
 
         * {
@@ -25,57 +33,194 @@
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        #splash-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .splash-content {
+            text-align: center;
+            animation: logoFadeIn 1s ease-out forwards;
+        }
+
+        .splash-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3em;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .splash-tagline {
+            font-size: 0.9em;
+            color: var(--text-light);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        @keyframes logoFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        #main-content {
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        #main-content.visible {
+            opacity: 1;
+        }
+
+        /* Nav */
+        .nav-header {
+            background: rgba(255, 255, 255, 0.4);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5em;
+            font-weight: 500;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.85em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #6b5a45;
+            transform: translateX(-3px);
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 3rem 2rem;
         }
 
         header {
             text-align: center;
-            margin-bottom: 2.5rem;
-            padding: 2rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 16px;
-            color: white;
+            margin-bottom: 3rem;
+            padding: 3rem 2rem;
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5em;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-light);
+            font-size: 0.95em;
+            letter-spacing: 0.05em;
         }
 
         .weather-widget {
-            background: linear-gradient(135deg, #60a5fa, #3b82f6);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 12px;
+            background: var(--card);
+            color: var(--text);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
             margin-bottom: 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 1rem;
+            transition: all 0.5s ease;
+        }
+
+        .weather-widget.sunny {
+            background: linear-gradient(135deg, rgba(235, 219, 185, 0.6), rgba(255, 255, 255, 0.6));
+            border-color: rgba(235, 219, 185, 0.8);
+        }
+
+        .weather-widget.rainy {
+            background: linear-gradient(135deg, rgba(169, 178, 195, 0.4), rgba(255, 255, 255, 0.4));
+            border-color: rgba(169, 178, 195, 0.6);
         }
 
         .weather-main {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 1.5rem;
         }
 
         .weather-icon {
-            font-size: 3rem;
+            font-size: 3.5rem;
+            opacity: 0.8;
         }
 
         .weather-temp {
-            font-size: 2.5rem;
-            font-weight: 700;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            font-weight: 500;
+            line-height: 1;
         }
 
         .weather-desc {
-            opacity: 0.9;
+            font-size: 0.9em;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 5px;
         }
 
         .rain-probability {
@@ -83,35 +228,33 @@
         }
 
         .rain-percent {
+            font-family: 'Courier Prime', monospace;
             font-size: 2rem;
             font-weight: 700;
+            color: var(--accent);
         }
 
         .alert-box {
-            background: #fee2e2;
+            background: rgba(185, 93, 93, 0.1);
             border-left: 4px solid var(--danger);
-            padding: 1rem 1.5rem;
-            border-radius: 0 8px 8px 0;
-            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 0 4px 4px 0;
+            margin-bottom: 2rem;
             display: none;
+            color: var(--danger);
         }
 
         .alert-box.active {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-        }
-
-        .alert-box.warning {
-            background: #fef3c7;
-            border-left-color: var(--warning);
+            gap: 1.5rem;
         }
 
         .two-column {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            gap: 2rem;
+            margin-bottom: 3rem;
         }
 
         @media (max-width: 968px) {
@@ -122,51 +265,60 @@
 
         .plan-card {
             background: var(--card);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--border);
             overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         }
 
         .plan-header {
-            padding: 1rem 1.5rem;
-            font-weight: 700;
+            padding: 1.5rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            font-size: 1.25em;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid var(--border);
         }
 
-        .plan-a {
-            background: #dcfce7;
-            color: #166534;
+        .plan-a .plan-header {
+            background: var(--plan-a-bg);
+            color: var(--success);
         }
 
-        .plan-b {
-            background: #dbeafe;
-            color: #1e40af;
+        .plan-b .plan-header {
+            background: var(--plan-b-bg);
+            color: #555;
         }
 
         .plan-content {
-            padding: 1.5rem;
+            padding: 2rem;
         }
 
         .capacity-indicator {
             display: flex;
             align-items: center;
             gap: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .capacity-bar {
             flex: 1;
-            height: 20px;
-            background: #e2e8f0;
-            border-radius: 10px;
+            height: 8px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
             overflow: hidden;
         }
 
         .capacity-fill {
             height: 100%;
-            border-radius: 10px;
+            border-radius: 4px;
             transition: width 0.3s ease;
         }
 
@@ -191,7 +343,8 @@
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 1rem;
+            font-size: 0.95em;
         }
 
         .checklist li:last-child {
@@ -201,33 +354,44 @@
         .check-box {
             width: 20px;
             height: 20px;
-            border: 2px solid var(--border);
-            border-radius: 4px;
+            border: 1px solid var(--text-light);
+            border-radius: 2px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.2s;
+            font-size: 0.8em;
+            color: transparent;
         }
 
         .check-box.checked {
-            background: var(--success);
-            border-color: var(--success);
+            background: var(--accent);
+            border-color: var(--accent);
             color: white;
         }
 
         .tent-calculator {
             background: var(--card);
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
+            padding: 2.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 3rem;
+        }
+
+        h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.75em;
+            color: var(--text);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
         }
 
         .form-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
         }
 
         .form-group {
@@ -236,49 +400,77 @@
         }
 
         label {
-            font-weight: 600;
+            font-weight: 500;
             margin-bottom: 0.5rem;
-            color: #475569;
-            font-size: 0.875rem;
+            color: var(--text-light);
+            font-size: 0.9em;
         }
 
         input,
         select {
             padding: 0.75rem;
-            border: 2px solid var(--border);
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--border-strong);
+            border-radius: 4px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: #fff;
+            box-shadow: 0 0 0 3px var(--accent-light);
         }
 
         .btn {
-            padding: 0.875rem 1.5rem;
+            padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 600;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.02em;
         }
 
         .btn-primary {
-            background: var(--primary);
-            color: white;
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            transform: translateY(-1px);
         }
 
         .btn-secondary {
-            background: #f1f5f9;
-            color: #475569;
-            border: 2px solid var(--border);
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--text);
+            border: 1px solid var(--border-strong);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
         }
 
         .tent-result {
-            background: #eff6ff;
-            padding: 1rem;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 2rem;
             border-radius: 8px;
-            margin-top: 1rem;
+            margin-top: 2rem;
+            border: 1px dashed var(--accent);
             display: none;
+            text-align: center;
         }
 
         .tent-result.active {
@@ -286,40 +478,46 @@
         }
 
         .tent-size {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
         }
 
         .cost-comparison {
             background: var(--card);
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 3rem;
         }
 
         .cost-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
         }
 
         .cost-item {
-            padding: 1rem;
-            background: #f8fafc;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.4);
             border-radius: 8px;
             text-align: center;
+            border: 1px solid var(--border);
         }
 
         .cost-label {
-            font-size: 0.875rem;
-            color: #64748b;
-            margin-bottom: 0.5rem;
+            font-size: 0.85em;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
         }
 
         .cost-value {
+            font-family: 'Courier Prime', monospace;
             font-size: 1.5rem;
             font-weight: 700;
             color: var(--text);
@@ -331,222 +529,296 @@
 
         .timeline-item {
             display: flex;
-            gap: 1rem;
-            padding: 1rem;
-            background: #f8fafc;
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
+            gap: 1.5rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
             align-items: center;
         }
 
         .time-slot {
-            font-family: 'Courier New', monospace;
-            font-weight: 600;
-            color: var(--primary);
-            min-width: 100px;
+            font-family: 'Courier Prime', monospace;
+            font-weight: 700;
+            color: var(--accent);
+            min-width: 90px;
         }
 
         .data-controls {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: #f1f5f9;
-            border-radius: 12px;
+            margin-top: 3rem;
+            padding: 2rem;
+            background: var(--card);
+            border-radius: 8px;
+            border: 1px solid var(--border);
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        @media print {
+
+            .setup-section,
+            .data-controls,
+            .nav-header,
+            #splash-screen {
+                display: none !important;
+            }
+
+            .container {
+                padding: 0;
+                margin: 0;
+                max-width: 100%;
+            }
+
+            .plan-card,
+            .tent-calculator,
+            .cost-comparison {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                page-break-inside: avoid;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <h1>🌧️ Rain Plan Calculator</h1>
-            <p>Backup venue calculations, tent sizing, and weather contingency planning</p>
-        </header>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo">Rain Plan</div>
+            <div class="splash-tagline">Contingency Calculator</div>
+        </div>
+    </div>
 
-        <div class="weather-widget">
-            <div class="weather-main">
-                <div class="weather-icon">🌤️</div>
+    <div id="main-content">
+        <nav class="nav-header">
+            <div class="nav-container">
+                <a href="https://whisperworkshop.com/nav.html" class="nav-brand">Rain Plan Calculator</a>
+                <a href="https://whisperworkshop.com/nav.html" class="nav-link">Return to Whisper Workshop Tool
+                    Suite</a>
+            </div>
+        </nav>
+
+        <div class="container">
+            <header>
+                <h1>Rain Plan Calculator</h1>
+                <p>Backup venue calculations, tent sizing, and weather contingency planning</p>
+            </header>
+
+            <div class="weather-widget" id="weatherWidget">
+                <div class="weather-main">
+                    <div class="weather-icon">🌤️</div>
+                    <div>
+                        <div class="weather-temp">72°F</div>
+                        <div class="weather-desc">Event Day Forecast</div>
+                    </div>
+                </div>
+                <div class="rain-probability">
+                    <div class="rain-percent" id="rainChance">15%</div>
+                    <div style="font-size: 0.9em; opacity: 0.8;">Chance of Rain</div>
+                    <input type="range" min="0" max="100" value="15" oninput="updateRainChance(this.value)"
+                        style="width: 100px; margin-top: 0.5rem;" title="Simulate forecast">
+                </div>
+            </div>
+
+            <div class="alert-box" id="rainAlert">
+                <span style="font-size: 1.5rem;">⚠️</span>
                 <div>
-                    <div class="weather-temp">72°F</div>
-                    <div class="weather-desc">Partly Cloudy</div>
+                    <strong style="font-family: 'Cormorant Garamond', serif; font-size: 1.25em;">High Rain Risk
+                        Detected</strong>
+                    <div style="font-size: 0.95em; margin-top: 0.25rem; opacity: 0.9;">Probability above 40% - Activate
+                        Plan B preparations</div>
                 </div>
             </div>
-            <div class="rain-probability">
-                <div class="rain-percent" id="rainChance">15%</div>
-                <div>Chance of Rain</div>
-                <small style="opacity: 0.8;">Event Date Forecast</small>
-            </div>
-        </div>
 
-        <div class="alert-box" id="rainAlert">
-            <span style="font-size: 1.5rem;">⚠️</span>
-            <div>
-                <strong>High Rain Risk Detected</strong>
-                <div style="font-size: 0.875rem; margin-top: 0.25rem;">Probability above 40% - Activate Plan B
-                    preparations</div>
-            </div>
-        </div>
+            <div class="two-column">
+                <div class="plan-card plan-a">
+                    <div class="plan-header">
+                        <span>Plan A: Outdoor</span>
+                        <span id="planAStatus">Preferred</span>
+                    </div>
+                    <div class="plan-content">
+                        <div class="capacity-indicator">
+                            <span
+                                style="font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-light);">Capacity</span>
+                            <div class="capacity-bar">
+                                <div class="capacity-fill capacity-good" id="planACap" style="width: 100%;"></div>
+                            </div>
+                            <span id="planAPct"
+                                style="font-family: 'Courier Prime', monospace; font-weight: 700;">100%</span>
+                        </div>
+                        <ul class="checklist" id="planAChecklist">
+                            <li>
+                                <div class="check-box checked">✓</div>
+                                <span>Garden ceremony setup confirmed</span>
+                            </li>
+                            <li>
+                                <div class="check-box"></div>
+                                <span>Outdoor sound system weatherproofed</span>
+                            </li>
+                            <li>
+                                <div class="check-box checked">✓</div>
+                                <span>Guest communication sent</span>
+                            </li>
+                            <li>
+                                <div class="check-box"></div>
+                                <span>Umbrella rental backup secured</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
 
-        <div class="two-column">
-            <div class="plan-card">
-                <div class="plan-header plan-a">
-                    <span>☀️ Plan A: Outdoor</span>
-                    <span id="planAStatus">Preferred</span>
+                <div class="plan-card plan-b">
+                    <div class="plan-header">
+                        <span>Plan B: Indoor / Tent</span>
+                        <span id="planBStatus">Standby</span>
+                    </div>
+                    <div class="plan-content">
+                        <div class="capacity-indicator">
+                            <span
+                                style="font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-light);">Capacity</span>
+                            <div class="capacity-bar">
+                                <div class="capacity-fill capacity-warning" id="planBCap" style="width: 75%;"></div>
+                            </div>
+                            <span id="planBPct"
+                                style="font-family: 'Courier Prime', monospace; font-weight: 700;">75%</span>
+                        </div>
+                        <ul class="checklist" id="planBChecklist">
+                            <li>
+                                <div class="check-box"></div>
+                                <span>Indoor venue backup confirmed</span>
+                            </li>
+                            <li>
+                                <div class="check-box checked">✓</div>
+                                <span>Tent vendor on 48-hour notice</span>
+                            </li>
+                            <li>
+                                <div class="check-box"></div>
+                                <span>Revised floor plan finalized</span>
+                            </li>
+                            <li>
+                                <div class="check-box"></div>
+                                <span>Vendor notifications sent</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tent-calculator">
+                <h3>Tent Size Calculator</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Guest Count</label>
+                        <input type="number" id="tentGuests" value="100" min="10" onchange="calculateTent()">
+                    </div>
+                    <div class="form-group">
+                        <label>Seating Style</label>
+                        <select id="tentStyle" onchange="calculateTent()">
+                            <option value="banquet">Banquet (60" rounds)</option>
+                            <option value="theater">Theater/Ceremony</option>
+                            <option value="cocktail">Cocktail/Standing</option>
+                            <option value="mixed">Mixed (ceremony + reception)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Additional Elements</label>
+                        <select id="tentExtras" onchange="calculateTent()">
+                            <option value="none">None</option>
+                            <option value="dance">+ Dance Floor</option>
+                            <option value="stage">+ Stage</option>
+                            <option value="both">+ Dance Floor & Stage</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- <button class="btn btn-primary" onclick="calculateTent()">Calculate Tent Requirements</button> -->
+
+                <div class="tent-result" id="tentResult">
+                    <div class="tent-size" id="tentSize">40' x 60' Pole Tent</div>
+                    <div style="margin-bottom: 0.75rem;">
+                        <strong>Capacity:</strong> <span id="tentCapacity">200 guests</span>
+                    </div>
+                    <div style="margin-bottom: 0.75rem;">
+                        <strong>Estimated Cost:</strong> <span id="tentCost">$2,400 - $3,600</span>
+                    </div>
+                    <div
+                        style="font-size: 0.875rem; color: var(--text-light); border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem;">
+                        Includes: tent, setup/breakdown, sidewalls (optional), lighting package
+                    </div>
+                </div>
+            </div>
+
+            <div class="cost-comparison">
+                <h3>Contingency Cost Analysis</h3>
+                <div class="cost-grid">
+                    <div class="cost-item">
+                        <div class="cost-label">Plan A Base Cost</div>
+                        <div class="cost-value" id="costPlanA">$0</div>
+                    </div>
+                    <div class="cost-item">
+                        <div class="cost-label">Plan B Additional</div>
+                        <div class="cost-value" id="costPlanB">$0</div>
+                    </div>
+                    <div class="cost-item">
+                        <div class="cost-label">Tent Deposit (10%)</div>
+                        <div class="cost-value" id="costDeposit">$0</div>
+                    </div>
+                    <div class="cost-item">
+                        <div class="cost-label">Total Exposure</div>
+                        <div class="cost-value" id="costTotal" style="color: var(--danger);">$0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="plan-card" style="margin-top: 1.5rem;">
+                <div class="plan-header" style="background: rgba(255,255,255,0.4);">
+                    <span>Timeline Adjustments (Plan B)</span>
                 </div>
                 <div class="plan-content">
-                    <div class="capacity-indicator">
-                        <span>Capacity:</span>
-                        <div class="capacity-bar">
-                            <div class="capacity-fill capacity-good" id="planACap" style="width: 100%;"></div>
-                        </div>
-                        <span id="planAPct">100%</span>
+                    <p style="margin-bottom: 1.5rem; color: var(--text-light); font-style: italic;">Plan B may require
+                        timeline adjustments for transitions:</p>
+                    <div class="timeline-comparison" id="timelineCompare">
+                        <!-- Populated by JS -->
+                        <div style="text-align: center; color: var(--text-light);">Loading timeline...</div>
                     </div>
-                    <ul class="checklist" id="planAChecklist">
-                        <li>
-                            <span class="check-box checked">✓</span>
-                            <span>Garden ceremony setup confirmed</span>
-                        </li>
-                        <li>
-                            <span class="check-box">□</span>
-                            <span>Outdoor sound system weatherproofed</span>
-                        </li>
-                        <li>
-                            <span class="check-box checked">✓</span>
-                            <span>Guest communication sent</span>
-                        </li>
-                        <li>
-                            <span class="check-box">□</span>
-                            <span>Umbrella rental backup secured</span>
-                        </li>
-                    </ul>
                 </div>
             </div>
 
-            <div class="plan-card">
-                <div class="plan-header plan-b">
-                    <span>🌧️ Plan B: Indoor/Covered</span>
-                    <span id="planBStatus">Standby</span>
-                </div>
-                <div class="plan-content">
-                    <div class="capacity-indicator">
-                        <span>Capacity:</span>
-                        <div class="capacity-bar">
-                            <div class="capacity-fill capacity-warning" id="planBCap" style="width: 75%;"></div>
-                        </div>
-                        <span id="planBPct">75%</span>
-                    </div>
-                    <ul class="checklist" id="planBChecklist">
-                        <li>
-                            <span class="check-box">□</span>
-                            <span>Indoor venue backup confirmed</span>
-                        </li>
-                        <li>
-                            <span class="check-box checked">✓</span>
-                            <span>Tent vendor on 48-hour notice</span>
-                        </li>
-                        <li>
-                            <span class="check-box">□</span>
-                            <span>Revised floor plan finalized</span>
-                        </li>
-                        <li>
-                            <span class="check-box">□</span>
-                            <span>Vendor notifications sent</span>
-                        </li>
-                    </ul>
-                </div>
+            <div class="data-controls">
+                <button class="btn btn-primary" onclick="exportPlan()">Export Rain Plan</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importPlan(this)">
+                <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Import
+                    Plan</button>
+                <button class="btn btn-secondary" onclick="printChecklist()">Print Checklists</button>
+                <button class="btn btn-secondary" onclick="emailVendors()">Notify Vendors</button>
             </div>
-        </div>
-
-        <div class="tent-calculator">
-            <h3 style="margin-bottom: 1rem; color: var(--primary);">⛺ Tent Size Calculator</h3>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Guest Count</label>
-                    <input type="number" id="tentGuests" value="100" min="10" onchange="calculateTent()">
-                </div>
-                <div class="form-group">
-                    <label>Seating Style</label>
-                    <select id="tentStyle" onchange="calculateTent()">
-                        <option value="banquet">Banquet (60" rounds)</option>
-                        <option value="theater">Theater/Ceremony</option>
-                        <option value="cocktail">Cocktail/Standing</option>
-                        <option value="mixed">Mixed (ceremony + reception)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Additional Elements</label>
-                    <select id="tentExtras" onchange="calculateTent()">
-                        <option value="none">None</option>
-                        <option value="dance">+ Dance Floor</option>
-                        <option value="stage">+ Stage</option>
-                        <option value="both">+ Dance Floor & Stage</option>
-                    </select>
-                </div>
-            </div>
-            <button class="btn btn-primary" onclick="calculateTent()">Calculate Tent Requirements</button>
-
-            <div class="tent-result" id="tentResult">
-                <div class="tent-size" id="tentSize">40' x 60' Pole Tent</div>
-                <div style="margin-bottom: 0.5rem;">
-                    <strong>Capacity:</strong> <span id="tentCapacity">200 guests</span>
-                </div>
-                <div style="margin-bottom: 0.5rem;">
-                    <strong>Estimated Cost:</strong> <span id="tentCost">$2,400 - $3,600</span>
-                </div>
-                <div style="font-size: 0.875rem; color: #64748b;">
-                    Includes: tent, setup/breakdown, sidewalls (optional), lighting package
-                </div>
-            </div>
-        </div>
-
-        <div class="cost-comparison">
-            <h3 style="margin-bottom: 1rem;">💰 Weather Contingency Cost Analysis</h3>
-            <div class="cost-grid">
-                <div class="cost-item">
-                    <div class="cost-label">Plan A Base Cost</div>
-                    <div class="cost-value" id="costPlanA">$0</div>
-                </div>
-                <div class="cost-item">
-                    <div class="cost-label">Plan B Additional</div>
-                    <div class="cost-value" id="costPlanB">$0</div>
-                </div>
-                <div class="cost-item">
-                    <div class="cost-label">Tent Deposit (10%)</div>
-                    <div class="cost-value" id="costDeposit">$0</div>
-                </div>
-                <div class="cost-item">
-                    <div class="cost-label">Total Exposure</div>
-                    <div class="cost-value" id="costTotal" style="color: var(--danger);">$0</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="plan-card" style="margin-top: 1.5rem;">
-            <div class="plan-header" style="background: #f1f5f9; color: #475569;">
-                <span>⏰ Timeline Adjustments</span>
-            </div>
-            <div class="plan-content">
-                <p style="margin-bottom: 1rem; color: #64748b;">Plan B may require timeline adjustments for indoor
-                    transitions:</p>
-                <div class="timeline-comparison" id="timelineCompare">
-                    <!-- Populated by JS -->
-                </div>
-            </div>
-        </div>
-
-        <div class="data-controls">
-            <button class="btn btn-primary" onclick="exportPlan()">📥 Export Rain Plan</button>
-            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importPlan(this)">
-            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import
-                Plan</button>
-            <button class="btn btn-secondary" onclick="printChecklist()">🖨️ Print Checklists</button>
-            <button class="btn btn-secondary" onclick="emailVendors()">📧 Notify Vendors</button>
         </div>
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const splash = document.getElementById('splash-screen');
+            const mainContent = document.getElementById('main-content');
+
+            setTimeout(function () {
+                splash.classList.add('fade-out');
+                mainContent.classList.add('visible');
+
+                setTimeout(function () {
+                    splash.style.display = 'none';
+                }, 800);
+            }, 1000);
+
+            init();
+
+            // Toggle checkboxes
+            document.querySelectorAll('.check-box').forEach(box => {
+                box.addEventListener('click', function () {
+                    this.classList.toggle('checked');
+                    this.textContent = this.classList.contains('checked') ? '✓' : '';
+                });
+            });
+        });
+
         const STORAGE_KEY = 'event_rainplan_v1';
         let planData = {
             rainChance: 15,
@@ -562,57 +834,72 @@
             updateWeatherDisplay();
         }
 
+        function updateRainChance(val) {
+            document.getElementById('rainChance').textContent = val + '%';
+            updateWeatherDisplay();
+        }
+
         function loadGuestCount() {
             const guests = localStorage.getItem('event_guests_v1');
             if (guests) {
                 const count = JSON.parse(guests).filter(g => g.rsvp === 'confirmed').length;
                 if (count > 0) {
                     document.getElementById('tentGuests').value = count;
+                    calculateTent(); // Recalculate with guest count
                 }
             }
         }
 
         function loadTimeline() {
             const timeline = localStorage.getItem('event_timeline_v1');
+            const container = document.getElementById('timelineCompare');
+
             if (timeline) {
                 const data = JSON.parse(timeline);
-                const container = document.getElementById('timelineCompare');
 
                 if (data.items && data.items.length > 0) {
                     container.innerHTML = data.items.slice(0, 5).map(item => {
-                        const needsAdjust = ['ceremony', 'cocktail', 'photo'].some(k => item.category.includes(k));
+                        const needsAdjust = ['ceremony', 'cocktail', 'photo'].some(k => item.category?.includes(k));
                         return `
                         <div class="timeline-item">
                             <span class="time-slot">${item.startTime ? new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'TBD'}</span>
                             <div style="flex: 1;">
-                                <div style="font-weight: 600;">${item.title}</div>
-                                ${needsAdjust ? '<span style="color: var(--warning); font-size: 0.875rem;">⚠️ May need indoor adjustment</span>' : ''}
+                                <div style="font-weight: 600; font-family: 'Cormorant Garamond', serif; font-size: 1.1em;">${item.title}</div>
+                                ${needsAdjust ? '<div style="color: var(--warning); font-size: 0.85em; display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">⚠️ May need indoor adjustment</div>' : ''}
                             </div>
-                            <span style="font-size: 0.875rem; color: #64748b;">${item.duration} min</span>
+                            <span style="font-size: 0.9em; color: var(--text-light); font-family: 'Courier Prime', monospace;">${item.duration}m</span>
                         </div>
                         `;
                     }).join('');
                 } else {
-                    container.innerHTML = '<p style="color: #64748b;">No timeline data available</p>';
+                    container.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 1rem;">No timeline events found.</p>';
                 }
+            } else {
+                container.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 1rem;">No timeline data available.</p>';
             }
         }
 
         function updateWeatherDisplay() {
             const chance = parseInt(document.getElementById('rainChance').textContent);
             const alert = document.getElementById('rainAlert');
+            const widget = document.getElementById('weatherWidget');
 
             if (chance >= 40) {
                 alert.classList.add('active');
+                widget.classList.remove('sunny');
+                widget.classList.add('rainy');
                 document.getElementById('planAStatus').textContent = 'At Risk';
                 document.getElementById('planAStatus').style.color = 'var(--danger)';
-                document.getElementById('planBStatus').textContent = 'Recommended';
+                document.getElementById('planBStatus').textContent = 'Active';
                 document.getElementById('planBStatus').style.color = 'var(--success)';
-            } else if (chance >= 20) {
-                alert.classList.remove('active');
-                document.querySelector('.weather-widget').style.background = 'linear-gradient(135deg, #fbbf24, #f59e0b)';
             } else {
                 alert.classList.remove('active');
+                widget.classList.add('sunny');
+                widget.classList.remove('rainy');
+                document.getElementById('planAStatus').textContent = 'Preferred';
+                document.getElementById('planAStatus').style.color = 'var(--success)';
+                document.getElementById('planBStatus').textContent = 'Standby';
+                document.getElementById('planBStatus').style.color = 'var(--text-light)';
             }
         }
 
@@ -708,7 +995,9 @@
 
                     if (confirm('Import Rain Plan data?')) {
                         planData = data;
-                        document.getElementById('rainChance').textContent = data.weather?.rainChance + '%' || '15%';
+                        if (data.weather?.rainChance) {
+                            document.getElementById('rainChance').textContent = data.weather.rainChance + '%';
+                        }
                         updateWeatherDisplay();
                         calculateTent();
                     }
@@ -727,28 +1016,10 @@
         function emailVendors() {
             const plan = parseInt(document.getElementById('rainChance').textContent) > 40 ? 'Plan B (Indoor)' : 'Plan A (Outdoor)';
             const subject = `Weather Update: ${plan} for Event`;
-            const body = `Hello Team,
-
-Current weather forecast shows ${document.getElementById('rainChance').textContent}% chance of rain.
-
-We are implementing: ${plan}
-
-Please confirm your contingency preparations.
-
-Thanks!`;
+            const body = `Hello Team,\n\nCurrent weather forecast shows ${document.getElementById('rainChance').textContent}% chance of rain.\n\nWe are implementing: ${plan}\n\nPlease confirm your contingency preparations.\n\nThanks!`;
 
             window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         }
-
-        // Toggle checkboxes
-        document.querySelectorAll('.check-box').forEach(box => {
-            box.addEventListener('click', function () {
-                this.classList.toggle('checked');
-                this.textContent = this.classList.contains('checked') ? '✓' : '';
-            });
-        });
-
-        init();
     </script>
 </body>
 

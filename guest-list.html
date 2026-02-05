@@ -3,19 +3,25 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guest List Manager - Event Planner Suite</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Guest List Manager - Whisper Workshop</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --primary: #6366f1;
-            --secondary: #ec4899;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
+            --bg: #e4e4dc;
+            --card: rgba(255, 255, 255, 0.5);
+            --card-hover: rgba(255, 255, 255, 0.9);
+            --text: #3d3d3d;
+            --text-light: #666;
+            --accent: #8b7355;
+            --accent-light: rgba(139, 115, 85, 0.1);
+            --border: rgba(61, 61, 61, 0.1);
+            --border-strong: rgba(61, 61, 61, 0.2);
+            --success: #5a7c5a;
+            --danger: #b95d5d;
+            --warning: #cc9933;
         }
 
         * {
@@ -25,71 +31,202 @@
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s ease-in-out;
+            pointer-events: auto;
+        }
+
+        #splash-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        .splash-content {
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.95);
+            animation: logoFadeIn 1s ease-out forwards;
+        }
+
+        .splash-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3em;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .splash-tagline {
+            font-size: 0.9em;
+            color: var(--text-light);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        @keyframes logoFadeIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        #main-content {
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            min-height: 100vh;
+        }
+
+        #main-content.visible {
+            opacity: 1;
+        }
+
+        /* Nav */
+        .nav-header {
+            background: rgba(255, 255, 255, 0.4);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5em;
+            font-weight: 500;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.85em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #6b5a45;
+            transform: translateX(-3px);
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 3rem 2rem;
         }
 
         header {
             text-align: center;
-            margin-bottom: 2.5rem;
-            padding: 2rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 16px;
-            color: white;
+            margin-bottom: 3rem;
+            padding: 3rem 2rem;
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 8px;
         }
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+        header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5em;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-light);
+            font-size: 0.95em;
+            letter-spacing: 0.05em;
         }
 
         .stats-bar {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
+            gap: 1.5rem;
             margin-bottom: 2rem;
         }
 
         .stat-card {
             background: var(--card);
             padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--border);
             text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            background: var(--card-hover);
+            transform: translateY(-2px);
         }
 
         .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5em;
+            font-weight: 600;
+            color: var(--text);
         }
 
         .stat-label {
-            color: #64748b;
-            font-size: 0.875rem;
+            color: var(--text-light);
+            font-size: 0.8em;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.1em;
+            margin-top: 0.5rem;
         }
 
         .form-card {
             background: var(--card);
             padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--border);
             margin-bottom: 2rem;
+        }
+
+        .form-card h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8em;
+            font-weight: 500;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
         }
 
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1.5rem;
         }
 
@@ -99,26 +236,31 @@
         }
 
         label {
-            font-weight: 600;
+            font-size: 0.85em;
+            color: var(--text-light);
             margin-bottom: 0.5rem;
-            color: #475569;
-            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 500;
         }
 
         input,
         select {
             padding: 0.75rem;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
+            border: 1px solid var(--border-strong);
+            border-radius: 4px;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            background: rgba(255, 255, 255, 0.6);
+            color: var(--text);
             transition: all 0.2s;
         }
 
         input:focus,
         select:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            border-color: var(--accent);
+            background: white;
         }
 
         .checkbox-group {
@@ -133,56 +275,71 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.5rem 1rem;
-            background: var(--bg);
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--border);
             border-radius: 20px;
             cursor: pointer;
             transition: all 0.2s;
+            font-size: 0.9em;
         }
 
         .checkbox-item:hover {
-            background: #e0e7ff;
-        }
-
-        .checkbox-item input {
-            width: auto;
+            background: white;
+            border-color: var(--accent);
         }
 
         .btn {
             padding: 0.875rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
+            border: 1px solid var(--border-strong);
+            border-radius: 6px;
+            font-size: 0.9em;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.05em;
         }
 
         .btn-primary {
-            background: var(--primary);
-            color: white;
+            background: var(--text);
+            color: var(--bg);
+            border-color: var(--text);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+            background: var(--accent);
+            border-color: var(--accent);
+            transform: translateY(-1px);
         }
 
         .btn-secondary {
-            background: var(--secondary);
-            color: white;
+            background: rgba(255, 255, 255, 0.6);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            border-color: var(--accent);
         }
 
         .btn-danger {
+            background: rgba(185, 93, 93, 0.1);
+            color: var(--danger);
+            border-color: rgba(185, 93, 93, 0.3);
+        }
+
+        .btn-danger:hover {
             background: var(--danger);
             color: white;
+            border-color: var(--danger);
         }
 
         .btn-sm {
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8em;
         }
 
         .filters {
@@ -190,18 +347,22 @@
             gap: 1rem;
             margin-bottom: 1.5rem;
             flex-wrap: wrap;
+            background: var(--card);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
         }
 
         .search-box {
             flex: 1;
-            min-width: 250px;
+            min-width: 200px;
         }
 
         .guest-table-container {
             background: var(--card);
-            border-radius: 12px;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border);
         }
 
         table {
@@ -210,67 +371,75 @@
         }
 
         th {
-            background: #f1f5f9;
+            background: rgba(255, 255, 255, 0.6);
             padding: 1rem;
             text-align: left;
-            font-weight: 600;
-            color: #475569;
+            font-weight: 500;
+            color: var(--text-light);
             text-transform: uppercase;
             font-size: 0.75rem;
             letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
         }
 
         td {
             padding: 1rem;
             border-bottom: 1px solid var(--border);
+            font-size: 0.95em;
         }
 
         tr:hover {
-            background: #f8fafc;
+            background: rgba(255, 255, 255, 0.4);
         }
 
         .badge {
             display: inline-flex;
             align-items: center;
             gap: 0.25rem;
-            padding: 0.375rem 0.75rem;
+            padding: 0.25rem 0.75rem;
             border-radius: 20px;
-            font-size: 0.875rem;
+            font-size: 0.8em;
             font-weight: 500;
+            border: 1px solid transparent;
         }
 
         .badge-confirmed {
-            background: #dcfce7;
-            color: #166534;
+            background: rgba(90, 124, 90, 0.15);
+            color: var(--success);
+            border-color: rgba(90, 124, 90, 0.2);
         }
 
         .badge-pending {
-            background: #fef3c7;
-            color: #92400e;
+            background: rgba(204, 153, 51, 0.15);
+            color: #997a00;
+            border-color: rgba(204, 153, 51, 0.2);
         }
 
         .badge-declined {
-            background: #fee2e2;
-            color: #991b1b;
+            background: rgba(185, 93, 93, 0.15);
+            color: var(--danger);
+            border-color: rgba(185, 93, 93, 0.2);
         }
 
         .badge-no-response {
-            background: #f1f5f9;
-            color: #475569;
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text-light);
+            border-color: rgba(0, 0, 0, 0.1);
         }
 
         .dietary-tags {
             display: flex;
-            gap: 0.25rem;
+            gap: 0.5rem;
             flex-wrap: wrap;
         }
 
         .dietary-tag {
-            padding: 0.25rem 0.5rem;
-            background: #e0e7ff;
-            color: var(--primary);
+            padding: 0.2rem 0.5rem;
+            background: white;
+            color: var(--accent);
+            border: 1px solid var(--border);
             border-radius: 4px;
-            font-size: 0.75rem;
+            font-size: 0.75em;
         }
 
         .actions {
@@ -285,7 +454,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(61, 61, 61, 0.6);
+            backdrop-filter: blur(4px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -296,203 +466,254 @@
         }
 
         .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 16px;
+            background: #f0f0eb;
+            padding: 2.5rem;
+            border-radius: 8px;
             max-width: 500px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
 
         .data-controls {
             margin-top: 2rem;
             padding: 1.5rem;
-            background: #f1f5f9;
-            border-radius: 12px;
+            background: var(--card);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .filters {
+                flex-direction: column;
+            }
+
+            .nav-header {
+                padding: 15px 0;
+            }
+
+            .guest-table-container {
+                overflow-x: auto;
+            }
         }
 
         @media print {
 
+            .nav-header,
             .form-card,
             .filters,
             .actions,
             .data-controls,
-            header {
+            #splash-screen {
                 display: none;
+            }
+
+            .container {
+                padding: 0;
+            }
+
+            body {
+                background: white;
             }
 
             .guest-table-container {
                 box-shadow: none;
+                border: none;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <h1>👥 Guest List Manager</h1>
-            <p>Track RSVPs, dietary needs, and guest details</p>
-        </header>
-
-        <div class="stats-bar">
-            <div class="stat-card">
-                <div class="stat-value" id="totalGuests">0</div>
-                <div class="stat-label">Total Invited</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="confirmedGuests">0</div>
-                <div class="stat-label">Confirmed</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="pendingGuests">0</div>
-                <div class="stat-label">Pending</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="totalAttending">0</div>
-                <div class="stat-label">Total Attending</div>
-            </div>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo">Guest Manager</div>
+            <div class="splash-tagline">Professional Event Planning Suite</div>
         </div>
+    </div>
 
-        <div class="form-card">
-            <h2 style="margin-bottom: 1.5rem; color: var(--primary);">Add New Guest</h2>
-            <form id="guestForm" class="form-grid">
-                <div class="form-group">
-                    <label>First Name *</label>
-                    <input type="text" id="firstName" required>
+    <!-- Main Content -->
+    <div id="main-content">
+        <nav class="nav-header">
+            <div class="nav-container">
+                <a href="https://whisperworkshop.com/nav.html" class="nav-brand">Guest Manager</a>
+                <a href="https://whisperworkshop.com/nav.html" class="nav-link">Return to Whisper Workshop Tool
+                    Suite</a>
+            </div>
+        </nav>
+
+        <div class="container">
+            <header>
+                <h1>Guest List Manager</h1>
+                <p>Track RSVPs, dietary needs, and seating assignments</p>
+            </header>
+
+            <div class="stats-bar">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalGuests">0</div>
+                    <div class="stat-label">Total Invited</div>
                 </div>
-                <div class="form-group">
-                    <label>Last Name *</label>
-                    <input type="text" id="lastName" required>
+                <div class="stat-card">
+                    <div class="stat-value" id="confirmedGuests">0</div>
+                    <div class="stat-label">Confirmed</div>
                 </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="email">
+                <div class="stat-card">
+                    <div class="stat-value" id="pendingGuests">0</div>
+                    <div class="stat-label">Pending</div>
                 </div>
-                <div class="form-group">
-                    <label>Phone</label>
-                    <input type="tel" id="phone">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalAttending">0</div>
+                    <div class="stat-label">Total Attending</div>
                 </div>
-                <div class="form-group">
-                    <label>Group/Family</label>
-                    <input type="text" id="group" placeholder="e.g., Smith Family">
-                </div>
-                <div class="form-group">
-                    <label>Table Assignment</label>
-                    <input type="text" id="table" placeholder="Table 1">
-                </div>
-                <div class="form-group" style="grid-column: 1 / -1;">
-                    <label>RSVP Status</label>
-                    <select id="rsvpStatus">
-                        <option value="no-response">No Response</option>
-                        <option value="confirmed">Confirmed ✓</option>
-                        <option value="pending">Pending ?</option>
-                        <option value="declined">Declined ✗</option>
-                    </select>
-                </div>
-                <div class="form-group" style="grid-column: 1 / -1;">
-                    <label>Dietary Restrictions</label>
-                    <div class="checkbox-group">
-                        <label class="checkbox-item">
-                            <input type="checkbox" value="Vegetarian"> Vegetarian
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" value="Vegan"> Vegan
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" value="Gluten-Free"> Gluten-Free
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" value="Dairy-Free"> Dairy-Free
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" value="Nut Allergy"> Nut Allergy
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" value="Shellfish Allergy"> Shellfish
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" value="Kosher"> Kosher
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" value="Halal"> Halal
-                        </label>
+            </div>
+
+            <div class="form-card">
+                <h2>Add New Guest</h2>
+                <form id="guestForm" class="form-grid">
+                    <div class="form-group">
+                        <label>First Name *</label>
+                        <input type="text" id="firstName" required>
                     </div>
+                    <div class="form-group">
+                        <label>Last Name *</label>
+                        <input type="text" id="lastName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="email">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="phone">
+                    </div>
+                    <div class="form-group">
+                        <label>Group/Family</label>
+                        <input type="text" id="group" placeholder="e.g., Smith Family">
+                    </div>
+                    <div class="form-group">
+                        <label>Table Assignment</label>
+                        <input type="text" id="table" placeholder="Table 1">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>RSVP Status</label>
+                        <select id="rsvpStatus">
+                            <option value="no-response">No Response</option>
+                            <option value="confirmed">Confirmed ✓</option>
+                            <option value="pending">Pending ?</option>
+                            <option value="declined">Declined ✗</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Dietary Restrictions</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="Vegetarian"> Vegetarian
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="Vegan"> Vegan
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="Gluten-Free"> Gluten-Free
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="Dairy-Free"> Dairy-Free
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="Nut Allergy"> Nut Allergy
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="Shellfish Allergy"> Shellfish
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="Kosher"> Kosher
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="Halal"> Halal
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>+1 Guest Name</label>
+                        <input type="text" id="plusOne" placeholder="Guest name or 'Pending'">
+                    </div>
+                    <div class="form-group">
+                        <label>+1 Dietary Needs</label>
+                        <input type="text" id="plusOneDietary" placeholder="Dietary restrictions">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Notes</label>
+                        <input type="text" id="notes" placeholder="VIP, high chair needed, etc.">
+                    </div>
+                </form>
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                    <button class="btn btn-primary" onclick="addGuest()">Add Guest</button>
+                    <button class="btn btn-secondary" onclick="clearForm()">Clear Form</button>
                 </div>
-                <div class="form-group">
-                    <label>+1 Guest Name</label>
-                    <input type="text" id="plusOne" placeholder="Guest name or 'Pending'">
-                </div>
-                <div class="form-group">
-                    <label>+1 Dietary Needs</label>
-                    <input type="text" id="plusOneDietary" placeholder="Dietary restrictions">
-                </div>
-                <div class="form-group" style="grid-column: 1 / -1;">
-                    <label>Notes</label>
-                    <input type="text" id="notes" placeholder="VIP, high chair needed, etc.">
-                </div>
-            </form>
-            <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
-                <button class="btn btn-primary" onclick="addGuest()">➕ Add Guest</button>
-                <button class="btn btn-secondary" onclick="clearForm()">Clear Form</button>
             </div>
-        </div>
 
-        <div class="filters">
-            <input type="text" class="search-box input" id="searchInput" placeholder="🔍 Search guests..."
-                onkeyup="renderGuests()">
-            <select id="filterStatus" onchange="renderGuests()">
-                <option value="all">All Statuses</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="pending">Pending</option>
-                <option value="declined">Declined</option>
-                <option value="no-response">No Response</option>
-            </select>
-            <select id="filterDietary" onchange="renderGuests()">
-                <option value="all">All Dietary</option>
-                <option value="vegetarian">Vegetarian</option>
-                <option value="vegan">Vegan</option>
-                <option value="gluten-free">Gluten-Free</option>
-                <option value="allergy">Has Allergies</option>
-            </select>
-            <button class="btn btn-secondary" onclick="printGuestList()">🖨️ Print</button>
-        </div>
+            <div class="filters">
+                <input type="text" class="search-box" id="searchInput" placeholder="Search guests..."
+                    onkeyup="renderGuests()">
+                <select id="filterStatus" onchange="renderGuests()">
+                    <option value="all">All Statuses</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="pending">Pending</option>
+                    <option value="declined">Declined</option>
+                    <option value="no-response">No Response</option>
+                </select>
+                <select id="filterDietary" onchange="renderGuests()">
+                    <option value="all">All Dietary</option>
+                    <option value="vegetarian">Vegetarian</option>
+                    <option value="vegan">Vegan</option>
+                    <option value="gluten-free">Gluten-Free</option>
+                    <option value="allergy">Has Allergies</option>
+                </select>
+                <button class="btn btn-secondary" onclick="printGuestList()">Print</button>
+            </div>
 
-        <div class="guest-table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Guest</th>
-                        <th>Contact</th>
-                        <th>Group</th>
-                        <th>RSVP</th>
-                        <th>Dietary</th>
-                        <th>Table</th>
-                        <th>Notes</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="guestTable"></tbody>
-            </table>
-        </div>
+            <div class="guest-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Guest</th>
+                            <th>Contact</th>
+                            <th>Group</th>
+                            <th>RSVP</th>
+                            <th>Dietary</th>
+                            <th>Table</th>
+                            <th>Notes</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="guestTable"></tbody>
+                </table>
+            </div>
 
-        <div class="data-controls">
-            <h3 style="margin-bottom: 1rem;">💾 Data Management</h3>
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                <button class="btn btn-primary" onclick="exportData()">📥 Export JSON</button>
-                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(this)">
-                <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import
-                    JSON</button>
-                <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button>
-                <button class="btn btn-secondary" onclick="generateCSV()">📊 Export CSV</button>
+            <div class="data-controls">
+                <button class="btn btn-primary" onclick="exportData()">Export JSON</button>
+                <div style="position: relative; overflow: hidden; display: inline-block;">
+                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Import
+                        JSON</button>
+                    <input type="file" id="importFile" accept=".json" style="position: absolute; left: -9999px;"
+                        onchange="importData(this)">
+                </div>
+                <button class="btn btn-secondary" onclick="generateCSV()">Export CSV</button>
+                <button class="btn btn-danger" onclick="clearAllData()">Clear All Data</button>
             </div>
         </div>
     </div>
 
+    <!-- Edit Modal -->
     <div class="modal" id="editModal">
         <div class="modal-content">
-            <h2 style="margin-bottom: 1.5rem;">Edit Guest</h2>
+            <h2 style="font-family: 'Cormorant Garamond', serif; margin-bottom: 1.5rem; color: var(--accent);">Edit
+                Guest</h2>
             <input type="hidden" id="editId">
             <div class="form-group" style="margin-bottom: 1rem;">
                 <label>First Name</label>
@@ -527,6 +748,22 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const splash = document.getElementById('splash-screen');
+            const mainContent = document.getElementById('main-content');
+
+            setTimeout(function () {
+                splash.classList.add('fade-out');
+                mainContent.classList.add('visible');
+
+                setTimeout(function () {
+                    splash.style.display = 'none';
+                }, 800);
+            }, 1500);
+
+            loadGuests();
+        });
+
         const STORAGE_KEY = 'event_guests_v1';
         let guests = [];
 
@@ -605,22 +842,27 @@
             });
 
             const tbody = document.getElementById('guestTable');
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-light); padding: 2rem;">No guests found.</td></tr>';
+                return;
+            }
+
             tbody.innerHTML = filtered.map(g => `
                 <tr>
                     <td>
                         <strong>${g.firstName} ${g.lastName}</strong>
-                        ${g.plusOne ? `<br><small style="color: #64748b;">+ ${g.plusOne}</small>` : ''}
+                        ${g.plusOne ? `<br><small style="color: var(--text-light); font-style: italic;">+ ${g.plusOne}</small>` : ''}
                     </td>
                     <td>
-                        ${g.email ? `<div>📧 ${g.email}</div>` : ''}
-                        ${g.phone ? `<div>📱 ${g.phone}</div>` : ''}
+                        ${g.email ? `<div>${g.email}</div>` : ''}
+                        ${g.phone ? `<div style="font-size: 0.9em; color: var(--text-light);">${g.phone}</div>` : ''}
                     </td>
                     <td>${g.group || '-'}</td>
                     <td><span class="badge badge-${g.rsvp}">${getRsvpLabel(g.rsvp)}</span></td>
                     <td>
                         <div class="dietary-tags">
                             ${g.dietary.map(d => `<span class="dietary-tag">${d}</span>`).join('')}
-                            ${g.plusOneDietary ? `<span class="dietary-tag" style="background: #fce7f3; color: #be185d;">+1: ${g.plusOneDietary}</span>` : ''}
+                            ${g.plusOneDietary ? `<span class="dietary-tag" style="border-color: var(--accent); color: var(--accent);">+1: ${g.plusOneDietary}</span>` : ''}
                         </div>
                     </td>
                     <td>${g.table || '-'}</td>
@@ -637,10 +879,10 @@
 
         function getRsvpLabel(status) {
             const labels = {
-                'confirmed': '✓ Confirmed',
-                'pending': '? Pending',
-                'declined': '✗ Declined',
-                'no-response': '○ No Response'
+                'confirmed': 'Confirmed',
+                'pending': 'Pending',
+                'declined': 'Declined',
+                'no-response': 'No Response'
             };
             return labels[status] || status;
         }
@@ -783,9 +1025,6 @@
         document.getElementById('editModal').addEventListener('click', (e) => {
             if (e.target.id === 'editModal') closeModal();
         });
-
-        // Init
-        loadGuests();
     </script>
 </body>
 

@@ -3,18 +3,25 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Budget Calculator - Event Planner Suite</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Budget Calculator - Whisper Workshop</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --primary: #10b981;
-            --secondary: #6366f1;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
+            --bg: #e4e4dc;
+            --card: rgba(255, 255, 255, 0.5);
+            --card-hover: rgba(255, 255, 255, 0.9);
+            --text: #3d3d3d;
+            --text-light: #666;
+            --accent: #8b7355;
+            --accent-light: rgba(139, 115, 85, 0.1);
+            --border: rgba(61, 61, 61, 0.1);
+            --border-strong: rgba(61, 61, 61, 0.2);
+            --success: #5a7c5a;
+            --danger: #b95d5d;
+            --warning: #cc9933;
         }
 
         * {
@@ -24,25 +31,158 @@
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
+            min-height: 100vh;
+            width: 100%;
+            position: relative;
+        }
+
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s ease-in-out;
+            pointer-events: auto;
+        }
+
+        #splash-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        .splash-content {
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.95);
+            animation: logoFadeIn 1s ease-out forwards;
+        }
+
+        .splash-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3em;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .splash-tagline {
+            font-size: 0.9em;
+            color: var(--text-light);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        @keyframes logoFadeIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        #main-content {
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+        }
+
+        #main-content.visible {
+            opacity: 1;
+        }
+
+        /* Navigation Header */
+        .nav-header {
+            background: rgba(255, 255, 255, 0.4);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            width: 100%;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5em;
+            font-weight: 500;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.85em;
+            font-weight: 400;
+            letter-spacing: 0.03em;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-link:hover {
+            color: #6b5a45;
+            transform: translateX(-3px);
+        }
+
+        .nav-link::before {
+            content: "←";
+            font-size: 0.9em;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 3rem 2rem;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         header {
             text-align: center;
-            margin-bottom: 2.5rem;
-            padding: 2rem;
-            background: linear-gradient(135deg, var(--primary), #059669);
-            border-radius: 16px;
-            color: white;
+            margin-bottom: 3rem;
+            padding: 3rem 2rem;
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5em;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-light);
+            font-size: 0.95em;
+            letter-spacing: 0.05em;
         }
 
         .dashboard {
@@ -55,10 +195,16 @@
         .metric-card {
             background: var(--card);
             padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+        }
+
+        .metric-card:hover {
+            background: var(--card-hover);
+            border-color: rgba(139, 115, 85, 0.3);
         }
 
         .metric-card::before {
@@ -71,7 +217,7 @@
         }
 
         .metric-card.total::before {
-            background: var(--primary);
+            background: var(--accent);
         }
 
         .metric-card.spent::before {
@@ -79,7 +225,7 @@
         }
 
         .metric-card.remaining::before {
-            background: var(--secondary);
+            background: var(--success);
         }
 
         .metric-card.per-guest::before {
@@ -87,58 +233,62 @@
         }
 
         .metric-label {
-            color: #64748b;
-            font-size: 0.875rem;
+            color: var(--text-light);
+            font-size: 0.75em;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.1em;
             margin-bottom: 0.5rem;
+            font-weight: 500;
         }
 
         .metric-value {
-            font-size: 2rem;
-            font-weight: 700;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2em;
+            font-weight: 600;
             color: var(--text);
         }
 
+        .metric-value.negative {
+            color: var(--danger);
+        }
+
         .metric-sub {
-            font-size: 0.875rem;
-            color: #64748b;
+            font-size: 0.85em;
+            color: var(--text-light);
             margin-top: 0.25rem;
+            font-style: italic;
         }
 
         .progress-section {
             background: var(--card);
             padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--border);
             margin-bottom: 2rem;
         }
 
+        .progress-section h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5em;
+            font-weight: 500;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
         .progress-bar {
-            height: 32px;
-            background: #e2e8f0;
-            border-radius: 16px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 12px;
             overflow: hidden;
             display: flex;
             margin-top: 0.5rem;
+            border: 1px solid var(--border);
         }
 
         .progress-segment {
             height: 100%;
             transition: width 0.3s ease;
             position: relative;
-        }
-
-        .progress-segment:hover::after {
-            content: attr(data-label);
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 0.75rem;
-            font-weight: 600;
-            white-space: nowrap;
         }
 
         .legend {
@@ -152,21 +302,30 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 0.875rem;
+            font-size: 0.85em;
+            color: var(--text-light);
         }
 
         .legend-color {
-            width: 16px;
-            height: 16px;
-            border-radius: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
         }
 
         .form-card {
             background: var(--card);
             padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--border);
             margin-bottom: 2rem;
+        }
+
+        .form-card h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8em;
+            font-weight: 500;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
         }
 
         .form-grid {
@@ -188,66 +347,105 @@
         }
 
         label {
-            font-weight: 600;
+            display: block;
+            font-weight: 500;
             margin-bottom: 0.5rem;
-            color: #475569;
-            font-size: 0.875rem;
+            color: var(--text);
+            font-size: 0.9em;
+            letter-spacing: 0.02em;
         }
 
-        input,
+        input[type="text"],
+        input[type="number"],
         select {
             padding: 0.75rem;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: inherit;
+            border: 1px solid var(--border-strong);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s ease;
+            color: var(--text);
         }
 
         input:focus,
         select:focus {
             outline: none;
-            border-color: var(--primary);
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        input[type="number"] {
+            text-align: right;
         }
 
         .btn {
             padding: 0.875rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
+            border: 1px solid var(--border-strong);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.02em;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
         }
 
         .btn-primary {
-            background: var(--primary);
-            color: white;
+            background: var(--text);
+            color: var(--bg);
+            border-color: var(--text);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-danger {
-            background: var(--danger);
+            background: var(--accent);
+            border-color: var(--accent);
             color: white;
-            padding: 0.5rem 1rem;
+            transform: translateY(-1px);
         }
 
         .btn-secondary {
-            background: #64748b;
+            background: rgba(255, 255, 255, 0.6);
+            color: var(--text);
+            border: 1px solid var(--border-strong);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--accent);
+        }
+
+        .btn-danger {
+            background: rgba(185, 93, 93, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(185, 93, 93, 0.3);
+            padding: 0.5rem 1rem;
+            font-size: 0.8em;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
             color: white;
+            border-color: var(--danger);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.8em;
         }
 
         .expenses-table {
             background: var(--card);
-            border-radius: 12px;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: none;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
         }
 
         table {
@@ -256,38 +454,42 @@
         }
 
         th {
-            background: #f1f5f9;
-            padding: 1rem;
             text-align: left;
-            font-weight: 600;
-            color: #475569;
-            text-transform: uppercase;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.6);
             font-size: 0.75rem;
+            text-transform: uppercase;
             letter-spacing: 0.05em;
+            color: var(--text-light);
+            font-weight: 500;
+            border-bottom: 1px solid var(--border);
         }
 
         td {
             padding: 1rem;
             border-bottom: 1px solid var(--border);
+            font-size: 0.95em;
         }
 
         tr:hover {
-            background: #f8fafc;
+            background: rgba(255, 255, 255, 0.4);
         }
 
         .category-badge {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.375rem 0.75rem;
+            padding: 0.25rem 0.75rem;
             border-radius: 20px;
-            font-size: 0.875rem;
+            font-size: 0.8em;
             font-weight: 500;
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .amount {
-            font-family: 'Courier New', monospace;
+            font-family: 'Cormorant Garamond', serif;
             font-weight: 600;
+            font-size: 1.1em;
         }
 
         .amount.negative {
@@ -297,172 +499,233 @@
         .variance {
             padding: 0.25rem 0.5rem;
             border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
+            font-size: 0.8em;
+            font-weight: 500;
         }
 
         .variance.over {
-            background: #fee2e2;
+            background: rgba(185, 93, 93, 0.1);
             color: var(--danger);
         }
 
         .variance.under {
-            background: #dcfce7;
-            color: #166534;
+            background: rgba(90, 124, 90, 0.1);
+            color: var(--success);
         }
 
         .variance.equal {
-            background: #e0e7ff;
-            color: var(--secondary);
+            background: rgba(139, 115, 85, 0.1);
+            color: var(--accent);
         }
 
         .category-header {
-            background: #f8fafc;
+            background: rgba(255, 255, 255, 0.3);
             padding: 0.75rem 1rem;
-            font-weight: 700;
-            color: #475569;
+            font-weight: 500;
+            color: var(--text);
             border-bottom: 2px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1em;
         }
 
         .summary-row {
-            background: #f1f5f9;
+            background: rgba(139, 115, 85, 0.05);
             font-weight: 600;
         }
 
         .controls {
             margin-top: 2rem;
             padding: 1.5rem;
-            background: #f1f5f9;
-            border-radius: 12px;
+            background: var(--card);
+            border-radius: 8px;
+            border: 1px solid var(--border);
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
         }
 
-        input[type="number"] {
-            text-align: right;
+        @media (max-width: 640px) {
+
+            .nav-header,
+            .controls {
+                padding: 15px;
+            }
+
+            .io-controls {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .expenses-table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <h1>💰 Budget Calculator</h1>
-            <p>Track estimated vs actual spending with automatic variance analysis</p>
-        </header>
-
-        <div class="dashboard">
-            <div class="metric-card total">
-                <div class="metric-label">Total Budget</div>
-                <div class="metric-value" id="totalBudget">$0</div>
-                <div class="metric-sub">Including 10% contingency</div>
-            </div>
-            <div class="metric-card spent">
-                <div class="metric-label">Total Spent</div>
-                <div class="metric-value" id="totalSpent">$0</div>
-                <div class="metric-sub" id="spentPercent">0% of budget</div>
-            </div>
-            <div class="metric-card remaining">
-                <div class="metric-label">Remaining</div>
-                <div class="metric-value" id="remaining">$0</div>
-                <div class="metric-sub" id="remainingStatus">On track</div>
-            </div>
-            <div class="metric-card per-guest">
-                <div class="metric-label">Cost Per Guest</div>
-                <div class="metric-value" id="costPerGuest">$0</div>
-                <div class="metric-sub">Based on confirmed guests</div>
-            </div>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo">Budget Calculator</div>
+            <div class="splash-tagline">Professional Event Planning Suite</div>
         </div>
+    </div>
 
-        <div class="progress-section">
-            <h3 style="margin-bottom: 1rem;">Budget Allocation</h3>
-            <div class="progress-bar" id="progressBar"></div>
-            <div class="legend" id="legend"></div>
-        </div>
-
-        <div class="form-card">
-            <h2 style="margin-bottom: 1.5rem; color: var(--primary);">Add Expense Item</h2>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>Item/Service *</label>
-                    <input type="text" id="itemName" placeholder="e.g., Photography Package" required>
-                </div>
-                <div class="form-group">
-                    <label>Category *</label>
-                    <select id="category" required>
-                        <option value="venue">🏛️ Venue</option>
-                        <option value="catering">🍽️ Catering</option>
-                        <option value="bar">🍸 Beverages/Bar</option>
-                        <option value="photography">📸 Photography</option>
-                        <option value="videography">🎥 Videography</option>
-                        <option value="music">🎵 Music/Entertainment</option>
-                        <option value="flowers">💐 Flowers/Decor</option>
-                        <option value="attire">👗 Attire</option>
-                        <option value="stationery">✉️ Stationery</option>
-                        <option value="transport">🚗 Transportation</option>
-                        <option value="gifts">🎁 Favors/Gifts</option>
-                        <option value="accommodations">🏨 Accommodations</option>
-                        <option value="other">📋 Other</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Estimated $</label>
-                    <input type="number" id="estimated" placeholder="0.00" min="0" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label>Actual $</label>
-                    <input type="number" id="actual" placeholder="0.00" min="0" step="0.01">
-                </div>
-                <button class="btn btn-primary" onclick="addExpense()">➕ Add</button>
+    <!-- Main Content -->
+    <div id="main-content">
+        <!-- Navigation Header -->
+        <nav class="nav-header">
+            <div class="nav-container">
+                <a href="https://whisperworkshop.com/nav.html" class="nav-brand">Budget Calculator</a>
+                <a href="https://whisperworkshop.com/nav.html" class="nav-link">Return to Whisper Workshop Tool
+                    Suite</a>
             </div>
-        </div>
+        </nav>
 
-        <div class="expenses-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th>Category</th>
-                        <th style="text-align: right;">Estimated</th>
-                        <th style="text-align: right;">Actual</th>
-                        <th style="text-align: right;">Variance</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="expensesBody"></tbody>
-            </table>
-        </div>
+        <div class="container">
+            <header>
+                <h1>Budget Calculator</h1>
+                <p>Track estimated vs actual spending with automatic variance analysis</p>
+            </header>
 
-        <div class="controls">
-            <button class="btn btn-primary" onclick="exportData()">📥 Export JSON</button>
-            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(this)">
-            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import
-                JSON</button>
-            <button class="btn btn-secondary" onclick="generateCSV()">📊 Export CSV</button>
-            <button class="btn btn-danger" onclick="clearAll()">🗑️ Clear All</button>
+            <div class="dashboard">
+                <div class="metric-card total">
+                    <div class="metric-label">Total Budget</div>
+                    <div class="metric-value" id="totalBudget">$0</div>
+                    <div class="metric-sub">Including 10% contingency</div>
+                </div>
+                <div class="metric-card spent">
+                    <div class="metric-label">Total Spent</div>
+                    <div class="metric-value" id="totalSpent">$0</div>
+                    <div class="metric-sub" id="spentPercent">0% of budget</div>
+                </div>
+                <div class="metric-card remaining">
+                    <div class="metric-label">Remaining</div>
+                    <div class="metric-value" id="remaining">$0</div>
+                    <div class="metric-sub" id="remainingStatus">On track</div>
+                </div>
+                <div class="metric-card per-guest">
+                    <div class="metric-label">Cost Per Guest</div>
+                    <div class="metric-value" id="costPerGuest">$0</div>
+                    <div class="metric-sub">Based on confirmed guests</div>
+                </div>
+            </div>
+
+            <div class="progress-section">
+                <h3>Budget Allocation</h3>
+                <div class="progress-bar" id="progressBar"></div>
+                <div class="legend" id="legend"></div>
+            </div>
+
+            <div class="form-card">
+                <h2>Add Expense Item</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Item/Service *</label>
+                        <input type="text" id="itemName" placeholder="e.g., Photography Package" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="category" required>
+                            <option value="venue">🏛️ Venue</option>
+                            <option value="catering">🍽️ Catering</option>
+                            <option value="bar">🍸 Beverages/Bar</option>
+                            <option value="photography">📸 Photography</option>
+                            <option value="videography">🎥 Videography</option>
+                            <option value="music">🎵 Music/Entertainment</option>
+                            <option value="flowers">💐 Flowers/Decor</option>
+                            <option value="attire">👗 Attire</option>
+                            <option value="stationery">✉️ Stationery</option>
+                            <option value="transport">🚗 Transportation</option>
+                            <option value="gifts">🎁 Favors/Gifts</option>
+                            <option value="accommodations">🏨 Accommodations</option>
+                            <option value="other">📋 Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Estimated $</label>
+                        <input type="number" id="estimated" placeholder="0.00" min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Actual $</label>
+                        <input type="number" id="actual" placeholder="0.00" min="0" step="0.01">
+                    </div>
+                    <button class="btn btn-primary" onclick="addExpense()">Add Item</button>
+                </div>
+            </div>
+
+            <div class="expenses-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Category</th>
+                            <th style="text-align: right;">Estimated</th>
+                            <th style="text-align: right;">Actual</th>
+                            <th style="text-align: right;">Variance</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expensesBody"></tbody>
+                </table>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-primary" onclick="exportData()">Export JSON</button>
+                <div style="position: relative; overflow: hidden; display: inline-block;">
+                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Import
+                        JSON</button>
+                    <input type="file" id="importFile" accept=".json" style="position: absolute; left: -9999px;"
+                        onchange="importData(this)">
+                </div>
+                <button class="btn btn-secondary" onclick="generateCSV()">Export CSV</button>
+                <button class="btn btn-danger" onclick="clearAll()">Clear All</button>
+            </div>
         </div>
     </div>
 
     <script>
+        // Splash screen initialization
+        document.addEventListener('DOMContentLoaded', function () {
+            const splash = document.getElementById('splash-screen');
+            const mainContent = document.getElementById('main-content');
+
+            setTimeout(function () {
+                splash.classList.add('fade-out');
+                mainContent.classList.add('visible');
+
+                setTimeout(function () {
+                    splash.style.display = 'none';
+                }, 800);
+            }, 1500);
+        });
+
         const STORAGE_KEY = 'event_budget_v1';
+        // Updated palette to match Brand UX better
         const CATEGORY_COLORS = {
-            venue: '#8b5cf6', catering: '#f59e0b', bar: '#ef4444',
-            photography: '#ec4899', videography: '#06b6d4',
-            music: '#8b5cf6', flowers: '#10b981', attire: '#6366f1',
-            stationery: '#14b8a6', transport: '#f97316',
-            gifts: '#84cc16', accommodations: '#0ea5e9', other: '#64748b'
+            venue: '#8b7355', catering: '#a49178', bar: '#8b5a5a',
+            photography: '#6b5a45', videography: '#8a8a8a',
+            music: '#b8a68b', flowers: '#5a7c5a', attire: '#d4c5b0',
+            stationery: '#8c9c8c', transport: '#7c6a5a',
+            gifts: '#a89f91', accommodations: '#6e6e6e', other: '#9e9e9e'
         };
 
         const CATEGORY_NAMES = {
-            venue: '🏛️ Venue', catering: '🍽️ Catering', bar: '🍸 Bar',
-            photography: '📸 Photo', videography: '🎥 Video', music: '🎵 Music',
-            flowers: '💐 Decor', attire: '👗 Attire', stationery: '✉️ Paper',
-            transport: '🚗 Transport', gifts: '🎁 Gifts', accommodations: '🏨 Hotel', other: '📋 Other'
+            venue: 'Venue', catering: 'Catering', bar: 'Bar',
+            photography: 'Photo', videography: 'Video', music: 'Music',
+            flowers: 'Decor', attire: 'Attire', stationery: 'Paper',
+            transport: 'Transport', gifts: 'Gifts', accommodations: 'Hotel', other: 'Other'
         };
 
         let expenses = [];
@@ -563,14 +826,14 @@
 
             const statusEl = document.getElementById('remainingStatus');
             if (remaining < 0) {
-                statusEl.textContent = '⚠️ Over Budget!';
+                statusEl.textContent = 'Over Budget!';
                 statusEl.style.color = 'var(--danger)';
             } else if (remaining < totalBudget * 0.1) {
-                statusEl.textContent = '⚡ Tight';
+                statusEl.textContent = 'Tight';
                 statusEl.style.color = 'var(--warning)';
             } else {
-                statusEl.textContent = '✓ On Track';
-                statusEl.style.color = 'var(--primary)';
+                statusEl.textContent = 'On Track';
+                statusEl.style.color = 'var(--success)';
             }
 
             // Guest count from localStorage (from guest manager)
@@ -593,7 +856,7 @@
                     segment.className = 'progress-segment';
                     segment.style.width = percent + '%';
                     segment.style.background = CATEGORY_COLORS[cat];
-                    segment.dataset.label = `${CATEGORY_NAMES[cat]} ${Math.round(percent)}%`;
+                    segment.title = `${CATEGORY_NAMES[cat]} ${Math.round(percent)}%`;
                     progressBar.appendChild(segment);
 
                     const legendItem = document.createElement('div');
@@ -611,8 +874,8 @@
                     const segment = document.createElement('div');
                     segment.className = 'progress-segment';
                     segment.style.width = remainingPercent + '%';
-                    segment.style.background = '#e2e8f0';
-                    segment.dataset.label = `Remaining ${Math.round(remainingPercent)}%`;
+                    segment.style.background = 'transparent';
+                    segment.title = `Remaining ${Math.round(remainingPercent)}%`;
                     progressBar.appendChild(segment);
                 }
             }
@@ -648,9 +911,9 @@
                         <td><strong>${e.item}</strong></td>
                         <td><span class="category-badge" style="background: ${CATEGORY_COLORS[e.category]}20; color: ${CATEGORY_COLORS[e.category]}">${CATEGORY_NAMES[e.category]}</span></td>
                         <td class="amount" style="text-align: right;">${formatCurrency(e.estimated)}</td>
-                        <td class="amount" style="text-align: right; ${e.actual ? 'color: var(--primary)' : 'color: #94a3b8'}">${e.actual ? formatCurrency(e.actual) : '-'}</td>
+                        <td class="amount" style="text-align: right; ${e.actual ? 'color: var(--accent)' : 'color: #999'}">${e.actual ? formatCurrency(e.actual) : '-'}</td>
                         <td style="text-align: right;"><span class="variance ${varianceClass}">${varianceText}</span></td>
-                        <td>${e.paid ? '✅ Paid' : e.actual > 0 ? '💳 Unpaid' : '⏳ Pending'}</td>
+                        <td>${e.paid ? 'Paid' : e.actual > 0 ? 'Unpaid' : 'Pending'}</td>
                         <td>
                             <button class="btn btn-secondary btn-sm" onclick="togglePaid(${e.id})">${e.paid ? 'Mark Unpaid' : 'Mark Paid'}</button>
                             <button class="btn btn-danger btn-sm" onclick="deleteExpense(${e.id})">Delete</button>
@@ -661,7 +924,7 @@
             });
 
             if (expenses.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 3rem; color: #94a3b8;">No expenses added yet. Start by adding your first budget item above.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 3rem; color: #999;">No expenses added yet. Start by adding your first budget item above.</td></tr>';
             }
 
             // Grand total row

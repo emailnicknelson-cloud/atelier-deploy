@@ -4,18 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vendor Comparison - Event Planner Suite</title>
+    <title>Vendor Comparison - Whisper Workshop</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Courier+Prime:wght@400;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --primary: #6366f1;
-            --secondary: #ec4899;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
+            --bg: #e4e4dc;
+            --card: rgba(255, 255, 255, 0.5);
+            --card-hover: rgba(255, 255, 255, 0.9);
+            --text: #3d3d3d;
+            --text-light: #666;
+            --accent: #8b7355;
+            --accent-light: rgba(139, 115, 85, 0.1);
+            --border: rgba(61, 61, 61, 0.1);
+            --border-strong: rgba(61, 61, 61, 0.2);
+            --success: #5a7c5a;
+            --danger: #b95d5d;
+            --warning: #cc9933;
         }
 
         * {
@@ -25,40 +31,167 @@
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        #splash-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .splash-content {
+            text-align: center;
+            animation: logoFadeIn 1s ease-out forwards;
+        }
+
+        .splash-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3em;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .splash-tagline {
+            font-size: 0.9em;
+            color: var(--text-light);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        @keyframes logoFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        #main-content {
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        #main-content.visible {
+            opacity: 1;
+        }
+
+        /* Nav */
+        .nav-header {
+            background: rgba(255, 255, 255, 0.4);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5em;
+            font-weight: 500;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.85em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #6b5a45;
+            transform: translateX(-3px);
         }
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 3rem 2rem;
         }
 
         header {
             text-align: center;
-            margin-bottom: 2.5rem;
-            padding: 2rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 16px;
-            color: white;
+            margin-bottom: 3rem;
+            padding: 3rem 2rem;
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5em;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-light);
+            font-size: 0.95em;
+            letter-spacing: 0.05em;
         }
 
         .setup-section {
             background: var(--card);
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5em;
+            color: var(--text);
             margin-bottom: 1.5rem;
+            font-weight: 500;
         }
 
         .form-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
         }
 
         .form-group {
@@ -67,156 +200,212 @@
         }
 
         label {
-            font-weight: 600;
+            font-weight: 500;
             margin-bottom: 0.5rem;
-            color: #475569;
-            font-size: 0.875rem;
+            color: var(--text-light);
+            font-size: 0.9em;
         }
 
         input,
         select {
             padding: 0.75rem;
-            border: 2px solid var(--border);
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--border-strong);
+            border-radius: 4px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: #fff;
+            box-shadow: 0 0 0 3px var(--accent-light);
         }
 
         .btn {
-            padding: 0.875rem 1.5rem;
+            padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 600;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.02em;
         }
 
         .btn-primary {
-            background: var(--primary);
-            color: white;
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            transform: translateY(-1px);
         }
 
         .btn-secondary {
-            background: #f1f5f9;
-            color: #475569;
-            border: 2px solid var(--border);
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--text);
+            border: 1px solid var(--border-strong);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
         }
 
         .btn-danger {
-            background: #fee2e2;
+            background: transparent;
             color: var(--danger);
+            border: 1px solid rgba(185, 93, 93, 0.3);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85em;
         }
 
-        .btn-sm {
-            padding: 0.5rem 1rem;
-            font-size: 0.75rem;
+        .btn-danger:hover {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
         }
 
         .comparison-table {
             background: var(--card);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--border);
             overflow-x: auto;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 800px;
+            min-width: 900px;
         }
 
         th {
-            background: #f1f5f9;
-            padding: 1rem;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 1.25rem 1rem;
             text-align: left;
             font-weight: 600;
-            color: #475569;
-            position: sticky;
-            top: 0;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-size: 0.8em;
+            letter-spacing: 0.1em;
+            border-bottom: 1px solid var(--border);
         }
 
         td {
-            padding: 1rem;
+            padding: 1.25rem 1rem;
             border-bottom: 1px solid var(--border);
             vertical-align: top;
+            color: var(--text);
         }
 
-        tr:hover {
-            background: #f8fafc;
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.3);
         }
 
         .vendor-name {
-            font-weight: 700;
-            color: var(--primary);
-            font-size: 1.125rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            color: var(--text);
+            font-size: 1.25em;
+            margin-bottom: 0.25rem;
         }
 
         .vendor-type {
-            font-size: 0.75rem;
-            color: #64748b;
+            font-size: 0.75em;
+            color: var(--accent);
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
         .price-tag {
-            font-family: 'Courier New', monospace;
-            font-size: 1.25rem;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1.1em;
             font-weight: 700;
-            color: var(--success);
+            color: var(--text);
         }
 
         .rating-stars {
             color: var(--warning);
-            font-size: 1.125rem;
+            font-size: 1.1em;
+            letter-spacing: 2px;
         }
 
         .score-badge {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             font-weight: 700;
             font-size: 1rem;
+            font-family: 'Courier Prime', monospace;
+            border: 2px solid transparent;
         }
 
         .score-high {
-            background: #dcfce7;
-            color: #166534;
+            background: #f0fdf4;
+            color: var(--success);
+            border-color: var(--success);
         }
 
         .score-med {
-            background: #fef3c7;
+            background: #fffbeb;
             color: #92400e;
+            border-color: var(--warning);
         }
 
         .score-low {
-            background: #fee2e2;
-            color: #991b1b;
+            background: #fef2f2;
+            color: var(--danger);
+            border-color: var(--danger);
         }
 
         .feature-check {
             color: var(--success);
             font-weight: 700;
+            margin-right: 0.25rem;
         }
 
         .feature-x {
-            color: #cbd5e1;
+            color: #ccc;
+            margin-right: 0.25rem;
         }
 
-        .winner-row {
-            background: #ecfdf5 !important;
-            border-left: 4px solid var(--success);
+        .winner-row td {
+            background: rgba(90, 124, 90, 0.05);
+            /* Success color tint */
+        }
+
+        .winner-row td:first-child {
+            border-left: 3px solid var(--success);
         }
 
         .criteria-weights {
-            background: #f1f5f9;
-            padding: 1rem;
+            background: rgba(255, 255, 255, 0.4);
+            padding: 1.5rem;
             border-radius: 8px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1em;
+            color: var(--text);
             margin-bottom: 1rem;
         }
 
@@ -224,47 +413,100 @@
             display: flex;
             align-items: center;
             gap: 1rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.9em;
         }
 
         .weight-slider label {
             flex: 1;
             margin: 0;
+            cursor: default;
         }
 
         .weight-slider input[type="range"] {
             width: 150px;
+            padding: 0;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+
+        /* Custom range slider styling */
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            margin-top: -6px;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #d1d1cf;
+            border-radius: 2px;
         }
 
         .notes-cell {
-            max-width: 200px;
-            font-size: 0.875rem;
-            color: #64748b;
+            max-width: 250px;
+            font-size: 0.9em;
+            color: var(--text-light);
+            font-style: italic;
         }
 
         .data-controls {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: #f1f5f9;
-            border-radius: 12px;
+            margin-top: 3rem;
+            padding: 2rem;
+            background: var(--card);
+            border-radius: 8px;
+            border: 1px solid var(--border);
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
+            justify-content: flex-end;
         }
 
         @media print {
 
             .setup-section,
             .data-controls,
-            .weight-slider input {
-                display: none;
+            .weight-slider input,
+            .nav-header,
+            #splash-screen,
+            .container>header p {
+                display: none !important;
+            }
+
+            .container {
+                padding: 0;
+                margin: 0;
+                max-width: 100%;
             }
 
             .comparison-table {
                 box-shadow: none;
+                border: none;
+                overflow: visible;
             }
 
-            .winner-row {
+            table {
+                min-width: 0;
+            }
+
+            th {
+                background: none;
+                border-bottom: 2px solid #000;
+                color: #000;
+            }
+
+            td {
+                border-bottom: 1px solid #ccc;
+            }
+
+            .winner-row td {
                 background: #f0fdf4 !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
@@ -274,173 +516,223 @@
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <h1>⚖️ Vendor Comparison Matrix</h1>
-            <p>Compare quotes side-by-side with weighted scoring</p>
-        </header>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo">Vendor Matrix</div>
+            <div class="splash-tagline">Compare & Decide</div>
+        </div>
+    </div>
 
-        <div class="setup-section">
-            <h3 style="margin-bottom: 1rem; color: var(--primary);">Add New Vendor Quote</h3>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Vendor Name *</label>
-                    <input type="text" id="vendorName" placeholder="e.g., Elegant Catering Co">
-                </div>
-                <div class="form-group">
-                    <label>Category *</label>
-                    <select id="vendorCategory">
-                        <option value="venue">🏛️ Venue</option>
-                        <option value="catering">🍽️ Catering</option>
-                        <option value="photo">📸 Photography</option>
-                        <option value="video">🎥 Videography</option>
-                        <option value="music">🎵 Music/Entertainment</option>
-                        <option value="florist">💐 Florist</option>
-                        <option value="decor">🎨 Decor/Rentals</option>
-                        <option value="transport">🚗 Transportation</option>
-                        <option value="other">📋 Other</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Quote Price *</label>
-                    <input type="number" id="vendorPrice" placeholder="0.00" step="0.01">
-                </div>
+    <div id="main-content">
+        <nav class="nav-header">
+            <div class="nav-container">
+                <a href="https://whisperworkshop.com/nav.html" class="nav-brand">Vendor Matrix</a>
+                <a href="https://whisperworkshop.com/nav.html" class="nav-link">Return to Whisper Workshop Tool
+                    Suite</a>
             </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Rating (1-5)</label>
-                    <select id="vendorRating">
-                        <option value="5">⭐⭐⭐⭐⭐ (5)</option>
-                        <option value="4">⭐⭐⭐⭐ (4)</option>
-                        <option value="3">⭐⭐⭐ (3)</option>
-                        <option value="2">⭐⭐ (2)</option>
-                        <option value="1">⭐ (1)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Response Time</label>
-                    <select id="vendorResponse">
-                        <option value="excellent">Excellent (< 2 hours)</option>
-                        <option value="good">Good (< 24 hours)</option>
-                        <option value="fair">Fair (< 3 days)</option>
-                        <option value="poor">Poor (> 3 days)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Availability</label>
-                    <select id="vendorAvailable">
-                        <option value="confirmed">✅ Date Confirmed</option>
-                        <option value="hold">⏳ On Hold</option>
-                        <option value="checking">🔍 Checking</option>
-                        <option value="unavailable">❌ Unavailable</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group" style="grid-column: span 2;">
-                    <label>Includes (check all that apply)</label>
-                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem;">
-                        <label style="display: flex; align-items: center; gap: 0.5rem;">
-                            <input type="checkbox" id="incSetup"> Setup/Breakdown
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem;">
-                            <input type="checkbox" id="incStaff"> Staff Included
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem;">
-                            <input type="checkbox" id="incInsurance"> Insurance
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem;">
-                            <input type="checkbox" id="incTravel"> Travel Included
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem;">
-                            <input type="checkbox" id="incBackup"> Backup Plan
-                        </label>
+        </nav>
+
+        <div class="container">
+            <header>
+                <h1>Vendor Comparison Matrix</h1>
+                <p>Compare quotes side-by-side with weighted scoring</p>
+            </header>
+
+            <div class="setup-section">
+                <h3>Add New Vendor Quote</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Vendor Name *</label>
+                        <input type="text" id="vendorName" placeholder="e.g., Elegant Catering Co">
+                    </div>
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="vendorCategory">
+                            <option value="venue">Venue</option>
+                            <option value="catering">Catering</option>
+                            <option value="photo">Photography</option>
+                            <option value="video">Videography</option>
+                            <option value="music">Music/Entertainment</option>
+                            <option value="florist">Florist</option>
+                            <option value="decor">Decor/Rentals</option>
+                            <option value="transport">Transportation</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Quote Price *</label>
+                        <input type="number" id="vendorPrice" placeholder="0.00" step="0.01">
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Years Experience</label>
-                    <input type="number" id="vendorExp" placeholder="e.g., 5" min="0">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Rating (1-5)</label>
+                        <select id="vendorRating">
+                            <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                            <option value="4">⭐⭐⭐⭐ (4)</option>
+                            <option value="3">⭐⭐⭐ (3)</option>
+                            <option value="2">⭐⭐ (2)</option>
+                            <option value="1">⭐ (1)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Response Time</label>
+                        <select id="vendorResponse">
+                            <option value="excellent">Excellent (< 2 hours)</option>
+                            <option value="good">Good (< 24 hours)</option>
+                            <option value="fair">Fair (< 3 days)</option>
+                            <option value="poor">Poor (> 3 days)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Availability</label>
+                        <select id="vendorAvailable">
+                            <option value="confirmed">Date Confirmed</option>
+                            <option value="hold">On Hold</option>
+                            <option value="checking">Checking</option>
+                            <option value="unavailable">Unavailable</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Includes (check all that apply)</label>
+                        <div
+                            style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.5rem; font-size: 0.95em;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="checkbox" id="incSetup" style="width: auto;"> Setup/Breakdown
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="checkbox" id="incStaff" style="width: auto;"> Staff Included
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="checkbox" id="incInsurance" style="width: auto;"> Insurance
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="checkbox" id="incTravel" style="width: auto;"> Travel Included
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="checkbox" id="incBackup" style="width: auto;"> Backup Plan
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Years Experience</label>
+                        <input type="number" id="vendorExp" placeholder="e.g., 5" min="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="grid-column: span 3;">
+                        <label>Notes</label>
+                        <input type="text" id="vendorNotes" placeholder="Specifics, restrictions, special offers...">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="addVendor()" style="width: 100%;">Add Vendor to
+                    Comparison</button>
+            </div>
+
+            <div class="criteria-weights">
+                <h4>Scoring Weights (adjust to prioritize)</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                    <div>
+                        <div class="weight-slider">
+                            <label>💰 Price</label>
+                            <input type="range" id="weightPrice" min="0" max="10" value="7" onchange="render()">
+                            <span id="valPrice"
+                                style="font-family: 'Courier Prime', monospace; color: var(--accent);">7</span>
+                        </div>
+                        <div class="weight-slider">
+                            <label>⭐ Rating</label>
+                            <input type="range" id="weightRating" min="0" max="10" value="8" onchange="render()">
+                            <span id="valRating"
+                                style="font-family: 'Courier Prime', monospace; color: var(--accent);">8</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="weight-slider">
+                            <label>⚡ Response</label>
+                            <input type="range" id="weightResponse" min="0" max="10" value="5" onchange="render()">
+                            <span id="valResponse"
+                                style="font-family: 'Courier Prime', monospace; color: var(--accent);">5</span>
+                        </div>
+                        <div class="weight-slider">
+                            <label>📅 Availability</label>
+                            <input type="range" id="weightAvail" min="0" max="10" value="10" onchange="render()">
+                            <span id="valAvail"
+                                style="font-family: 'Courier Prime', monospace; color: var(--accent);">10</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="weight-slider">
+                            <label>✨ Features</label>
+                            <input type="range" id="weightFeatures" min="0" max="10" value="6" onchange="render()">
+                            <span id="valFeatures"
+                                style="font-family: 'Courier Prime', monospace; color: var(--accent);">6</span>
+                        </div>
+                        <div class="weight-slider">
+                            <label>🏆 Experience</label>
+                            <input type="range" id="weightExp" min="0" max="10" value="4" onchange="render()">
+                            <span id="valExp"
+                                style="font-family: 'Courier Prime', monospace; color: var(--accent);">4</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="form-row">
-                <div class="form-group" style="grid-column: span 3;">
-                    <label>Notes</label>
-                    <input type="text" id="vendorNotes" placeholder="Specifics, restrictions, special offers...">
-                </div>
-            </div>
-            <button class="btn btn-primary" onclick="addVendor()" style="width: 100%;">➕ Add Vendor to
-                Comparison</button>
-        </div>
 
-        <div class="criteria-weights">
-            <h4 style="margin-bottom: 0.5rem;">Scoring Weights (adjust to prioritize)</h4>
-            <div class="weight-slider">
-                <label>💰 Price (lower is better)</label>
-                <input type="range" id="weightPrice" min="0" max="10" value="7" onchange="render()">
-                <span id="valPrice">7</span>
+            <div class="comparison-table">
+                <table id="comparisonTable">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Vendor</th>
+                            <th>Price</th>
+                            <th>Rating</th>
+                            <th>Response</th>
+                            <th>Status</th>
+                            <th>Includes</th>
+                            <th>Score</th>
+                            <th>Notes</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vendorList"></tbody>
+                </table>
             </div>
-            <div class="weight-slider">
-                <label>⭐ Rating/Reviews</label>
-                <input type="range" id="weightRating" min="0" max="10" value="8" onchange="render()">
-                <span id="valRating">8</span>
-            </div>
-            <div class="weight-slider">
-                <label>⚡ Response Time</label>
-                <input type="range" id="weightResponse" min="0" max="10" value="5" onchange="render()">
-                <span id="valResponse">5</span>
-            </div>
-            <div class="weight-slider">
-                <label>📅 Availability</label>
-                <input type="range" id="weightAvail" min="0" max="10" value="10" onchange="render()">
-                <span id="valAvail">10</span>
-            </div>
-            <div class="weight-slider">
-                <label>✨ Included Features</label>
-                <input type="range" id="weightFeatures" min="0" max="10" value="6" onchange="render()">
-                <span id="valFeatures">6</span>
-            </div>
-            <div class="weight-slider">
-                <label>🏆 Experience</label>
-                <input type="range" id="weightExp" min="0" max="10" value="4" onchange="render()">
-                <span id="valExp">4</span>
-            </div>
-        </div>
 
-        <div class="comparison-table">
-            <table id="comparisonTable">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Vendor</th>
-                        <th>Price</th>
-                        <th>Rating</th>
-                        <th>Response</th>
-                        <th>Status</th>
-                        <th>Includes</th>
-                        <th>Score</th>
-                        <th>Notes</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="vendorList"></tbody>
-            </table>
-        </div>
-
-        <div class="data-controls">
-            <button class="btn btn-primary" onclick="exportData()">📥 Export Comparison</button>
-            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(this)">
-            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import</button>
-            <button class="btn btn-secondary" onclick="window.print()">🖨️ Print Matrix</button>
-            <button class="btn btn-danger" onclick="clearAll()">🗑️ Clear All</button>
+            <div class="data-controls">
+                <button class="btn btn-primary" onclick="exportData()">Export Comparison</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(this)">
+                <button class="btn btn-secondary"
+                    onclick="document.getElementById('importFile').click()">Import</button>
+                <button class="btn btn-secondary" onclick="window.print()">Print Matrix</button>
+                <button class="btn btn-danger" onclick="clearAll()">Clear All</button>
+            </div>
         </div>
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const splash = document.getElementById('splash-screen');
+            const mainContent = document.getElementById('main-content');
+
+            setTimeout(function () {
+                splash.classList.add('fade-out');
+                mainContent.classList.add('visible');
+
+                setTimeout(function () {
+                    splash.style.display = 'none';
+                }, 800);
+            }, 1000);
+
+            init();
+        });
+
         const STORAGE_KEY = 'event_vendors_v1';
         const CATEGORIES = {
-            venue: '🏛️ Venue', catering: '🍽️ Catering', photo: '📸 Photography',
-            video: '🎥 Videography', music: '🎵 Music', florist: '💐 Florist',
-            decor: '🎨 Decor', transport: '🚗 Transport', other: '📋 Other'
+            venue: 'Venue', catering: 'Catering', photo: 'Photography',
+            video: 'Videography', music: 'Music', florist: 'Florist',
+            decor: 'Decor', transport: 'Transport', other: 'Other'
         };
 
         let vendors = [];
@@ -515,33 +807,27 @@
             let score = 0;
             let maxScore = 0;
 
-            // Price score (inverse - lower is better, normalize to budget comparison)
             const prices = vendors.map(x => x.price);
             const maxPrice = Math.max(...prices, 1);
             const priceScore = (1 - (v.price / maxPrice)) * 100;
             score += priceScore * weights.price;
             maxScore += 100 * weights.price;
 
-            // Rating score (out of 5)
             score += (v.rating / 5) * 100 * weights.rating;
             maxScore += 100 * weights.rating;
 
-            // Response score
             const responseScores = { excellent: 100, good: 75, fair: 50, poor: 25 };
             score += (responseScores[v.response] || 0) * weights.response;
             maxScore += 100 * weights.response;
 
-            // Availability score
             const availScores = { confirmed: 100, hold: 75, checking: 50, unavailable: 0 };
             score += (availScores[v.availability] || 0) * weights.avail;
             maxScore += 100 * weights.avail;
 
-            // Features score
             const featureCount = Object.values(v.includes).filter(x => x).length;
             score += (featureCount / 5) * 100 * weights.features;
             maxScore += 100 * weights.features;
 
-            // Experience score (cap at 20 years for max score)
             score += (Math.min(v.experience, 20) / 20) * 100 * weights.exp;
             maxScore += 100 * weights.exp;
 
@@ -549,7 +835,6 @@
         }
 
         function render() {
-            // Calculate scores and sort
             const scored = vendors.map(v => ({ ...v, score: calculateScore(v) }));
             scored.sort((a, b) => b.score - a.score);
 
@@ -557,10 +842,13 @@
             tbody.innerHTML = scored.map((v, index) => {
                 const isWinner = index === 0 && v.score > 70;
                 const scoreClass = v.score >= 80 ? 'score-high' : v.score >= 60 ? 'score-med' : 'score-low';
+                const statusIcon = {
+                    confirmed: '✅', hold: '⏳', checking: '🔍', unavailable: '❌'
+                };
 
                 return `
                 <tr class="${isWinner ? 'winner-row' : ''}">
-                    <td><strong>#${index + 1}</strong></td>
+                    <td><strong style="font-family: 'Cormorant Garamond', serif; font-size: 1.25em;">#${index + 1}</strong></td>
                     <td>
                         <div class="vendor-name">${v.name}</div>
                         <div class="vendor-type">${CATEGORIES[v.category]}</div>
@@ -573,11 +861,9 @@
                     </td>
                     <td>${v.response.charAt(0).toUpperCase() + v.response.slice(1)}</td>
                     <td>
-                        ${v.availability === 'confirmed' ? '✅ Confirmed' :
-                        v.availability === 'hold' ? '⏳ Hold' :
-                            v.availability === 'checking' ? '🔍 Checking' : '❌ No'}
+                        ${statusIcon[v.availability]} ${v.availability.charAt(0).toUpperCase() + v.availability.slice(1)}
                     </td>
-                    <td>
+                    <td style="font-size: 0.9em; line-height: 1.4;">
                         ${v.includes.setup ? '<span class="feature-check">✓</span>' : '<span class="feature-x">○</span>'} Setup
                         <br>${v.includes.staff ? '<span class="feature-check">✓</span>' : '<span class="feature-x">○</span>'} Staff
                         <br>${v.includes.insurance ? '<span class="feature-check">✓</span>' : '<span class="feature-x">○</span>'} Ins
@@ -585,7 +871,7 @@
                     <td><span class="score-badge ${scoreClass}">${v.score}</span></td>
                     <td class="notes-cell">${v.notes || '-'}</td>
                     <td>
-                        <button class="btn btn-sm btn-danger" onclick="deleteVendor(${v.id})">Delete</button>
+                        <button class="btn btn-danger" onclick="deleteVendor(${v.id})">Delete</button>
                     </td>
                 </tr>
                 `;
@@ -663,8 +949,6 @@
             localStorage.removeItem(STORAGE_KEY);
             render();
         }
-
-        init();
     </script>
 </body>
 

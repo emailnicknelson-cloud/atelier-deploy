@@ -4,16 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Floor Plan Designer - Event Planner Suite</title>
+    <title>Floor Plan Designer - Whisper Workshop</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Courier+Prime:wght@400;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --primary: #6366f1;
-            --secondary: #ec4899;
-            --success: #10b981;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
+            --bg: #e4e4dc;
+            --card: rgba(255, 255, 255, 0.5);
+            --card-hover: rgba(255, 255, 255, 0.9);
+            --text: #3d3d3d;
+            --text-light: #666;
+            --accent: #8b7355;
+            --accent-light: rgba(139, 115, 85, 0.1);
+            --border: rgba(61, 61, 61, 0.1);
+            --border-strong: rgba(61, 61, 61, 0.2);
+            --success: #5a7c5a;
+            --danger: #b95d5d;
+            --warning: #cc9933;
         }
 
         * {
@@ -23,17 +31,126 @@
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
             overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        #splash-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .splash-content {
+            text-align: center;
+            animation: logoFadeIn 1s ease-out forwards;
+        }
+
+        .splash-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3em;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .splash-tagline {
+            font-size: 0.9em;
+            color: var(--text-light);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        @keyframes logoFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        #main-content {
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #main-content.visible {
+            opacity: 1;
+        }
+
+        /* Nav */
+        .nav-header {
+            background: rgba(255, 255, 255, 0.4);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            flex-shrink: 0;
+        }
+
+        .nav-container {
+            max-width: 100%;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5em;
+            font-weight: 500;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.85em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #6b5a45;
+            transform: translateX(-3px);
         }
 
         .app-container {
             display: grid;
             grid-template-columns: 280px 1fr 280px;
-            height: 100vh;
+            flex: 1;
+            overflow: hidden;
         }
 
         @media (max-width: 1200px) {
@@ -57,29 +174,32 @@
         }
 
         .toolbar {
-            background: var(--card);
+            background: rgba(255, 255, 255, 0.4);
             border-right: 1px solid var(--border);
             padding: 1rem;
             overflow-y: auto;
+            backdrop-filter: blur(10px);
         }
 
         .canvas-container {
-            background: #e2e8f0;
+            background: #d8d8d0;
             position: relative;
             overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05);
         }
 
         #canvas {
             background: white;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             cursor: crosshair;
         }
 
         .properties-panel {
-            background: var(--card);
+            background: rgba(255, 255, 255, 0.4);
             border-left: 1px solid var(--border);
             padding: 1rem;
             overflow-y: auto;
+            backdrop-filter: blur(10px);
         }
 
         .tool-section {
@@ -93,48 +213,53 @@
         }
 
         h3 {
-            font-size: 0.75rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1em;
+            color: var(--text);
+            margin-bottom: 1rem;
+            font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: #64748b;
-            margin-bottom: 0.75rem;
         }
 
         .shape-btn {
             width: 100%;
             padding: 0.75rem;
             margin-bottom: 0.5rem;
-            background: #f1f5f9;
-            border: 2px solid transparent;
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 4px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 0.75rem;
             transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
         }
 
         .shape-btn:hover {
-            background: #e2e8f0;
+            background: white;
+            border-color: var(--accent);
         }
 
         .shape-btn.active {
-            border-color: var(--primary);
-            background: #e0e7ff;
+            border-color: var(--accent);
+            background: var(--accent-light);
+            color: var(--accent);
+            font-weight: 500;
         }
 
         .shape-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--primary);
-            border-radius: 4px;
-        }
-
-        .room-dims {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
+            width: 24px;
+            height: 24px;
+            background: #ccc;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
         }
 
         input[type="number"],
@@ -142,42 +267,64 @@
         select {
             width: 100%;
             padding: 0.5rem;
-            border: 2px solid var(--border);
-            border-radius: 6px;
-            font-size: 0.875rem;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--border-strong);
+            border-radius: 2px;
+            font-size: 0.9em;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: #fff;
         }
 
         .btn {
             width: 100%;
-            padding: 0.75rem;
+            padding: 0.6rem;
             border: none;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 600;
+            border-radius: 2px;
+            font-size: 0.85em;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
             margin-bottom: 0.5rem;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.02em;
         }
 
         .btn-primary {
-            background: var(--primary);
-            color: white;
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
         }
 
         .btn-secondary {
-            background: #f1f5f9;
-            color: #475569;
-            border: 2px solid var(--border);
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--text);
+            border: 1px solid var(--border-strong);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
         }
 
         .btn-danger {
-            background: #fee2e2;
+            background: transparent;
             color: var(--danger);
+            border: 1px solid rgba(185, 93, 93, 0.3);
         }
 
-        .btn-sm {
-            padding: 0.5rem;
-            font-size: 0.75rem;
+        .btn-danger:hover {
+            background: var(--danger);
+            color: white;
         }
 
         .zoom-controls {
@@ -186,31 +333,40 @@
             left: 1rem;
             display: flex;
             gap: 0.5rem;
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
             padding: 0.5rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
         }
 
         .zoom-btn {
-            width: 36px;
-            height: 36px;
-            border: none;
-            background: #f1f5f9;
-            border-radius: 6px;
+            width: 30px;
+            height: 30px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 2px;
             cursor: pointer;
             font-weight: 700;
+            color: var(--text);
+        }
+
+        .zoom-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
         }
 
         .info-overlay {
             position: absolute;
             top: 1rem;
             left: 1rem;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            font-size: 0.875rem;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.75rem;
+            border-radius: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            font-size: 0.8em;
+            font-family: 'Courier Prime', monospace;
+            border: 1px solid var(--border);
         }
 
         .prop-group {
@@ -220,39 +376,25 @@
         .prop-group label {
             display: block;
             font-size: 0.75rem;
-            color: #64748b;
+            color: var(--text-light);
             margin-bottom: 0.25rem;
-        }
-
-        .layer-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem;
-            background: #f1f5f9;
-            border-radius: 6px;
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        .layer-visibility {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .color-picker {
             display: flex;
-            gap: 0.25rem;
+            gap: 0.4rem;
             flex-wrap: wrap;
         }
 
         .color-swatch {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             cursor: pointer;
             border: 2px solid transparent;
+            transition: transform 0.2s;
         }
 
         .color-swatch:hover {
@@ -261,210 +403,241 @@
 
         .color-swatch.active {
             border-color: var(--text);
+            transform: scale(1.1);
         }
 
         .measurement-mode {
-            background: #fef3c7;
+            background: #fff8e1;
             padding: 0.5rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8em;
             margin-top: 0.5rem;
             display: none;
+            border: 1px solid #ffeeba;
+            color: #b45309;
         }
 
         .measurement-mode.active {
             display: block;
         }
 
-        header {
-            padding: 1rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-        }
-
-        header h1 {
-            font-size: 1.25rem;
+        /* Checkbox styling */
+        input[type="range"] {
+            width: 100%;
         }
 
         @media print {
 
             .toolbar,
             .properties-panel,
-            .zoom-controls {
-                display: none;
+            .zoom-controls,
+            .nav-header,
+            #splash-screen {
+                display: none !important;
             }
 
             .canvas-container {
                 width: 100vw;
                 height: 100vh;
+                background: white;
+                box-shadow: none;
+            }
+
+            .app-container {
+                display: block;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="app-container">
-        <div class="toolbar">
-            <header>
-                <h1>📐 Floor Plan Designer</h1>
-                <p style="font-size: 0.875rem; opacity: 0.9;">2D Room Layout Tool</p>
-            </header>
-
-            <div class="tool-section" style="margin-top: 1rem;">
-                <h3>Room Setup</h3>
-                <div class="prop-group">
-                    <label>Room Width (ft)</label>
-                    <input type="number" id="roomWidth" value="60" min="10" max="200" onchange="updateRoom()">
-                </div>
-                <div class="prop-group">
-                    <label>Room Length (ft)</label>
-                    <input type="number" id="roomLength" value="40" min="10" max="200" onchange="updateRoom()">
-                </div>
-                <button class="btn btn-secondary" onclick="resetView()">Reset View</button>
-            </div>
-
-            <div class="tool-section">
-                <h3>Furniture & Objects</h3>
-                <button class="shape-btn active" onclick="setTool('select')" id="tool-select">
-                    <span class="shape-icon" style="background: #64748b;">↖</span>
-                    <span>Select/Move</span>
-                </button>
-                <button class="shape-btn" onclick="setTool('table-round')" id="tool-table-round">
-                    <span class="shape-icon" style="background: #8b5cf6; border-radius: 50%;">●</span>
-                    <span>Round Table (60")</span>
-                </button>
-                <button class="shape-btn" onclick="setTool('table-rect')" id="tool-table-rect">
-                    <span class="shape-icon" style="background: #ec4899;">▭</span>
-                    <span>Rectangular Table</span>
-                </button>
-                <button class="shape-btn" onclick="setTool('chair')" id="tool-chair">
-                    <span class="shape-icon"
-                        style="background: #f59e0b; clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);">🪑</span>
-                    <span>Chair</span>
-                </button>
-                <button class="shape-btn" onclick="setTool('stage')" id="tool-stage">
-                    <span class="shape-icon" style="background: #10b981;">▰</span>
-                    <span>Stage/Dance Floor</span>
-                </button>
-                <button class="shape-btn" onclick="setTool('bar')" id="tool-bar">
-                    <span class="shape-icon" style="background: #ef4444;">▂</span>
-                    <span>Bar</span>
-                </button>
-                <button class="shape-btn" onclick="setTool('wall')" id="tool-wall">
-                    <span class="shape-icon" style="background: #1e293b; height: 4px; margin: 14px 0;">—</span>
-                    <span>Wall/Divider</span>
-                </button>
-                <button class="shape-btn" onclick="setTool('measure')" id="tool-measure">
-                    <span class="shape-icon" style="background: #06b6d4;">📏</span>
-                    <span>Measure Tool</span>
-                </button>
-            </div>
-
-            <div class="tool-section">
-                <h3>Load from Seating Chart</h3>
-                <button class="btn btn-primary" onclick="importFromSeating()">Import Tables</button>
-                <p style="font-size: 0.75rem; color: #64748b; margin-top: 0.5rem;">Imports tables from Seating Chart
-                    tool</p>
-            </div>
-
-            <div class="tool-section">
-                <h3>Actions</h3>
-                <button class="btn btn-danger" onclick="deleteSelected()">Delete Selected</button>
-                <button class="btn btn-secondary" onclick="clearAll()">Clear All Objects</button>
-                <button class="btn btn-secondary" onclick="duplicateSelected()">Duplicate</button>
-            </div>
-
-            <div class="tool-section">
-                <h3>Export</h3>
-                <button class="btn btn-primary" onclick="exportPlan()">Save Plan (JSON)</button>
-                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importPlan(this)">
-                <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Load
-                    Plan</button>
-                <button class="btn btn-secondary" onclick="exportImage()">Export PNG</button>
-            </div>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo">Floor Plan Designer</div>
+            <div class="splash-tagline">Layout & Flow</div>
         </div>
+    </div>
 
-        <div class="canvas-container">
-            <canvas id="canvas" width="1200" height="800"></canvas>
-
-            <div class="info-overlay">
-                <div id="cursorPos">0, 0 ft</div>
-                <div id="selectionInfo" style="margin-top: 0.5rem; color: #64748b; font-size: 0.75rem;">No selection
-                </div>
+    <div id="main-content">
+        <nav class="nav-header">
+            <div class="nav-container">
+                <a href="https://whisperworkshop.com/nav.html" class="nav-brand">Floor Plan Designer</a>
+                <a href="https://whisperworkshop.com/nav.html" class="nav-link">Return to Whisper Workshop Tool
+                    Suite</a>
             </div>
+        </nav>
 
-            <div class="zoom-controls">
-                <button class="zoom-btn" onclick="zoom(-0.1)">-</button>
-                <span id="zoomDisplay" style="padding: 0 0.5rem;">100%</span>
-                <button class="zoom-btn" onclick="zoom(0.1)">+</button>
-                <button class="zoom-btn" onclick="resetZoom()" style="font-size: 0.75rem;">Fit</button>
-            </div>
-
-            <div class="measurement-mode" id="measureMode">
-                <strong>Measurement Mode:</strong> Click and drag to measure distance
-            </div>
-        </div>
-
-        <div class="properties-panel" id="propPanel">
-            <h3 style="margin-top: 0;">Properties</h3>
-            <div id="noSelection" style="color: #64748b; font-size: 0.875rem; padding: 2rem 0; text-align: center;">
-                Select an object to edit properties
-            </div>
-
-            <div id="propEditor" style="display: none;">
-                <div class="prop-group">
-                    <label>Object Type</label>
-                    <input type="text" id="propType" readonly>
+        <div class="app-container">
+            <div class="toolbar">
+                <div class="tool-section">
+                    <h3>Room Setup</h3>
+                    <div class="prop-group">
+                        <label>Room Width (ft)</label>
+                        <input type="number" id="roomWidth" value="60" min="10" max="200" onchange="updateRoom()">
+                    </div>
+                    <div class="prop-group">
+                        <label>Room Length (ft)</label>
+                        <input type="number" id="roomLength" value="40" min="10" max="200" onchange="updateRoom()">
+                    </div>
+                    <button class="btn btn-secondary" onclick="resetView()">Reset View</button>
                 </div>
 
-                <div class="prop-group">
-                    <label>Label</label>
-                    <input type="text" id="propLabel" onchange="updateObject()">
-                </div>
-
-                <div class="prop-group">
-                    <label>Width (ft)</label>
-                    <input type="number" id="propWidth" step="0.5" onchange="updateObject()">
-                </div>
-
-                <div class="prop-group">
-                    <label>Length (ft)</label>
-                    <input type="number" id="propLength" step="0.5" onchange="updateObject()">
-                </div>
-
-                <div class="prop-group">
-                    <label>Rotation (°)</label>
-                    <input type="range" id="propRotation" min="0" max="360" step="15" oninput="updateObject()">
-                </div>
-
-                <div class="prop-group">
-                    <label>Color</label>
-                    <div class="color-picker" id="colorPicker"></div>
-                </div>
-
-                <div class="prop-group">
-                    <label>Position</label>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                        <input type="number" id="propX" step="0.5" onchange="updateObject()">
-                        <input type="number" id="propY" step="0.5" onchange="updateObject()">
+                <div class="tool-section">
+                    <h3>Furniture & Objects</h3>
+                    <button class="shape-btn active" onclick="setTool('select')" id="tool-select">
+                        <span class="shape-icon" style="background: #78716c;">↖</span>
+                        <span>Select/Move</span>
+                    </button>
+                    <button class="shape-btn" onclick="setTool('table-round')" id="tool-table-round">
+                        <span class="shape-icon" style="background: #8b5cf6; border-radius: 50%;">●</span>
+                        <span>Round Table (60")</span>
+                    </button>
+                    <button class="shape-btn" onclick="setTool('table-rect')" id="tool-table-rect">
+                        <span class="shape-icon" style="background: #ec4899;">▭</span>
+                        <span>Rectangular Table</span>
+                    </button>
+                    <button class="shape-btn" onclick="setTool('chair')" id="tool-chair">
+                        <span class="shape-icon"
+                            style="background: #f59e0b; clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);">🪑</span>
+                        <span>Chair</span>
+                    </button>
+                    <button class="shape-btn" onclick="setTool('stage')" id="tool-stage">
+                        <span class="shape-icon" style="background: #10b981;">▰</span>
+                        <span>Stage/Dance Floor</span>
+                    </button>
+                    <button class="shape-btn" onclick="setTool('bar')" id="tool-bar">
+                        <span class="shape-icon" style="background: #ef4444;">▂</span>
+                        <span>Bar</span>
+                    </button>
+                    <button class="shape-btn" onclick="setTool('wall')" id="tool-wall">
+                        <span class="shape-icon" style="background: #1e293b; height: 4px; margin: 10px 0;">—</span>
+                        <span>Wall/Divider</span>
+                    </button>
+                    <button class="shape-btn" onclick="setTool('measure')" id="tool-measure">
+                        <span class="shape-icon" style="background: #06b6d4;">📏</span>
+                        <span>Measure Tool</span>
+                    </button>
+                    <div class="measurement-mode" id="measureMode">
+                        Click and drag to measure distance
                     </div>
                 </div>
 
-                <button class="btn btn-primary" onclick="bringToFront()">Bring to Front</button>
-                <button class="btn btn-secondary" onclick="sendToBack()">Send to Back</button>
+                <div class="tool-section">
+                    <h3>Actions</h3>
+                    <button class="btn btn-primary" onclick="importFromSeating()">Import Tables</button>
+                    <button class="btn btn-secondary" onclick="duplicateSelected()">Duplicate Selected</button>
+                    <button class="btn btn-danger" onclick="deleteSelected()">Delete Selected</button>
+                    <button class="btn btn-danger" onclick="clearAll()">Clear All Objects</button>
+                </div>
+
+                <div class="tool-section">
+                    <h3>Data</h3>
+                    <button class="btn btn-primary" onclick="exportPlan()">Save JSON</button>
+                    <input type="file" id="importFile" accept=".json" style="display: none;"
+                        onchange="importPlan(this)">
+                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Load
+                        JSON</button>
+                    <button class="btn btn-secondary" onclick="exportImage()">Export PNG</button>
+                </div>
             </div>
 
-            <div class="tool-section" style="margin-top: 2rem;">
-                <h3>Layers</h3>
-                <div id="layerList"></div>
+            <div class="canvas-container">
+                <canvas id="canvas" width="1200" height="800"></canvas>
+
+                <div class="info-overlay">
+                    <div id="cursorPos">0.0, 0.0 ft</div>
+                    <div id="selectionInfo" style="margin-top: 0.25rem; color: #888;">No selection</div>
+                </div>
+
+                <div class="zoom-controls">
+                    <button class="zoom-btn" onclick="zoom(-0.1)">-</button>
+                    <span id="zoomDisplay"
+                        style="font-family: 'Courier Prime', monospace; font-size: 0.9em; align-self: center;">100%</span>
+                    <button class="zoom-btn" onclick="zoom(0.1)">+</button>
+                    <button class="zoom-btn" onclick="resetZoom()"
+                        style="width: auto; padding: 0 0.5rem; font-size: 0.8em; font-weight: 500;">Fit</button>
+                </div>
+            </div>
+
+            <div class="properties-panel" id="propPanel">
+                <h3>Properties</h3>
+                <div id="noSelection"
+                    style="color: var(--text-light); font-size: 0.9em; padding: 2rem 0; text-align: center; font-style: italic;">
+                    Select an object to edit
+                </div>
+
+                <div id="propEditor" style="display: none;">
+                    <div class="prop-group">
+                        <label>Object Type</label>
+                        <input type="text" id="propType" readonly
+                            style="background: rgba(0,0,0,0.05); color: #666; border: none;">
+                    </div>
+
+                    <div class="prop-group">
+                        <label>Label</label>
+                        <input type="text" id="propLabel" onchange="updateObject()">
+                    </div>
+
+                    <div class="prop-group">
+                        <label>Width (ft)</label>
+                        <input type="number" id="propWidth" step="0.5" onchange="updateObject()">
+                    </div>
+
+                    <div class="prop-group">
+                        <label>Length (ft)</label>
+                        <input type="number" id="propLength" step="0.5" onchange="updateObject()">
+                    </div>
+
+                    <div class="prop-group">
+                        <label>Rotation (°)</label>
+                        <input type="range" id="propRotation" min="0" max="360" step="15" oninput="updateObject()">
+                        <div style="text-align: right; font-size: 0.8em; color: #888;" id="propRotDisplay">0°</div>
+                    </div>
+
+                    <div class="prop-group">
+                        <label>Color</label>
+                        <div class="color-picker" id="colorPicker"></div>
+                    </div>
+
+                    <div class="prop-group">
+                        <label>Position (X, Y)</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                            <input type="number" id="propX" step="0.5" onchange="updateObject()">
+                            <input type="number" id="propY" step="0.5" onchange="updateObject()">
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 2rem;">
+                        <button class="btn btn-secondary" onclick="bringToFront()">Bring to Front</button>
+                        <button class="btn btn-secondary" onclick="sendToBack()">Send to Back</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const splash = document.getElementById('splash-screen');
+            const mainContent = document.getElementById('main-content');
+
+            setTimeout(function () {
+                splash.classList.add('fade-out');
+                mainContent.classList.add('visible');
+
+                setTimeout(function () {
+                    splash.style.display = 'none';
+                }, 800);
+            }, 1000);
+
+            init();
+        });
+
         const STORAGE_KEY = 'event_floorplan_v1';
         const PIXELS_PER_FOOT = 10;
-        const COLORS = ['#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#06b6d4', '#6366f1', '#84cc16', '#1e293b'];
+        // Earthy/Subdued brand colors
+        const COLORS = ['#8b7355', '#3d3d3d', '#5a7c5a', '#b95d5d', '#cc9933', '#8b5cf6', '#78716c', '#000000'];
 
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
@@ -485,6 +658,10 @@
             setupCanvas();
             setupColorPicker();
             animate();
+
+            document.getElementById('propRotation').addEventListener('input', (e) => {
+                document.getElementById('propRotDisplay').textContent = e.target.value + '°';
+            });
         }
 
         function setupCanvas() {
@@ -494,8 +671,16 @@
             canvas.width = rect.width * dpr;
             canvas.height = rect.height * dpr;
             ctx.scale(dpr, dpr);
-            canvas.style.width = rect.width + 'px';
-            canvas.style.height = rect.height + 'px';
+            // Don't set style width/height here to rely on CSS layout
+
+            // Resize observer
+            new ResizeObserver(() => {
+                const rect = canvas.parentNode.getBoundingClientRect();
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                ctx.scale(dpr, dpr);
+                draw();
+            }).observe(canvas.parentNode);
 
             canvas.addEventListener('mousedown', handleMouseDown);
             canvas.addEventListener('mousemove', handleMouseMove);
@@ -507,14 +692,26 @@
         function setupColorPicker() {
             const picker = document.getElementById('colorPicker');
             picker.innerHTML = COLORS.map(c =>
-                `<div class="color-swatch" style="background: ${c}" onclick="setColor('${c}')"></div>`
+                `<div class="color-swatch" style="background: ${c}" onclick="setColor('${c}')" title="${c}"></div>`
             ).join('');
+        }
+
+        function setColor(c) {
+            if (selectedId) {
+                const obj = objects.find(o => o.id === selectedId);
+                if (obj) {
+                    obj.color = c;
+                    draw();
+                    updateProperties();
+                }
+            }
         }
 
         function updateRoom() {
             room.width = parseFloat(document.getElementById('roomWidth').value) || 60;
             room.length = parseFloat(document.getElementById('roomLength').value) || 40;
             draw();
+            savePlan();
         }
 
         function setTool(tool) {
@@ -523,6 +720,9 @@
             document.getElementById(`tool-${tool}`)?.classList.add('active');
 
             document.getElementById('measureMode').classList.toggle('active', tool === 'measure');
+            selectedId = null;
+            updateProperties();
+            draw();
         }
 
         function screenToWorld(sx, sy) {
@@ -553,6 +753,7 @@
 
             if (currentTool === 'select') {
                 // Check for object selection (reverse order for top-first)
+                let hit = false;
                 for (let i = objects.length - 1; i >= 0; i--) {
                     const obj = objects[i];
                     if (hitTest(worldPos.x, worldPos.y, obj)) {
@@ -561,15 +762,18 @@
                         dragStart = { x: worldPos.x - obj.x, y: worldPos.y - obj.y };
                         updateProperties();
                         draw();
+                        hit = true;
                         return;
                     }
                 }
-                selectedId = null;
-                updateProperties();
 
-                // Pan start
-                isDragging = true;
-                dragStart = { x: mouseX - offset.x, y: mouseY - offset.y };
+                if (!hit) {
+                    selectedId = null;
+                    updateProperties();
+                    // Pan start
+                    isDragging = true;
+                    dragStart = { x: mouseX - offset.x, y: mouseY - offset.y };
+                }
             } else {
                 // Create new object
                 createObject(currentTool, worldPos.x, worldPos.y);
@@ -618,7 +822,7 @@
                 if (obj) {
                     obj.x = worldPos.x - dragStart.x;
                     obj.y = worldPos.y - dragStart.y;
-                    updateProperties();
+                    updateProperties(); // Update inputs live
                 }
             } else if (currentTool === 'select') {
                 offset.x = mouseX - dragStart.x;
@@ -661,6 +865,7 @@
         }
 
         function hitTest(x, y, obj) {
+            // Simple bounding box hit test with rotation support
             const cos = Math.cos(-obj.rotation * Math.PI / 180);
             const sin = Math.sin(-obj.rotation * Math.PI / 180);
             const dx = x - obj.x;
@@ -676,9 +881,13 @@
                 'table-round': { width: 5, length: 5, rotation: 0, color: '#8b5cf6', shape: 'circle' },
                 'table-rect': { width: 6, length: 3, rotation: 0, color: '#ec4899', shape: 'rect' },
                 'chair': { width: 1.5, length: 1.5, rotation: 0, color: '#f59e0b', shape: 'chair' },
-                'stage': { width: 12, length: 8, rotation: 0, color: '#10b981', shape: 'rect' },
-                'bar': { width: 8, length: 2.5, rotation: 0, color: '#ef4444', shape: 'rect' },
-                'wall': { width: 0.5, length: 10, rotation: 0, color: '#1e293b', shape: 'wall' }
+                // Use brand colors for defaults
+                'table-round': { width: 5, length: 5, rotation: 0, color: '#8b7355', shape: 'circle' }, // accent
+                'table-rect': { width: 6, length: 3, rotation: 0, color: '#3d3d3d', shape: 'rect' }, // text dark
+                'chair': { width: 1.5, length: 1.5, rotation: 0, color: '#cc9933', shape: 'chair' }, // warning gold
+                'stage': { width: 12, length: 8, rotation: 0, color: '#5a7c5a', shape: 'rect' }, // success green
+                'bar': { width: 8, length: 2.5, rotation: 0, color: '#b95d5d', shape: 'rect' }, // danger red
+                'wall': { width: 0.5, length: 10, rotation: 0, color: '#333333', shape: 'wall' }
             };
 
             const def = defaults[type];
@@ -694,12 +903,134 @@
 
             savePlan();
             setTool('select');
+            selectedId = objects[objects.length - 1].id;
+            updateProperties();
+            draw();
+        }
+
+        function duplicateSelected() {
+            if (!selectedId) return;
+            const obj = objects.find(o => o.id === selectedId);
+            if (obj) {
+                const newObj = { ...obj, id: Date.now(), x: obj.x + 2, y: obj.y + 2 };
+                objects.push(newObj);
+                selectedId = newObj.id;
+                savePlan();
+                updateProperties();
+                draw();
+            }
+        }
+
+        function deleteSelected() {
+            if (!selectedId) return;
+            objects = objects.filter(o => o.id !== selectedId);
+            selectedId = null;
+            savePlan();
+            updateProperties();
+            draw();
+        }
+
+        function clearAll() {
+            if (confirm('Clear all objects?')) {
+                objects = [];
+                selectedId = null;
+                savePlan();
+                updateProperties();
+                draw();
+            }
+        }
+
+        function updateObject() {
+            if (!selectedId) return;
+            const obj = objects.find(o => o.id === selectedId);
+            if (obj) {
+                obj.label = document.getElementById('propLabel').value;
+                obj.width = parseFloat(document.getElementById('propWidth').value);
+                obj.length = parseFloat(document.getElementById('propLength').value);
+                obj.rotation = parseInt(document.getElementById('propRotation').value);
+                obj.x = parseFloat(document.getElementById('propX').value);
+                obj.y = parseFloat(document.getElementById('propY').value);
+
+                document.getElementById('propRotDisplay').textContent = obj.rotation + '°';
+                draw();
+                savePlan();
+            }
+        }
+
+        function updateProperties() {
+            const editor = document.getElementById('propEditor');
+            const noSel = document.getElementById('noSelection');
+
+            if (!selectedId) {
+                editor.style.display = 'none';
+                noSel.style.display = 'block';
+                return;
+            }
+
+            const obj = objects.find(o => o.id === selectedId);
+            if (obj) {
+                noSel.style.display = 'none';
+                editor.style.display = 'block';
+
+                document.getElementById('propType').value = obj.type;
+                document.getElementById('propLabel').value = obj.label || '';
+                document.getElementById('propWidth').value = obj.width;
+                document.getElementById('propLength').value = obj.length;
+                document.getElementById('propRotation').value = obj.rotation;
+                document.getElementById('propRotDisplay').textContent = obj.rotation + '°';
+                document.getElementById('propX').value = obj.x.toFixed(1);
+                document.getElementById('propY').value = obj.y.toFixed(1);
+
+                // Highlight active color
+                document.querySelectorAll('.color-swatch').forEach(el => {
+                    el.classList.toggle('active', el.style.backgroundColor === obj.color);
+                    // Handle hex conversion comparison if needed, though simple string compare works for set list
+                });
+            }
+        }
+
+        function bringToFront() {
+            if (!selectedId) return;
+            const idx = objects.findIndex(o => o.id === selectedId);
+            if (idx > -1) {
+                const [obj] = objects.splice(idx, 1);
+                objects.push(obj);
+                draw();
+                savePlan();
+            }
+        }
+
+        function sendToBack() {
+            if (!selectedId) return;
+            const idx = objects.findIndex(o => o.id === selectedId);
+            if (idx > -1) {
+                const [obj] = objects.splice(idx, 1);
+                objects.unshift(obj);
+                draw();
+                savePlan();
+            }
+        }
+
+        function resetView() {
+            zoom = 1;
+            offset = { x: 50, y: 50 };
+            document.getElementById('zoomDisplay').textContent = '100%';
+            draw();
+        }
+
+        function resetZoom() { resetView(); }
+
+        function zoom(delta) {
+            zoom = Math.max(0.5, Math.min(3, zoom + delta));
+            document.getElementById('zoomDisplay').textContent = Math.round(zoom * 100) + '%';
             draw();
         }
 
         function draw() {
+            if (!ctx) return;
+
             // Clear
-            ctx.fillStyle = '#e2e8f0';
+            ctx.fillStyle = '#d8d8d0';
             ctx.fillRect(0, 0, canvas.width / window.devicePixelRatio, canvas.height / window.devicePixelRatio);
 
             // Draw room
@@ -710,14 +1041,17 @@
                 h: room.length * PIXELS_PER_FOOT * zoom
             };
 
+            // Room floor
             ctx.fillStyle = 'white';
             ctx.fillRect(roomScreen.x, roomScreen.y, roomScreen.w, roomScreen.h);
-            ctx.strokeStyle = '#94a3b8';
-            ctx.lineWidth = 2;
+
+            // Room Wall border
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 4 * zoom;
             ctx.strokeRect(roomScreen.x, roomScreen.y, roomScreen.w, roomScreen.h);
 
             // Draw grid
-            ctx.strokeStyle = '#e2e8f0';
+            ctx.strokeStyle = '#e5e5e5';
             ctx.lineWidth = 1;
             for (let x = 0; x <= room.width; x += 5) {
                 const sx = offset.x + x * PIXELS_PER_FOOT * zoom;
@@ -745,9 +1079,9 @@
                 ctx.rotate(obj.rotation * Math.PI / 180);
 
                 // Shadow
-                ctx.shadowColor = 'rgba(0,0,0,0.2)';
-                ctx.shadowBlur = 4;
-                ctx.shadowOffsetY = 2;
+                ctx.shadowColor = 'rgba(0,0,0,0.1)';
+                ctx.shadowBlur = 8 * zoom;
+                ctx.shadowOffsetY = 4 * zoom;
 
                 // Object body
                 ctx.fillStyle = obj.color;
@@ -759,34 +1093,39 @@
                     ctx.beginPath();
                     ctx.arc(0, 0, w / 2, 0, Math.PI * 2);
                     ctx.fill();
+                    // Chair back indicator
                     ctx.fillStyle = 'rgba(255,255,255,0.3)';
                     ctx.beginPath();
                     ctx.arc(0, -h / 4, w / 4, 0, Math.PI * 2);
                     ctx.fill();
                 } else if (obj.shape === 'wall') {
+                    ctx.fillStyle = '#000';
                     ctx.fillRect(-w / 2, -h / 2, w, h);
-                    ctx.strokeStyle = '#0f172a';
-                    ctx.lineWidth = 1;
-                    ctx.strokeRect(-w / 2, -h / 2, w, h);
                 } else {
                     ctx.beginPath();
-                    ctx.roundRect(-w / 2, -h / 2, w, h, 4);
+                    ctx.roundRect(-w / 2, -h / 2, w, h, 2);
                     ctx.fill();
                 }
 
+                // Border/Styling
                 ctx.shadowColor = 'transparent';
+                ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+                ctx.lineWidth = 1;
+                if (obj.shape !== 'wall') {
+                    ctx.stroke();
+                }
 
                 // Selection highlight
                 if (obj.id === selectedId) {
-                    ctx.strokeStyle = '#06b6d4';
-                    ctx.lineWidth = 3;
+                    ctx.strokeStyle = '#8b7355'; // Accent color
+                    ctx.lineWidth = 2;
                     ctx.setLineDash([5, 5]);
                     if (obj.shape === 'circle') {
                         ctx.beginPath();
-                        ctx.arc(0, 0, w / 2 + 5, 0, Math.PI * 2);
+                        ctx.arc(0, 0, w / 2 + 4, 0, Math.PI * 2);
                         ctx.stroke();
                     } else {
-                        ctx.strokeRect(-w / 2 - 3, -h / 2 - 3, w + 6, h + 6);
+                        ctx.strokeRect(-w / 2 - 4, -h / 2 - 4, w + 8, h + 8);
                     }
                     ctx.setLineDash([]);
                 }
@@ -794,174 +1133,32 @@
                 // Label
                 if (obj.label) {
                     ctx.fillStyle = 'white';
-                    ctx.font = 'bold 12px sans-serif';
+                    ctx.font = `bold ${10 * zoom}px sans-serif`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
+                    ctx.shadowColor = 'rgba(0,0,0,0.5)';
+                    ctx.shadowBlur = 2;
                     ctx.fillText(obj.label, 0, 0);
+                    ctx.shadowColor = 'transparent';
                 }
 
                 ctx.restore();
             });
+
+            // animate loop handled by requestAnimationFrame in animate()
         }
 
         function animate() {
-            requestAnimationFrame(animate);
-        }
-
-        function updateProperties() {
-            const obj = objects.find(o => o.id === selectedId);
-            const noSel = document.getElementById('noSelection');
-            const editor = document.getElementById('propEditor');
-
-            if (!obj) {
-                noSel.style.display = 'block';
-                editor.style.display = 'none';
-                document.getElementById('selectionInfo').textContent = 'No selection';
-                return;
-            }
-
-            noSel.style.display = 'none';
-            editor.style.display = 'block';
-
-            document.getElementById('propType').value = obj.type;
-            document.getElementById('propLabel').value = obj.label || '';
-            document.getElementById('propWidth').value = obj.width;
-            document.getElementById('propLength').value = obj.length;
-            document.getElementById('propRotation').value = obj.rotation;
-            document.getElementById('propX').value = obj.x.toFixed(1);
-            document.getElementById('propY').value = obj.y.toFixed(1);
-
-            // Update color picker
-            document.querySelectorAll('.color-swatch').forEach(swatch => {
-                swatch.classList.toggle('active', swatch.style.background === obj.color);
-            });
-
-            document.getElementById('selectionInfo').textContent =
-                `${obj.type} at ${obj.x.toFixed(1)}, ${obj.y.toFixed(1)}`;
-        }
-
-        function updateObject() {
-            const obj = objects.find(o => o.id === selectedId);
-            if (!obj) return;
-
-            obj.label = document.getElementById('propLabel').value;
-            obj.width = parseFloat(document.getElementById('propWidth').value) || obj.width;
-            obj.length = parseFloat(document.getElementById('propLength').value) || obj.length;
-            obj.rotation = parseInt(document.getElementById('propRotation').value) || 0;
-            obj.x = parseFloat(document.getElementById('propX').value) || obj.x;
-            obj.y = parseFloat(document.getElementById('propY').value) || obj.y;
-
-            savePlan();
-            draw();
-        }
-
-        function setColor(color) {
-            const obj = objects.find(o => o.id === selectedId);
-            if (obj) {
-                obj.color = color;
-                updateObject();
-            }
-        }
-
-        function deleteSelected() {
-            if (!selectedId) return;
-            objects = objects.filter(o => o.id !== selectedId);
-            selectedId = null;
-            updateProperties();
-            savePlan();
-            draw();
-        }
-
-        function duplicateSelected() {
-            const obj = objects.find(o => o.id === selectedId);
-            if (!obj) return;
-
-            objects.push({
-                ...obj,
-                id: Date.now(),
-                x: obj.x + 2,
-                y: obj.y + 2
-            });
-            savePlan();
-            draw();
-        }
-
-        function bringToFront() {
-            const idx = objects.findIndex(o => o.id === selectedId);
-            if (idx > -1) {
-                const obj = objects.splice(idx, 1)[0];
-                objects.push(obj);
-                savePlan();
-                draw();
-            }
-        }
-
-        function sendToBack() {
-            const idx = objects.findIndex(o => o.id === selectedId);
-            if (idx > -1) {
-                const obj = objects.splice(idx, 1)[0];
-                objects.unshift(obj);
-                savePlan();
-                draw();
-            }
-        }
-
-        function importFromSeating() {
-            const stored = localStorage.getItem('event_seating_v1');
-            if (!stored) {
-                alert('No seating chart data found');
-                return;
-            }
-
-            const data = JSON.parse(stored);
-            if (!data.tables || data.tables.length === 0) {
-                alert('No tables in seating chart');
-                return;
-            }
-
-            // Import tables as round tables
-            data.tables.forEach((table, i) => {
-                const type = TABLE_TYPES[table.type];
-                objects.push({
-                    id: Date.now() + i,
-                    type: 'table-round',
-                    x: 10 + (i % 5) * 8,
-                    y: 10 + Math.floor(i / 5) * 8,
-                    width: type.width / 12, // Convert inches to feet approximation
-                    length: type.height / 12,
-                    rotation: 0,
-                    color: '#8b5cf6',
-                    shape: 'circle',
-                    label: `Table ${i + 1}`
-                });
-            });
-
-            savePlan();
-            draw();
-            alert(`Imported ${data.tables.length} tables`);
-        }
-
-        function zoom(delta) {
-            zoom = Math.max(0.5, Math.min(3, zoom + delta));
-            document.getElementById('zoomDisplay').textContent = Math.round(zoom * 100) + '%';
-            draw();
-        }
-
-        function resetZoom() {
-            zoom = 1;
-            offset = { x: 50, y: 50 };
-            document.getElementById('zoomDisplay').textContent = '100%';
-            draw();
-        }
-
-        function resetView() {
-            offset = { x: 50, y: 50 };
-            zoom = 1;
-            draw();
+            // If we needed continuous animation
+            // requestAnimationFrame(animate);
         }
 
         function savePlan() {
-            const data = { room, objects, timestamp: new Date().toISOString() };
+            const data = {
+                room,
+                objects,
+                timestamp: Date.now()
+            };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         }
 
@@ -969,18 +1166,52 @@
             const stored = localStorage.getItem(STORAGE_KEY);
             if (stored) {
                 const data = JSON.parse(stored);
-                room = data.room || room;
-                objects = data.objects || [];
+                if (data.room) room = data.room;
+                if (data.objects) objects = data.objects;
 
                 document.getElementById('roomWidth').value = room.width;
                 document.getElementById('roomLength').value = room.length;
             }
         }
 
+        function importFromSeating() {
+            const seatingData = localStorage.getItem('event_seating_v1');
+            if (!seatingData) {
+                alert('No seating chart data found');
+                return;
+            }
+
+            try {
+                const data = JSON.parse(seatingData);
+                if (data.tables && data.tables.length > 0) {
+                    if (confirm(`Import ${data.tables.length} tables from Seating Chart? This will add to existing objects.`)) {
+                        data.tables.forEach(t => {
+                            objects.push({
+                                id: Date.now() + Math.random(),
+                                type: t.type === 'round' ? 'table-round' : 'table-rect',
+                                x: t.x / PIXELS_PER_FOOT,
+                                y: t.y / PIXELS_PER_FOOT,
+                                width: t.type === 'round' ? 5 : 6,
+                                length: t.type === 'round' ? 5 : 3,
+                                rotation: 0,
+                                color: t.type === 'round' ? '#8b7355' : '#3d3d3d',
+                                shape: t.type === 'round' ? 'circle' : 'rect',
+                                label: t.name || ''
+                            });
+                        });
+                        savePlan();
+                        draw();
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
         function exportPlan() {
             const exportData = {
                 app: "WhisperWorkshop",
-                type: "floorPlanDesigner",
+                type: "floorPlan",
                 version: "1.0",
                 timestamp: new Date().toISOString(),
                 data: { room, objects }
@@ -996,29 +1227,31 @@
         function importPlan(input) {
             const file = input.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
                     const json = JSON.parse(e.target.result);
                     let data;
-
-                    if (json.app === "WhisperWorkshop" && json.type === "floorPlanDesigner") {
+                    if (json.app === "WhisperWorkshop" && json.type === "floorPlan") {
                         data = json.data;
                     } else {
                         data = json; // Legacy support
                     }
 
-                    if (confirm(`Load floor plan with ${data.objects?.length || 0} objects?`)) {
-                        room = data.room || room;
-                        objects = data.objects || [];
-                        document.getElementById('roomWidth').value = room.width;
-                        document.getElementById('roomLength').value = room.length;
-                        savePlan();
-                        draw();
+                    if (data && data.room && data.objects) {
+                        if (confirm('Import floor plan? This will overwrite current layout.')) {
+                            room = data.room;
+                            objects = data.objects;
+                            document.getElementById('roomWidth').value = room.width;
+                            document.getElementById('roomLength').value = room.length;
+                            savePlan();
+                            draw();
+                        }
+                    } else {
+                        alert('Invalid floor plan file');
                     }
                 } catch (err) {
-                    alert('Invalid floor plan file');
+                    alert('Invalid file');
                 }
             };
             reader.readAsText(file);
@@ -1027,21 +1260,10 @@
 
         function exportImage() {
             const link = document.createElement('a');
-            link.download = `floorplan_${new Date().toISOString().split('T')[0]}.png`;
+            link.download = 'floorplan.png';
             link.href = canvas.toDataURL();
             link.click();
         }
-
-        function clearAll() {
-            if (!confirm('Clear all objects?')) return;
-            objects = [];
-            selectedId = null;
-            savePlan();
-            updateProperties();
-            draw();
-        }
-
-        init();
     </script>
 </body>
 

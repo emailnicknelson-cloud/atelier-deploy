@@ -3,18 +3,26 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Planner - Event Planner Suite</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Menu Planner - Whisper Workshop</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --primary: #f59e0b;
-            --secondary: #ec4899;
-            --success: #10b981;
-            --danger: #ef4444;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
+            --bg: #e4e4dc;
+            --card: rgba(255, 255, 255, 0.5);
+            --card-hover: rgba(255, 255, 255, 0.9);
+            --text: #3d3d3d;
+            --text-light: #666;
+            --accent: #8b7355;
+            --accent-light: rgba(139, 115, 85, 0.1);
+            --border: rgba(61, 61, 61, 0.1);
+            --border-strong: rgba(61, 61, 61, 0.2);
+            --success: #5a7c5a;
+            --danger: #b95d5d;
+            --warning: #cc9933;
+            --info: #5d7cb9;
         }
 
         * {
@@ -24,25 +32,145 @@
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s ease-in-out;
+            pointer-events: auto;
+        }
+
+        #splash-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        .splash-content {
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.95);
+            animation: logoFadeIn 1s ease-out forwards;
+        }
+
+        .splash-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3em;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .splash-tagline {
+            font-size: 0.9em;
+            color: var(--text-light);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        @keyframes logoFadeIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        #main-content {
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            min-height: 100vh;
+        }
+
+        #main-content.visible {
+            opacity: 1;
+        }
+
+        /* Nav */
+        .nav-header {
+            background: rgba(255, 255, 255, 0.4);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5em;
+            font-weight: 500;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.85em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #6b5a45;
+            transform: translateX(-3px);
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 3rem 2rem;
         }
 
         header {
             text-align: center;
-            margin-bottom: 2.5rem;
-            padding: 2rem;
-            background: linear-gradient(135deg, var(--primary), #ea580c);
-            border-radius: 16px;
-            color: white;
+            margin-bottom: 3rem;
+            padding: 3rem 2rem;
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5em;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-light);
+            font-size: 0.95em;
+            letter-spacing: 0.05em;
         }
 
         .dashboard {
@@ -55,74 +183,121 @@
         .metric-card {
             background: var(--card);
             padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--border);
             text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            background: var(--card-hover);
+            transform: translateY(-2px);
         }
 
         .metric-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5em;
+            font-weight: 600;
+            color: var(--text);
         }
 
         .metric-label {
-            color: #64748b;
-            font-size: 0.875rem;
+            color: var(--text-light);
+            font-size: 0.8em;
             text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 0.5rem;
         }
 
         .alert-box {
-            background: #fef3c7;
-            border-left: 4px solid var(--primary);
+            background: rgba(204, 153, 51, 0.1);
+            border-left: 3px solid var(--warning);
             padding: 1rem 1.5rem;
-            border-radius: 0 8px 8px 0;
+            border-radius: 0 4px 4px 0;
             margin-bottom: 1.5rem;
             display: none;
+            align-items: center;
+            gap: 1rem;
         }
 
         .alert-box.active {
             display: flex;
-            align-items: center;
-            gap: 0.75rem;
         }
 
         .dietary-legend {
             display: flex;
-            gap: 1rem;
+            gap: 0.5rem;
             flex-wrap: wrap;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             padding: 1rem;
             background: var(--card);
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
         }
 
         .dietary-tag {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
+            gap: 0.4rem;
+            padding: 0.4rem 0.8rem;
             border-radius: 20px;
-            font-size: 0.875rem;
+            font-size: 0.85em;
             font-weight: 500;
+            border: 1px solid transparent;
+        }
+
+        .veg {
+            background: rgba(90, 124, 90, 0.15);
+            color: var(--success);
+            border-color: rgba(90, 124, 90, 0.2);
+        }
+
+        .vegan {
+            background: rgba(90, 124, 90, 0.25);
+            color: #3d5c3d;
+            border-color: rgba(90, 124, 90, 0.3);
+        }
+
+        .gf {
+            background: rgba(204, 153, 51, 0.15);
+            color: #997a00;
+            border-color: rgba(204, 153, 51, 0.2);
+        }
+
+        .df {
+            background: rgba(93, 124, 185, 0.15);
+            color: var(--info);
+            border-color: rgba(93, 124, 185, 0.2);
+        }
+
+        .nut-free {
+            background: rgba(185, 93, 93, 0.1);
+            color: var(--danger);
+            border-color: rgba(185, 93, 93, 0.2);
         }
 
         .course-section {
             background: var(--card);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--border);
             margin-bottom: 1.5rem;
             overflow: hidden;
         }
 
         .course-header {
-            background: linear-gradient(90deg, var(--primary), #fbbf24);
-            color: white;
+            background: rgba(255, 255, 255, 0.6);
             padding: 1rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .course-header h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5em;
+            color: var(--accent);
+            font-weight: 600;
         }
 
         .course-content {
@@ -130,133 +305,132 @@
         }
 
         .menu-item {
-            background: #f8fafc;
-            border: 2px solid var(--border);
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 6px;
             padding: 1rem;
             margin-bottom: 1rem;
             display: grid;
-            grid-template-columns: 1fr auto auto auto auto;
-            gap: 1rem;
+            grid-template-columns: 1fr auto auto auto;
+            gap: 1.5rem;
             align-items: center;
             transition: all 0.2s;
         }
 
         .menu-item:hover {
-            border-color: var(--primary);
+            border-color: var(--accent);
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
         @media (max-width: 768px) {
             .menu-item {
                 grid-template-columns: 1fr;
+                gap: 1rem;
             }
         }
 
         .item-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.25em;
             font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.25rem;
         }
 
         .item-desc {
-            font-size: 0.875rem;
-            color: #64748b;
-            margin-top: 0.25rem;
+            font-size: 0.9em;
+            color: var(--text-light);
+            font-style: italic;
         }
 
         .dietary-icons {
             display: flex;
-            gap: 0.25rem;
+            gap: 0.4rem;
+            margin-top: 0.5rem;
         }
 
         .dietary-icon {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.7em;
+            font-weight: 600;
             cursor: help;
         }
 
-        .veg {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .vegan {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .gf {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .df {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .nut-free {
-            background: #fce7f3;
-            color: #be185d;
-        }
-
         .portion-calc {
-            background: #f1f5f9;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.875rem;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 0.5rem 0.8rem;
+            border-radius: 4px;
+            font-family: 'Inter', monospace;
+            font-size: 0.85em;
+            border: 1px solid var(--border);
+            min-width: 120px;
+            text-align: right;
         }
 
         .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 600;
+            padding: 0.6rem 1.2rem;
+            border: 1px solid var(--border-strong);
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
+            font-family: 'Inter', sans-serif;
+            background: white;
+            color: var(--text);
+        }
+
+        .btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
         }
 
         .btn-primary {
-            background: var(--primary);
-            color: white;
+            background: var(--text);
+            color: var(--bg);
+            border-color: var(--text);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
-        }
-
-        .btn-secondary {
-            background: #f1f5f9;
-            color: #475569;
-            border: 2px solid var(--border);
-        }
-
-        .btn-danger {
-            background: #fee2e2;
-            color: var(--danger);
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
         }
 
         .btn-sm {
-            padding: 0.5rem 1rem;
-            font-size: 0.75rem;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8em;
+        }
+
+        .btn-danger {
+            color: var(--danger);
+            border-color: rgba(185, 93, 93, 0.3);
+            background: rgba(185, 93, 93, 0.05);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
         }
 
         .add-item-form {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr auto;
             gap: 1rem;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px dashed var(--border);
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px dashed var(--border-strong);
         }
 
         @media (max-width: 968px) {
@@ -266,149 +440,216 @@
         }
 
         input,
-        select,
-        textarea {
-            padding: 0.75rem;
-            border: 2px solid var(--border);
-            border-radius: 8px;
+        select {
+            padding: 0.6rem;
+            border: 1px solid var(--border-strong);
+            border-radius: 4px;
             font-family: inherit;
+            background: rgba(255, 255, 255, 0.7);
         }
 
         input:focus,
-        select:focus,
-        textarea:focus {
+        select:focus {
             outline: none;
-            border-color: var(--primary);
+            border-color: var(--accent);
+            background: white;
         }
 
         .checkbox-group {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.8rem;
             flex-wrap: wrap;
+            margin-top: 0.5rem;
         }
 
         .checkbox-item {
             display: flex;
             align-items: center;
-            gap: 0.25rem;
-            padding: 0.5rem;
-            background: white;
-            border: 2px solid var(--border);
-            border-radius: 6px;
+            gap: 0.4rem;
+            font-size: 0.85em;
             cursor: pointer;
-            font-size: 0.875rem;
-        }
-
-        .checkbox-item:hover {
-            border-color: var(--primary);
-        }
-
-        .checkbox-item input {
-            width: auto;
+            color: var(--text-light);
         }
 
         .shopping-list {
             background: var(--card);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-            margin-top: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .shopping-list h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5em;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
         }
 
         .shopping-category {
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .shopping-category h4 {
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--border);
+            color: var(--text);
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            font-size: 1em;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .shopping-item {
             display: flex;
             justify-content: space-between;
             padding: 0.5rem 0;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95em;
         }
 
         .data-controls {
-            margin-top: 2rem;
+            margin-top: 3rem;
             padding: 1.5rem;
-            background: #f1f5f9;
-            border-radius: 12px;
+            background: var(--card);
+            border-radius: 8px;
+            border: 1px solid var(--border);
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
+        }
+
+        @media print {
+
+            .nav-header,
+            .add-item-form,
+            .btn,
+            .data-controls,
+            #splash-screen {
+                display: none;
+            }
+
+            .container {
+                padding: 0;
+            }
+
+            body {
+                background: white;
+            }
+
+            .course-section,
+            .shopping-list {
+                break-inside: avoid;
+                border: 1px solid #ccc;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <h1>🍽️ Menu Planner</h1>
-            <p>Design courses, calculate portions, and accommodate dietary restrictions</p>
-        </header>
-
-        <div class="dashboard">
-            <div class="metric-card">
-                <div class="metric-value" id="guestCount">0</div>
-                <div class="metric-label">Total Guests</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value" id="dietaryCount">0</div>
-                <div class="metric-label">Dietary Restrictions</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value" id="totalCourses">0</div>
-                <div class="metric-label">Menu Items</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value" id="estCost">$0</div>
-                <div class="metric-label">Est. Food Cost</div>
-            </div>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo">Menu Planner</div>
+            <div class="splash-tagline">Professional Event Planning Suite</div>
         </div>
+    </div>
 
-        <div class="alert-box" id="dietaryAlert">
-            <span style="font-size: 1.25rem;">⚠️</span>
-            <div>
-                <strong>Dietary Alert</strong>
-                <div id="alertDetails" style="font-size: 0.875rem; margin-top: 0.25rem;"></div>
+    <!-- Main Content -->
+    <div id="main-content">
+        <nav class="nav-header">
+            <div class="nav-container">
+                <a href="https://whisperworkshop.com/nav.html" class="nav-brand">Menu Planner</a>
+                <a href="https://whisperworkshop.com/nav.html" class="nav-link">Return to Whisper Workshop Tool
+                    Suite</a>
             </div>
-        </div>
+        </nav>
 
-        <div class="dietary-legend">
-            <span style="font-weight: 600; margin-right: 0.5rem;">Dietary Icons:</span>
-            <span class="dietary-tag veg">🥬 Veg</span>
-            <span class="dietary-tag vegan">🌱 Vegan</span>
-            <span class="dietary-tag gf">🌾 GF</span>
-            <span class="dietary-tag df">🥛 DF</span>
-            <span class="dietary-tag nut-free">🥜 Nut-Free</span>
-        </div>
+        <div class="container">
+            <header>
+                <h1>Menu Planner</h1>
+                <p>Design courses, calculate portions, and accommodate dietary restrictions</p>
+            </header>
 
-        <div id="coursesContainer"></div>
+            <div class="dashboard">
+                <div class="metric-card">
+                    <div class="metric-value" id="guestCount">0</div>
+                    <div class="metric-label">Total Guests</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="dietaryCount">0</div>
+                    <div class="metric-label">Dietary Restrictions</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="totalCourses">0</div>
+                    <div class="metric-label">Menu Items</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="estCost">$0</div>
+                    <div class="metric-label">Est. Food Cost</div>
+                </div>
+            </div>
 
-        <button class="btn btn-primary" style="width: 100%; margin-bottom: 2rem;" onclick="addCourse()">➕ Add New
-            Course</button>
+            <div class="alert-box" id="dietaryAlert">
+                <span style="font-size: 1.25rem;">⚠️</span>
+                <div>
+                    <strong>Dietary Alert</strong>
+                    <div id="alertDetails" style="font-size: 0.9em; margin-top: 0.2rem; color: #5a4a35;"></div>
+                </div>
+            </div>
 
-        <div class="shopping-list">
-            <h3 style="margin-bottom: 1rem; color: var(--primary);">🛒 Auto-Generated Shopping List</h3>
-            <div id="shoppingList"></div>
-        </div>
+            <div class="dietary-legend">
+                <span
+                    style="font-weight: 600; color: var(--text-light); font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.05em;">Code:</span>
+                <span class="dietary-tag veg">Vegetarian (V)</span>
+                <span class="dietary-tag vegan">Vegan (VG)</span>
+                <span class="dietary-tag gf">Gluten-Free (GF)</span>
+                <span class="dietary-tag df">Dairy-Free (DF)</span>
+                <span class="dietary-tag nut-free">Nut-Free (NF)</span>
+            </div>
 
-        <div class="data-controls">
-            <button class="btn btn-primary" onclick="exportData()">📥 Export Menu</button>
-            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(this)">
-            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import
-                Menu</button>
-            <button class="btn btn-secondary" onclick="generatePDF()">📄 Print Menu</button>
-            <button class="btn btn-danger" onclick="clearAll()">🗑️ Clear All</button>
+            <div id="coursesContainer"></div>
+
+            <button class="btn btn-primary" style="width: 100%; margin-bottom: 2rem; padding: 1rem;"
+                onclick="addCourse()">Add New
+                Course Section</button>
+
+            <div class="shopping-list">
+                <h3>Auto-Generated Shopping List</h3>
+                <div id="shoppingList"></div>
+            </div>
+
+            <div class="data-controls">
+                <button class="btn btn-primary" onclick="exportData()">Export Menu</button>
+                <div style="position: relative; overflow: hidden; display: inline-block;">
+                    <button class="btn" onclick="document.getElementById('importFile').click()">Import Menu</button>
+                    <input type="file" id="importFile" accept=".json" style="position: absolute; left: -9999px;"
+                        onchange="importData(this)">
+                </div>
+                <button class="btn" onclick="generatePDF()">Print Menu</button>
+                <button class="btn btn-danger" onclick="clearAll()">Clear All</button>
+            </div>
         </div>
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const splash = document.getElementById('splash-screen');
+            const mainContent = document.getElementById('main-content');
+
+            setTimeout(function () {
+                splash.classList.add('fade-out');
+                mainContent.classList.add('visible');
+
+                setTimeout(function () {
+                    splash.style.display = 'none';
+                }, 800);
+            }, 1500);
+
+            init();
+        });
+
         const STORAGE_KEY = 'event_menu_v1';
         const COURSES = ['Appetizers', 'Salads', 'Main Course', 'Sides', 'Desserts', 'Beverages', 'Late Night'];
 
@@ -427,20 +668,22 @@
             const stored = localStorage.getItem('event_guests_v1');
             if (stored) {
                 const guests = JSON.parse(stored);
+                // Filter simply by presence in list or check specific status if needed, assuming 'confirmed' for portions
                 const confirmed = guests.filter(g => g.rsvp === 'confirmed');
-                menuData.guests = confirmed.length;
+                menuData.guests = confirmed.length > 0 ? confirmed.length : (guests.length > 0 ? guests.length : 50); // Default to 50 if no guests
 
                 // Count dietary restrictions
                 const dietary = {};
-                confirmed.forEach(g => {
-                    g.dietary.forEach(d => {
-                        dietary[d] = (dietary[d] || 0) + 1;
-                        if (g.plusOne && g.plusOne !== 'Pending') {
+                (confirmed.length > 0 ? confirmed : guests).forEach(g => {
+                    if (g.dietary) {
+                        g.dietary.forEach(d => {
                             dietary[d] = (dietary[d] || 0) + 1;
-                        }
-                    });
+                        });
+                    }
                 });
                 menuData.dietaryGuests = dietary;
+            } else {
+                menuData.guests = 50; // Default
             }
             updateDashboard();
         }
@@ -567,7 +810,7 @@
 
             return {
                 count: Math.ceil(baseCount * multiplier),
-                note: 'Full service with 50% buffer'
+                note: 'Full service + buffer'
             };
         }
 
@@ -578,7 +821,7 @@
                 <div class="course-section">
                     <div class="course-header">
                         <h3>${course.name}</h3>
-                        <button class="btn btn-sm" style="background: rgba(255,255,255,0.2); color: white;" onclick="deleteCourse(${course.id})">Delete Course</button>
+                        <button class="btn btn-sm" onclick="deleteCourse(${course.id})">Remove Section</button>
                     </div>
                     <div class="course-content">
                         ${course.items.map(item => {
@@ -588,7 +831,7 @@
                                 <div>
                                     <div class="item-name">${item.name}</div>
                                     ${item.description ? `<div class="item-desc">${item.description}</div>` : ''}
-                                    <div class="dietary-icons" style="margin-top: 0.5rem;">
+                                    <div class="dietary-icons">
                                         ${item.dietary.includes('Vegetarian') ? '<span class="dietary-icon veg" title="Vegetarian">V</span>' : ''}
                                         ${item.dietary.includes('Vegan') ? '<span class="dietary-icon vegan" title="Vegan">VG</span>' : ''}
                                         ${item.dietary.includes('Gluten-Free') ? '<span class="dietary-icon gf" title="Gluten-Free">GF</span>' : ''}
@@ -597,46 +840,37 @@
                                     </div>
                                 </div>
                                 <div class="portion-calc">
-                                    ${portions.count} ${item.unit}<br>
-                                    <small style="color: #64748b;">${portions.note}</small>
+                                    <strong>${portions.count}</strong> ${item.unit}<br>
+                                    <small style="color: var(--text-light); font-size: 0.8em;">${portions.note}</small>
                                 </div>
-                                <button class="btn btn-danger btn-sm" onclick="deleteItem(${course.id}, ${item.id})">Delete</button>
+                                <div></div>
+                                <button class="btn btn-danger btn-sm" onclick="deleteItem(${course.id}, ${item.id})">×</button>
                             </div>
                             `;
             }).join('')}
                         
                         <div class="add-item-form">
-                            <input type="text" id="item-name-${course.id}" placeholder="Item name (e.g., Caesar Salad)" required>
+                            <input type="text" id="item-name-${course.id}" placeholder="Item name (e.g., Caesar Salad)">
                             <input type="text" id="item-desc-${course.id}" placeholder="Description">
                             <div style="display: flex; gap: 0.5rem;">
                                 <input type="number" id="item-portion-${course.id}" placeholder="Qty" value="1" style="width: 60px;">
                                 <select id="item-unit-${course.id}" style="width: 100px;">
                                     <option value="servings">servings</option>
                                     <option value="lbs">lbs</option>
-                                    <option value="pieces">pieces</option>
-                                    <option value="gallons">gallons</option>
+                                    <option value="pieces">pcs</option>
+                                    <option value="gallons">gal</option>
                                     <option value="trays">trays</option>
-                                    <option value="bottles">bottles</option>
+                                    <option value="bottles">btl</option>
                                 </select>
                             </div>
                             <button class="btn btn-primary" onclick="addItem(${course.id})">Add Item</button>
                         </div>
-                        <div class="checkbox-group" style="margin-top: 0.5rem;">
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="diet-${course.id}" value="Vegetarian"> 🥬 Vegetarian
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="diet-${course.id}" value="Vegan"> 🌱 Vegan
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="diet-${course.id}" value="Gluten-Free"> 🌾 Gluten-Free
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="diet-${course.id}" value="Dairy-Free"> 🥛 Dairy-Free
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="diet-${course.id}" value="Nut Allergy"> 🥜 Nut-Free
-                            </label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="diet-${course.id}" value="Vegetarian"> Vegetarian</label>
+                            <label class="checkbox-item"><input type="checkbox" name="diet-${course.id}" value="Vegan"> Vegan</label>
+                            <label class="checkbox-item"><input type="checkbox" name="diet-${course.id}" value="Gluten-Free"> Gluten-Free</label>
+                            <label class="checkbox-item"><input type="checkbox" name="diet-${course.id}" value="Dairy-Free"> Dairy-Free</label>
+                            <label class="checkbox-item"><input type="checkbox" name="diet-${course.id}" value="Nut Allergy"> Nut-Free</label>
                         </div>
                     </div>
                 </div>
@@ -648,8 +882,6 @@
 
         function renderShoppingList() {
             const container = document.getElementById('shoppingList');
-
-            // Aggregate all items by unit type
             const aggregated = {};
 
             menuData.courses.forEach(course => {
@@ -664,11 +896,10 @@
             });
 
             if (Object.keys(aggregated).length === 0) {
-                container.innerHTML = '<p style="color: #64748b;">Add menu items to generate shopping list...</p>';
+                container.innerHTML = '<p style="color: var(--text-light); font-style: italic;">Add menu items to generate shopping list...</p>';
                 return;
             }
 
-            // Group by unit type
             const byUnit = {};
             Object.values(aggregated).forEach(item => {
                 if (!byUnit[item.unit]) byUnit[item.unit] = [];
@@ -698,7 +929,6 @@
                 menuData = JSON.parse(stored);
                 render();
             } else {
-                // Initialize with default courses
                 menuData.courses = COURSES.map((name, i) => ({
                     id: Date.now() + i,
                     name,
@@ -766,8 +996,6 @@
             saveMenu();
             render();
         }
-
-        init();
     </script>
 </body>
 

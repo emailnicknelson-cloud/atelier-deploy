@@ -3,19 +3,27 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invitation Tracker - Event Planner Suite</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Invitation Tracker - Whisper Workshop</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --primary: #14b8a6;
-            --secondary: #06b6d4;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
+            --bg: #e4e4dc;
+            --card: rgba(255, 255, 255, 0.5);
+            --card-hover: rgba(255, 255, 255, 0.9);
+            --text: #3d3d3d;
+            --text-light: #666;
+            --accent: #8b7355;
+            --accent-light: rgba(139, 115, 85, 0.1);
+            --border: rgba(61, 61, 61, 0.1);
+            --border-strong: rgba(61, 61, 61, 0.2);
+            --success: #5a7c5a;
+            --danger: #b95d5d;
+            --warning: #cc9933;
+            --info: #5d7cb9;
+            --purple: #7d5db9;
         }
 
         * {
@@ -25,25 +33,145 @@
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s ease-in-out;
+            pointer-events: auto;
+        }
+
+        #splash-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        .splash-content {
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.95);
+            animation: logoFadeIn 1s ease-out forwards;
+        }
+
+        .splash-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3em;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .splash-tagline {
+            font-size: 0.9em;
+            color: var(--text-light);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        @keyframes logoFadeIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        #main-content {
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            min-height: 100vh;
+        }
+
+        #main-content.visible {
+            opacity: 1;
+        }
+
+        /* Nav */
+        .nav-header {
+            background: rgba(255, 255, 255, 0.4);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5em;
+            font-weight: 500;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.85em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #6b5a45;
+            transform: translateX(-3px);
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 3rem 2rem;
         }
 
         header {
             text-align: center;
-            margin-bottom: 2.5rem;
-            padding: 2rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 16px;
-            color: white;
+            margin-bottom: 3rem;
+            padding: 3rem 2rem;
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5em;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-light);
+            font-size: 0.95em;
+            letter-spacing: 0.05em;
         }
 
         .dashboard {
@@ -56,38 +184,54 @@
         .metric-card {
             background: var(--card);
             padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--border);
             text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            background: var(--card-hover);
+            transform: translateY(-2px);
         }
 
         .metric-value {
+            font-family: 'Cormorant Garamond', serif;
             font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary);
+            font-weight: 600;
+            color: var(--text);
         }
 
         .metric-label {
-            color: #64748b;
-            font-size: 0.875rem;
+            color: var(--text-light);
+            font-size: 0.8em;
             text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 0.5rem;
         }
 
         .progress-section {
             background: var(--card);
             padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--border);
             margin-bottom: 2rem;
         }
 
+        .progress-section h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3em;
+            color: var(--text);
+            margin-bottom: 1rem;
+        }
+
         .progress-bar {
-            height: 40px;
-            background: #e2e8f0;
-            border-radius: 20px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 16px;
             overflow: hidden;
             display: flex;
-            margin-top: 0.5rem;
+            border: 1px solid var(--border);
         }
 
         .progress-segment {
@@ -96,18 +240,18 @@
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: 600;
-            font-size: 0.875rem;
-            transition: width 0.3s ease;
+            font-weight: 500;
+            font-size: 0.8em;
+            transition: width 0.5s ease;
             position: relative;
         }
 
         .segment-sent {
-            background: #3b82f6;
+            background: var(--info);
         }
 
         .segment-opened {
-            background: #8b5cf6;
+            background: var(--purple);
         }
 
         .segment-responded {
@@ -120,95 +264,107 @@
 
         .kanban-board {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
+            align-items: start;
         }
 
         .kanban-column {
             background: var(--card);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--border);
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            max-height: 80vh;
         }
 
         .column-header {
             padding: 1rem;
-            font-weight: 700;
+            font-weight: 500;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid var(--border);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1em;
         }
 
-        .column-sent {
-            background: #dbeafe;
-            color: #1e40af;
+        .column-sent .column-header {
+            background: rgba(93, 124, 185, 0.1);
+            color: var(--info);
         }
 
-        .column-opened {
-            background: #e0e7ff;
-            color: #3730a3;
+        .column-opened .column-header {
+            background: rgba(125, 93, 185, 0.1);
+            color: var(--purple);
         }
 
-        .column-responded {
-            background: #dcfce7;
-            color: #166534;
+        .column-responded .column-header {
+            background: rgba(90, 124, 90, 0.1);
+            color: var(--success);
         }
 
-        .column-bounced {
-            background: #fee2e2;
-            color: #991b1b;
+        .column-bounced .column-header {
+            background: rgba(185, 93, 93, 0.1);
+            color: var(--danger);
         }
 
         .column-count {
-            background: rgba(255, 255, 255, 0.5);
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.875rem;
+            background: white;
+            padding: 0.15rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-family: 'Inter', sans-serif;
+            border: 1px solid var(--border);
         }
 
         .column-content {
             padding: 1rem;
-            min-height: 200px;
-            max-height: 500px;
             overflow-y: auto;
+            min-height: 150px;
+            flex: 1;
         }
 
         .invitation-card {
-            background: #f8fafc;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.875rem;
             margin-bottom: 0.75rem;
             cursor: grab;
             transition: all 0.2s;
         }
 
         .invitation-card:hover {
-            border-color: var(--primary);
+            border-color: var(--accent);
+            background: white;
             transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
 
         .invitation-card.dragging {
             opacity: 0.5;
+            border-style: dashed;
         }
 
         .guest-name {
-            font-weight: 600;
+            font-weight: 500;
             margin-bottom: 0.25rem;
+            font-size: 0.95em;
         }
 
         .guest-email {
-            font-size: 0.875rem;
-            color: #64748b;
+            font-size: 0.8em;
+            color: var(--text-light);
             margin-bottom: 0.5rem;
             word-break: break-all;
         }
 
         .status-dots {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.4rem;
             margin-top: 0.5rem;
         }
 
@@ -216,7 +372,7 @@
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: #e2e8f0;
+            background: rgba(0, 0, 0, 0.1);
         }
 
         .status-dot.active {
@@ -228,97 +384,122 @@
         }
 
         .timestamp {
-            font-size: 0.75rem;
-            color: #94a3b8;
+            font-size: 0.7em;
+            color: var(--text-light);
             margin-top: 0.5rem;
+            font-style: italic;
         }
 
         .batch-actions {
             background: var(--card);
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
             margin-bottom: 2rem;
+        }
+
+        .batch-actions h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5em;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
         }
 
         .form-row {
             display: grid;
             grid-template-columns: 2fr 1fr auto;
             gap: 1rem;
-            align-items: end;
-        }
-
-        @media (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
+            align-items: center;
         }
 
         input,
         select {
             padding: 0.75rem;
-            border: 2px solid var(--border);
-            border-radius: 8px;
+            border: 1px solid var(--border-strong);
+            border-radius: 4px;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            background: rgba(255, 255, 255, 0.6);
+            color: var(--text);
+            transition: all 0.2s;
             width: 100%;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: white;
         }
 
         .btn {
             padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 600;
+            border: 1px solid var(--border-strong);
+            border-radius: 6px;
+            font-size: 0.9em;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.05em;
+            background: white;
+            color: var(--text);
+        }
+
+        .btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
         }
 
         .btn-primary {
-            background: var(--primary);
+            background: var(--text);
+            color: var(--bg);
+            border-color: var(--text);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            border-color: var(--accent);
             color: white;
-        }
-
-        .btn-secondary {
-            background: #f1f5f9;
-            color: #475569;
-            border: 2px solid var(--border);
-        }
-
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-warning {
-            background: var(--warning);
-            color: white;
-        }
-
-        .btn-sm {
-            padding: 0.5rem 1rem;
-            font-size: 0.75rem;
+            transform: translateY(-1px);
         }
 
         .reminder-scheduler {
-            background: #fef3c7;
-            border-left: 4px solid var(--warning);
-            padding: 1rem;
-            margin-top: 1rem;
-            border-radius: 0 8px 8px 0;
+            background: rgba(204, 153, 51, 0.1);
+            border-left: 3px solid var(--warning);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-radius: 4px;
             display: none;
         }
 
         .reminder-scheduler.active {
             display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .data-controls {
             margin-top: 2rem;
             padding: 1.5rem;
-            background: #f1f5f9;
-            border-radius: 12px;
+            background: var(--card);
+            border-radius: 8px;
+            border: 1px solid var(--border);
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
@@ -326,145 +507,222 @@
 
         .stats-detail {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 1rem;
-            margin-top: 1rem;
+            margin-top: 1.5rem;
         }
 
         .stat-item {
             text-align: center;
             padding: 1rem;
-            background: #f8fafc;
+            background: rgba(255, 255, 255, 0.5);
             border-radius: 8px;
+            border: 1px solid var(--border);
         }
 
         .stat-number {
+            font-family: 'Cormorant Garamond', serif;
             font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
         }
 
-        .stat-desc {
-            font-size: 0.75rem;
-            color: #64748b;
-            margin-top: 0.25rem;
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-header {
+                padding: 15px 0;
+            }
+        }
+
+        @media print {
+
+            .nav-header,
+            .batch-actions,
+            .data-controls,
+            #splash-screen {
+                display: none;
+            }
+
+            .container {
+                padding: 0;
+            }
+
+            body {
+                background: white;
+            }
+
+            .kanban-board {
+                display: block;
+            }
+
+            .kanban-column {
+                margin-bottom: 2rem;
+                border: 1px solid #ccc;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <h1>📨 Invitation Tracker</h1>
-            <p>Monitor sent, opened, and responded invitations with automated reminders</p>
-        </header>
-
-        <div class="dashboard">
-            <div class="metric-card">
-                <div class="metric-value" id="totalInvites">0</div>
-                <div class="metric-label">Total Invitations</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value" id="openRate">0%</div>
-                <div class="metric-label">Open Rate</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value" id="responseRate">0%</div>
-                <div class="metric-label">Response Rate</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value" id="daysToEvent">0</div>
-                <div class="metric-label">Days to Event</div>
-            </div>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo">Invitation Tracker</div>
+            <div class="splash-tagline">Professional Event Planning Suite</div>
         </div>
+    </div>
 
-        <div class="progress-section">
-            <h3 style="margin-bottom: 0.5rem;">Invitation Pipeline</h3>
-            <div class="progress-bar" id="pipelineBar"></div>
-            <div class="stats-detail" id="pipelineStats"></div>
-        </div>
-
-        <div class="batch-actions">
-            <h3 style="margin-bottom: 1rem; color: var(--primary);">Batch Actions</h3>
-            <div class="form-row">
-                <input type="text" id="bulkEmails" placeholder="Enter email addresses (comma separated)">
-                <select id="templateSelect">
-                    <option value="standard">Standard Invitation</option>
-                    <option value="formal">Formal Invitation</option>
-                    <option value="casual">Casual/Friendly</option>
-                    <option value="reminder">Reminder Template</option>
-                    <option value="final">Final Call</option>
-                </select>
-                <button class="btn btn-primary" onclick="sendBatch()">📤 Send Invitations</button>
+    <!-- Main Content -->
+    <div id="main-content">
+        <nav class="nav-header">
+            <div class="nav-container">
+                <a href="https://whisperworkshop.com/nav.html" class="nav-brand">Invitation Tracker</a>
+                <a href="https://whisperworkshop.com/nav.html" class="nav-link">Return to Whisper Workshop Tool
+                    Suite</a>
             </div>
-            <button class="btn btn-secondary" style="margin-top: 0.5rem;" onclick="syncWithGuests()">🔄 Sync with Guest
-                List</button>
+        </nav>
 
-            <div class="reminder-scheduler" id="reminderBox">
-                <strong>📅 Schedule Reminder</strong>
-                <p style="font-size: 0.875rem; margin: 0.5rem 0;">Send follow-up to non-responders on:</p>
-                <div style="display: flex; gap: 1rem; align-items: center;">
-                    <input type="date" id="reminderDate">
-                    <select id="reminderType">
-                        <option value="gentle">Gentle Reminder</option>
-                        <option value="urgent">Urgent (1 week left)</option>
-                        <option value="final">Final Notice</option>
+        <div class="container">
+            <header>
+                <h1>Invitation Tracker</h1>
+                <p>Monitor sent, opened, and responded invitations with automated reminders</p>
+            </header>
+
+            <div class="dashboard">
+                <div class="metric-card">
+                    <div class="metric-value" id="totalInvites">0</div>
+                    <div class="metric-label">Total Invitations</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="openRate">0%</div>
+                    <div class="metric-label">Open Rate</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="responseRate">0%</div>
+                    <div class="metric-label">Response Rate</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="daysToEvent">0</div>
+                    <div class="metric-label">Days to Event</div>
+                </div>
+            </div>
+
+            <div class="progress-section">
+                <h3>Invitation Pipeline</h3>
+                <div class="progress-bar" id="pipelineBar"></div>
+                <div class="stats-detail" id="pipelineStats"></div>
+            </div>
+
+            <div class="batch-actions">
+                <h3>Batch Actions</h3>
+                <div class="form-row">
+                    <input type="text" id="bulkEmails" placeholder="Enter email addresses (comma separated)">
+                    <select id="templateSelect">
+                        <option value="standard">Standard Invitation</option>
+                        <option value="formal">Formal Invitation</option>
+                        <option value="casual">Casual/Friendly</option>
+                        <option value="reminder">Reminder Template</option>
+                        <option value="final">Final Call</option>
                     </select>
-                    <button class="btn btn-warning" onclick="scheduleReminder()">Schedule</button>
+                    <button class="btn btn-primary" onclick="sendBatch()">Send Invitations</button>
+                </div>
+                <div style="margin-top: 1rem; display: flex; gap: 1rem; align-items: center;">
+                    <button class="btn" onclick="syncWithGuests()">Sync with Guest List</button>
+                    <button class="btn" onclick="toggleReminders()"
+                        style="color: var(--warning); border-color: var(--warning);">Schedule Reminders</button>
+                </div>
+
+                <div class="reminder-scheduler" id="reminderBox">
+                    <strong style="display: block; margin-bottom: 0.5rem; color: #8a6d3b;">Schedule Reminder</strong>
+                    <p style="font-size: 0.875rem; margin-bottom: 1rem; color: #8a6d3b;">Send follow-up to
+                        non-responders on:</p>
+                    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                        <input type="date" id="reminderDate" style="max-width: 200px;">
+                        <select id="reminderType" style="max-width: 200px;">
+                            <option value="gentle">Gentle Reminder</option>
+                            <option value="urgent">Urgent (1 week left)</option>
+                            <option value="final">Final Notice</option>
+                        </select>
+                        <button class="btn"
+                            style="background: var(--warning); color: white; border-color: var(--warning);"
+                            onclick="scheduleReminder()">Schedule</button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="kanban-board">
-            <div class="kanban-column">
-                <div class="column-header column-sent">
-                    <span>📤 Sent</span>
-                    <span class="column-count" id="count-sent">0</span>
+            <div class="kanban-board">
+                <div class="kanban-column column-sent">
+                    <div class="column-header">
+                        <span>Sent</span>
+                        <span class="column-count" id="count-sent">0</span>
+                    </div>
+                    <div class="column-content" id="col-sent" ondrop="drop(event, 'sent')"
+                        ondragover="allowDrop(event)">
+                    </div>
                 </div>
-                <div class="column-content" id="col-sent" ondrop="drop(event, 'sent')" ondragover="allowDrop(event)">
+
+                <div class="kanban-column column-opened">
+                    <div class="column-header">
+                        <span>Opened</span>
+                        <span class="column-count" id="count-opened">0</span>
+                    </div>
+                    <div class="column-content" id="col-opened" ondrop="drop(event, 'opened')"
+                        ondragover="allowDrop(event)"></div>
+                </div>
+
+                <div class="kanban-column column-responded">
+                    <div class="column-header">
+                        <span>Responded</span>
+                        <span class="column-count" id="count-responded">0</span>
+                    </div>
+                    <div class="column-content" id="col-responded" ondrop="drop(event, 'responded')"
+                        ondragover="allowDrop(event)"></div>
+                </div>
+
+                <div class="kanban-column column-bounced">
+                    <div class="column-header">
+                        <span>Bounced</span>
+                        <span class="column-count" id="count-bounced">0</span>
+                    </div>
+                    <div class="column-content" id="col-bounced" ondrop="drop(event, 'bounced')"
+                        ondragover="allowDrop(event)"></div>
                 </div>
             </div>
 
-            <div class="kanban-column">
-                <div class="column-header column-opened">
-                    <span>👀 Opened</span>
-                    <span class="column-count" id="count-opened">0</span>
+            <div class="data-controls">
+                <button class="btn btn-primary" onclick="exportData()">Export Data</button>
+                <div style="position: relative; overflow: hidden; display: inline-block;">
+                    <button class="btn" onclick="document.getElementById('importFile').click()">Import Data</button>
+                    <input type="file" id="importFile" accept=".json" style="position: absolute; left: -9999px;"
+                        onchange="importData(this)">
                 </div>
-                <div class="column-content" id="col-opened" ondrop="drop(event, 'opened')"
-                    ondragover="allowDrop(event)"></div>
+                <button class="btn" onclick="window.print()">Print Status</button>
+                <button class="btn" style="color: var(--success); border-color: var(--success);"
+                    onclick="markAllOpened()">Mark All Opened</button>
             </div>
-
-            <div class="kanban-column">
-                <div class="column-header column-responded">
-                    <span>✅ Responded</span>
-                    <span class="column-count" id="count-responded">0</span>
-                </div>
-                <div class="column-content" id="col-responded" ondrop="drop(event, 'responded')"
-                    ondragover="allowDrop(event)"></div>
-            </div>
-
-            <div class="kanban-column">
-                <div class="column-header column-bounced">
-                    <span>❌ Bounced/Failed</span>
-                    <span class="column-count" id="count-bounced">0</span>
-                </div>
-                <div class="column-content" id="col-bounced" ondrop="drop(event, 'bounced')"
-                    ondragover="allowDrop(event)"></div>
-            </div>
-        </div>
-
-        <div class="data-controls">
-            <button class="btn btn-primary" onclick="exportData()">📥 Export Data</button>
-            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(this)">
-            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import
-                Data</button>
-            <button class="btn btn-secondary" onclick="window.print()">🖨️ Print Status</button>
-            <button class="btn btn-success" onclick="markAllOpened()">Mark All Opened</button>
-            <button class="btn btn-warning" onclick="toggleReminders()">📅 Schedule Reminders</button>
         </div>
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const splash = document.getElementById('splash-screen');
+            const mainContent = document.getElementById('main-content');
+
+            setTimeout(function () {
+                splash.classList.add('fade-out');
+                mainContent.classList.add('visible');
+
+                setTimeout(function () {
+                    splash.style.display = 'none';
+                }, 800);
+            }, 1500);
+
+            init();
+        });
+
         const STORAGE_KEY = 'event_invitations_v1';
         let invitations = [];
         let eventDate = null;
@@ -609,38 +867,41 @@
             Object.values(cols).forEach(col => col.innerHTML = '');
 
             invitations.forEach(inv => {
-                counts[inv.status]++;
+                if (cols[inv.status]) {
+                    counts[inv.status]++;
 
-                const card = document.createElement('div');
-                card.className = 'invitation-card';
-                card.draggable = true;
-                card.ondragstart = (e) => drag(e, inv.id);
+                    const card = document.createElement('div');
+                    card.className = 'invitation-card';
+                    card.draggable = true;
+                    card.ondragstart = (e) => drag(e, inv.id);
 
-                const sentDate = inv.sentAt ? new Date(inv.sentAt).toLocaleDateString() : 'Not sent';
-                const responseBadge = inv.rsvpStatus === 'confirmed' ? '✅' :
-                    inv.rsvpStatus === 'declined' ? '❌' :
-                        inv.rsvpStatus === 'pending' ? '⏳' : '○';
+                    const sentDate = inv.sentAt ? new Date(inv.sentAt).toLocaleDateString() : 'Not sent';
+                    const responseBadge = inv.rsvpStatus === 'confirmed' ? '✓' :
+                        inv.rsvpStatus === 'declined' ? '✗' :
+                            inv.rsvpStatus === 'pending' ? '?' : '○';
 
-                card.innerHTML = `
-                    <div class="guest-name">${responseBadge} ${inv.name}</div>
-                    <div class="guest-email">${inv.email}</div>
-                    <div style="font-size: 0.75rem; color: #64748b;">
-                        Template: ${TEMPLATES[inv.template]?.name || inv.template}
-                    </div>
-                    <div class="status-dots">
-                        <span class="status-dot ${inv.sentAt ? 'active' : ''}" title="Sent"></span>
-                        <span class="status-dot ${inv.openedAt ? 'active' : ''}" title="Opened"></span>
-                        <span class="status-dot ${inv.respondedAt ? 'active' : ''} ${inv.rsvpStatus === 'pending' ? 'pending' : ''}" title="Responded"></span>
-                    </div>
-                    ${inv.sentAt ? `<div class="timestamp">Sent: ${sentDate}</div>` : ''}
-                `;
+                    card.innerHTML = `
+                       <div class="guest-name"><span style="color: var(--accent); margin-right: 4px;">${responseBadge}</span> ${inv.name}</div>
+                       <div class="guest-email">${inv.email}</div>
+                       <div style="font-size: 0.75rem; color: var(--text-light);">
+                           ${TEMPLATES[inv.template]?.name || inv.template}
+                       </div>
+                       <div class="status-dots">
+                           <span class="status-dot ${inv.sentAt ? 'active' : ''}" title="Sent"></span>
+                           <span class="status-dot ${inv.openedAt ? 'active' : ''}" title="Opened"></span>
+                           <span class="status-dot ${inv.respondedAt ? 'active' : ''} ${inv.rsvpStatus === 'pending' ? 'pending' : ''}" title="Responded"></span>
+                       </div>
+                       ${inv.sentAt ? `<div class="timestamp">Sent: ${sentDate}</div>` : ''}
+                   `;
 
-                cols[inv.status].appendChild(card);
+                    cols[inv.status].appendChild(card);
+                }
             });
 
             // Update counts
             Object.keys(counts).forEach(key => {
-                document.getElementById(`count-${key}`).textContent = counts[key];
+                const el = document.getElementById(`count-${key}`);
+                if (el) el.textContent = counts[key];
             });
 
             // Update dashboard
@@ -658,7 +919,7 @@
             const pipelineStats = document.getElementById('pipelineStats');
 
             if (total === 0) {
-                pipeline.innerHTML = '<div style="width: 100%; text-align: center; line-height: 40px; color: #64748b;">No invitations sent yet</div>';
+                pipeline.innerHTML = '<div style="width: 100%; text-align: center; line-height: 32px; color: var(--text-light); font-size: 0.9em;">No invitations sent yet</div>';
             } else {
                 const sentPct = (counts.sent / total) * 100;
                 const openedPct = (counts.opened / total) * 100;
@@ -666,29 +927,29 @@
                 const bouncedPct = (counts.bounced / total) * 100;
 
                 pipeline.innerHTML = `
-                    ${counts.sent > 0 ? `<div class="progress-segment segment-sent" style="width: ${sentPct}%">${counts.sent}</div>` : ''}
-                    ${counts.opened > 0 ? `<div class="progress-segment segment-opened" style="width: ${openedPct}%">${counts.opened}</div>` : ''}
-                    ${counts.responded > 0 ? `<div class="progress-segment segment-responded" style="width: ${respondedPct}%">${counts.responded}</div>` : ''}
-                    ${counts.bounced > 0 ? `<div class="progress-segment segment-bounced" style="width: ${bouncedPct}%">${counts.bounced}</div>` : ''}
+                    ${counts.sent > 0 ? `<div class="progress-segment segment-sent" style="width: ${sentPct}%" title="Sent: ${counts.sent}">${counts.sent}</div>` : ''}
+                    ${counts.opened > 0 ? `<div class="progress-segment segment-opened" style="width: ${openedPct}%" title="Opened: ${counts.opened}">${counts.opened}</div>` : ''}
+                    ${counts.responded > 0 ? `<div class="progress-segment segment-responded" style="width: ${respondedPct}%" title="Responded: ${counts.responded}">${counts.responded}</div>` : ''}
+                    ${counts.bounced > 0 ? `<div class="progress-segment segment-bounced" style="width: ${bouncedPct}%" title="Bounced: ${counts.bounced}">${counts.bounced}</div>` : ''}
                 `;
             }
 
             pipelineStats.innerHTML = `
                 <div class="stat-item">
-                    <div class="stat-number" style="color: #3b82f6;">${counts.sent}</div>
-                    <div class="stat-desc">Awaiting Open</div>
+                    <div class="stat-number" style="color: var(--info);">${counts.sent}</div>
+                    <div class="stat-desc">Sent</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number" style="color: #8b5cf6;">${counts.opened}</div>
-                    <div class="stat-desc">Viewed Only</div>
+                    <div class="stat-number" style="color: var(--purple);">${counts.opened}</div>
+                    <div class="stat-desc">Viewed</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number" style="color: var(--success);">${counts.responded}</div>
-                    <div class="stat-desc">Completed</div>
+                    <div class="stat-desc">Done</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number" style="color: var(--danger);">${counts.bounced}</div>
-                    <div class="stat-desc">Failed/DNS</div>
+                    <div class="stat-desc">Failed</div>
                 </div>
             `;
         }
@@ -706,7 +967,6 @@
                 return;
             }
 
-            // In real implementation, this would schedule an actual email
             const nonResponders = invitations.filter(i => i.status !== 'responded');
             alert(`Scheduled ${type} reminder for ${date} to ${nonResponders.length} non-responders`);
 
@@ -714,7 +974,6 @@
         }
 
         function checkReminders() {
-            // Auto-check for reminders needed
             if (!eventDate) return;
 
             const daysLeft = Math.ceil((eventDate - new Date()) / (1000 * 60 * 60 * 24));
@@ -752,16 +1011,7 @@
                 type: "invitationTracker",
                 version: "1.0",
                 timestamp: new Date().toISOString(),
-                data: {
-                    invitations,
-                    stats: {
-                        total: invitations.length,
-                        sent: invitations.filter(i => i.status === 'sent').length,
-                        opened: invitations.filter(i => i.status === 'opened').length,
-                        responded: invitations.filter(i => i.status === 'responded').length,
-                        bounced: invitations.filter(i => i.status === 'bounced').length
-                    }
-                }
+                data: invitations
             };
 
             const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
@@ -783,10 +1033,9 @@
                     if (json.app === "WhisperWorkshop" && json.type === "invitationTracker") {
                         data = json.data;
                     } else {
-                        data = json; // Legacy or raw wrapper
+                        data = json;
                     }
 
-                    // Handle structure where data might be { invitations, stats } or just array (legacy)
                     const newInvites = Array.isArray(data) ? data : (data.invitations || []);
 
                     if (newInvites.length > 0 && confirm(`Import ${newInvites.length} invitations?`)) {
@@ -801,8 +1050,6 @@
             reader.readAsText(file);
             input.value = '';
         }
-
-        init();
     </script>
 </body>
 

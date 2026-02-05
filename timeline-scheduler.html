@@ -4,17 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Timeline Scheduler - Event Planner Suite</title>
+    <title>Timeline Scheduler - Whisper Workshop</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Courier+Prime:wght@400;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --primary: #8b5cf6;
-            --secondary: #ec4899;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
+            --bg: #e4e4dc;
+            --card: rgba(255, 255, 255, 0.5);
+            --card-hover: rgba(255, 255, 255, 0.9);
+            --text: #3d3d3d;
+            --text-light: #666;
+            --accent: #8b7355;
+            --accent-light: rgba(139, 115, 85, 0.1);
+            --border: rgba(61, 61, 61, 0.1);
+            --border-strong: rgba(61, 61, 61, 0.2);
+            --success: #5a7c5a;
+            --danger: #b95d5d;
+            --warning: #cc9933;
         }
 
         * {
@@ -24,68 +31,202 @@
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        #splash-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .splash-content {
+            text-align: center;
+            animation: logoFadeIn 1s ease-out forwards;
+        }
+
+        .splash-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3em;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .splash-tagline {
+            font-size: 0.9em;
+            color: var(--text-light);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        @keyframes logoFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        #main-content {
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        #main-content.visible {
+            opacity: 1;
+        }
+
+        /* Nav */
+        .nav-header {
+            background: rgba(255, 255, 255, 0.4);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5em;
+            font-weight: 500;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.85em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #6b5a45;
+            transform: translateX(-3px);
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 3rem 2rem;
         }
 
         header {
             text-align: center;
-            margin-bottom: 2.5rem;
-            padding: 2rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 16px;
-            color: white;
+            margin-bottom: 3rem;
+            padding: 3rem 2rem;
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5em;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-light);
+            font-size: 0.95em;
+            letter-spacing: 0.05em;
         }
 
         .event-info {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
         }
 
         .info-card {
             background: var(--card);
             padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            background: var(--card-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
         }
 
         .info-label {
-            font-size: 0.875rem;
-            color: #64748b;
+            font-size: 0.75em;
+            color: var(--text-light);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.5rem;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
         }
 
         .info-value {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--primary);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent);
         }
 
         .setup-section {
             background: var(--card);
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 3rem;
+        }
+
+        h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5em;
+            color: var(--text);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
         }
 
         .form-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
         }
 
         .form-group {
@@ -94,87 +235,105 @@
         }
 
         label {
-            font-weight: 600;
+            font-weight: 500;
             margin-bottom: 0.5rem;
-            color: #475569;
-            font-size: 0.875rem;
+            color: var(--text-light);
+            font-size: 0.9em;
         }
 
         input,
         select,
         textarea {
             padding: 0.75rem;
-            border: 2px solid var(--border);
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--border-strong);
+            border-radius: 4px;
             font-size: 1rem;
-            font-family: inherit;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            transition: all 0.2s;
         }
 
         input:focus,
         select:focus,
         textarea:focus {
             outline: none;
-            border-color: var(--primary);
+            border-color: var(--accent);
+            background: #fff;
+            box-shadow: 0 0 0 3px var(--accent-light);
         }
 
         .btn {
-            padding: 0.875rem 1.5rem;
+            padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.02em;
         }
 
         .btn-primary {
-            background: var(--primary);
-            color: white;
+            background: var(--text);
+            color: var(--bg);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+            background: var(--accent);
+            transform: translateY(-1px);
         }
 
         .btn-secondary {
-            background: #64748b;
-            color: white;
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--text);
+            border: 1px solid var(--border-strong);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
         }
 
         .btn-danger {
-            background: #ef4444;
-            color: white;
+            background: transparent;
+            color: var(--danger);
+            border: 1px solid rgba(185, 93, 93, 0.3);
             padding: 0.5rem 1rem;
-            font-size: 0.875rem;
+            font-size: 0.85em;
         }
 
-        .btn-sm {
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
+        .btn-danger:hover {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
         }
 
         .timeline-container {
             background: var(--card);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--border);
             overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
         }
 
         .timeline-header {
             display: grid;
             grid-template-columns: 100px 1fr 120px 150px 100px;
             gap: 1rem;
-            padding: 1rem;
-            background: #f1f5f9;
+            padding: 1.25rem 1.5rem;
+            background: rgba(255, 255, 255, 0.4);
+            border-bottom: 1px solid var(--border);
             font-weight: 600;
-            font-size: 0.875rem;
+            font-size: 0.8em;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #475569;
+            letter-spacing: 0.1em;
+            color: var(--text-light);
         }
 
         @media (max-width: 768px) {
@@ -187,10 +346,11 @@
             display: grid;
             grid-template-columns: 100px 1fr 120px 150px 100px;
             gap: 1rem;
-            padding: 1rem;
+            padding: 1.25rem 1.5rem;
             border-bottom: 1px solid var(--border);
             align-items: center;
             transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.2);
         }
 
         @media (max-width: 768px) {
@@ -203,7 +363,7 @@
             .timeline-item>div::before {
                 content: attr(data-label);
                 font-weight: 600;
-                color: #64748b;
+                color: var(--text-light);
                 font-size: 0.75rem;
                 text-transform: uppercase;
                 display: block;
@@ -212,80 +372,81 @@
         }
 
         .timeline-item:hover {
-            background: #f8fafc;
+            background: rgba(255, 255, 255, 0.6);
         }
 
         .timeline-item.dragging {
             opacity: 0.5;
-            background: #e0e7ff;
-            border: 2px dashed var(--primary);
+            background: var(--accent-light);
+            border: 1px dashed var(--accent);
         }
 
         .time-display {
-            font-family: 'Courier New', monospace;
+            font-family: 'Courier Prime', monospace;
             font-weight: 700;
-            color: var(--primary);
-            font-size: 1.125rem;
+            color: var(--accent);
+            font-size: 1.1em;
         }
 
         .duration-badge {
             display: inline-flex;
             align-items: center;
             padding: 0.25rem 0.75rem;
-            background: #e0e7ff;
-            color: var(--primary);
+            background: rgba(255, 255, 255, 0.5);
+            color: var(--text);
+            border: 1px solid var(--border);
             border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 600;
+            font-size: 0.85em;
+            font-family: 'Courier Prime', monospace;
         }
 
         .item-title {
             font-weight: 600;
             color: var(--text);
+            font-size: 1.05em;
             margin-bottom: 0.25rem;
+            font-family: 'Cormorant Garamond', serif;
         }
 
         .item-desc {
-            font-size: 0.875rem;
-            color: #64748b;
+            font-size: 0.9em;
+            color: var(--text-light);
+            font-style: italic;
         }
 
         .vendor-tag {
             display: inline-flex;
             align-items: center;
             gap: 0.25rem;
-            padding: 0.25rem 0.5rem;
-            background: #f1f5f9;
+            padding: 0.2rem 0.6rem;
+            background: #f0f0eb;
             border-radius: 4px;
-            font-size: 0.75rem;
+            font-size: 0.75em;
+            color: var(--text);
             margin-right: 0.25rem;
             margin-bottom: 0.25rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .buffer-alert {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.25rem 0.75rem;
-            background: #fef3c7;
-            color: #92400e;
+            padding: 0.2rem 0.5rem;
+            background: #fff8e1;
+            color: #cc9933;
+            border: 1px solid #ffeeba;
             border-radius: 4px;
-            font-size: 0.75rem;
+            font-size: 0.7em;
             margin-left: 0.5rem;
-        }
-
-        .category-indicator {
-            width: 4px;
-            height: 100%;
-            position: absolute;
-            left: 0;
-            top: 0;
+            text-transform: uppercase;
+            font-weight: 600;
         }
 
         .add-item-form {
-            background: #f8fafc;
-            padding: 1.5rem;
-            border-top: 2px solid var(--border);
+            background: rgba(255, 255, 255, 0.3);
+            padding: 2rem;
+            border-top: 1px solid var(--border);
         }
 
         .form-grid {
@@ -303,8 +464,9 @@
 
         .drag-handle {
             cursor: grab;
-            color: #94a3b8;
+            color: var(--border-strong);
             padding: 0.5rem;
+            font-size: 1.2em;
         }
 
         .drag-handle:active {
@@ -320,8 +482,18 @@
             .setup-section,
             .add-item-form,
             .btn,
-            .drag-handle {
+            .drag-handle,
+            .nav-header,
+            #splash-screen,
+            .container>header,
+            .event-info {
                 display: none !important;
+            }
+
+            .container {
+                padding: 0;
+                margin: 0;
+                max-width: 100%;
             }
 
             .print-run-sheet {
@@ -329,164 +501,229 @@
                 margin-top: 2rem;
             }
 
+            body {
+                background: white;
+            }
+
             .timeline-container {
                 box-shadow: none;
+                border: none;
+            }
+
+            .timeline-header {
+                border-bottom: 2px solid #000;
+                background: none;
             }
 
             .timeline-item {
-                break-inside: avoid;
+                page-break-inside: avoid;
+                border-bottom: 1px solid #ccc;
+                background: none;
+            }
+
+            .time-display {
+                color: #000;
             }
         }
 
         .conflict-warning {
-            background: #fee2e2;
+            background: #fdf2f2;
             border-left: 4px solid var(--danger);
-            padding: 0.75rem 1rem;
-            margin-bottom: 1rem;
-            border-radius: 0 8px 8px 0;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 0 4px 4px 0;
             display: none;
+            color: var(--danger);
         }
 
         .conflict-warning.active {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 1rem;
         }
 
         .data-controls {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: #f1f5f9;
-            border-radius: 12px;
+            margin-top: 3rem;
+            padding: 2rem;
+            background: var(--card);
+            border-radius: 8px;
+            border: 1px solid var(--border);
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
+            justify-content: flex-end;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <h1>⏰ Timeline Scheduler</h1>
-            <p>Build your perfect event day schedule with drag-and-drop precision</p>
-        </header>
-
-        <div class="event-info">
-            <div class="info-card">
-                <div class="info-label">Event Date</div>
-                <input type="date" id="eventDate" class="info-value"
-                    style="width: 100%; font-size: 1rem; padding: 0.5rem;" onchange="saveEventInfo()">
-            </div>
-            <div class="info-card">
-                <div class="info-label">Start Time</div>
-                <input type="time" id="startTime" class="info-value"
-                    style="width: 100%; font-size: 1rem; padding: 0.5rem;" onchange="saveEventInfo()">
-            </div>
-            <div class="info-card">
-                <div class="info-label">End Time</div>
-                <div class="info-value" id="displayEndTime">--:--</div>
-            </div>
-            <div class="info-card">
-                <div class="info-label">Total Duration</div>
-                <div class="info-value" id="totalDuration">0h 0m</div>
-            </div>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo">Events Timeline</div>
+            <div class="splash-tagline">Professional Run of Show</div>
         </div>
+    </div>
 
-        <div class="conflict-warning" id="conflictWarning">
-            <span style="font-size: 1.25rem;">⚠️</span>
-            <div>
-                <strong>Schedule Conflict Detected</strong>
-                <div style="font-size: 0.875rem; margin-top: 0.25rem;" id="conflictDetails"></div>
+    <div id="main-content">
+        <nav class="nav-header">
+            <div class="nav-container">
+                <a href="https://whisperworkshop.com/nav.html" class="nav-brand">Events Timeline</a>
+                <a href="https://whisperworkshop.com/nav.html" class="nav-link">Return to Whisper Workshop Tool
+                    Suite</a>
             </div>
-        </div>
+        </nav>
 
-        <div class="setup-section">
-            <h3 style="margin-bottom: 1rem; color: var(--primary);">Vendor List (for quick assignment)</h3>
-            <div class="form-row">
-                <input type="text" id="vendorInput" placeholder="Add vendor name (e.g., DJ Mike, Catering Co)..."
-                    onkeypress="if(event.key==='Enter')addVendor()">
-                <button class="btn btn-secondary" onclick="addVendor()">Add Vendor</button>
-            </div>
-            <div id="vendorTags" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem;"></div>
-        </div>
+        <div class="container">
+            <header>
+                <h1>Timeline Scheduler</h1>
+                <p>Build your perfect event day schedule with drag-and-drop precision</p>
+            </header>
 
-        <div class="timeline-container">
-            <div class="timeline-header">
-                <div>Time</div>
-                <div>Activity</div>
-                <div>Duration</div>
-                <div>Vendors</div>
-                <div>Actions</div>
-            </div>
-            <div id="timelineItems"></div>
-
-            <div class="add-item-form">
-                <h3 style="margin-bottom: 1rem; color: var(--primary);">Add Schedule Item</h3>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Activity Title</label>
-                        <input type="text" id="itemTitle" placeholder="e.g., Guest Arrival & Cocktails">
-                    </div>
-                    <div class="form-group">
-                        <label>Duration (min)</label>
-                        <input type="number" id="itemDuration" value="30" min="5" step="5">
-                    </div>
-                    <div class="form-group">
-                        <label>Buffer (min)</label>
-                        <input type="number" id="itemBuffer" value="0" min="0" step="5"
-                            title="Transition time after this item">
-                    </div>
-                    <div class="form-group">
-                        <label>Category</label>
-                        <select id="itemCategory">
-                            <option value="setup">🔧 Setup</option>
-                            <option value="prep">👗 Prep</option>
-                            <option value="ceremony">💍 Ceremony</option>
-                            <option value="reception">🎉 Reception</option>
-                            <option value="meal">🍽️ Meal</option>
-                            <option value="speech">🎤 Speech</option>
-                            <option value="dance">💃 Dance</option>
-                            <option value="cleanup">🧹 Cleanup</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Assign Vendor</label>
-                        <select id="itemVendor">
-                            <option value="">-- Select --</option>
-                        </select>
-                    </div>
-                    <button class="btn btn-primary" onclick="addItem()">➕ Add</button>
+            <div class="event-info">
+                <div class="info-card">
+                    <div class="info-label">Event Date</div>
+                    <input type="date" id="eventDate" class="info-value"
+                        style="width: 100%; font-size: 1.1rem; padding: 0.25rem; background: transparent; border: none; border-bottom: 1px solid var(--border);"
+                        onchange="saveEventInfo()">
                 </div>
-                <div class="form-group" style="margin-top: 1rem;">
-                    <label>Description/Notes</label>
-                    <input type="text" id="itemDesc" placeholder="Details, special requirements, location...">
+                <div class="info-card">
+                    <div class="info-label">Start Time</div>
+                    <input type="time" id="startTime" class="info-value"
+                        style="width: 100%; font-size: 1.1rem; padding: 0.25rem; background: transparent; border: none; border-bottom: 1px solid var(--border);"
+                        onchange="saveEventInfo()">
+                </div>
+                <div class="info-card">
+                    <div class="info-label">End Time</div>
+                    <div class="info-value" id="displayEndTime">--:--</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Total Duration</div>
+                    <div class="info-value" id="totalDuration">0h 0m</div>
                 </div>
             </div>
-        </div>
 
-        <div class="print-run-sheet" id="printRunSheet">
-            <h2 style="text-align: center; margin-bottom: 1rem;">RUN OF SHOW</h2>
-            <p style="text-align: center; color: #64748b; margin-bottom: 2rem;" id="printDate"></p>
-            <div id="printContent"></div>
-        </div>
+            <div class="conflict-warning" id="conflictWarning">
+                <span style="font-size: 1.5rem;">⚠️</span>
+                <div>
+                    <strong style="font-family: 'Cormorant Garamond', serif; font-size: 1.25em;">Schedule Conflict
+                        Detected</strong>
+                    <div style="font-size: 0.9em; margin-top: 0.25rem; opacity: 0.9;" id="conflictDetails"></div>
+                </div>
+            </div>
 
-        <div class="data-controls">
-            <button class="btn btn-primary" onclick="exportData()">📥 Export JSON</button>
-            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(this)">
-            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import
-                JSON</button>
-            <button class="btn btn-secondary" onclick="window.print()">🖨️ Print Run Sheet</button>
-            <button class="btn btn-danger" onclick="clearAll()">🗑️ Clear All</button>
+            <div class="setup-section">
+                <h3>Vendor List</h3>
+                <div class="form-row">
+                    <input type="text" id="vendorInput" placeholder="Add vendor name (e.g., DJ Mike, Catering Co)..."
+                        onkeypress="if(event.key==='Enter')addVendor()">
+                    <button class="btn btn-secondary" onclick="addVendor()" style="max-width: 150px;">Add
+                        Vendor</button>
+                </div>
+                <div id="vendorTags" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem;"></div>
+            </div>
+
+            <div class="timeline-container">
+                <div class="timeline-header">
+                    <div>Time</div>
+                    <div>Activity</div>
+                    <div>Duration</div>
+                    <div>Vendors</div>
+                    <div>Actions</div>
+                </div>
+                <div id="timelineItems"></div>
+
+                <div class="add-item-form">
+                    <h3>Add Schedule Item</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Activity Title</label>
+                            <input type="text" id="itemTitle" placeholder="e.g., Guest Arrival & Cocktails">
+                        </div>
+                        <div class="form-group">
+                            <label>Duration (min)</label>
+                            <input type="number" id="itemDuration" value="30" min="5" step="5">
+                        </div>
+                        <div class="form-group">
+                            <label>Buffer (min)</label>
+                            <input type="number" id="itemBuffer" value="0" min="0" step="5"
+                                title="Transition time after this item">
+                        </div>
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select id="itemCategory">
+                                <option value="setup">Setup</option>
+                                <option value="prep">Prep</option>
+                                <option value="ceremony">Ceremony</option>
+                                <option value="reception">Reception</option>
+                                <option value="meal">Meal</option>
+                                <option value="speech">Speech</option>
+                                <option value="dance">Dance</option>
+                                <option value="cleanup">Cleanup</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Assign Vendor</label>
+                            <select id="itemVendor">
+                                <option value="">-- Select --</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="addItem()">Add Item</button>
+                    </div>
+                    <div class="form-group" style="margin-top: 1.5rem;">
+                        <label>Description / Notes</label>
+                        <input type="text" id="itemDesc" placeholder="Details, special requirements, location...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="print-run-sheet" id="printRunSheet">
+                <h2 style="text-align: center; margin-bottom: 0.5rem; font-family: 'Cormorant Garamond', serif;">RUN OF
+                    SHOW</h2>
+                <p style="text-align: center; color: #666; margin-bottom: 2rem; font-family: 'Courier Prime', monospace;"
+                    id="printDate"></p>
+                <div id="printContent"></div>
+            </div>
+
+            <div class="data-controls">
+                <button class="btn btn-primary" onclick="exportData()">Export JSON</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(this)">
+                <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Import
+                    JSON</button>
+                <button class="btn btn-secondary" onclick="window.print()">Print Run Sheet</button>
+                <button class="btn btn-danger" onclick="clearAll()">Clear All</button>
+            </div>
         </div>
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const splash = document.getElementById('splash-screen');
+            const mainContent = document.getElementById('main-content');
+
+            setTimeout(function () {
+                splash.classList.add('fade-out');
+                mainContent.classList.add('visible');
+
+                setTimeout(function () {
+                    splash.style.display = 'none';
+                }, 800);
+            }, 1000);
+
+            loadData();
+        });
+
         const STORAGE_KEY = 'event_timeline_v1';
+        // Updated colors to match earthy/subdued theme
         const CATEGORY_COLORS = {
-            setup: '#64748b', prep: '#ec4899', ceremony: '#8b5cf6',
-            reception: '#f59e0b', meal: '#10b981', speech: '#06b6d4',
-            dance: '#ef4444', cleanup: '#78716c'
+            setup: '#78716c',      // stone
+            prep: '#d6bcfa',       // soft purple
+            ceremony: '#8b5cf6',   // violet
+            reception: '#cc9933',  // gold/warning based
+            meal: '#5a7c5a',       // green/success based
+            speech: '#5d7cb9',     // soft blue
+            dance: '#b95d5d',      // red/danger based
+            cleanup: '#44403c'     // dark stone
         };
 
         let items = [];
@@ -545,9 +782,9 @@
             const select = document.getElementById('itemVendor');
 
             container.innerHTML = vendors.map(v => `
-                <span class="vendor-tag" style="background: #e0e7ff; color: var(--primary);">
+                <span class="vendor-tag">
                     ${v.name}
-                    <button onclick="removeVendor(${v.id})" style="background: none; border: none; cursor: pointer; padding: 0; margin-left: 0.25rem;">×</button>
+                    <button onclick="removeVendor(${v.id})" style="background: none; border: none; cursor: pointer; padding: 0; margin-left: 0.25rem; color: #999;">×</button>
                 </span>
             `).join('');
 
@@ -592,7 +829,6 @@
         function deleteItem(id) {
             if (!confirm('Delete this item?')) return;
             items = items.filter(i => i.id !== id);
-            // Reorder
             items.forEach((item, idx) => item.order = idx);
             saveData();
         }
@@ -610,14 +846,12 @@
             const startTimeVal = document.getElementById('startTime').value;
 
             if (!startTimeVal) {
-                container.innerHTML = '<div style="padding: 3rem; text-align: center; color: #64748b;">Please set an event start time above to generate the timeline.</div>';
+                container.innerHTML = '<div style="padding: 3rem; text-align: center; color: #666; font-style: italic;">Please set an event start time above to generate the timeline.</div>';
                 return;
             }
 
-            // Sort by order
             items.sort((a, b) => a.order - b.order);
 
-            // Calculate times
             let currentTime = new Date(`2000-01-01T${startTimeVal}`);
             const startTime = new Date(currentTime);
 
@@ -634,7 +868,7 @@
             document.getElementById('totalDuration').textContent =
                 `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m`;
 
-            // Check for conflicts (same vendor, overlapping times)
+            // Conflicts
             const conflicts = [];
             for (let i = 0; i < items.length; i++) {
                 for (let j = i + 1; j < items.length; j++) {
@@ -658,7 +892,7 @@
                 warningEl.classList.remove('active');
             }
 
-            // Render items
+            // Render
             container.innerHTML = items.map((item, index) => {
                 const vendorNames = item.vendors.map(v => {
                     const vendor = vendors.find(x => x.id === v);
@@ -674,7 +908,7 @@
                         <div class="drag-handle" style="margin-left: 8px;">⋮⋮</div>
                         <div data-label="Time">
                             <div class="time-display">${formatTime(item.startTime)}</div>
-                            <div style="font-size: 0.75rem; color: #94a3b8;">to ${formatTime(item.endTime)}</div>
+                            <div style="font-size: 0.75rem; color: #999;">to ${formatTime(item.endTime)}</div>
                         </div>
                         <div data-label="Activity">
                             <div class="item-title">${item.title} ${bufferWarning}</div>
@@ -682,17 +916,17 @@
                         </div>
                         <div data-label="Duration">
                             <span class="duration-badge">${item.duration} min</span>
-                            ${item.buffer > 0 ? `<div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.25rem;">+${item.buffer}m buffer</div>` : ''}
+                            ${item.buffer > 0 ? `<div style="font-size: 0.75rem; color: #999; margin-top: 0.25rem;">+${item.buffer}m buffer</div>` : ''}
                         </div>
-                        <div data-label="Vendors">${vendorNames || '-'}</div>
+                        <div data-label="Vendors">${vendorNames || '<span style="color:#ccc">-</span>'}</div>
                         <div data-label="Actions">
-                            <button class="btn btn-danger btn-sm" onclick="deleteItem(${item.id})">Delete</button>
+                            <button class="btn btn-danger" onclick="deleteItem(${item.id})">Delete</button>
                         </div>
                     </div>
                 `;
             }).join('');
 
-            // Setup drag and drop
+            // Dnd
             container.querySelectorAll('.timeline-item').forEach(el => {
                 el.addEventListener('dragstart', handleDragStart);
                 el.addEventListener('dragend', handleDragEnd);
@@ -700,18 +934,18 @@
                 el.addEventListener('drop', handleDrop);
             });
 
-            // Update print view
+            // Print View
             document.getElementById('printDate').textContent =
                 eventInfo.date ? new Date(eventInfo.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '';
 
             document.getElementById('printContent').innerHTML = items.map(item => `
-                <div style="display: flex; gap: 2rem; padding: 0.75rem 0; border-bottom: 1px solid #e2e8f0;">
-                    <div style="width: 80px; font-weight: 700;">${formatTime(item.startTime)}</div>
+                <div style="display: flex; gap: 2rem; padding: 0.75rem 0; border-bottom: 1px solid #eee;">
+                     <div style="width: 80px; font-weight: 700; font-family: 'Courier Prime', monospace;">${formatTime(item.startTime)}</div>
                     <div style="flex: 1;">
-                        <div style="font-weight: 600;">${item.title}</div>
-                        ${item.description ? `<div style="font-size: 0.875rem; color: #64748b;">${item.description}</div>` : ''}
+                        <div style="font-weight: 600; font-family: 'Cormorant Garamond', serif; font-size: 1.1em; margin-bottom: 0.25rem;">${item.title}</div>
+                        ${item.description ? `<div style="font-size: 0.9em; color: #666; font-style: italic;">${item.description}</div>` : ''}
                     </div>
-                    <div style="width: 100px; text-align: right; color: #64748b;">${item.duration} min</div>
+                     <div style="width: 100px; text-align: right; color: #666; font-size: 0.9em;">${item.duration} min</div>
                 </div>
             `).join('');
         }
@@ -745,7 +979,6 @@
             const oldOrder = draggedItem.order;
             const newOrder = targetItem.order;
 
-            // Reorder
             items.forEach(item => {
                 if (oldOrder < newOrder) {
                     if (item.order > oldOrder && item.order <= newOrder) item.order--;
@@ -805,16 +1038,17 @@
         }
 
         function clearAll() {
-            if (!confirm('Clear all timeline data?')) return;
-            items = [];
-            vendors = [];
-            eventInfo = { date: '', startTime: '' };
-            localStorage.removeItem(STORAGE_KEY);
-            renderTimeline();
-            renderVendors();
+            if (confirm('Clear all timeline data?')) {
+                items = [];
+                vendors = [];
+                eventInfo = { date: '', startTime: '' };
+                localStorage.removeItem(STORAGE_KEY);
+                document.getElementById('eventDate').value = '';
+                document.getElementById('startTime').value = '';
+                renderVendors();
+                renderTimeline();
+            }
         }
-
-        loadData();
     </script>
 </body>
 
