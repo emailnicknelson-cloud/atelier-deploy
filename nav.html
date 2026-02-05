@@ -1078,9 +1078,9 @@
 
             const { key, data } = tool;
 
-            if (key === "barCalculator" && data.results) {
+            if (key === "barCalculator" && (data.results || data.totalDrinks || data.breakdown)) {
                 return renderBarCalc(data);
-            } else if (key === "budgetCalculator" && (data.summary || data.categories)) {
+            } else if (key === "budgetCalculator" && (data.summary || data.categories || Array.isArray(data) || data.expenses)) {
                 return renderBudgetCalc(data);
             } else if ((key === "floorPlanDesigner") && data.objects) {
                 return renderFloorPlanSVG(data);

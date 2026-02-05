@@ -18,26 +18,24 @@
         "floorPlanDesigner"
     ],
     "data": {
-        "budgetCalculator": {
-            "expenses": [
-                {
-                    "id": 1,
-                    "item": "Luxury Tent",
-                    "category": "venue",
-                    "estimated": 5000,
-                    "actual": 5200,
-                    "paid": false
-                },
-                {
-                    "id": 2,
-                    "item": "Gourmet Catering",
-                    "category": "catering",
-                    "estimated": 12000,
-                    "actual": 11500,
-                    "paid": true
-                }
-            ]
-        },
+        "budgetCalculator": [
+            {
+                "id": 1,
+                "item": "Luxury Tent",
+                "category": "venue",
+                "estimated": 5000,
+                "actual": 5200,
+                "paid": false
+            },
+            {
+                "id": 2,
+                "item": "Gourmet Catering",
+                "category": "catering",
+                "estimated": 12000,
+                "actual": 11500,
+                "paid": true
+            }
+        ],
         "guestList": [
             {
                 "id": 1,
@@ -226,27 +224,30 @@
             ]
         },
         "barCalculator": {
-            "guestCount": 100,
-            "duration": 5,
-            "drinkers": 90,
-            "totalDrinks": 500,
-            "breakdown": {
-                "wine": 200,
-                "beer": 200,
-                "liquor": 100
+            "inputs": {
+                "guests": 100,
+                "duration": 5,
+                "drinkingPct": "90",
+                "barType": "full"
             },
-            "shoppingList": [
-                {
-                    "item": "Red Wine",
-                    "qty": 20,
-                    "unit": "btl"
-                },
-                {
-                    "item": "Vodka",
-                    "qty": 4,
-                    "unit": "L"
-                }
-            ]
+            "results": {
+                "totalDrinks": 500,
+                "totalCost": 1200,
+                "breakdown": [
+                    {
+                        "type": "Beer",
+                        "servings": 200
+                    },
+                    {
+                        "type": "Wine",
+                        "servings": 200
+                    },
+                    {
+                        "type": "Spirits",
+                        "servings": 100
+                    }
+                ]
+            }
         },
         "floorPlanDesigner": {
             "room": {
