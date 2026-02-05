@@ -844,6 +844,15 @@
 
             // Initialize HUD features
             initializeToolsGrid();
+
+            // Load custom order
+            const storedOrder = localStorage.getItem('whisper_tools_order');
+            if (storedOrder) {
+                try {
+                    toolsOrder = JSON.parse(storedOrder);
+                } catch (e) { console.error('Failed to load tools order'); }
+            }
+
             scanLocalStorage(); // Auto-scan on load
         });
 
@@ -866,7 +875,8 @@
 
         // State
         let toolsData = {};
-        let expandedTools = new Set(); // Changed from single selectedTool to Set
+        let expandedTools = new Set();
+        let toolsOrder = []; // Track visual order of tools
 
         // Initialize tools grid badges
         function initializeToolsGrid() {
@@ -916,21 +926,37 @@
 
             if (Object.keys(toolsData).length === 0) {
                 loadedDataSection.style.display = 'none';
-                initializeToolsGrid(); // Ensure badges are cleared
+                initializeToolsGrid();
                 return;
             }
 
             loadedDataSection.style.display = 'block';
 
-            dataGrid.innerHTML = Object.entries(toolsData).map(([key, tool]) => {
+            // Ensure toolsOrder contains all current keys in toolsData
+            const currentKeys = new Set(Object.keys(toolsData));
+            // First, filter out any keys from order that no longer exist
+            toolsOrder = toolsOrder.filter(k => currentKeys.has(k));
+            // Then append any new keys that aren't in order yet
+            currentKeys.forEach(k => {
+                if (!toolsOrder.includes(k)) {
+                    toolsOrder.push(k);
+                }
+            });
+
+            dataGrid.innerHTML = toolsOrder.map((key, index) => {
+                const tool = toolsData[key];
+                if (!tool) return ''; // Should not happen given filter above
+
                 const preview = renderDataPreview(tool);
-                // We don't have tool.emoji/name directly in toolsData usually if generic scan?
-                // Wait, scanLocalStorage constructs toolsData.
-                // We need to ensure toolsData has metadata.
-                // We'll rely on the scanLocalStorage to populate metadata.
 
                 return `
-                    <div class="card data-card">
+                    <div class="card data-card" 
+                         draggable="true" 
+                         data-key="${key}"
+                         ondragstart="handleDragStart(event)" 
+                         ondragover="handleDragOver(event)" 
+                         ondrop="handleDrop(event)"
+                         ondragend="handleDragEnd(event)">
                         <div class="card-header" onclick="toggleDataCard('${key}')">
                             <div style="flex: 1;">
                                 <div class="card-title">
@@ -970,9 +996,80 @@
         function clearToolData(key) {
             if (confirm(`Remove data for ${toolsData[key].name}?`)) {
                 delete toolsData[key];
+                // Also remove from order
+                toolsOrder = toolsOrder.filter(k => k !== key);
+                saveToolsOrder();
+
                 showToast('Data removed', 'info');
                 renderDataGrid();
             }
+        }
+
+        // --- Drag and Drop Handlers ---
+
+        let dragSrcEl = null;
+
+        function handleDragStart(e) {
+            dragSrcEl = e.currentTarget; // The card element being dragged
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', e.currentTarget.getAttribute('data-key'));
+
+            // Add slight delay so the drag image is created before we make the source translucent
+            setTimeout(() => {
+                e.currentTarget.classList.add('dragging');
+            }, 0);
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault(); // Necessary. Allows us to drop.
+            }
+            e.dataTransfer.dropEffect = 'move';
+
+            const card = e.target.closest('.data-card');
+            if (card && card !== dragSrcEl) {
+                card.classList.add('drag-over');
+            }
+            return false;
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation(); // Stops some browsers from redirecting.
+            }
+
+            // Don't do anything if dropping the same column we're dragging.
+            const targetCard = e.target.closest('.data-card');
+            if (dragSrcEl !== targetCard && targetCard) {
+                const sourceKey = e.dataTransfer.getData('text/plain');
+                const targetKey = targetCard.getAttribute('data-key');
+
+                const sourceIndex = toolsOrder.indexOf(sourceKey);
+                const targetIndex = toolsOrder.indexOf(targetKey);
+
+                if (sourceIndex > -1 && targetIndex > -1) {
+                    // Move item in array
+                    toolsOrder.splice(sourceIndex, 1);
+                    toolsOrder.splice(targetIndex, 0, sourceKey);
+
+                    saveToolsOrder();
+                    renderDataGrid();
+                }
+            }
+
+            return false;
+        }
+
+        function handleDragEnd(e) {
+            const cards = document.querySelectorAll('.data-card');
+            cards.forEach(card => {
+                card.classList.remove('dragging');
+                card.classList.remove('drag-over');
+            });
+        }
+
+        function saveToolsOrder() {
+            localStorage.setItem('whisper_tools_order', JSON.stringify(toolsOrder));
         }
 
         // Render data preview
