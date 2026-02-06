@@ -603,6 +603,110 @@
                 padding: 18px 16px;
             }
         }
+
+        /* Settings Panel */
+        .settings-trigger {
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
+        }
+
+        .settings-trigger:hover {
+            opacity: 1;
+        }
+
+        .settings-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .settings-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .settings-panel {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .settings-overlay.active .settings-panel {
+            transform: translateY(0);
+        }
+
+        .settings-header {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .settings-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+            padding: 0;
+            line-height: 1;
+        }
+
+        .settings-group {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .settings-group:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .settings-group h4 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-light);
+            margin-bottom: 0.75rem;
+        }
+
+        .settings-action {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .settings-desc {
+            font-size: 0.8em;
+            color: #888;
+            margin-bottom: 0.5rem;
+        }
     </style>
 </head>
 
@@ -832,6 +936,49 @@
             <div class="footer">
                 <!-- <a href="index.html" class="atelier-link">Return to Atelier</a> -->
                 <span class="version-badge">v2.1 Enterprise Suite</span>
+                <div class="settings-trigger" onclick="toggleSettings()" title="Advanced Settings">⚙️</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this) toggleSettings()">
+        <div class="settings-panel">
+            <div class="settings-header">
+                <span>Advanced Settings</span>
+                <button class="settings-close" onclick="toggleSettings()">×</button>
+            </div>
+
+            <div class="settings-group">
+                <h4>Data Management</h4>
+                <div class="settings-action">
+                    <span>Export Full Suite Backup</span>
+                    <button class="btn btn-secondary" onclick="exportFullEvent()"
+                        style="padding: 4px 12px; font-size: 0.8em;">Export All</button>
+                </div>
+                <div class="settings-desc">Save all data from all tools to a single file.</div>
+
+                <div class="settings-action">
+                    <span>Import Backup</span>
+                    <button class="btn btn-secondary" onclick="document.getElementById('fileInput').click()"
+                        style="padding: 4px 12px; font-size: 0.8em;">Import...</button>
+                </div>
+                <!-- Input already exists in nav.html (fileInput) -->
+                <div class="settings-desc">Restore a full suite backup (overwrites all data).</div>
+            </div>
+
+            <div class="settings-group">
+                <h4>Reset</h4>
+                <div class="settings-action">
+                    <span style="color: var(--danger);">Factory Reset</span>
+                    <button class="btn btn-danger" onclick="clearAllData()"
+                        style="padding: 4px 12px; font-size: 0.8em;">Clear All Data</button>
+                </div>
+                <div class="settings-desc">Permanently wipe all data from browser storage.</div>
+            </div>
+
+            <div style="font-size: 0.7em; color: #ccc; text-align: center; margin-top: 1rem;">
+                Whisper Workshop v2.1
             </div>
         </div>
     </div>
@@ -1662,6 +1809,20 @@
 
         // Initialize metadata on load
         loadEventMetadata();
+
+        // --- Advanced Settings ---
+        function toggleSettings() {
+            const overlay = document.getElementById('settingsOverlay');
+            overlay.classList.toggle('active');
+        }
+
+        function clearAllData() {
+            if (confirm("FACTORY RESET WARNING:\n\nThis will permanently delete ALL data for ALL tools.\nThis action cannot be undone.\n\nAre you sure?")) {
+                localStorage.clear();
+                alert("All data cleared. Reloading...");
+                location.reload();
+            }
+        }
 
         function exportFullEvent() {
             const eventName = document.getElementById('eventNameInput').value.trim() || "My_Event";
