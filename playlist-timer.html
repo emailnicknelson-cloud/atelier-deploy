@@ -494,6 +494,26 @@
                 border: 1px solid #ccc;
             }
         }
+
+        .footer {
+            text-align: center;
+            padding-top: 40px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(61, 61, 61, 0.15);
+            color: #888;
+            font-size: 0.85em;
+            font-weight: 300;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: rgba(139, 115, 85, 0.1);
+            color: #8b7355;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
     </style>
 </head>
 
@@ -613,6 +633,10 @@
                 </div>
                 <button class="btn" onclick="window.print()">Print Playlist</button>
                 <button class="btn" onclick="shareWithDJ()">Share with DJ</button>
+            </div>
+
+            <div class="footer">
+                <span class="version-badge">v2.1 Enterprise Suite</span>
             </div>
         </div>
     </div>

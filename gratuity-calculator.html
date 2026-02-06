@@ -491,6 +491,26 @@
                 border: 1px solid #ddd;
             }
         }
+
+        .footer {
+            text-align: center;
+            padding-top: 40px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(61, 61, 61, 0.15);
+            color: #888;
+            font-size: 0.85em;
+            font-weight: 300;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: rgba(139, 115, 85, 0.1);
+            color: #8b7355;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
     </style>
 </head>
 
@@ -876,6 +896,10 @@
                 <button class="btn btn-secondary" onclick="exportGratuities()">Export List</button>
                 <button class="btn btn-secondary" onclick="window.print()">Print Envelope List</button>
                 <button class="btn btn-primary" onclick="exportToBudget()">Add to Budget</button>
+            </div>
+
+            <div class="footer">
+                <span class="version-badge">v2.1 Enterprise Suite</span>
             </div>
         </div>
     </div>
