@@ -1003,7 +1003,14 @@
 
         function clearToolData(key) {
             if (confirm(`Remove data for ${toolsData[key].name}?`)) {
+                // Remove from storage first
+                if (STORAGE_KEYS[key]) {
+                    localStorage.removeItem(STORAGE_KEYS[key]);
+                }
+
+                // Remove from memory
                 delete toolsData[key];
+
                 // Also remove from order
                 toolsOrder = toolsOrder.filter(k => k !== key);
                 saveToolsOrder();
