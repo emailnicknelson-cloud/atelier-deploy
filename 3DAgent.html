@@ -1,1277 +1,987 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <meta name="description" content="3DAgent Strategic Analysis - AI-powered 3D asset generation pipeline">
-    <title>3DAgent — Strategic Analysis</title>
-    <style>
-        /* Reset and Base */
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        html {
-            scroll-behavior: smooth;
-            -webkit-text-size-adjust: 100%;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: #0a0e1a;
-            color: #e2e8f0;
-            line-height: 1.6;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-        
-        /* CSS Variables for theming */
-        :root {
-            --primary: #6366f1;
-            --primary-light: #818cf8;
-            --secondary: #8b5cf6;
-            --accent: #ec4899;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --dark: #0f172a;
-            --darker: #020617;
-            --surface: #1e293b;
-            --surface-light: #334155;
-            --text: #e2e8f0;
-            --text-muted: #94a3b8;
-            --border: rgba(255, 255, 255, 0.1);
-        }
-        
-        /* Typography */
-        h1, h2, h3, h4, h5, h6 {
-            font-weight: 700;
-            line-height: 1.2;
-            color: #fff;
-        }
-        
-        h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
-        h2 { font-size: clamp(1.5rem, 4vw, 2.5rem); }
-        h3 { font-size: clamp(1.25rem, 3vw, 1.75rem); }
-        h4 { font-size: clamp(1.1rem, 2vw, 1.25rem); }
-        
-        p { margin-bottom: 1rem; }
-        
-        /* Layout */
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-        
-        @media (min-width: 640px) {
-            .container { padding: 0 1.5rem; }
-        }
-        
-        @media (min-width: 1024px) {
-            .container { padding: 0 2rem; }
-        }
-        
-        /* Navigation */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border);
-            z-index: 1000;
-            transition: all 0.3s;
-        }
-        
-        .navbar-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 60px;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 700;
-            font-size: 1.25rem;
-            color: #fff;
-            text-decoration: none;
-        }
-        
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.875rem;
-        }
-        
-        .nav-links {
-            display: none;
-            gap: 2rem;
-        }
-        
-        @media (min-width: 768px) {
-            .nav-links {
-                display: flex;
-            }
-        }
-        
-        .nav-link {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: color 0.2s;
-            position: relative;
-        }
-        
-        .nav-link:hover {
-            color: #fff;
-        }
-        
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--primary);
-            transition: width 0.3s;
-        }
-        
-        .nav-link:hover::after {
-            width: 100%;
-        }
-        
-        /* Mobile Menu */
-        .mobile-menu-btn {
-            display: block;
-            background: none;
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            padding: 0.5rem;
-        }
-        
-        @media (min-width: 768px) {
-            .mobile-menu-btn {
-                display: none;
-            }
-        }
-        
-        .mobile-menu {
-            display: none;
-            position: absolute;
-            top: 60px;
-            left: 0;
-            right: 0;
-            background: rgba(15, 23, 42, 0.98);
-            border-bottom: 1px solid var(--border);
-            padding: 1rem;
-        }
-        
-        .mobile-menu.active {
-            display: block;
-        }
-        
-        .mobile-menu a {
-            display: block;
-            padding: 0.75rem;
-            color: var(--text-muted);
-            text-decoration: none;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-        
-        .mobile-menu a:hover {
-            background: rgba(255,255,255,0.05);
-            color: #fff;
-        }
-        
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            padding: 80px 0 40px;
-            background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 70%),
-                        radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
-        }
-        
-        .hero-content {
-            text-align: center;
-            max-width: 800px;
-        }
-        
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            margin-bottom: 1.5rem;
-        }
-        
-        .badge-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--success);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        .gradient-text {
-            background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .hero-subtitle {
-            font-size: clamp(1.125rem, 2.5vw, 1.5rem);
-            color: var(--text-muted);
-            margin: 1.5rem 0 2rem;
-            line-height: 1.6;
-        }
-        
-        .hero-cta {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            align-items: center;
-        }
-        
-        @media (min-width: 640px) {
-            .hero-cta {
-                flex-direction: row;
-                justify-content: center;
-            }
-        }
-        
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.875rem 1.75rem;
-            border-radius: 9999px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-            width: 100%;
-            max-width: 280px;
-        }
-        
-        @media (min-width: 640px) {
-            .btn {
-                width: auto;
-            }
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: #fff;
-            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
-        }
-        
-        .btn-secondary {
-            background: rgba(255,255,255,0.05);
-            color: #fff;
-            border: 1px solid var(--border);
-        }
-        
-        .btn-secondary:hover {
-            background: rgba(255,255,255,0.1);
-            transform: translateY(-2px);
-        }
-        
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(1, 1fr);
-            gap: 1rem;
-            margin-top: 3rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        @media (min-width: 640px) {
-            .stats-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        
-        .stat-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
-            transition: transform 0.3s;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-4px);
-            background: rgba(255,255,255,0.05);
-        }
-        
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 0.25rem;
-        }
-        
-        .stat-label {
-            font-size: 0.875rem;
-            color: var(--text-muted);
-        }
-        
-        /* Section Styles */
-        section {
-            padding: 4rem 0;
-        }
-        
-        @media (min-width: 768px) {
-            section {
-                padding: 6rem 0;
-            }
-        }
-        
-        .section-header {
-            margin-bottom: 3rem;
-        }
-        
-        .section-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--primary-light);
-            margin-bottom: 0.5rem;
-        }
-        
-        .section-title {
-            margin-bottom: 1rem;
-        }
-        
-        .section-desc {
-            font-size: 1.125rem;
-            color: var(--text-muted);
-            max-width: 600px;
-        }
-        
-        /* Cards */
-        .card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            transition: all 0.3s;
-        }
-        
-        @media (min-width: 640px) {
-            .card {
-                padding: 2rem;
-            }
-        }
-        
-        .card:hover {
-            border-color: rgba(99, 102, 241, 0.3);
-            background: rgba(255,255,255,0.05);
-        }
-        
-        .card-grid {
-            display: grid;
-            gap: 1.5rem;
-        }
-        
-        @media (min-width: 640px) {
-            .card-grid-2 {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (min-width: 1024px) {
-            .card-grid-3 {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .card-grid-4 {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-        
-        /* Problem Section */
-        .problem-card {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-        
-        .problem-icon {
-            flex-shrink: 0;
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-        
-        .problem-icon.red { background: rgba(239, 68, 68, 0.1); }
-        .problem-icon.orange { background: rgba(245, 158, 11, 0.1); }
-        .problem-icon.yellow { background: rgba(234, 179, 8, 0.1); }
-        
-        /* Table Styles */
-        .table-container {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            margin: 0 -1rem;
-            padding: 0 1rem;
-        }
-        
-        @media (min-width: 768px) {
-            .table-container {
-                margin: 0;
-                padding: 0;
-            }
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.875rem;
-            min-width: 600px;
-        }
-        
-        th {
-            text-align: left;
-            padding: 1rem;
-            background: rgba(255,255,255,0.05);
-            color: var(--text-muted);
-            font-weight: 600;
-            border-bottom: 1px solid var(--border);
-        }
-        
-        td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-            color: var(--text);
-        }
-        
-        tr:hover td {
-            background: rgba(99, 102, 241, 0.05);
-        }
-        
-        .status-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        
-        .status-ready {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-        
-        .status-warn {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-        }
-        
-        /* Agent Pipeline */
-        .agent-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
-        }
-        
-        @media (min-width: 640px) {
-            .agent-grid {
-                grid-template-columns: repeat(5, 1fr);
-            }
-        }
-        
-        @media (min-width: 1024px) {
-            .agent-grid {
-                grid-template-columns: repeat(10, 1fr);
-            }
-        }
-        
-        .agent-item {
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            border-radius: 8px;
-            padding: 0.75rem;
-            text-align: center;
-            font-size: 0.75rem;
-        }
-        
-        @media (min-width: 640px) {
-            .agent-item {
-                font-size: 0.875rem;
-                padding: 1rem;
-            }
-        }
-        
-        .agent-emoji {
-            font-size: 1.5rem;
-            margin-bottom: 0.25rem;
-        }
-        
-        .agent-name {
-            color: #fff;
-            font-weight: 600;
-        }
-        
-        /* Options Cards */
-        .option-card {
-            position: relative;
-            padding: 1.5rem;
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            background: rgba(255,255,255,0.02);
-            transition: all 0.3s;
-        }
-        
-        @media (min-width: 640px) {
-            .option-card {
-                padding: 2rem;
-            }
-        }
-        
-        .option-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(99, 102, 241, 0.3);
-        }
-        
-        .option-recommended {
-            border-color: rgba(16, 185, 129, 0.3);
-            background: rgba(16, 185, 129, 0.05);
-        }
-        
-        .option-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            padding: 0.25rem 0.75rem;
-            background: rgba(16, 185, 129, 0.2);
-            color: var(--success);
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 700;
-        }
-        
-        .option-letter {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 1rem;
-        }
-        
-        .option-a { background: linear-gradient(135deg, #10b981, #059669); }
-        .option-b { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-        .option-c { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-        
-        .check-list {
-            list-style: none;
-            margin: 1.5rem 0;
-        }
-        
-        .check-list li {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
-            font-size: 0.9375rem;
-            color: var(--text-muted);
-        }
-        
-        .check-list li::before {
-            content: '✓';
-            color: var(--success);
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-        
-        /* Highlight Box */
-        .highlight-box {
-            background: rgba(236, 72, 153, 0.1);
-            border-left: 4px solid var(--accent);
-            padding: 1.5rem;
-            border-radius: 0 12px 12px 0;
-            margin: 2rem 0;
-        }
-        
-        .important-box {
-            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(99, 102, 241, 0.1));
-            border: 1px solid rgba(236, 72, 153, 0.3);
-            border-radius: 16px;
-            padding: 1.5rem;
-            display: flex;
-            gap: 1rem;
-            align-items: flex-start;
-        }
-        
-        @media (min-width: 640px) {
-            .highlight-box, .important-box {
-                padding: 2rem;
-            }
-        }
-        
-        .important-icon {
-            width: 48px;
-            height: 48px;
-            background: rgba(236, 72, 153, 0.2);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            flex-shrink: 0;
-        }
-        
-        /* Code style */
-        code {
-            font-family: 'Courier New', monospace;
-            background: rgba(99, 102, 241, 0.15);
-            padding: 0.2em 0.4em;
-            border-radius: 4px;
-            font-size: 0.9em;
-            color: #a5b4fc;
-        }
-        
-        /* Footer */
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 2rem 0;
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.875rem;
-        }
-        
-        /* Utility */
-        .text-center { text-align: center; }
-        .mb-4 { margin-bottom: 1rem; }
-        .mb-8 { margin-bottom: 2rem; }
-        .mt-8 { margin-top: 2rem; }
-        
-        /* Scrollbar styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: var(--darker);
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--surface-light);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3DAgent — Strategic Analysis</title>
+  <meta name="description" content="Strategic analysis for 3DAgent: the first multi-agent pipeline that outputs production-quality .blend files from text prompts." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ───────── RESET & ROOT ───────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-primary:    #0a0a0f;
+      --bg-secondary:  #111118;
+      --bg-card:       rgba(255, 255, 255, 0.03);
+      --bg-card-hover: rgba(255, 255, 255, 0.06);
+      --border:        rgba(255, 255, 255, 0.06);
+      --border-accent: rgba(139, 92, 246, 0.3);
+      --text-primary:  #f0f0f5;
+      --text-secondary:#9a9ab0;
+      --text-muted:    #5e5e73;
+      --accent-violet: #8b5cf6;
+      --accent-blue:   #3b82f6;
+      --accent-cyan:   #06b6d4;
+      --accent-emerald:#10b981;
+      --accent-amber:  #f59e0b;
+      --accent-rose:   #f43f5e;
+      --accent-orange: #f97316;
+      --glow-violet:   rgba(139, 92, 246, 0.15);
+      --glow-blue:     rgba(59, 130, 246, 0.12);
+      --font-sans:     'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono:     'JetBrains Mono', 'Fira Code', monospace;
+      --radius:        16px;
+      --radius-sm:     10px;
+      --radius-xs:     6px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.7;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ───────── AMBIENT BACKGROUND ───────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(139, 92, 246, 0.08), transparent),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(59, 130, 246, 0.06), transparent),
+        radial-gradient(ellipse 40% 40% at 50% 50%, rgba(6, 182, 212, 0.04), transparent);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ───────── LAYOUT ───────── */
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 60px 28px 120px;
+    }
+
+    /* ───────── NAV DOTS ───────── */
+    .nav-rail {
+      position: fixed;
+      right: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      z-index: 100;
+    }
+    .nav-rail a {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .nav-rail a:hover,
+    .nav-rail a.active {
+      background: var(--accent-violet);
+      box-shadow: 0 0 12px var(--glow-violet);
+      transform: scale(1.3);
+    }
+    .nav-rail a .tooltip {
+      position: absolute;
+      right: 22px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: var(--radius-xs);
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .nav-rail a:hover .tooltip { opacity: 1; }
+
+    /* ───────── HERO ───────── */
+    .hero {
+      text-align: center;
+      padding: 80px 0 60px;
+      position: relative;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 18px;
+      border-radius: 999px;
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      color: var(--accent-violet);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      animation: fadeDown 0.8s ease-out;
+    }
+    .hero-badge::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-violet);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+      50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(139, 92, 246, 0); }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.6rem, 5.5vw, 4.2rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      animation: fadeDown 0.8s ease-out 0.1s both;
+    }
+    .hero h1 .gradient-text {
+      background: linear-gradient(135deg, var(--accent-violet), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero .subtitle {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+      font-weight: 400;
+      animation: fadeDown 0.8s ease-out 0.2s both;
+    }
+    .hero .divider-line {
+      width: 60px;
+      height: 3px;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--accent-violet), var(--accent-cyan));
+      margin: 40px auto 0;
+      animation: fadeDown 0.8s ease-out 0.3s both;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ───────── SECTIONS ───────── */
+    .section {
+      margin-top: 72px;
+      animation: fadeIn 0.6s ease-out both;
+    }
+    .section[data-visible] { animation-play-state: running; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .section-label .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    h2 {
+      font-size: 1.85rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      margin-top: 32px;
+      letter-spacing: -0.01em;
+    }
+
+    p {
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+
+    strong { color: var(--text-primary); font-weight: 600; }
+
+    /* ───────── CARDS ───────── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(12px);
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-accent);
+      box-shadow: 0 0 40px var(--glow-violet), inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    /* ───────── BULLET LISTS ───────── */
+    .bullet-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .bullet-list li {
+      position: relative;
+      padding-left: 28px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+    .bullet-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-violet);
+      box-shadow: 0 0 8px var(--glow-violet);
+    }
+    .bullet-list li strong {
+      color: var(--text-primary);
+    }
+
+    /* ───────── STAT HIGHLIGHT ───────── */
+    .stat {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--accent-cyan);
+    }
+
+    /* ───────── TABLES ───────── */
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 20px 0 24px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    thead th {
+      background: rgba(139, 92, 246, 0.08);
+      color: var(--text-primary);
+      font-weight: 700;
+      text-align: left;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    tbody td {
+      padding: 13px 18px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      vertical-align: top;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr {
+      transition: background 0.2s ease;
+    }
+    tbody tr:hover {
+      background: rgba(139, 92, 246, 0.04);
+    }
+    td:first-child {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    /* ───────── STATUS BADGES ───────── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .badge-green {
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+    .badge-amber {
+      background: rgba(245, 158, 11, 0.12);
+      color: var(--accent-amber);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+    .badge-rose {
+      background: rgba(244, 63, 94, 0.12);
+      color: var(--accent-rose);
+      border: 1px solid rgba(244, 63, 94, 0.25);
+    }
+    .badge-check::before { content: '✓ '; }
+    .badge-progress::before { content: '◐ '; }
+
+    /* ───────── NUMBERED FEATURES ───────── */
+    .feature-grid {
+      display: grid;
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .feature-item {
+      display: flex;
+      gap: 20px;
+      padding: 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      transition: all 0.3s ease;
+    }
+    .feature-item:hover {
+      border-color: var(--border-accent);
+      background: var(--bg-card-hover);
+      transform: translateX(4px);
+    }
+    .feature-num {
+      flex-shrink: 0;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+      font-family: var(--font-mono);
+    }
+    .feature-num.v { background: rgba(139, 92, 246, 0.15); color: var(--accent-violet); }
+    .feature-num.b { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+    .feature-num.c { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); }
+    .feature-num.e { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); }
+    .feature-content h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .feature-content p {
+      font-size: 14px;
+      margin: 0;
+    }
+
+    /* ───────── STRATEGY CARDS ───────── */
+    .strategy-card {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .strategy-card:hover {
+      border-color: var(--border-accent);
+      background: var(--bg-card-hover);
+    }
+    .strategy-card.recommended {
+      border-color: rgba(139, 92, 246, 0.35);
+      box-shadow: 0 0 40px rgba(139, 92, 246, 0.08);
+    }
+    .strategy-card.recommended::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-violet), var(--accent-cyan));
+    }
+    .strategy-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .strategy-letter {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-xs);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 18px;
+      font-family: var(--font-mono);
+    }
+    .strategy-letter.a { background: rgba(139, 92, 246, 0.15); color: var(--accent-violet); }
+    .strategy-letter.b { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+    .strategy-letter.c { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); }
+    .strategy-title { font-size: 1.2rem; font-weight: 700; }
+    .strategy-tag {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--accent-violet);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+    .strategy-target {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .strategy-target span { color: var(--accent-amber); }
+
+    /* ───────── CALLOUT ───────── */
+    .callout {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(59, 130, 246, 0.06));
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      border-left: 4px solid var(--accent-violet);
+      border-radius: var(--radius-sm);
+      padding: 28px 28px 28px 24px;
+      margin: 32px 0;
+      position: relative;
+    }
+    .callout-icon {
+      position: absolute;
+      top: -14px;
+      left: 20px;
+      background: var(--bg-primary);
+      padding: 2px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-violet);
+      border-radius: var(--radius-xs);
+      border: 1px solid rgba(139, 92, 246, 0.25);
+    }
+    .callout p {
+      color: var(--text-primary);
+      font-size: 15px;
+      margin: 0;
+    }
+    .callout strong { color: #fff; }
+
+    /* ───────── BUCKETS ───────── */
+    .bucket {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 16px;
+      transition: all 0.3s ease;
+    }
+    .bucket:hover {
+      border-color: var(--border-accent);
+      background: var(--bg-card-hover);
+    }
+    .bucket-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .bucket-num {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+      font-family: var(--font-mono);
+    }
+    .bucket-num.n1 { background: rgba(139, 92, 246, 0.15); color: var(--accent-violet); }
+    .bucket-num.n2 { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+    .bucket-num.n3 { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); }
+    .bucket h3 { margin: 0; font-size: 1.1rem; }
+    .bucket-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .bucket-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .bucket-list li {
+      padding-left: 22px;
+      position: relative;
+      color: var(--text-secondary);
+      font-size: 14.5px;
+    }
+    .bucket-list li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* ───────── HONEST ASSESSMENT BOX ───────── */
+    .honesty-box {
+      background: rgba(244, 63, 94, 0.04);
+      border: 1px solid rgba(244, 63, 94, 0.15);
+      border-radius: var(--radius-sm);
+      padding: 22px 24px;
+      margin: 24px 0;
+    }
+    .honesty-box .label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-rose);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .honesty-box p {
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    /* ───────── GAP TABLE STYLING ───────── */
+    .gap-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: var(--radius-xs);
+      font-size: 12px;
+      font-weight: 500;
+      background: rgba(244, 63, 94, 0.1);
+      color: var(--accent-rose);
+    }
+
+    /* ───────── FOOTER ───────── */
+    .footer {
+      text-align: center;
+      margin-top: 80px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+    .footer .logo-text {
+      font-weight: 800;
+      font-size: 16px;
+      background: linear-gradient(135deg, var(--accent-violet), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    /* ───────── CODE / MONO ───────── */
+    code {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      padding: 2px 7px;
+      background: rgba(139, 92, 246, 0.1);
+      border-radius: 4px;
+      color: var(--accent-violet);
+    }
+
+    /* ───────── RESPONSIVE ───────── */
+    @media (max-width: 700px) {
+      .page-wrapper { padding: 32px 16px 80px; }
+      .hero { padding: 40px 0 40px; }
+      .card, .strategy-card, .bucket { padding: 20px; }
+      .nav-rail { display: none; }
+      .strategy-header { flex-wrap: wrap; }
+      .strategy-tag { margin-left: 0; margin-top: 8px; }
+      table { font-size: 13px; }
+      thead th, tbody td { padding: 10px 12px; }
+    }
+
+    /* ───────── SCROLL ANIMATIONS ───────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container navbar-content">
-            <a href="#" class="logo">
-                <div class="logo-icon">3D</div>
-                <span>3DAgent</span>
-            </a>
-            
-            <div class="nav-links">
-                <a href="#problem" class="nav-link">Problem</a>
-                <a href="#opportunity" class="nav-link">Opportunity</a>
-                <a href="#today" class="nav-link">Today</a>
-                <a href="#options" class="nav-link">Strategy</a>
-                <a href="#next" class="nav-link">Next Steps</a>
-            </div>
-            
-            <button class="mobile-menu-btn" onclick="toggleMenu()" aria-label="Toggle menu">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
-            </button>
-        </div>
-        
-        <div class="mobile-menu" id="mobileMenu">
-            <a href="#problem" onclick="toggleMenu()">Problem</a>
-            <a href="#opportunity" onclick="toggleMenu()">Opportunity</a>
-            <a href="#today" onclick="toggleMenu()">Today</a>
-            <a href="#options" onclick="toggleMenu()">Strategy</a>
-            <a href="#next" onclick="toggleMenu()">Next Steps</a>
-        </div>
-    </nav>
 
-    <!-- Hero -->
-    <section class="hero">
-        <div class="container hero-content">
-            <div class="badge">
-                <span class="badge-dot"></span>
-                Strategic Analysis Document
-            </div>
-            
-            <h1>
-                3DAgent<br>
-                <span class="gradient-text">Strategic Analysis</span>
-            </h1>
-            
-            <p class="hero-subtitle">
-                The first multi-agent pipeline that outputs production-quality <code>.blend</code> files, not raw meshes.
-            </p>
-            
-            <div class="hero-cta">
-                <a href="#problem" class="btn btn-primary">Explore Analysis</a>
-                <a href="#options" class="btn btn-secondary">View Strategy</a>
-            </div>
-            
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value">10</div>
-                    <div class="stat-label">Specialized Agents</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">95%+</div>
-                    <div class="stat-label">Pipeline Success</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">$0.15</div>
-                    <div class="stat-label">Per Asset Cost</div>
-                </div>
-            </div>
-        </div>
+  <!-- Navigation Rail -->
+  <nav class="nav-rail" aria-label="Page navigation">
+    <a href="#problem"><span class="tooltip">The Problem</span></a>
+    <a href="#opportunity"><span class="tooltip">The Opportunity</span></a>
+    <a href="#status"><span class="tooltip">Current Status</span></a>
+    <a href="#strategy"><span class="tooltip">Strategic Options</span></a>
+    <a href="#next"><span class="tooltip">What's Next</span></a>
+  </nav>
+
+  <div class="page-wrapper">
+
+    <!-- ████  HERO  ████ -->
+    <header class="hero">
+      <div class="hero-badge">Strategic Analysis</div>
+      <h1><span class="gradient-text">3DAgent</span></h1>
+      <p class="subtitle">The first multi-agent pipeline that outputs production-quality <code>.blend</code> files — not raw meshes — from a text prompt.</p>
+      <div class="divider-line"></div>
+    </header>
+
+    <!-- ████  THE PROBLEM  ████ -->
+    <section class="section reveal" id="problem">
+      <div class="section-label">
+        <span class="dot" style="background:var(--accent-rose)"></span>
+        <span style="color:var(--accent-rose)">The Problem</span>
+      </div>
+      <h2>3D Asset Creation Is Broken</h2>
+      <p><strong>3D asset creation is the most expensive, slowest bottleneck in game development and digital content.</strong></p>
+
+      <ul class="bullet-list">
+        <li>A single production-quality game asset costs <span class="stat">$50–$500</span> from a freelancer and takes <span class="stat">1–5 days</span></li>
+        <li>An indie studio needing 200 props pays <span class="stat">$10K–$100K</span> and waits <strong>months</strong></li>
+        <li>Non-technical creators (architects, educators, product designers) are completely locked out — Blender's learning curve is <strong>6-12 months</strong></li>
+        <li>Even for experienced artists, repetitive setup work (UVs, materials, lighting, rigging, export) consumes <span class="stat">60%</span> of production time</li>
+      </ul>
+
+      <h3 style="margin-top:36px">The Existing "AI 3D" Landscape Doesn't Solve This</h3>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Tool</th><th>What It Actually Produces</th><th>Gap</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Meshy, Tripo, CSM</td>
+              <td>Raw mesh blobs — no UVs, no PBR materials, no rig</td>
+              <td><span class="gap-tag">Unusable in production</span></td>
+            </tr>
+            <tr>
+              <td>Point-E, Shap-E</td>
+              <td>Research demos — low-poly, no textures</td>
+              <td><span class="gap-tag">Proof of concept only</span></td>
+            </tr>
+            <tr>
+              <td>Rodin, Luma Genie 2</td>
+              <td>Better geometry but still mesh-only output</td>
+              <td><span class="gap-tag">Still needs artist finishing</span></td>
+            </tr>
+            <tr>
+              <td>Blender + ChatGPT</td>
+              <td>One-off scripts that crash 70% of the time</td>
+              <td><span class="gap-tag">No pipeline, no QC</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <span class="callout-icon">The Gap</span>
+        <p><strong>Nobody produces a game-engine-ready <code>.blend</code> file</strong> with clean UVs, PBR materials, a rig, proper lighting, and a final render — from a text prompt — without human intervention.</p>
+      </div>
     </section>
 
-    <!-- Problem -->
-    <section id="problem">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-label">The Challenge</span>
-                <h2 class="section-title">The Problem</h2>
-            </div>
-            
-            <div class="card-grid card-grid-2">
-                <div>
-                    <div class="card problem-card">
-                        <div class="problem-icon red">💰</div>
-                        <div>
-                            <h4>Prohibitive Costs</h4>
-                            <p style="color: var(--text-muted); font-size: 0.9375rem; margin-bottom: 0;">
-                                A single asset costs <strong style="color: #fff;">$50–$500</strong> and takes <strong style="color: #fff;">1–5 days</strong>. 
-                                An indie studio needing 200 props pays <strong style="color: #fff;">$10K–$100K</strong> and waits months.
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <div class="card problem-card">
-                        <div class="problem-icon orange">🚫</div>
-                        <div>
-                            <h4>Accessibility Gap</h4>
-                            <p style="color: var(--text-muted); font-size: 0.9375rem; margin-bottom: 0;">
-                                Non-technical creators are locked out — Blender's learning curve is <strong style="color: #fff;">6-12 months</strong>.
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <div class="card problem-card">
-                        <div class="problem-icon yellow">⏱️</div>
-                        <div>
-                            <h4>Inefficient Workflow</h4>
-                            <p style="color: var(--text-muted); font-size: 0.9375rem; margin-bottom: 0;">
-                                Repetitive setup work (UVs, materials, lighting, rigging) consumes <strong style="color: #fff;">60%</strong> of production time.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <h4 style="margin-bottom: 1rem;">Existing "AI 3D" Landscape</h4>
-                    <p style="color: var(--text-muted); font-size: 0.9375rem; margin-bottom: 1.5rem;">
-                        Current tools don't solve production needs:
-                    </p>
-                    
-                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: rgba(239,68,68,0.1); border-radius: 8px; border: 1px solid rgba(239,68,68,0.2);">
-                            <div>
-                                <div style="font-weight: 600; font-size: 0.9375rem;">Meshy, Tripo, CSM</div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted);">Raw mesh blobs</div>
-                            </div>
-                            <span style="color: var(--danger); font-size: 0.75rem; font-weight: 600;">No UVs, No PBR</span>
-                        </div>
-                        
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: rgba(239,68,68,0.1); border-radius: 8px; border: 1px solid rgba(239,68,68,0.2);">
-                            <div>
-                                <div style="font-weight: 600; font-size: 0.9375rem;">Point-E, Shap-E</div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted);">Research demos</div>
-                            </div>
-                            <span style="color: var(--danger); font-size: 0.75rem; font-weight: 600;">Low-poly only</span>
-                        </div>
-                        
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: rgba(245,158,11,0.1); border-radius: 8px; border: 1px solid rgba(245,158,11,0.2);">
-                            <div>
-                                <div style="font-weight: 600; font-size: 0.9375rem;">Rodin, Luma Genie 2</div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted);">Better geometry</div>
-                            </div>
-                            <span style="color: var(--warning); font-size: 0.75rem; font-weight: 600;">Mesh-only</span>
-                        </div>
-                        
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: rgba(245,158,11,0.1); border-radius: 8px; border: 1px solid rgba(245,158,11,0.2);">
-                            <div>
-                                <div style="font-weight: 600; font-size: 0.9375rem;">Blender + ChatGPT</div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted);">One-off scripts</div>
-                            </div>
-                            <span style="color: var(--warning); font-size: 0.75rem; font-weight: 600;">70% crash rate</span>
-                        </div>
-                    </div>
-                    
-                    <div class="highlight-box" style="margin-top: 1.5rem; margin-bottom: 0;">
-                        <p style="margin: 0; font-size: 0.9375rem;">
-                            <strong style="color: var(--accent);">The Gap:</strong> Nobody produces game-engine-ready .blend files with clean UVs, PBR materials, rigs, lighting, and final renders — from a text prompt — without human intervention.
-                        </p>
-                    </div>
-                </div>
-            </div>
+    <!-- ████  THE OPPORTUNITY  ████ -->
+    <section class="section reveal" id="opportunity">
+      <div class="section-label">
+        <span class="dot" style="background:var(--accent-emerald)"></span>
+        <span style="color:var(--accent-emerald)">The Opportunity</span>
+      </div>
+      <h2>A Multi-Agent Pipeline, Not a Single Model</h2>
+      <p><strong>3DAgent is the first multi-agent pipeline that outputs production-quality .blend files, not raw meshes.</strong> Here's what makes the architecture fundamentally different:</p>
+
+      <div class="feature-grid">
+        <div class="feature-item">
+          <div class="feature-num v">1</div>
+          <div class="feature-content">
+            <h4>Multi-Agent Specialization</h4>
+            <p>10 agents (Director → Modeler → UV → Optimizer → Rigger → Material Artist → Lighter → Compositor → Renderer → Exporter), each with domain-specific Blender API knowledge. No single LLM call can do this — <strong>the pipeline is the product.</strong></p>
+          </div>
         </div>
+        <div class="feature-item">
+          <div class="feature-num b">2</div>
+          <div class="feature-content">
+            <h4>Deterministic Safety Nets</h4>
+            <p>5 local scripts (UV, Optimizer, Material Clamp, Tech Artist, Export) run at <strong>zero token cost</strong> and guarantee baseline quality even when LLM agents fail. The pipeline degrades gracefully instead of catastrophically.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-num c">3</div>
+          <div class="feature-content">
+            <h4>Local-First Execution</h4>
+            <p>Blender runs on the user's machine. The only cloud cost is LLM tokens — approximately <span class="stat">96K tokens</span> per asset at current optimization (<span class="stat">~$0.15–$0.50</span>/asset on Gemini pricing). No GPU inference servers needed.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-num e">4</div>
+          <div class="feature-content">
+            <h4>Self-Correcting</h4>
+            <p>The sanitizer fixes 30+ known Blender API mistakes before execution. The correction loop feeds tracebacks back to the LLM. Turns a <span class="stat">30%</span> first-attempt success rate into a <span class="stat">95%+</span> pipeline success rate.</p>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- Opportunity -->
-    <section id="opportunity" style="background: rgba(255,255,255,0.02);">
-        <div class="container">
-            <div class="section-header text-center" style="margin-left: auto; margin-right: auto;">
-                <span class="section-label">The Solution</span>
-                <h2 class="section-title">The Opportunity</h2>
-                <p class="section-desc" style="margin-left: auto; margin-right: auto;">
-                    3DAgent is the first multi-agent pipeline that outputs production-quality <code>.blend</code> files, not raw meshes.
-                </p>
-            </div>
-            
-            <div class="card-grid card-grid-4 mb-8">
-                <div class="card text-center">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">👥</div>
-                    <h4 style="margin-bottom: 0.5rem;">Multi-Agent</h4>
-                    <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">
-                        10 specialized agents with domain-specific Blender API knowledge
-                    </p>
-                </div>
-                
-                <div class="card text-center">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🛡️</div>
-                    <h4 style="margin-bottom: 0.5rem;">Deterministic</h4>
-                    <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">
-                        5 local scripts at zero token cost guarantee baseline quality
-                    </p>
-                </div>
-                
-                <div class="card text-center">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">💻</div>
-                    <h4 style="margin-bottom: 0.5rem;">Local-First</h4>
-                    <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">
-                        Blender runs locally. Only cost is LLM tokens (~$0.15–$0.50/asset)
-                    </p>
-                </div>
-                
-                <div class="card text-center">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔄</div>
-                    <h4 style="margin-bottom: 0.5rem;">Self-Correcting</h4>
-                    <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">
-                        Sanitizer fixes 30+ API mistakes. 95%+ pipeline success rate
-                    </p>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3 class="text-center mb-8">10-Agent Pipeline Architecture</h3>
-                
-                <div class="agent-grid">
-                    <div class="agent-item">
-                        <div class="agent-emoji">🎬</div>
-                        <div class="agent-name">Director</div>
-                    </div>
-                    <div class="agent-item">
-                        <div class="agent-emoji">🎨</div>
-                        <div class="agent-name">Modeler</div>
-                    </div>
-                    <div class="agent-item">
-                        <div class="agent-emoji">📐</div>
-                        <div class="agent-name">UV</div>
-                    </div>
-                    <div class="agent-item">
-                        <div class="agent-emoji">⚡</div>
-                        <div class="agent-name">Optimizer</div>
-                    </div>
-                    <div class="agent-item">
-                        <div class="agent-emoji">🦴</div>
-                        <div class="agent-name">Rigger</div>
-                    </div>
-                    <div class="agent-item">
-                        <div class="agent-emoji">🎭</div>
-                        <div class="agent-name">Material</div>
-                    </div>
-                    <div class="agent-item">
-                        <div class="agent-emoji">💡</div>
-                        <div class="agent-name">Lighter</div>
-                    </div>
-                    <div class="agent-item">
-                        <div class="agent-emoji">🖼️</div>
-                        <div class="agent-name">Compositor</div>
-                    </div>
-                    <div class="agent-item">
-                        <div class="agent-emoji">📷</div>
-                        <div class="agent-name">Renderer</div>
-                    </div>
-                    <div class="agent-item" style="background: rgba(16,185,129,0.2); border-color: rgba(16,185,129,0.3);">
-                        <div class="agent-emoji">📦</div>
-                        <div class="agent-name" style="color: var(--success);">Exporter</div>
-                    </div>
-                </div>
-                
-                <div class="text-center mt-8">
-                    <span class="badge" style="background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: var(--success);">
-                        <span class="badge-dot" style="background: var(--success);"></span>
-                        Output: Production-Ready .blend File
-                    </span>
-                </div>
-            </div>
-        </div>
+    <!-- ████  CURRENT STATUS  ████ -->
+    <section class="section reveal" id="status">
+      <div class="section-label">
+        <span class="dot" style="background:var(--accent-amber)"></span>
+        <span style="color:var(--accent-amber)">Current Status</span>
+      </div>
+      <h2>Where We Are Today <span style="color:var(--text-muted);font-size:0.5em;font-weight:400;vertical-align: middle;">18 cycles in</span></h2>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Dimension</th><th>Current State</th><th>Marketable Bar</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Geometry</td>
+              <td>Recognizable shapes with correct proportions for simple objects. Components properly parented.</td>
+              <td>Silhouette-accurate with surface detail (bevels, panel lines, organic curves)</td>
+              <td><span class="badge badge-amber badge-progress">In Progress</span></td>
+            </tr>
+            <tr>
+              <td>Materials</td>
+              <td>Procedural PBR (wood grain, metallic) with correct roughness/metallic split.</td>
+              <td>Texture-quality materials with wear, dirt maps, edge highlighting</td>
+              <td><span class="badge badge-amber badge-progress">In Progress</span></td>
+            </tr>
+            <tr>
+              <td>Rendering</td>
+              <td>Consistent Cycles renders with 3-point lighting, Filmic, exposure control</td>
+              <td>—</td>
+              <td><span class="badge badge-green badge-check">Ready</span></td>
+            </tr>
+            <tr>
+              <td>Pipeline Reliability</td>
+              <td>100% success rate on latest test (10/10 agents)</td>
+              <td>—</td>
+              <td><span class="badge badge-green badge-check">Ready</span></td>
+            </tr>
+            <tr>
+              <td>Token Cost</td>
+              <td>~96K tokens/asset (~$0.15–$0.50)</td>
+              <td>—</td>
+              <td><span class="badge badge-green badge-check">Ready</span></td>
+            </tr>
+            <tr>
+              <td>GUI</td>
+              <td>Functional PySide6 app with admin settings, project browser, live agent log</td>
+              <td>Needs polish, batch mode, prompt library</td>
+              <td><span class="badge badge-amber badge-progress">In Progress</span></td>
+            </tr>
+            <tr>
+              <td>Asset Diversity</td>
+              <td>8 hard-surface/prop assets tested. No organic, no characters.</td>
+              <td>Needs 50+ validated assets across categories</td>
+              <td><span class="badge badge-rose">Early</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="honesty-box">
+        <div class="label">⚠ Honest Truth</div>
+        <p><strong>Geometry quality is our ceiling.</strong> The LLM writes Blender Python scripts to build geometry from primitives — it cannot sculpt, retopologize, or do sub-D modeling the way an artist would. A tankard will be recognizably a tankard but will never have hand-carved wood grain detail in the mesh itself. The procedural textures carry more visual weight than the geometry.</p>
+      </div>
     </section>
 
-    <!-- Today -->
-    <section id="today">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-label">Current Status</span>
-                <h2 class="section-title">Where We Are Today</h2>
-                <p class="section-desc">Honest assessment after 18 development cycles</p>
-            </div>
-            
-            <div class="card" style="padding: 0; overflow: hidden;">
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Dimension</th>
-                                <th>Current State</th>
-                                <th>Marketable Bar</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Geometry</strong></td>
-                                <td>Recognizable shapes, correct proportions, proper parenting</td>
-                                <td>Silhouette-accurate with surface detail</td>
-                                <td><span class="status-badge status-warn">In Progress</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Materials</strong></td>
-                                <td>Procedural PBR with correct roughness/metallic split</td>
-                                <td>Texture-quality with wear, dirt, edge highlights</td>
-                                <td><span class="status-badge status-warn">In Progress</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Rendering</strong></td>
-                                <td>Consistent Cycles renders, 3-point lighting, Filmic</td>
-                                <td>✅ Already acceptable</td>
-                                <td><span class="status-badge status-ready">Ready</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Pipeline</strong></td>
-                                <td>100% success rate (10/10 agents)</td>
-                                <td>✅ Already acceptable</td>
-                                <td><span class="status-badge status-ready">Ready</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Token Cost</strong></td>
-                                <td>~96K tokens/asset (~$0.15–$0.50)</td>
-                                <td>✅ Already acceptable</td>
-                                <td><span class="status-badge status-ready">Ready</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>GUI</strong></td>
-                                <td>Functional PySide6 app with admin, browser, logs</td>
-                                <td>Needs polish, batch mode, prompt library</td>
-                                <td><span class="status-badge status-warn">In Progress</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Assets</strong></td>
-                                <td>8 hard-surface/prop assets tested</td>
-                                <td>Needs 50+ validated assets across categories</td>
-                                <td><span class="status-badge status-warn">In Progress</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <div class="highlight-box">
-                <h4 style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                    <span style="font-size: 1.25rem;">ℹ️</span>
-                    The Honest Truth
-                </h4>
-                <p style="margin: 0; color: var(--text-muted);">
-                    Geometry quality is our ceiling. The LLM writes Blender Python scripts to build geometry from primitives — it cannot sculpt, retopologize, or do sub-D modeling the way an artist would. A tankard will be recognizably a tankard but will never have hand-carved wood grain detail in the mesh itself. The procedural textures carry more visual weight than the geometry.
-                </p>
-            </div>
-            
-            <div class="card-grid card-grid-3 mt-8">
-                <div class="card text-center">
-                    <div class="stat-value">18</div>
-                    <div style="color: var(--text-muted); font-size: 0.875rem;">Development Cycles</div>
-                </div>
-                <div class="card text-center">
-                    <div class="stat-value">8</div>
-                    <div style="color: var(--text-muted); font-size: 0.875rem;">Tested Assets</div>
-                </div>
-                <div class="card text-center">
-                    <div class="stat-value">30% → 95%</div>
-                    <div style="color: var(--text-muted); font-size: 0.875rem;">Success Rate Improvement</div>
-                </div>
-            </div>
+    <!-- ████  STRATEGIC OPTIONS  ████ -->
+    <section class="section reveal" id="strategy">
+      <div class="section-label">
+        <span class="dot" style="background:var(--accent-blue)"></span>
+        <span style="color:var(--accent-blue)">Strategic Options</span>
+      </div>
+      <h2>Three Paths Forward</h2>
+
+      <!-- Option A -->
+      <div class="strategy-card recommended">
+        <div class="strategy-header">
+          <div class="strategy-letter a">A</div>
+          <div class="strategy-title">"Asset Kit Generator"</div>
+          <span class="strategy-tag">Recommended</span>
         </div>
+        <div class="strategy-target">Target → <span>Indie game devs who need bulk props/environment pieces</span></div>
+        <ul class="bullet-list">
+          <li>Position as <strong>rapid prototyping / placeholder generation</strong> — "Generate 200 props in an afternoon for $30"</li>
+          <li><strong>Quality reframe:</strong> These are meant to populate a world, not be examined up close. At 5-10m camera distance in a game, our assets look great</li>
+          <li>Lean into batch generation, prompt library, and style consistency</li>
+          <li><strong>Biggest impact:</strong> GUI + batch mode + prompt templates + style presets</li>
+        </ul>
+      </div>
+
+      <!-- Option B -->
+      <div class="strategy-card">
+        <div class="strategy-header">
+          <div class="strategy-letter b">B</div>
+          <div class="strategy-title">"Artist's Starting Point"</div>
+        </div>
+        <div class="strategy-target">Target → <span>3D artists who want a 70% head-start</span></div>
+        <ul class="bullet-list">
+          <li>Generate the boring setup (UVs, basic shapes, materials, rig, lighting) so artists can focus on creative refinement</li>
+          <li>Export includes clean topology for easy modification</li>
+          <li>Position as "Blender co-pilot, not replacement"</li>
+          <li><strong>Biggest impact:</strong> Export quality + topology cleanup + artist-friendly naming</li>
+        </ul>
+      </div>
+
+      <!-- Option C -->
+      <div class="strategy-card">
+        <div class="strategy-header">
+          <div class="strategy-letter c">C</div>
+          <div class="strategy-title">"E-Commerce Product Viz"</div>
+        </div>
+        <div class="strategy-target">Target → <span>Product companies needing 3D renders of simple objects</span></div>
+        <ul class="bullet-list">
+          <li>Narrowest scope but highest quality bar (customers compare against photographs)</li>
+          <li>Simple geometry (bottles, cups, boxes) is actually our strength</li>
+          <li>Would need photorealistic material library + HDRI lighting</li>
+          <li><strong>Biggest impact:</strong> Material library + render presets + turntable animation</li>
+        </ul>
+      </div>
     </section>
 
-    <!-- Options -->
-    <section id="options" style="background: rgba(255,255,255,0.02);">
-        <div class="container">
-            <div class="section-header text-center" style="margin-left: auto; margin-right: auto;">
-                <span class="section-label">Strategic Direction</span>
-                <h2 class="section-title">Strategic Options</h2>
-            </div>
-            
-            <div class="card-grid card-grid-3">
-                <!-- Option A -->
-                <div class="option-card option-recommended">
-                    <span class="option-badge">RECOMMENDED</span>
-                    <div class="option-letter option-a">A</div>
-                    <h3>Asset Kit Generator</h3>
-                    <p style="color: var(--success); font-size: 0.875rem; font-weight: 600; margin-bottom: 1rem;">Indie Game Devs</p>
-                    
-                    <ul class="check-list">
-                        <li>Rapid prototyping / placeholder generation</li>
-                        <li>Generate 200 props in an afternoon for $30</li>
-                        <li>Batch generation & style consistency</li>
-                    </ul>
-                    
-                    <div style="padding-top: 1rem; border-top: 1px solid var(--border);">
-                        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Key Focus</div>
-                        <p style="margin: 0; font-size: 0.9375rem; color: var(--text-muted);">
-                            GUI + batch mode + prompt templates + style presets
-                        </p>
-                    </div>
-                </div>
-                
-                <!-- Option B -->
-                <div class="option-card">
-                    <div class="option-letter option-b">B</div>
-                    <h3>Artist's Starting Point</h3>
-                    <p style="color: var(--primary-light); font-size: 0.875rem; font-weight: 600; margin-bottom: 1rem;">3D Artists</p>
-                    
-                    <ul class="check-list">
-                        <li>70% head-start on boring setup work</li>
-                        <li>Clean topology for easy modification</li>
-                        <li>"Blender co-pilot, not replacement"</li>
-                    </ul>
-                    
-                    <div style="padding-top: 1rem; border-top: 1px solid var(--border);">
-                        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Key Focus</div>
-                        <p style="margin: 0; font-size: 0.9375rem; color: var(--text-muted);">
-                            Export quality + topology cleanup + artist-friendly naming
-                        </p>
-                    </div>
-                </div>
-                
-                <!-- Option C -->
-                <div class="option-card">
-                    <div class="option-letter option-c">C</div>
-                    <h3>E-Commerce Product Viz</h3>
-                    <p style="color: var(--secondary); font-size: 0.875rem; font-weight: 600; margin-bottom: 1rem;">Product Companies</p>
-                    
-                    <ul class="check-list">
-                        <li>Narrow scope, highest quality bar</li>
-                        <li>Simple geometry strength (bottles, cups)</li>
-                        <li>Photorealistic material library needed</li>
-                    </ul>
-                    
-                    <div style="padding-top: 1rem; border-top: 1px solid var(--border);">
-                        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Key Focus</div>
-                        <p style="margin: 0; font-size: 0.9375rem; color: var(--text-muted);">
-                            Material library + render presets + turntable animation
-                        </p>
-                    </div>
-                </div>
-            </div>
+    <!-- ████  WHAT MATTERS NEXT  ████ -->
+    <section class="section reveal" id="next">
+      <div class="section-label">
+        <span class="dot" style="background:var(--accent-cyan)"></span>
+        <span style="color:var(--accent-cyan)">What Matters Next</span>
+      </div>
+      <h2>Three High-Leverage Buckets</h2>
+      <p>Regardless of positioning, the next critical work falls into three areas:</p>
+
+      <div class="bucket">
+        <div class="bucket-header">
+          <div class="bucket-num n1">1</div>
+          <h3>Asset Quality</h3>
+          <span class="bucket-subtitle">the product is the .blend file</span>
         </div>
+        <ul class="bucket-list">
+          <li>Geometry needs surface detail — the Modeler prompt should guide edge loops, chamfers, and proportional accuracy more aggressively</li>
+          <li>Materials need more visual contrast between different surface types in the same object</li>
+          <li>Need to validate with 30+ diverse assets and build a "known good" portfolio</li>
+        </ul>
+      </div>
+
+      <div class="bucket">
+        <div class="bucket-header">
+          <div class="bucket-num n2">2</div>
+          <h3>GUI as Product Surface</h3>
+          <span class="bucket-subtitle">users touch this, not the pipeline</span>
+        </div>
+        <ul class="bucket-list">
+          <li>Batch generation queue</li>
+          <li>Prompt library with categorized templates</li>
+          <li>Before/after comparison view</li>
+          <li>Export format picker (blend / glb / fbx / obj)</li>
+          <li>Cost estimator (show token count → dollar estimate)</li>
+        </ul>
+      </div>
+
+      <div class="bucket">
+        <div class="bucket-header">
+          <div class="bucket-num n3">3</div>
+          <h3>Robustness</h3>
+          <span class="bucket-subtitle">trust = retention</span>
+        </div>
+        <ul class="bucket-list">
+          <li>Pipeline currently has no timeout protection — a stuck Blender process blocks forever</li>
+          <li>Error recovery is retry-based with no fallback strategy beyond "try simpler"</li>
+          <li>Need progress estimation (not just percentage ticks)</li>
+          <li>Need crash recovery — if the machine reboots mid-pipeline, can it resume?</li>
+        </ul>
+      </div>
+
+      <div class="callout" style="margin-top:36px">
+        <span class="callout-icon">⚡ Key Insight</span>
+        <p><strong>The single highest-leverage thing we can do right now is NOT more pipeline engineering.</strong> It's building a beautiful, premium GUI that makes the 96K-token pipeline <em>feel</em> like a $200 product. The pipeline is good enough to ship for Option A. The GUI is not.</p>
+      </div>
     </section>
 
-    <!-- Next Steps -->
-    <section id="next">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-label">Action Items</span>
-                <h2 class="section-title">What Matters Next</h2>
-            </div>
-            
-            <div class="card-grid card-grid-3 mb-8">
-                <div class="card" style="border-top: 4px solid var(--primary);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h4>1. Asset Quality</h4>
-                        <span style="font-size: 1.5rem;">🎯</span>
-                    </div>
-                    <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1rem;">The product is the .blend file</p>
-                    
-                    <ul style="list-style: none; font-size: 0.9375rem; color: var(--text-muted);">
-                        <li style="margin-bottom: 0.5rem;">• Guide edge loops, chamfers, proportional accuracy</li>
-                        <li style="margin-bottom: 0.5rem;">• Visual contrast between surface types</li>
-                        <li>• Validate 30+ diverse assets for portfolio</li>
-                    </ul>
-                </div>
-                
-                <div class="card" style="border-top: 4px solid var(--secondary);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h4>2. GUI as Product</h4>
-                        <span style="font-size: 1.5rem;">✨</span>
-                    </div>
-                    <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1rem;">Users touch this, not the pipeline</p>
-                    
-                    <ul style="list-style: none; font-size: 0.9375rem; color: var(--text-muted);">
-                        <li style="margin-bottom: 0.5rem;">• Batch generation queue</li>
-                        <li style="margin-bottom: 0.5rem;">• Prompt library with templates</li>
-                        <li style="margin-bottom: 0.5rem;">• Before/after comparison view</li>
-                        <li style="margin-bottom: 0.5rem;">• Export format picker</li>
-                        <li>• Cost estimator (tokens → $)</li>
-                    </ul>
-                </div>
-                
-                <div class="card" style="border-top: 4px solid var(--accent);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h4>3. Robustness</h4>
-                        <span style="font-size: 1.5rem;">🛡️</span>
-                    </div>
-                    <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1rem;">Trust = Retention</p>
-                    
-                    <ul style="list-style: none; font-size: 0.9375rem; color: var(--text-muted);">
-                        <li style="margin-bottom: 0.5rem;">• Timeout protection for stuck processes</li>
-                        <li style="margin-bottom: 0.5rem;">• Error recovery beyond retry</li>
-                        <li style="margin-bottom: 0.5rem;">• Progress estimation (not just %)</li>
-                        <li>• Crash recovery & resume capability</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="important-box">
-                <div class="important-icon">⚡</div>
-                <div>
-                    <h4 style="margin-bottom: 0.5rem;">Critical Insight</h4>
-                    <p style="margin: 0; color: var(--text-muted); font-size: 1rem; line-height: 1.6;">
-                        The single highest-leverage thing we can do right now is <strong style="color: var(--accent);">NOT more pipeline engineering</strong>. 
-                        It's building a beautiful, premium GUI that makes the 96K-token pipeline <strong style="color: #fff;">feel like a $200 product</strong>. 
-                        The pipeline is good enough to ship for Option A. The GUI is not.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                <div class="logo-icon" style="width: 24px; height: 24px; font-size: 0.75rem;">3D</div>
-                <span style="font-weight: 700; color: #fff;">3DAgent</span>
-            </div>
-            <p>Strategic Analysis Document • 2024</p>
-        </div>
+    <!-- ████  FOOTER  ████ -->
+    <footer class="footer">
+      <div class="logo-text">3DAgent</div>
+      <p>Strategic Analysis · February 2026</p>
     </footer>
 
-    <script>
-        // Mobile menu toggle
-        function toggleMenu() {
-            const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('active');
+  </div>
+
+  <script>
+    // ───── Scroll reveal ─────
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
         }
-        
-        // Close mobile menu when clicking on a link
-        document.querySelectorAll('.mobile-menu a').forEach(link => {
-            link.addEventListener('click', () => {
-                document.getElementById('mobileMenu').classList.remove('active');
-            });
-        });
-        
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    const offsetTop = target.offsetTop - 80; // Account for fixed header
-                    window.scrollTo({
-                        top: offsetTop,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-        
-        // Add shadow to navbar on scroll
-        window.addEventListener('scroll', () => {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
-            } else {
-                navbar.style.boxShadow = 'none';
-            }
-        });
-    </script>
+      });
+    }, { threshold: 0.08 });
+    reveals.forEach(el => observer.observe(el));
+
+    // ───── Nav rail active state ─────
+    const navLinks = document.querySelectorAll('.nav-rail a');
+    const sections = document.querySelectorAll('.section');
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          navLinks.forEach(link => {
+            link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+    sections.forEach(s => sectionObserver.observe(s));
+  </script>
 </body>
 </html>
