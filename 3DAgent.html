@@ -1,882 +1,883 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="3DAgent Strategic Analysis - AI-powered 3D asset generation pipeline">
     <title>3DAgent — Strategic Analysis</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
-                    colors: {
-                        primary: '#6366f1',
-                        secondary: '#8b5cf6',
-                        accent: '#ec4899',
-                        dark: '#0f172a',
-                        darker: '#020617',
-                        surface: '#1e293b',
-                        'surface-light': '#334155',
-                    },
-                    animation: {
-                        'gradient': 'gradient 8s linear infinite',
-                        'fade-in': 'fadeIn 0.5s ease-out',
-                        'slide-up': 'slideUp 0.6s ease-out',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                    },
-                    keyframes: {
-                        gradient: {
-                            '0%, 100%': { backgroundPosition: '0% 50%' },
-                            '50%': { backgroundPosition: '100% 50%' },
-                        },
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
-                        },
-                        slideUp: {
-                            '0%': { transform: 'translateY(20px)', opacity: '0' },
-                            '100%': { transform: 'translateY(0)', opacity: '1' },
-                        },
-                    },
-                },
-            },
-        }
-    </script>
     <style>
+        /* Reset and Base */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+        }
+        
         body {
-            background-color: #020617;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #0a0e1a;
             color: #e2e8f0;
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
         
-        .glass {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        /* CSS Variables for theming */
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --darker: #020617;
+            --surface: #1e293b;
+            --surface-light: #334155;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
         }
         
-        .glass-strong {
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(99, 102, 241, 0.2);
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            line-height: 1.2;
+            color: #fff;
         }
         
-        .text-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+        h2 { font-size: clamp(1.5rem, 4vw, 2.5rem); }
+        h3 { font-size: clamp(1.25rem, 3vw, 1.75rem); }
+        h4 { font-size: clamp(1.1rem, 2vw, 1.25rem); }
+        
+        p { margin-bottom: 1rem; }
+        
+        /* Layout */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
         }
         
-        .text-gradient-alt {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        @media (min-width: 640px) {
+            .container { padding: 0 1.5rem; }
         }
         
-        .glow {
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        @media (min-width: 1024px) {
+            .container { padding: 0 2rem; }
         }
         
-        .hover-lift {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            transition: all 0.3s;
         }
         
-        .hover-lift:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #fff;
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+        }
+        
+        .nav-links {
+            display: none;
+            gap: 2rem;
+        }
+        
+        @media (min-width: 768px) {
+            .nav-links {
+                display: flex;
+            }
         }
         
         .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s;
             position: relative;
-            overflow: hidden;
+        }
+        
+        .nav-link:hover {
+            color: #fff;
         }
         
         .nav-link::after {
             content: '';
             position: absolute;
-            bottom: -2px;
+            bottom: -4px;
             left: 0;
             width: 0;
             height: 2px;
-            background: linear-gradient(90deg, #6366f1, #ec4899);
-            transition: width 0.3s ease;
+            background: var(--primary);
+            transition: width 0.3s;
         }
         
         .nav-link:hover::after {
             width: 100%;
         }
         
-        .progress-bar {
-            position: fixed;
-            top: 0;
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: block;
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .mobile-menu-btn {
+                display: none;
+            }
+        }
+        
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 60px;
             left: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #6366f1, #ec4899);
-            z-index: 50;
-            transition: width 0.1s;
+            right: 0;
+            background: rgba(15, 23, 42, 0.98);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem;
         }
         
-        .agent-card {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
-            border: 1px solid rgba(99, 102, 241, 0.2);
+        .mobile-menu.active {
+            display: block;
         }
         
-        .status-good {
-            color: #34d399;
-            background: rgba(52, 211, 153, 0.1);
+        .mobile-menu a {
+            display: block;
+            padding: 0.75rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
         }
         
-        .status-warn {
-            color: #fbbf24;
-            background: rgba(251, 191, 36, 0.1);
+        .mobile-menu a:hover {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
         }
         
-        .metric-card {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.4) 100%);
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 80px 0 40px;
+            background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 70%),
+                        radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
         }
         
-        .option-card {
-            transition: all 0.4s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
         }
         
-        .option-card:hover {
-            border-color: rgba(99, 102, 241, 0.5);
-            transform: translateY(-8px);
-            box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.25);
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
         }
         
-        .option-recommended {
-            border-color: rgba(52, 211, 153, 0.5);
-            background: linear-gradient(135deg, rgba(52, 211, 153, 0.1) 0%, rgba(52, 211, 153, 0.05) 100%);
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
         }
         
-        .table-row-hover:hover {
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-subtitle {
+            font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+            color: var(--text-muted);
+            margin: 1.5rem 0 2rem;
+            line-height: 1.6;
+        }
+        
+        .hero-cta {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        @media (min-width: 640px) {
+            .hero-cta {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.875rem 1.75rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            max-width: 280px;
+        }
+        
+        @media (min-width: 640px) {
+            .btn {
+                width: auto;
+            }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1rem;
+            margin-top: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        @media (min-width: 640px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+        
+        /* Section Styles */
+        section {
+            padding: 4rem 0;
+        }
+        
+        @media (min-width: 768px) {
+            section {
+                padding: 6rem 0;
+            }
+        }
+        
+        .section-header {
+            margin-bottom: 3rem;
+        }
+        
+        .section-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--primary-light);
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-title {
+            margin-bottom: 1rem;
+        }
+        
+        .section-desc {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            max-width: 600px;
+        }
+        
+        /* Cards */
+        .card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        @media (min-width: 640px) {
+            .card {
+                padding: 2rem;
+            }
+        }
+        
+        .card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .card-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        @media (min-width: 640px) {
+            .card-grid-2 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .card-grid-3 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .card-grid-4 {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        /* Problem Section */
+        .problem-card {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .problem-icon {
+            flex-shrink: 0;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .problem-icon.red { background: rgba(239, 68, 68, 0.1); }
+        .problem-icon.orange { background: rgba(245, 158, 11, 0.1); }
+        .problem-icon.yellow { background: rgba(234, 179, 8, 0.1); }
+        
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -1rem;
+            padding: 0 1rem;
+        }
+        
+        @media (min-width: 768px) {
+            .table-container {
+                margin: 0;
+                padding: 0;
+            }
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+            min-width: 600px;
+        }
+        
+        th {
+            text-align: left;
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            color: var(--text-muted);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+        }
+        
+        tr:hover td {
             background: rgba(99, 102, 241, 0.05);
         }
         
-        code {
-            font-family: 'JetBrains Mono', monospace;
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-ready {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .status-warn {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+        
+        /* Agent Pipeline */
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        
+        @media (min-width: 640px) {
+            .agent-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .agent-grid {
+                grid-template-columns: repeat(10, 1fr);
+            }
+        }
+        
+        .agent-item {
             background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+            font-size: 0.75rem;
+        }
+        
+        @media (min-width: 640px) {
+            .agent-item {
+                font-size: 0.875rem;
+                padding: 1rem;
+            }
+        }
+        
+        .agent-emoji {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .agent-name {
+            color: #fff;
+            font-weight: 600;
+        }
+        
+        /* Options Cards */
+        .option-card {
+            position: relative;
+            padding: 1.5rem;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.02);
+            transition: all 0.3s;
+        }
+        
+        @media (min-width: 640px) {
+            .option-card {
+                padding: 2rem;
+            }
+        }
+        
+        .option-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+        
+        .option-recommended {
+            border-color: rgba(16, 185, 129, 0.3);
+            background: rgba(16, 185, 129, 0.05);
+        }
+        
+        .option-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.25rem 0.75rem;
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        
+        .option-letter {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+        
+        .option-a { background: linear-gradient(135deg, #10b981, #059669); }
+        .option-b { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .option-c { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        
+        .check-list {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+        
+        .check-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.9375rem;
+            color: var(--text-muted);
+        }
+        
+        .check-list li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        
+        /* Highlight Box */
+        .highlight-box {
+            background: rgba(236, 72, 153, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+        
+        .important-box {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(99, 102, 241, 0.1));
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        
+        @media (min-width: 640px) {
+            .highlight-box, .important-box {
+                padding: 2rem;
+            }
+        }
+        
+        .important-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(236, 72, 153, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        /* Code style */
+        code {
+            font-family: 'Courier New', monospace;
+            background: rgba(99, 102, 241, 0.15);
             padding: 0.2em 0.4em;
             border-radius: 4px;
             font-size: 0.9em;
             color: #a5b4fc;
         }
         
-        .highlight-box {
-            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
-            border-left: 4px solid #ec4899;
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 2rem 0;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
         }
         
-        .scroll-indicator {
-            position: fixed;
-            right: 2rem;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 40;
-        }
+        /* Utility */
+        .text-center { text-align: center; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mt-8 { margin-top: 2rem; }
         
-        .dot {
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            margin: 12px 0;
-            cursor: pointer;
-            transition: all 0.3s ease;
         }
         
-        .dot.active {
-            background: #6366f1;
-            transform: scale(1.5);
-            box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+        ::-webkit-scrollbar-track {
+            background: var(--darker);
         }
         
-        @media (max-width: 768px) {
-            .scroll-indicator {
-                display: none;
-            }
+        ::-webkit-scrollbar-thumb {
+            background: var(--surface-light);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
         }
     </style>
 </head>
-<body class="antialiased selection:bg-primary selection:text-white overflow-x-hidden">
-
-    <!-- Progress Bar -->
-    <div class="progress-bar" id="progressBar"></div>
-
+<body>
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-40 glass-strong border-b border-white/10 transition-all duration-300" id="navbar">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                        <span class="text-white font-bold text-sm">3D</span>
-                    </div>
-                    <span class="font-bold text-xl tracking-tight text-white">3DAgent</span>
-                </div>
-                
-                <div class="hidden md:flex space-x-8">
-                    <a href="#problem" class="nav-link text-sm font-medium text-gray-300 hover:text-white transition-colors">Problem</a>
-                    <a href="#opportunity" class="nav-link text-sm font-medium text-gray-300 hover:text-white transition-colors">Opportunity</a>
-                    <a href="#today" class="nav-link text-sm font-medium text-gray-300 hover:text-white transition-colors">Today</a>
-                    <a href="#options" class="nav-link text-sm font-medium text-gray-300 hover:text-white transition-colors">Strategy</a>
-                    <a href="#next" class="nav-link text-sm font-medium text-gray-300 hover:text-white transition-colors">Next Steps</a>
-                </div>
-
-                <button class="md:hidden text-gray-300 hover:text-white" onclick="toggleMobileMenu()">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                </button>
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="#" class="logo">
+                <div class="logo-icon">3D</div>
+                <span>3DAgent</span>
+            </a>
+            
+            <div class="nav-links">
+                <a href="#problem" class="nav-link">Problem</a>
+                <a href="#opportunity" class="nav-link">Opportunity</a>
+                <a href="#today" class="nav-link">Today</a>
+                <a href="#options" class="nav-link">Strategy</a>
+                <a href="#next" class="nav-link">Next Steps</a>
             </div>
+            
+            <button class="mobile-menu-btn" onclick="toggleMenu()" aria-label="Toggle menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
         </div>
         
-        <!-- Mobile Menu -->
-        <div id="mobileMenu" class="hidden md:hidden glass-strong border-t border-white/10">
-            <div class="px-4 pt-2 pb-6 space-y-2">
-                <a href="#problem" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-md">Problem</a>
-                <a href="#opportunity" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-md">Opportunity</a>
-                <a href="#today" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-md">Today</a>
-                <a href="#options" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-md">Strategy</a>
-                <a href="#next" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-md">Next Steps</a>
-            </div>
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="#problem" onclick="toggleMenu()">Problem</a>
+            <a href="#opportunity" onclick="toggleMenu()">Opportunity</a>
+            <a href="#today" onclick="toggleMenu()">Today</a>
+            <a href="#options" onclick="toggleMenu()">Strategy</a>
+            <a href="#next" onclick="toggleMenu()">Next Steps</a>
         </div>
     </nav>
 
-    <!-- Scroll Indicator -->
-    <div class="scroll-indicator hidden lg:flex flex-col items-center">
-        <div class="dot active" data-section="hero"></div>
-        <div class="dot" data-section="problem"></div>
-        <div class="dot" data-section="opportunity"></div>
-        <div class="dot" data-section="today"></div>
-        <div class="dot" data-section="options"></div>
-        <div class="dot" data-section="next"></div>
-    </div>
-
-    <!-- Hero Section -->
-    <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-        <!-- Background Effects -->
-        <div class="absolute inset-0 bg-darker">
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(99,102,241,0.15),transparent_50%)]"></div>
-            <div class="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse-slow"></div>
-            <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 2s;"></div>
-        </div>
-
-        <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="inline-flex items-center px-4 py-2 rounded-full glass mb-8 animate-fade-in">
-                <span class="flex h-2 w-2 rounded-full bg-green-400 mr-2 animate-pulse"></span>
-                <span class="text-sm font-medium text-gray-300">Strategic Analysis Document</span>
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container hero-content">
+            <div class="badge">
+                <span class="badge-dot"></span>
+                Strategic Analysis Document
             </div>
             
-            <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6 animate-slide-up">
-                <span class="block text-white mb-2">3DAgent</span>
-                <span class="block text-gradient">Strategic Analysis</span>
+            <h1>
+                3DAgent<br>
+                <span class="gradient-text">Strategic Analysis</span>
             </h1>
             
-            <p class="mt-6 text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed animate-slide-up" style="animation-delay: 0.1s;">
+            <p class="hero-subtitle">
                 The first multi-agent pipeline that outputs production-quality <code>.blend</code> files, not raw meshes.
             </p>
-
-            <div class="mt-12 flex flex-col sm:flex-row gap-4 justify-center animate-slide-up" style="animation-delay: 0.2s;">
-                <a href="#problem" class="px-8 py-4 rounded-full bg-gradient-to-r from-primary to-secondary text-white font-semibold hover:shadow-lg hover:shadow-primary/25 transition-all hover:-translate-y-1">
-                    Explore Analysis
-                </a>
-                <a href="#options" class="px-8 py-4 rounded-full glass text-white font-semibold hover:bg-white/10 transition-all hover:-translate-y-1">
-                    View Strategy
-                </a>
+            
+            <div class="hero-cta">
+                <a href="#problem" class="btn btn-primary">Explore Analysis</a>
+                <a href="#options" class="btn btn-secondary">View Strategy</a>
             </div>
-
-            <!-- Stats Grid -->
-            <div class="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto animate-slide-up" style="animation-delay: 0.3s;">
-                <div class="glass rounded-2xl p-6 hover-lift">
-                    <div class="text-3xl font-bold text-white mb-1">10</div>
-                    <div class="text-sm text-gray-400">Specialized Agents</div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">10</div>
+                    <div class="stat-label">Specialized Agents</div>
                 </div>
-                <div class="glass rounded-2xl p-6 hover-lift">
-                    <div class="text-3xl font-bold text-white mb-1">95%+</div>
-                    <div class="text-sm text-gray-400">Pipeline Success</div>
+                <div class="stat-card">
+                    <div class="stat-value">95%+</div>
+                    <div class="stat-label">Pipeline Success</div>
                 </div>
-                <div class="glass rounded-2xl p-6 hover-lift">
-                    <div class="text-3xl font-bold text-white mb-1">$0.15</div>
-                    <div class="text-sm text-gray-400">Per Asset Cost</div>
+                <div class="stat-card">
+                    <div class="stat-value">$0.15</div>
+                    <div class="stat-label">Per Asset Cost</div>
                 </div>
             </div>
-        </div>
-
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-            <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-            </svg>
         </div>
     </section>
 
-    <!-- The Problem -->
-    <section id="problem" class="py-24 relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="mb-16">
-                <h2 class="text-sm font-semibold text-primary uppercase tracking-wider mb-2">The Challenge</h2>
-                <h3 class="text-4xl md:text-5xl font-bold text-white">The Problem</h3>
+    <!-- Problem -->
+    <section id="problem">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">The Challenge</span>
+                <h2 class="section-title">The Problem</h2>
             </div>
-
-            <div class="grid lg:grid-cols-2 gap-12 items-start">
-                <div class="space-y-6">
-                    <div class="glass rounded-2xl p-8 hover-lift">
-                        <div class="flex items-start space-x-4">
-                            <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center">
-                                <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <h4 class="text-xl font-semibold text-white mb-2">Prohibitive Costs</h4>
-                                <p class="text-gray-400 leading-relaxed">A single production-quality game asset costs <span class="text-white font-semibold">$50–$500</span> from a freelancer and takes <span class="text-white font-semibold">1–5 days</span>. An indie studio needing 200 props pays <span class="text-white font-semibold">$10K–$100K</span> and waits months.</p>
-                            </div>
+            
+            <div class="card-grid card-grid-2">
+                <div>
+                    <div class="card problem-card">
+                        <div class="problem-icon red">💰</div>
+                        <div>
+                            <h4>Prohibitive Costs</h4>
+                            <p style="color: var(--text-muted); font-size: 0.9375rem; margin-bottom: 0;">
+                                A single asset costs <strong style="color: #fff;">$50–$500</strong> and takes <strong style="color: #fff;">1–5 days</strong>. 
+                                An indie studio needing 200 props pays <strong style="color: #fff;">$10K–$100K</strong> and waits months.
+                            </p>
                         </div>
                     </div>
-
-                    <div class="glass rounded-2xl p-8 hover-lift">
-                        <div class="flex items-start space-x-4">
-                            <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center">
-                                <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <h4 class="text-xl font-semibold text-white mb-2">Accessibility Gap</h4>
-                                <p class="text-gray-400 leading-relaxed">Non-technical creators (architects, educators, product designers) are completely locked out — Blender's learning curve is <span class="text-white font-semibold">6-12 months</span>.</p>
-                            </div>
+                    
+                    <div class="card problem-card">
+                        <div class="problem-icon orange">🚫</div>
+                        <div>
+                            <h4>Accessibility Gap</h4>
+                            <p style="color: var(--text-muted); font-size: 0.9375rem; margin-bottom: 0;">
+                                Non-technical creators are locked out — Blender's learning curve is <strong style="color: #fff;">6-12 months</strong>.
+                            </p>
                         </div>
                     </div>
-
-                    <div class="glass rounded-2xl p-8 hover-lift">
-                        <div class="flex items-start space-x-4">
-                            <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center">
-                                <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <h4 class="text-xl font-semibold text-white mb-2">Inefficient Workflow</h4>
-                                <p class="text-gray-400 leading-relaxed">Even for experienced artists, repetitive setup work (UVs, materials, lighting, rigging, export) consumes <span class="text-white font-semibold">60%</span> of production time.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="lg:sticky lg:top-24">
-                    <div class="glass-strong rounded-3xl p-8 glow">
-                        <h4 class="text-2xl font-bold text-white mb-6">Existing "AI 3D" Landscape</h4>
-                        <p class="text-gray-400 mb-6">The current tools don't solve production needs:</p>
-                        
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between p-4 rounded-xl bg-red-500/5 border border-red-500/20">
-                                <div>
-                                    <div class="font-semibold text-white">Meshy, Tripo, CSM</div>
-                                    <div class="text-sm text-gray-500">Raw mesh blobs</div>
-                                </div>
-                                <div class="text-red-400 text-sm font-medium">No UVs, No PBR</div>
-                            </div>
-                            
-                            <div class="flex items-center justify-between p-4 rounded-xl bg-red-500/5 border border-red-500/20">
-                                <div>
-                                    <div class="font-semibold text-white">Point-E, Shap-E</div>
-                                    <div class="text-sm text-gray-500">Research demos</div>
-                                </div>
-                                <div class="text-red-400 text-sm font-medium">Low-poly only</div>
-                            </div>
-                            
-                            <div class="flex items-center justify-between p-4 rounded-xl bg-orange-500/5 border border-orange-500/20">
-                                <div>
-                                    <div class="font-semibold text-white">Rodin, Luma Genie 2</div>
-                                    <div class="text-sm text-gray-500">Better geometry</div>
-                                </div>
-                                <div class="text-orange-400 text-sm font-medium">Mesh-only</div>
-                            </div>
-                            
-                            <div class="flex items-center justify-between p-4 rounded-xl bg-orange-500/5 border border-orange-500/20">
-                                <div>
-                                    <div class="font-semibold text-white">Blender + ChatGPT</div>
-                                    <div class="text-sm text-gray-500">One-off scripts</div>
-                                </div>
-                                <div class="text-orange-400 text-sm font-medium">70% crash rate</div>
-                            </div>
-                        </div>
-
-                        <div class="mt-6 p-4 rounded-xl highlight-box">
-                            <p class="text-sm font-medium text-pink-200">
-                                <span class="text-pink-400">The Gap:</span> Nobody produces game-engine-ready .blend files with clean UVs, PBR materials, rigs, lighting, and final renders — from a text prompt — without human intervention.
+                    
+                    <div class="card problem-card">
+                        <div class="problem-icon yellow">⏱️</div>
+                        <div>
+                            <h4>Inefficient Workflow</h4>
+                            <p style="color: var(--text-muted); font-size: 0.9375rem; margin-bottom: 0;">
+                                Repetitive setup work (UVs, materials, lighting, rigging) consumes <strong style="color: #fff;">60%</strong> of production time.
                             </p>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- The Opportunity -->
-    <section id="opportunity" class="py-24 relative bg-surface/30">
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(99,102,241,0.1),transparent_50%)]"></div>
-        
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="mb-16 text-center">
-                <h2 class="text-sm font-semibold text-secondary uppercase tracking-wider mb-2">The Solution</h2>
-                <h3 class="text-4xl md:text-5xl font-bold text-white mb-6">The Opportunity</h3>
-                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
-                    3DAgent is the first multi-agent pipeline that outputs production-quality <code>.blend</code> files, not raw meshes.
-                </p>
-            </div>
-
-            <!-- Architecture Grid -->
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-                <div class="glass rounded-2xl p-6 hover-lift group">
-                    <div class="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                        </svg>
-                    </div>
-                    <h4 class="text-lg font-semibold text-white mb-2">Multi-Agent</h4>
-                    <p class="text-sm text-gray-400">10 specialized agents from Director to Exporter, each with domain-specific Blender API knowledge.</p>
-                </div>
-
-                <div class="glass rounded-2xl p-6 hover-lift group">
-                    <div class="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                        <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                        </svg>
-                    </div>
-                    <h4 class="text-lg font-semibold text-white mb-2">Deterministic</h4>
-                    <p class="text-sm text-gray-400">5 local scripts run at zero token cost, guaranteeing baseline quality even when LLM agents fail.</p>
-                </div>
-
-                <div class="glass rounded-2xl p-6 hover-lift group">
-                    <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                        </svg>
-                    </div>
-                    <h4 class="text-lg font-semibold text-white mb-2">Local-First</h4>
-                    <p class="text-sm text-gray-400">Blender runs on user's machine. Only cost is LLM tokens (~$0.15–$0.50/asset). No GPU servers needed.</p>
-                </div>
-
-                <div class="glass rounded-2xl p-6 hover-lift group">
-                    <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                        </svg>
-                    </div>
-                    <h4 class="text-lg font-semibold text-white mb-2">Self-Correcting</h4>
-                    <p class="text-sm text-gray-400">Sanitizer fixes 30+ known API mistakes. Correction loop feeds tracebacks back to LLM. 95%+ success rate.</p>
-                </div>
-            </div>
-
-            <!-- Pipeline Visualization -->
-            <div class="glass-strong rounded-3xl p-8 md:p-12">
-                <h4 class="text-2xl font-bold text-white mb-8 text-center">10-Agent Pipeline Architecture</h4>
                 
-                <div class="relative">
-                    <!-- Connection Line -->
-                    <div class="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-primary via-secondary to-accent transform -translate-y-1/2 z-0"></div>
+                <div class="card">
+                    <h4 style="margin-bottom: 1rem;">Existing "AI 3D" Landscape</h4>
+                    <p style="color: var(--text-muted); font-size: 0.9375rem; margin-bottom: 1.5rem;">
+                        Current tools don't solve production needs:
+                    </p>
                     
-                    <div class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-4 relative z-10">
-                        <div class="agent-card rounded-xl p-4 text-center hover:scale-105 transition-transform cursor-pointer">
-                            <div class="text-2xl mb-2">🎬</div>
-                            <div class="text-xs font-semibold text-white">Director</div>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: rgba(239,68,68,0.1); border-radius: 8px; border: 1px solid rgba(239,68,68,0.2);">
+                            <div>
+                                <div style="font-weight: 600; font-size: 0.9375rem;">Meshy, Tripo, CSM</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Raw mesh blobs</div>
+                            </div>
+                            <span style="color: var(--danger); font-size: 0.75rem; font-weight: 600;">No UVs, No PBR</span>
                         </div>
-                        <div class="agent-card rounded-xl p-4 text-center hover:scale-105 transition-transform cursor-pointer">
-                            <div class="text-2xl mb-2">🎨</div>
-                            <div class="text-xs font-semibold text-white">Modeler</div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: rgba(239,68,68,0.1); border-radius: 8px; border: 1px solid rgba(239,68,68,0.2);">
+                            <div>
+                                <div style="font-weight: 600; font-size: 0.9375rem;">Point-E, Shap-E</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Research demos</div>
+                            </div>
+                            <span style="color: var(--danger); font-size: 0.75rem; font-weight: 600;">Low-poly only</span>
                         </div>
-                        <div class="agent-card rounded-xl p-4 text-center hover:scale-105 transition-transform cursor-pointer">
-                            <div class="text-2xl mb-2">📐</div>
-                            <div class="text-xs font-semibold text-white">UV</div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: rgba(245,158,11,0.1); border-radius: 8px; border: 1px solid rgba(245,158,11,0.2);">
+                            <div>
+                                <div style="font-weight: 600; font-size: 0.9375rem;">Rodin, Luma Genie 2</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Better geometry</div>
+                            </div>
+                            <span style="color: var(--warning); font-size: 0.75rem; font-weight: 600;">Mesh-only</span>
                         </div>
-                        <div class="agent-card rounded-xl p-4 text-center hover:scale-105 transition-transform cursor-pointer">
-                            <div class="text-2xl mb-2">⚡</div>
-                            <div class="text-xs font-semibold text-white">Optimizer</div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: rgba(245,158,11,0.1); border-radius: 8px; border: 1px solid rgba(245,158,11,0.2);">
+                            <div>
+                                <div style="font-weight: 600; font-size: 0.9375rem;">Blender + ChatGPT</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">One-off scripts</div>
+                            </div>
+                            <span style="color: var(--warning); font-size: 0.75rem; font-weight: 600;">70% crash rate</span>
                         </div>
-                        <div class="agent-card rounded-xl p-4 text-center hover:scale-105 transition-transform cursor-pointer">
-                            <div class="text-2xl mb-2">🦴</div>
-                            <div class="text-xs font-semibold text-white">Rigger</div>
-                        </div>
-                        <div class="agent-card rounded-xl p-4 text-center hover:scale-105 transition-transform cursor-pointer">
-                            <div class="text-2xl mb-2">🎭</div>
-                            <div class="text-xs font-semibold text-white">Material</div>
-                        </div>
-                        <div class="agent-card rounded-xl p-4 text-center hover:scale-105 transition-transform cursor-pointer">
-                            <div class="text-2xl mb-2">💡</div>
-                            <div class="text-xs font-semibold text-white">Lighter</div>
-                        </div>
-                        <div class="agent-card rounded-xl p-4 text-center hover:scale-105 transition-transform cursor-pointer">
-                            <div class="text-2xl mb-2">🖼️</div>
-                            <div class="text-xs font-semibold text-white">Compositor</div>
-                        </div>
-                        <div class="agent-card rounded-xl p-4 text-center hover:scale-105 transition-transform cursor-pointer">
-                            <div class="text-2xl mb-2">📷</div>
-                            <div class="text-xs font-semibold text-white">Renderer</div>
-                        </div>
-                        <div class="agent-card rounded-xl p-4 text-center hover:scale-105 transition-transform cursor-pointer bg-gradient-to-br from-green-500/20 to-emerald-500/20 border-green-500/30">
-                            <div class="text-2xl mb-2">📦</div>
-                            <div class="text-xs font-semibold text-green-400">Exporter</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-8 flex justify-center">
-                    <div class="inline-flex items-center px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20">
-                        <span class="w-2 h-2 rounded-full bg-green-400 mr-2 animate-pulse"></span>
-                        <span class="text-sm text-green-400 font-medium">Output: Production-Ready .blend File</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Where We Are Today -->
-    <section id="today" class="py-24 relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="mb-16">
-                <h2 class="text-sm font-semibold text-accent uppercase tracking-wider mb-2">Current Status</h2>
-                <h3 class="text-4xl md:text-5xl font-bold text-white mb-6">Where We Are Today</h3>
-                <p class="text-xl text-gray-400">Honest assessment after 18 development cycles</p>
-            </div>
-
-            <!-- Status Table -->
-            <div class="glass-strong rounded-3xl overflow-hidden mb-12">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead>
-                            <tr class="border-b border-white/10 bg-white/5">
-                                <th class="px-6 py-4 text-sm font-semibold text-gray-300">Dimension</th>
-                                <th class="px-6 py-4 text-sm font-semibold text-gray-300">Current State</th>
-                                <th class="px-6 py-4 text-sm font-semibold text-gray-300">Marketable Bar</th>
-                                <th class="px-6 py-4 text-sm font-semibold text-gray-300">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-white/5">
-                            <tr class="table-row-hover transition-colors">
-                                <td class="px-6 py-4 font-medium text-white">Geometry</td>
-                                <td class="px-6 py-4 text-sm text-gray-400">Recognizable shapes, correct proportions, proper parenting</td>
-                                <td class="px-6 py-4 text-sm text-gray-400">Silhouette-accurate with surface detail</td>
-                                <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-medium status-warn">In Progress</span></td>
-                            </tr>
-                            <tr class="table-row-hover transition-colors">
-                                <td class="px-6 py-4 font-medium text-white">Materials</td>
-                                <td class="px-6 py-4 text-sm text-gray-400">Procedural PBR with correct roughness/metallic split</td>
-                                <td class="px-6 py-4 text-sm text-gray-400">Texture-quality with wear, dirt, edge highlights</td>
-                                <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-medium status-warn">In Progress</span></td>
-                            </tr>
-                            <tr class="table-row-hover transition-colors">
-                                <td class="px-6 py-4 font-medium text-white">Rendering</td>
-                                <td class="px-6 py-4 text-sm text-gray-400">Consistent Cycles renders, 3-point lighting, Filmic</td>
-                                <td class="px-6 py-4 text-sm text-gray-400">✅ Already acceptable</td>
-                                <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-medium status-good">Ready</span></td>
-                            </tr>
-                            <tr class="table-row-hover transition-colors">
-                                <td class="px-6 py-4 font-medium text-white">Pipeline Reliability</td>
-                                <td class="px-6 py-4 text-sm text-gray-400">100% success rate (10/10 agents)</td>
-                                <td class="px-6 py-4 text-sm text-gray-400">✅ Already acceptable</td>
-                                <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-medium status-good">Ready</span></td>
-                            </tr>
-                            <tr class="table-row-hover transition-colors">
-                                <td class="px-6 py-4 font-medium text-white">Token Cost</td>
-                                <td class="px-6 py-4 text-sm text-gray-400">~96K tokens/asset (~$0.15–$0.50)</td>
-                                <td class="px-6 py-4 text-sm text-gray-400">✅ Already acceptable</td>
-                                <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-medium status-good">Ready</span></td>
-                            </tr>
-                            <tr class="table-row-hover transition-colors">
-                                <td class="px-6 py-4 font-medium text-white">GUI</td>
-                                <td class="px-6 py-4 text-sm text-gray-400">Functional PySide6 app with admin, browser, logs</td>
-                                <td class="px-6 py-4 text-sm text-gray-400">Needs polish, batch mode, prompt library</td>
-                                <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-medium status-warn">In Progress</span></td>
-                            </tr>
-                            <tr class="table-row-hover transition-colors">
-                                <td class="px-6 py-4 font-medium text-white">Asset Diversity</td>
-                                <td class="px-6 py-4 text-sm text-gray-400">8 hard-surface/prop assets tested</td>
-                                <td class="px-6 py-4 text-sm text-gray-400">Needs 50+ validated assets across categories</td>
-                                <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-medium status-warn">In Progress</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- The Honest Truth -->
-            <div class="highlight-box rounded-2xl p-8 mb-12">
-                <h4 class="text-xl font-bold text-white mb-4 flex items-center">
-                    <svg class="w-6 h-6 mr-2 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    The Honest Truth
-                </h4>
-                <p class="text-gray-300 leading-relaxed">
-                    Geometry quality is our ceiling. The LLM writes Blender Python scripts to build geometry from primitives — it cannot sculpt, retopologize, or do sub-D modeling the way an artist would. A tankard will be recognizably a tankard but will never have hand-carved wood grain detail in the mesh itself. The procedural textures carry more visual weight than the geometry.
-                </p>
-            </div>
-
-            <!-- Metrics -->
-            <div class="grid md:grid-cols-3 gap-6">
-                <div class="metric-card rounded-2xl p-6 border border-white/10">
-                    <div class="text-4xl font-bold text-white mb-2">18</div>
-                    <div class="text-gray-400 mb-1">Development Cycles</div>
-                    <div class="text-xs text-gray-500">Iterative improvements completed</div>
-                </div>
-                <div class="metric-card rounded-2xl p-6 border border-white/10">
-                    <div class="text-4xl font-bold text-white mb-2">8</div>
-                    <div class="text-gray-400 mb-1">Tested Assets</div>
-                    <div class="text-xs text-gray-500">Hard-surface props validated</div>
-                </div>
-                <div class="metric-card rounded-2xl p-6 border border-white/10">
-                    <div class="text-4xl font-bold text-white mb-2">30%</div>
-                    <div class="text-gray-400 mb-1">→ 95%</div>
-                    <div class="text-xs text-gray-500">Success rate improvement</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Strategic Options -->
-    <section id="options" class="py-24 relative bg-surface/30">
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_70%,rgba(236,72,153,0.1),transparent_50%)]"></div>
-        
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="mb-16 text-center">
-                <h2 class="text-sm font-semibold text-primary uppercase tracking-wider mb-2">Strategic Direction</h2>
-                <h3 class="text-4xl md:text-5xl font-bold text-white mb-6">Strategic Options</h3>
-            </div>
-
-            <div class="grid lg:grid-cols-3 gap-8">
-                <!-- Option A -->
-                <div class="option-card option-recommended rounded-3xl p-8 relative overflow-hidden group">
-                    <div class="absolute top-4 right-4">
-                        <span class="px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-bold border border-green-500/30">RECOMMENDED</span>
                     </div>
                     
-                    <div class="mb-6">
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-white font-bold text-xl mb-4">A</div>
-                        <h4 class="text-2xl font-bold text-white mb-2">Asset Kit Generator</h4>
-                        <p class="text-green-400 text-sm font-medium">Indie Game Devs</p>
-                    </div>
-
-                    <div class="space-y-4 mb-8">
-                        <div class="flex items-start space-x-3">
-                            <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            <p class="text-sm text-gray-300">Rapid prototyping / placeholder generation</p>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            <p class="text-sm text-gray-300">Generate 200 props in an afternoon for $30</p>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            <p class="text-sm text-gray-300">Batch generation & style consistency</p>
-                        </div>
-                    </div>
-
-                    <div class="pt-6 border-t border-white/10">
-                        <div class="text-xs text-gray-500 uppercase tracking-wider mb-2">Key Focus</div>
-                        <p class="text-sm text-gray-300">GUI + batch mode + prompt templates + style presets</p>
-                    </div>
-                </div>
-
-                <!-- Option B -->
-                <div class="option-card rounded-3xl p-8 relative overflow-hidden group bg-surface/50">
-                    <div class="mb-6">
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white font-bold text-xl mb-4">B</div>
-                        <h4 class="text-2xl font-bold text-white mb-2">Artist's Starting Point</h4>
-                        <p class="text-blue-400 text-sm font-medium">3D Artists</p>
-                    </div>
-
-                    <div class="space-y-4 mb-8">
-                        <div class="flex items-start space-x-3">
-                            <svg class="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            <p class="text-sm text-gray-300">70% head-start on boring setup work</p>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <svg class="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            <p class="text-sm text-gray-300">Clean topology for easy modification</p>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <svg class="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            <p class="text-sm text-gray-300">"Blender co-pilot, not replacement"</p>
-                        </div>
-                    </div>
-
-                    <div class="pt-6 border-t border-white/10">
-                        <div class="text-xs text-gray-500 uppercase tracking-wider mb-2">Key Focus</div>
-                        <p class="text-sm text-gray-300">Export quality + topology cleanup + artist-friendly naming</p>
-                    </div>
-                </div>
-
-                <!-- Option C -->
-                <div class="option-card rounded-3xl p-8 relative overflow-hidden group bg-surface/50">
-                    <div class="mb-6">
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-400 to-pink-600 flex items-center justify-center text-white font-bold text-xl mb-4">C</div>
-                        <h4 class="text-2xl font-bold text-white mb-2">E-Commerce Product Viz</h4>
-                        <p class="text-purple-400 text-sm font-medium">Product Companies</p>
-                    </div>
-
-                    <div class="space-y-4 mb-8">
-                        <div class="flex items-start space-x-3">
-                            <svg class="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            <p class="text-sm text-gray-300">Narrow scope, highest quality bar</p>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <svg class="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            <p class="text-sm text-gray-300">Simple geometry strength (bottles, cups)</p>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <svg class="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            <p class="text-sm text-gray-300">Photorealistic material library needed</p>
-                        </div>
-                    </div>
-
-                    <div class="pt-6 border-t border-white/10">
-                        <div class="text-xs text-gray-500 uppercase tracking-wider mb-2">Key Focus</div>
-                        <p class="text-sm text-gray-300">Material library + render presets + turntable animation</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- What Matters Next -->
-    <section id="next" class="py-24 relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="mb-16">
-                <h2 class="text-sm font-semibold text-accent uppercase tracking-wider mb-2">Action Items</h2>
-                <h3 class="text-4xl md:text-5xl font-bold text-white mb-6">What Matters Next</h3>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-8 mb-12">
-                <!-- Asset Quality -->
-                <div class="glass rounded-2xl p-8 hover-lift border-t-4 border-primary">
-                    <div class="flex items-center justify-between mb-6">
-                        <h4 class="text-xl font-bold text-white">1. Asset Quality</h4>
-                        <span class="text-3xl">🎯</span>
-                    </div>
-                    <p class="text-gray-400 text-sm mb-6">The product is the .blend file</p>
-                    
-                    <ul class="space-y-3">
-                        <li class="flex items-start space-x-3 text-sm text-gray-300">
-                            <span class="text-primary mt-1">•</span>
-                            <span>Guide edge loops, chamfers, proportional accuracy</span>
-                        </li>
-                        <li class="flex items-start space-x-3 text-sm text-gray-300">
-                            <span class="text-primary mt-1">•</span>
-                            <span>Visual contrast between surface types</span>
-                        </li>
-                        <li class="flex items-start space-x-3 text-sm text-gray-300">
-                            <span class="text-primary mt-1">•</span>
-                            <span>Validate 30+ diverse assets for portfolio</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- GUI -->
-                <div class="glass rounded-2xl p-8 hover-lift border-t-4 border-secondary relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-20 h-20 bg-secondary/10 rounded-full blur-2xl"></div>
-                    <div class="flex items-center justify-between mb-6 relative z-10">
-                        <h4 class="text-xl font-bold text-white">2. GUI as Product</h4>
-                        <span class="text-3xl">✨</span>
-                    </div>
-                    <p class="text-gray-400 text-sm mb-6">Users touch this, not the pipeline</p>
-                    
-                    <ul class="space-y-3 relative z-10">
-                        <li class="flex items-start space-x-3 text-sm text-gray-300">
-                            <span class="text-secondary mt-1">•</span>
-                            <span>Batch generation queue</span>
-                        </li>
-                        <li class="flex items-start space-x-3 text-sm text-gray-300">
-                            <span class="text-secondary mt-1">•</span>
-                            <span>Prompt library with templates</span>
-                        </li>
-                        <li class="flex items-start space-x-3 text-sm text-gray-300">
-                            <span class="text-secondary mt-1">•</span>
-                            <span>Before/after comparison view</span>
-                        </li>
-                        <li class="flex items-start space-x-3 text-sm text-gray-300">
-                            <span class="text-secondary mt-1">•</span>
-                            <span>Export format picker (blend/glb/fbx/obj)</span>
-                        </li>
-                        <li class="flex items-start space-x-3 text-sm text-gray-300">
-                            <span class="text-secondary mt-1">•</span>
-                            <span>Cost estimator (tokens → $)</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Robustness -->
-                <div class="glass rounded-2xl p-8 hover-lift border-t-4 border-accent">
-                    <div class="flex items-center justify-between mb-6">
-                        <h4 class="text-xl font-bold text-white">3. Robustness</h4>
-                        <span class="text-3xl">🛡️</span>
-                    </div>
-                    <p class="text-gray-400 text-sm mb-6">Trust = Retention</p>
-                    
-                    <ul class="space-y-3">
-                        <li class="flex items-start space-x-3 text-sm text-gray-300">
-                            <span class="text-accent mt-1">•</span>
-                            <span>Timeout protection for stuck processes</span>
-                        </li>
-                        <li class="flex items-start space-x-3 text-sm text-gray-300">
-                            <span class="text-accent mt-1">•</span>
-                            <span>Error recovery beyond retry</span>
-                        </li>
-                        <li class="flex items-start space-x-3 text-sm text-gray-300">
-                            <span class="text-accent mt-1">•</span>
-                            <span>Progress estimation (not just %)</span>
-                        </li>
-                        <li class="flex items-start space-x-3 text-sm text-gray-300">
-                            <span class="text-accent mt-1">•</span>
-                            <span>Crash recovery & resume capability</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Important Callout -->
-            <div class="glass-strong rounded-3xl p-8 md:p-12 border border-accent/30 relative overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-r from-accent/5 to-primary/5"></div>
-                <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-6">
-                    <div class="flex-shrink-0 w-16 h-16 rounded-2xl bg-accent/20 flex items-center justify-center">
-                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                        </svg>
-                    </div>
-                    <div class="flex-1">
-                        <h4 class="text-2xl font-bold text-white mb-2">Critical Insight</h4>
-                        <p class="text-lg text-gray-300 leading-relaxed">
-                            The single highest-leverage thing we can do right now is <span class="text-accent font-semibold">NOT more pipeline engineering</span>. It's building a beautiful, premium GUI that makes the 96K-token pipeline <span class="text-white font-semibold">feel like a $200 product</span>. The pipeline is good enough to ship for Option A. The GUI is not.
+                    <div class="highlight-box" style="margin-top: 1.5rem; margin-bottom: 0;">
+                        <p style="margin: 0; font-size: 0.9375rem;">
+                            <strong style="color: var(--accent);">The Gap:</strong> Nobody produces game-engine-ready .blend files with clean UVs, PBR materials, rigs, lighting, and final renders — from a text prompt — without human intervention.
                         </p>
                     </div>
                 </div>
@@ -884,127 +885,393 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="py-12 border-t border-white/10 bg-darker">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="flex items-center space-x-3 mb-4 md:mb-0">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                        <span class="text-white font-bold text-sm">3D</span>
-                    </div>
-                    <span class="font-bold text-lg text-white">3DAgent</span>
+    <!-- Opportunity -->
+    <section id="opportunity" style="background: rgba(255,255,255,0.02);">
+        <div class="container">
+            <div class="section-header text-center" style="margin-left: auto; margin-right: auto;">
+                <span class="section-label">The Solution</span>
+                <h2 class="section-title">The Opportunity</h2>
+                <p class="section-desc" style="margin-left: auto; margin-right: auto;">
+                    3DAgent is the first multi-agent pipeline that outputs production-quality <code>.blend</code> files, not raw meshes.
+                </p>
+            </div>
+            
+            <div class="card-grid card-grid-4 mb-8">
+                <div class="card text-center">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">👥</div>
+                    <h4 style="margin-bottom: 0.5rem;">Multi-Agent</h4>
+                    <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">
+                        10 specialized agents with domain-specific Blender API knowledge
+                    </p>
                 </div>
-                <div class="text-sm text-gray-500">
-                    Strategic Analysis Document • 2026
+                
+                <div class="card text-center">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🛡️</div>
+                    <h4 style="margin-bottom: 0.5rem;">Deterministic</h4>
+                    <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">
+                        5 local scripts at zero token cost guarantee baseline quality
+                    </p>
+                </div>
+                
+                <div class="card text-center">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">💻</div>
+                    <h4 style="margin-bottom: 0.5rem;">Local-First</h4>
+                    <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">
+                        Blender runs locally. Only cost is LLM tokens (~$0.15–$0.50/asset)
+                    </p>
+                </div>
+                
+                <div class="card text-center">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔄</div>
+                    <h4 style="margin-bottom: 0.5rem;">Self-Correcting</h4>
+                    <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">
+                        Sanitizer fixes 30+ API mistakes. 95%+ pipeline success rate
+                    </p>
                 </div>
             </div>
+            
+            <div class="card">
+                <h3 class="text-center mb-8">10-Agent Pipeline Architecture</h3>
+                
+                <div class="agent-grid">
+                    <div class="agent-item">
+                        <div class="agent-emoji">🎬</div>
+                        <div class="agent-name">Director</div>
+                    </div>
+                    <div class="agent-item">
+                        <div class="agent-emoji">🎨</div>
+                        <div class="agent-name">Modeler</div>
+                    </div>
+                    <div class="agent-item">
+                        <div class="agent-emoji">📐</div>
+                        <div class="agent-name">UV</div>
+                    </div>
+                    <div class="agent-item">
+                        <div class="agent-emoji">⚡</div>
+                        <div class="agent-name">Optimizer</div>
+                    </div>
+                    <div class="agent-item">
+                        <div class="agent-emoji">🦴</div>
+                        <div class="agent-name">Rigger</div>
+                    </div>
+                    <div class="agent-item">
+                        <div class="agent-emoji">🎭</div>
+                        <div class="agent-name">Material</div>
+                    </div>
+                    <div class="agent-item">
+                        <div class="agent-emoji">💡</div>
+                        <div class="agent-name">Lighter</div>
+                    </div>
+                    <div class="agent-item">
+                        <div class="agent-emoji">🖼️</div>
+                        <div class="agent-name">Compositor</div>
+                    </div>
+                    <div class="agent-item">
+                        <div class="agent-emoji">📷</div>
+                        <div class="agent-name">Renderer</div>
+                    </div>
+                    <div class="agent-item" style="background: rgba(16,185,129,0.2); border-color: rgba(16,185,129,0.3);">
+                        <div class="agent-emoji">📦</div>
+                        <div class="agent-name" style="color: var(--success);">Exporter</div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-8">
+                    <span class="badge" style="background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: var(--success);">
+                        <span class="badge-dot" style="background: var(--success);"></span>
+                        Output: Production-Ready .blend File
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Today -->
+    <section id="today">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Current Status</span>
+                <h2 class="section-title">Where We Are Today</h2>
+                <p class="section-desc">Honest assessment after 18 development cycles</p>
+            </div>
+            
+            <div class="card" style="padding: 0; overflow: hidden;">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Dimension</th>
+                                <th>Current State</th>
+                                <th>Marketable Bar</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Geometry</strong></td>
+                                <td>Recognizable shapes, correct proportions, proper parenting</td>
+                                <td>Silhouette-accurate with surface detail</td>
+                                <td><span class="status-badge status-warn">In Progress</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Materials</strong></td>
+                                <td>Procedural PBR with correct roughness/metallic split</td>
+                                <td>Texture-quality with wear, dirt, edge highlights</td>
+                                <td><span class="status-badge status-warn">In Progress</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Rendering</strong></td>
+                                <td>Consistent Cycles renders, 3-point lighting, Filmic</td>
+                                <td>✅ Already acceptable</td>
+                                <td><span class="status-badge status-ready">Ready</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Pipeline</strong></td>
+                                <td>100% success rate (10/10 agents)</td>
+                                <td>✅ Already acceptable</td>
+                                <td><span class="status-badge status-ready">Ready</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Token Cost</strong></td>
+                                <td>~96K tokens/asset (~$0.15–$0.50)</td>
+                                <td>✅ Already acceptable</td>
+                                <td><span class="status-badge status-ready">Ready</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>GUI</strong></td>
+                                <td>Functional PySide6 app with admin, browser, logs</td>
+                                <td>Needs polish, batch mode, prompt library</td>
+                                <td><span class="status-badge status-warn">In Progress</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Assets</strong></td>
+                                <td>8 hard-surface/prop assets tested</td>
+                                <td>Needs 50+ validated assets across categories</td>
+                                <td><span class="status-badge status-warn">In Progress</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="highlight-box">
+                <h4 style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                    <span style="font-size: 1.25rem;">ℹ️</span>
+                    The Honest Truth
+                </h4>
+                <p style="margin: 0; color: var(--text-muted);">
+                    Geometry quality is our ceiling. The LLM writes Blender Python scripts to build geometry from primitives — it cannot sculpt, retopologize, or do sub-D modeling the way an artist would. A tankard will be recognizably a tankard but will never have hand-carved wood grain detail in the mesh itself. The procedural textures carry more visual weight than the geometry.
+                </p>
+            </div>
+            
+            <div class="card-grid card-grid-3 mt-8">
+                <div class="card text-center">
+                    <div class="stat-value">18</div>
+                    <div style="color: var(--text-muted); font-size: 0.875rem;">Development Cycles</div>
+                </div>
+                <div class="card text-center">
+                    <div class="stat-value">8</div>
+                    <div style="color: var(--text-muted); font-size: 0.875rem;">Tested Assets</div>
+                </div>
+                <div class="card text-center">
+                    <div class="stat-value">30% → 95%</div>
+                    <div style="color: var(--text-muted); font-size: 0.875rem;">Success Rate Improvement</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Options -->
+    <section id="options" style="background: rgba(255,255,255,0.02);">
+        <div class="container">
+            <div class="section-header text-center" style="margin-left: auto; margin-right: auto;">
+                <span class="section-label">Strategic Direction</span>
+                <h2 class="section-title">Strategic Options</h2>
+            </div>
+            
+            <div class="card-grid card-grid-3">
+                <!-- Option A -->
+                <div class="option-card option-recommended">
+                    <span class="option-badge">RECOMMENDED</span>
+                    <div class="option-letter option-a">A</div>
+                    <h3>Asset Kit Generator</h3>
+                    <p style="color: var(--success); font-size: 0.875rem; font-weight: 600; margin-bottom: 1rem;">Indie Game Devs</p>
+                    
+                    <ul class="check-list">
+                        <li>Rapid prototyping / placeholder generation</li>
+                        <li>Generate 200 props in an afternoon for $30</li>
+                        <li>Batch generation & style consistency</li>
+                    </ul>
+                    
+                    <div style="padding-top: 1rem; border-top: 1px solid var(--border);">
+                        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Key Focus</div>
+                        <p style="margin: 0; font-size: 0.9375rem; color: var(--text-muted);">
+                            GUI + batch mode + prompt templates + style presets
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Option B -->
+                <div class="option-card">
+                    <div class="option-letter option-b">B</div>
+                    <h3>Artist's Starting Point</h3>
+                    <p style="color: var(--primary-light); font-size: 0.875rem; font-weight: 600; margin-bottom: 1rem;">3D Artists</p>
+                    
+                    <ul class="check-list">
+                        <li>70% head-start on boring setup work</li>
+                        <li>Clean topology for easy modification</li>
+                        <li>"Blender co-pilot, not replacement"</li>
+                    </ul>
+                    
+                    <div style="padding-top: 1rem; border-top: 1px solid var(--border);">
+                        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Key Focus</div>
+                        <p style="margin: 0; font-size: 0.9375rem; color: var(--text-muted);">
+                            Export quality + topology cleanup + artist-friendly naming
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Option C -->
+                <div class="option-card">
+                    <div class="option-letter option-c">C</div>
+                    <h3>E-Commerce Product Viz</h3>
+                    <p style="color: var(--secondary); font-size: 0.875rem; font-weight: 600; margin-bottom: 1rem;">Product Companies</p>
+                    
+                    <ul class="check-list">
+                        <li>Narrow scope, highest quality bar</li>
+                        <li>Simple geometry strength (bottles, cups)</li>
+                        <li>Photorealistic material library needed</li>
+                    </ul>
+                    
+                    <div style="padding-top: 1rem; border-top: 1px solid var(--border);">
+                        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Key Focus</div>
+                        <p style="margin: 0; font-size: 0.9375rem; color: var(--text-muted);">
+                            Material library + render presets + turntable animation
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Next Steps -->
+    <section id="next">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Action Items</span>
+                <h2 class="section-title">What Matters Next</h2>
+            </div>
+            
+            <div class="card-grid card-grid-3 mb-8">
+                <div class="card" style="border-top: 4px solid var(--primary);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h4>1. Asset Quality</h4>
+                        <span style="font-size: 1.5rem;">🎯</span>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1rem;">The product is the .blend file</p>
+                    
+                    <ul style="list-style: none; font-size: 0.9375rem; color: var(--text-muted);">
+                        <li style="margin-bottom: 0.5rem;">• Guide edge loops, chamfers, proportional accuracy</li>
+                        <li style="margin-bottom: 0.5rem;">• Visual contrast between surface types</li>
+                        <li>• Validate 30+ diverse assets for portfolio</li>
+                    </ul>
+                </div>
+                
+                <div class="card" style="border-top: 4px solid var(--secondary);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h4>2. GUI as Product</h4>
+                        <span style="font-size: 1.5rem;">✨</span>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1rem;">Users touch this, not the pipeline</p>
+                    
+                    <ul style="list-style: none; font-size: 0.9375rem; color: var(--text-muted);">
+                        <li style="margin-bottom: 0.5rem;">• Batch generation queue</li>
+                        <li style="margin-bottom: 0.5rem;">• Prompt library with templates</li>
+                        <li style="margin-bottom: 0.5rem;">• Before/after comparison view</li>
+                        <li style="margin-bottom: 0.5rem;">• Export format picker</li>
+                        <li>• Cost estimator (tokens → $)</li>
+                    </ul>
+                </div>
+                
+                <div class="card" style="border-top: 4px solid var(--accent);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h4>3. Robustness</h4>
+                        <span style="font-size: 1.5rem;">🛡️</span>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1rem;">Trust = Retention</p>
+                    
+                    <ul style="list-style: none; font-size: 0.9375rem; color: var(--text-muted);">
+                        <li style="margin-bottom: 0.5rem;">• Timeout protection for stuck processes</li>
+                        <li style="margin-bottom: 0.5rem;">• Error recovery beyond retry</li>
+                        <li style="margin-bottom: 0.5rem;">• Progress estimation (not just %)</li>
+                        <li>• Crash recovery & resume capability</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="important-box">
+                <div class="important-icon">⚡</div>
+                <div>
+                    <h4 style="margin-bottom: 0.5rem;">Critical Insight</h4>
+                    <p style="margin: 0; color: var(--text-muted); font-size: 1rem; line-height: 1.6;">
+                        The single highest-leverage thing we can do right now is <strong style="color: var(--accent);">NOT more pipeline engineering</strong>. 
+                        It's building a beautiful, premium GUI that makes the 96K-token pipeline <strong style="color: #fff;">feel like a $200 product</strong>. 
+                        The pipeline is good enough to ship for Option A. The GUI is not.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <div class="logo-icon" style="width: 24px; height: 24px; font-size: 0.75rem;">3D</div>
+                <span style="font-weight: 700; color: #fff;">3DAgent</span>
+            </div>
+            <p>Strategic Analysis Document • 2024</p>
         </div>
     </footer>
 
     <script>
-        // Progress Bar
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.getElementById('progressBar').style.width = scrolled + '%';
-            
-            // Update active dot
-            updateActiveDot();
-        });
-
-        // Mobile Menu Toggle
-        function toggleMobileMenu() {
+        // Mobile menu toggle
+        function toggleMenu() {
             const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('hidden');
+            menu.classList.toggle('active');
         }
-
-        // Smooth Scroll for Anchor Links
+        
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('mobileMenu').classList.remove('active');
+            });
+        });
+        
+        // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
+                    const offsetTop = target.offsetTop - 80; // Account for fixed header
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
                     });
-                    // Close mobile menu if open
-                    document.getElementById('mobileMenu').classList.add('hidden');
                 }
             });
         });
-
-        // Scroll Indicator Dots
-        const sections = ['hero', 'problem', 'opportunity', 'today', 'options', 'next'];
         
-        function updateActiveDot() {
-            const scrollPos = window.scrollY + window.innerHeight / 3;
-            
-            sections.forEach((sectionId, index) => {
-                const section = document.getElementById(sectionId);
-                const dot = document.querySelector(`[data-section="${sectionId}"]`);
-                
-                if (section && dot) {
-                    const top = section.offsetTop;
-                    const bottom = top + section.offsetHeight;
-                    
-                    if (scrollPos >= top && scrollPos < bottom) {
-                        document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
-                        dot.classList.add('active');
-                    }
-                }
-            });
-        }
-
-        // Click on dots to scroll
-        document.querySelectorAll('.dot').forEach(dot => {
-            dot.addEventListener('click', function() {
-                const sectionId = this.getAttribute('data-section');
-                const section = document.getElementById(sectionId);
-                if (section) {
-                    section.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-        });
-
-        // Intersection Observer for fade-in animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        // Observe elements for animation
-        document.querySelectorAll('.glass, .option-card, .metric-card').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-            el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-            observer.observe(el);
-        });
-
-        // Navbar background on scroll
+        // Add shadow to navbar on scroll
         window.addEventListener('scroll', () => {
-            const nav = document.getElementById('navbar');
+            const navbar = document.querySelector('.navbar');
             if (window.scrollY > 50) {
-                nav.classList.add('shadow-lg');
-                nav.classList.add('bg-slate-900/95');
+                navbar.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
             } else {
-                nav.classList.remove('shadow-lg');
-                nav.classList.remove('bg-slate-900/95');
+                navbar.style.boxShadow = 'none';
             }
         });
-
-        // Initialize
-        updateActiveDot();
     </script>
 </body>
 </html>
