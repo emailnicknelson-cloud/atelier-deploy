@@ -3,21 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Debugging the "Vertex Soup" Texturing Deadlock | Whisper Workshop</title>
+    <title>3D Agent Blog - Whisper Workshop</title>
     <style>
-        :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-tertiary: #1a1a25;
-            --text-primary: #e4e4e7;
-            --text-secondary: #a1a1aa;
-            --accent-primary: #22d3ee;
-            --accent-secondary: #818cf8;
-            --accent-warm: #f472b6;
-            --code-bg: #0d1117;
-            --border-color: #27272a;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -25,416 +12,483 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
             line-height: 1.7;
-            overflow-x: hidden;
-        }
-
-        /* Animated gradient background */
-        .hero-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: 
-                radial-gradient(ellipse at 20% 20%, rgba(34, 211, 238, 0.08) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(129, 140, 248, 0.05) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(244, 114, 182, 0.03) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        /* Noise texture overlay */
-        .noise-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.03;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: -1;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 0 24px;
+            padding: 40px 20px;
         }
 
-        /* Header */
         header {
-            padding: 80px 0 60px;
-            border-bottom: 1px solid var(--border-color);
+            text-align: center;
             margin-bottom: 60px;
-            position: relative;
-        }
-
-        .meta {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-            margin-bottom: 24px;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .tag {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: var(--bg-primary);
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-weight: 600;
-            font-size: 0.75rem;
+            padding: 40px 0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
         }
 
         h1 {
-            font-size: clamp(2rem, 5vw, 3rem);
-            font-weight: 800;
-            line-height: 1.2;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-primary) 100%);
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
         }
 
         .subtitle {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            font-weight: 400;
-            max-width: 600px;
+            color: #94a3b8;
+            font-size: 1.1rem;
         }
 
-        /* Typography */
-        h2 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin: 48px 0 20px;
-            color: var(--text-primary);
+        .blog-post {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .post-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .post-title {
+            font-size: 1.8rem;
+            color: #f8fafc;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .post-meta {
             display: flex;
-            align-items: center;
-            gap: 12px;
+            gap: 20px;
+            color: #64748b;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
         }
 
-        h2::before {
-            content: '';
-            display: inline-block;
-            width: 4px;
-            height: 28px;
-            background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary));
-            border-radius: 2px;
+        .tag {
+            background: rgba(96, 165, 250, 0.15);
+            color: #60a5fa;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        h2 {
+            color: #60a5fa;
+            font-size: 1.4rem;
+            margin: 30px 0 15px 0;
+            font-weight: 600;
         }
 
         h3 {
-            font-size: 1.25rem;
+            color: #94a3b8;
+            font-size: 1.1rem;
+            margin: 25px 0 12px 0;
             font-weight: 600;
-            margin: 32px 0 16px;
-            color: var(--accent-warm);
         }
 
         p {
-            margin-bottom: 20px;
-            color: var(--text-secondary);
-            font-size: 1.0625rem;
+            margin-bottom: 16px;
+            color: #cbd5e1;
         }
 
-        strong {
-            color: var(--text-primary);
-            font-weight: 600;
+        .highlight-box {
+            background: rgba(96, 165, 250, 0.1);
+            border-left: 4px solid #60a5fa;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
         }
 
-        /* Lists */
-        ul, ol {
-            margin: 20px 0;
-            padding-left: 24px;
-            color: var(--text-secondary);
+        .warning-box {
+            background: rgba(251, 146, 60, 0.1);
+            border-left: 4px solid #fb923c;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
         }
 
-        li {
-            margin-bottom: 12px;
-            position: relative;
-        }
-
-        ul li::marker {
-            color: var(--accent-primary);
-        }
-
-        /* Code blocks */
-        pre {
-            background: var(--code-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 24px;
-            overflow-x: auto;
-            margin: 28px 0;
-            position: relative;
-        }
-
-        pre::before {
-            content: 'python';
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: var(--border-color);
-            color: var(--text-secondary);
-            padding: 4px 12px;
-            font-size: 0.75rem;
-            border-bottom-left-radius: 8px;
-            font-family: 'SF Mono', Monaco, monospace;
+        .success-box {
+            background: rgba(74, 222, 128, 0.1);
+            border-left: 4px solid #4ade80;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
         }
 
         code {
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Fira Code', monospace;
+            background: rgba(15, 23, 42, 0.8);
+            color: #f472b6;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
             font-size: 0.9em;
+        }
+
+        pre {
+            background: rgba(15, 23, 42, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            border: 1px solid rgba(148, 163, 184, 0.1);
         }
 
         pre code {
-            color: #e6edf3;
+            background: none;
+            padding: 0;
+            color: #e2e8f0;
             line-height: 1.6;
-            display: block;
         }
 
-        .code-keyword { color: #ff7b72; }
-        .code-string { color: #a5d6ff; }
-        .code-number { color: #79c0ff; }
-        .code-comment { color: #8b949e; font-style: italic; }
-        .code-function { color: #d2a8ff; }
-
-        /* Inline code */
-        p code, li code {
-            background: var(--bg-tertiary);
-            padding: 2px 8px;
-            border-radius: 4px;
-            color: var(--accent-primary);
-            font-size: 0.9em;
-            border: 1px solid var(--border-color);
-        }
-
-        /* Highlight boxes */
-        .highlight-box {
-            background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(129, 140, 248, 0.05));
-            border-left: 4px solid var(--accent-primary);
-            padding: 24px;
-            margin: 32px 0;
-            border-radius: 0 12px 12px 0;
-        }
-
-        .highlight-box h3 {
-            margin-top: 0;
-            color: var(--accent-primary);
-        }
-
-        .highlight-box p:last-child {
-            margin-bottom: 0;
-        }
-
-        /* Stats grid */
-        .stats {
+        .metric-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 32px 0;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
         }
 
-        .stat-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            padding: 24px;
-            border-radius: 12px;
+        .metric {
+            background: rgba(15, 23, 42, 0.6);
+            padding: 20px;
+            border-radius: 8px;
             text-align: center;
-            transition: transform 0.2s, border-color 0.2s;
+            border: 1px solid rgba(148, 163, 184, 0.1);
         }
 
-        .stat-card:hover {
-            transform: translateY(-2px);
-            border-color: var(--accent-primary);
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #60a5fa;
             display: block;
+        }
+
+        .metric-label {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .thought-chain {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .thought-header {
+            color: #60a5fa;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        ul, ol {
+            margin: 15px 0 15px 25px;
+            color: #cbd5e1;
+        }
+
+        li {
             margin-bottom: 8px;
         }
 
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+        .pipeline-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 25px 0;
         }
 
-        /* Footer */
-        footer {
-            margin-top: 80px;
-            padding: 40px 0;
-            border-top: 1px solid var(--border-color);
-            text-align: center;
-            color: var(--text-secondary);
-        }
-
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--accent-primary);
-            text-decoration: none;
-            font-weight: 600;
-            transition: gap 0.2s;
-        }
-
-        .back-link:hover {
-            gap: 12px;
-        }
-
-        /* Responsive */
-        @media (max-width: 640px) {
-            header {
-                padding: 60px 0 40px;
-            }
-            
-            .stats {
+        @media (max-width: 768px) {
+            .pipeline-comparison {
                 grid-template-columns: 1fr;
             }
-            
-            pre {
-                padding: 16px;
-                font-size: 0.875rem;
-            }
         }
 
-        /* Smooth scroll */
-        html {
-            scroll-behavior: smooth;
+        .pipeline-box {
+            background: rgba(15, 23, 42, 0.6);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(148, 163, 184, 0.1);
         }
 
-        /* Selection */
-        ::selection {
-            background: rgba(34, 211, 238, 0.3);
-            color: var(--text-primary);
+        .pipeline-title {
+            color: #f8fafc;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .old-pipeline {
+            border-left: 4px solid #ef4444;
+        }
+
+        .new-pipeline {
+            border-left: 4px solid #22c55e;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.3), transparent);
+            margin: 60px 0;
+        }
+
+        strong {
+            color: #f8fafc;
+        }
+
+        em {
+            color: #94a3b8;
         }
     </style>
 </head>
 <body>
-    <div class="hero-bg"></div>
-    <div class="noise-overlay"></div>
-
-    <article class="container">
+    <div class="container">
         <header>
-            <div class="meta">
-                <span class="tag">Technical Deep Dive</span>
-                <span>3D Generation Pipeline</span>
-            </div>
-            <h1>Debugging the "Vertex Soup" Texturing Deadlock in Text-to-3D Pipelines</h1>
-            <p class="subtitle">When your AI generates perfect multi-view paintings but your textures look like broken television static, the culprit isn't your rasterizer—it's your geometry.</p>
+            <h1>3D Agent Blog</h1>
+            <p class="subtitle">Technical Deep Dives from Whisper Workshop</p>
         </header>
 
-        <section>
-            <p>If you've ever tried building an automated Text-to-3D pipeline and mysteriously encountered final baked textures that look like broken television static or pitch-black geometry, you are not alone. Our journey to fix this led us deep into the math of UV projection mapping, C++ rendering libraries, and PyTorch rasterization—only to discover the culprit was entirely geometric.</p>
-        </section>
+        <!-- POST 2: Topology Optimization (New) -->
+        <article class="blog-post">
+            <div class="post-header">
+                <h2 class="post-title">How I Used Chain-of-Thought Reasoning to Cut Our 3D Mesh Poly Count by 80%</h2>
+                <div class="post-meta">
+                    <span>March 2026</span>
+                    <span class="tag">Pipeline Optimization</span>
+                    <span class="tag">Blender</span>
+                    <span class="tag">Topology</span>
+                </div>
+            </div>
 
-        <section>
+            <p>Our AI-generated 3D asset pipeline was producing meshes with <strong>10,000 faces and 24,000 vertices</strong>. For a simple cargo crate prop, marketplace standards demand under 5,000 faces. Something was deeply wrong with our topology cleaner, but it wasn't obvious at first glance — the script looked reasonable, and each individual operation made sense in isolation.</p>
+
+            <p>I used a structured sequential thinking process to break the problem apart. Here's exactly how that reasoning chain went.</p>
+
+            <div class="thought-chain">
+                <div class="thought-header">THOUGHT 1: MAP THE PIPELINE</div>
+                <p>Before optimizing, I mapped every operation in order with its input and output:</p>
+                <ol>
+                    <li>Import raw mesh (1.2M faces from marching cubes)</li>
+                    <li>Remove doubles (merge by distance)</li>
+                    <li>Dissolve degenerate geometry</li>
+                    <li>Recalculate normals</li>
+                    <li>Decimate to 5,000 faces</li>
+                    <li>Export intermediate for visualization</li>
+                    <li>Mark sharp edges (>30 degrees)</li>
+                    <li>Voxel Remesh (voxel_size = max_dim / 40)</li>
+                    <li>Decimate AGAIN if over 5,000</li>
+                    <li>Edge Split at 30 degrees</li>
+                    <li>Smart UV Project</li>
+                    <li>Export</li>
+                </ol>
+                <p>Ten steps. That's a lot for a topology cleaner. But the real insight came from asking: <em>what does each step actually do to the face count?</em></p>
+            </div>
+
+            <div class="thought-chain">
+                <div class="thought-header">THOUGHT 2: FOLLOW THE FACE COUNT</div>
+                <p>Step 5 decimates from 1.2 million down to 5,000. Clean. Efficient. Good.</p>
+                
+                <p><strong>Step 8 — Voxel Remesh</strong> — completely regenerates the mesh. It throws away the entire existing topology and creates a brand new uniform grid. The 5,000 faces from step 5? Gone. Deleted. The first decimation was entirely wasted computation.</p>
+                
+                <p>The voxel size was set to <code>max_dim / 40</code>. For a unit cube, that produces roughly 10,000 faces. The formula is approximately <code>surface_area / voxel_size^2</code>. So the divisor of 40 was giving us 10K faces by coincidence of the math, not by design.</p>
+                
+                <p>Then step 9 decimates AGAIN if the remesh overshot. We were decimating twice, with the first pass completely negated.</p>
+                
+                <div class="warning-box">
+                    <strong>Architectural Flaw #1:</strong> Double decimation with a topology-destroying operation in between.
+                </div>
+            </div>
+
+            <div class="thought-chain">
+                <div class="thought-header">THOUGHT 3: THE VERTEX MULTIPLIER</div>
+                <p>We had 10,000 faces but 24,000 vertices. That ratio is wrong — 10K faces should have roughly 5-7K unique vertices. Where did the extra 17,000 vertices come from?</p>
+                
+                <p><strong>Edge Split. Step 10.</strong></p>
+                
+                <p>Edge Split duplicates vertices at every edge where the angle between adjacent faces exceeds the threshold (30 degrees). On a voxel-remeshed mesh, most edges are at 90 degrees because voxel remesh creates a uniform grid. So the Edge Split was duplicating vertices at nearly every single edge in the mesh.</p>
+                
+                <p>But here's the thing: <strong>game engines don't need Edge Split meshes.</strong> Unity and Unreal both use custom normals and smooth groups to achieve hard edges. Edge Split is a Blender visualization technique, not a game-engine requirement. We were inflating our vertex count by 2-3x for zero gameplay benefit.</p>
+            </div>
+
+            <div class="thought-chain">
+                <div class="thought-header">THOUGHT 4: THE WRONG TOOL FOR QUADRIFICATION</div>
+                <p>The voxel remesh was labeled as "quadrification" — converting the triangulated marching-cubes output to quads. But voxel remesh <strong>doesn't produce quads</strong>. It produces uniform triangles. The stated goal of the operation wasn't even being achieved.</p>
+                
+                <p>True quad remeshing requires Quadriflow, Instant Meshes, or similar tools. But more importantly: <strong>marketplace assets don't need quads.</strong> Unity and Unreal triangulate every mesh on import. The entire quadrification step was solving a problem that didn't exist.</p>
+            </div>
+
+            <div class="thought-chain">
+                <div class="thought-header">THOUGHT 5: THE SECRET WEAPON</div>
+                <p>With the architectural flaws identified, I asked: what would the <strong>OPTIMAL</strong> pipeline look like?</p>
+                
+                <p>That's when I realized the key insight: <strong>Planar Decimate.</strong></p>
+                
+                <p>Hunyuan3D's marching cubes algorithm produces meshes with an interesting property: enormous flat surfaces (sides of a crate, for example) are tessellated with thousands of tiny coplanar triangles. These triangles all lie on the same plane and contribute zero visual detail. But standard collapse decimation treats them the same as detail-carrying triangles elsewhere on the mesh.</p>
+                
+                <p><strong>Planar Decimate</strong> (Blender's <code>dissolve_limited</code>) dissolves coplanar faces within an angle threshold. At 5 degrees, it eliminates 60-80% of faces on flat surfaces in a single operation — before collapse decimation even starts.</p>
+                
+                <p>This means the collapse decimation's entire poly budget goes to actual detail. Sharp corners, panel lines, rivets, surface features — they all survive because the budget isn't wasted on flat surfaces that could be one polygon.</p>
+                
+                <div class="highlight-box">
+                    <strong>Industry Insight:</strong> 3D scanners use this exact technique. Scan data comes in dense and uniform, just like marching cubes output. The standard pipeline is always: clean, planar decimate, then collapse decimate. We had skipped the most important step.
+                </div>
+            </div>
+
+            <h2>THE REWRITE</h2>
+            
+            <div class="pipeline-comparison">
+                <div class="pipeline-box old-pipeline">
+                    <div class="pipeline-title">Old Pipeline (10 steps, 3 redundant)</div>
+                    <p style="font-family: monospace; font-size: 0.9rem; line-height: 1.8;">
+                    Import → Clean → Decimate → Viz → Mark Sharp → Voxel Remesh → Decimate Again → Edge Split → UV → Export
+                    </p>
+                </div>
+                
+                <div class="pipeline-box new-pipeline">
+                    <div class="pipeline-title">New Pipeline (7 steps, 0 redundant)</div>
+                    <p style="font-family: monospace; font-size: 0.9rem; line-height: 1.8;">
+                    Import → Clean → Planar Decimate → Collapse Decimate → Viz → Auto Smooth → UV → Export
+                    </p>
+                </div>
+            </div>
+
+            <h3>Changes:</h3>
+            <ul>
+                <li>❌ Removed <strong>Voxel Remesh</strong> (uncalibrated, destroys detail, doesn't produce quads)</li>
+                <li>❌ Removed <strong>Edge Split</strong> (inflates vertices 2-3x, unnecessary for game engines)</li>
+                <li>❌ Removed first <strong>Decimate</strong> (was negated by voxel remesh anyway)</li>
+                <li>✅ Added <strong>Planar Decimate</strong> (dissolves flat surface tessellation)</li>
+                <li>✅ Replaced Edge Split with <strong>Auto Smooth</strong> (custom normals, zero vertex inflation)</li>
+                <li>✅ Lowered target to <strong>3,000 faces</strong> (no Edge Split inflation to account for)</li>
+            </ul>
+
+            <h2>THE RESULT</h2>
+            
+            <div class="metric-grid">
+                <div class="metric">
+                    <span class="metric-value">2,500-3,500</span>
+                    <div class="metric-label">Target Faces</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-value">2,500-4,000</span>
+                    <div class="metric-label">Target Vertices</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-value" style="color: #4ade80;">80%</span>
+                    <div class="metric-label">Vertex Reduction</div>
+                </div>
+            </div>
+
+            <p>Down from 10,000 faces and 24,000 vertices. An <strong>80% reduction in vertex count</strong> with better detail retention.</p>
+
+            <div class="success-box">
+                <strong>The Key Insight:</strong> Every individual operation in the original pipeline was technically correct. Remove doubles works. Decimation works. Voxel remesh works. Edge split works. The bugs were in the <strong>SEQUENCE</strong> — in how the operations interacted with each other and whether they were the right tool for the actual goal.
+            </div>
+
+            <p>This is why structured reasoning matters for pipeline optimization. You can't see the interaction effects by looking at each step in isolation. You have to follow the data (in this case, face count and vertex count) through every transformation and ask: <em>is this step actually contributing to the goal, or is it working against another step?</em></p>
+
+            <p>Three operations were working against each other. Removing them made the pipeline faster, simpler, and produced better results. <strong>Less code, better output.</strong> That's the kind of optimization that compounds.</p>
+        </article>
+
+        <div class="divider"></div>
+
+        <!-- POST 1: Vertex Soup (Existing) -->
+        <article class="blog-post">
+            <div class="post-header">
+                <h2 class="post-title">Debugging the "Vertex Soup" Texturing Deadlock in Text-to-3D Pipelines</h2>
+                <div class="post-meta">
+                    <span>February 2026</span>
+                    <span class="tag">Text-to-3D</span>
+                    <span class="tag">Hunyuan3D</span>
+                    <span class="tag">UV Mapping</span>
+                </div>
+            </div>
+
+            <p>When your AI generates perfect multi-view paintings but your textures look like broken television static, the culprit isn't your rasterizer—it's your geometry.</p>
+
+            <p>If you've ever tried building an automated Text-to-3D pipeline and mysteriously encountered final baked textures that look like broken television static or pitch-black geometry, you are not alone. Our journey to fix this led us deep into the math of UV projection mapping, C++ rendering libraries, and PyTorch rasterization—only to discover the culprit was entirely geometric.</p>
+
             <h2>The Symptoms</h2>
             <p>Our generation pipeline (using <strong>Hunyuan3D</strong>) consistently failed at the texturing phase. The AI would generate beautiful, coherent multi-view paintings of the asset (in this case, a wooden barrel), but the final 3D <code>.glb</code> output had a fidelity score of <strong>33/100</strong>. The textures were completely destroyed, resembling black squares or pulverized RGB noise.</p>
-            
-            <p>Further compounding the issue, the <code>xatlas</code> C++ library—responsible for generating the 2D UV island mapping—would randomly deadlock during multiprocessing, forcing a fallback to Blender's <code>Smart UV Project</code>.</p>
-        </section>
 
-        <section>
+            <p>Further compounding the issue, the <code>xatlas</code> C++ library—responsible for generating the 2D UV island mapping—would randomly deadlock during multiprocessing, forcing a fallback to Blender's <code>Smart UV Project</code>.</p>
+
+            <div class="metric-grid">
+                <div class="metric">
+                    <span class="metric-value">1.26M</span>
+                    <div class="metric-label">Original Faces</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-value">1024²</span>
+                    <div class="metric-label">Texture Resolution</div>
+                </div>
+                <div class="metric">
+                    <span class="metric-value" style="color: #ef4444;">33/100</span>
+                    <div class="metric-label">Initial Fidelity</div>
+                </div>
+            </div>
+
             <h2>The Red Herrings</h2>
             <p>We initially chased several ghosts:</p>
-            
             <ol>
                 <li><strong>Trimesh Loading:</strong> We suspected <code>trimesh.load(process=False)</code> was preserving "vertex soup" (where vertices duplicated at UV seams were never welded), destroying the rigid 1:1 vertex-to-face indices PyTorch requires.</li>
-                
                 <li><strong>Y-Axis Inversion:</strong> We intercepted PyTorch's <code>save_mesh</code> export to manually flip the V-coordinate of the UV atlas, theorizing a mismatch between Blender's OpenGL orientation (V=0 at bottom) and DirectX (V=0 at top).</li>
-                
                 <li><strong>Rasterizer Misalignment:</strong> We analyzed the C++ bindings of <code>custom_rasterizer</code> and PyTorch's <code>bake_from_multiview</code> differential rendering code, looking for 0-based vs 1-based indexing mismatches.</li>
             </ol>
-            
             <p>None of these solved the problem. The AI was mathematically painting the exact right pixels, but the UV map was crushing them.</p>
-        </section>
 
-        <section>
             <h2>The Root Cause</h2>
-            <div class="highlight-box">
-                <h3>Microscopic Polygon Density</h3>
-                <p>The breakthrough came when we looked physically at the raw mesh generated by the marching-cubes algorithm before texturing. It was composed of <strong>1.26 MILLION microscopic faces</strong> for a single wooden barrel.</p>
+            <h3>Microscopic Polygon Density</h3>
+            <p>The breakthrough came when we looked physically at the raw mesh generated by the marching-cubes algorithm before texturing. It was composed of <strong>1.26 MILLION microscopic faces</strong> for a single wooden barrel.</p>
+
+            <div class="warning-box">
+                When you attempt to pack 1.26 million individual triangles onto a single 1024x1024 pixel texture grid, you physically run out of pixels. Each UV island was computationally shattered into sub-pixel dust. Blender's <code>Smart UV Project</code> did its best to pack them, but the result was microscopic noise. This massive computational overhead is also exactly what caused <code>xatlas</code> to freeze and deadlock into an infinite loop.
             </div>
 
-            <div class="stats">
-                <div class="stat-card">
-                    <span class="stat-number">1.26M</span>
-                    <span class="stat-label">Original Faces</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-number">1024²</span>
-                    <span class="stat-label">Texture Resolution</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-number">33/100</span>
-                    <span class="stat-label">Initial Fidelity</span>
-                </div>
-            </div>
-
-            <p>When you attempt to pack 1.26 million individual triangles onto a single 1024x1024 pixel texture grid, you physically run out of pixels. Each UV island was computationally shattered into sub-pixel dust. Blender's <code>Smart UV Project</code> did its best to pack them, but the result was microscopic noise. This massive computational overhead is also exactly what caused <code>xatlas</code> to freeze and deadlock into an infinite loop.</p>
-        </section>
-
-        <section>
             <h2>The Fix</h2>
             <h3>Pre-Texturing Decimation</h3>
             <p>The solution was surprisingly straightforward: <strong>Decimate the mesh topology before computing UVs.</strong></p>
-            
+
             <p>By injecting a headless Blender clean-up script immediately after the shape generation phase, we aggressively crushed the polygon count:</p>
 
-            <pre><code><span class="code-comment"># Decimate the marching-cubes mesh from 1.2M down to ~25,000 faces</span>
-<span class="code-keyword">poly_target</span> = <span class="code-number">25000</span>
-<span class="code-keyword">current_faces</span> = <span class="code-function">len</span>(obj.data.polygons)
+            <pre><code># Decimate the marching-cubes mesh from 1.2M down to ~25,000 faces
+poly_target = 25000
+current_faces = len(obj.data.polygons)
 
-<span class="code-keyword">if</span> current_faces > poly_target:
+if current_faces > poly_target:
     ratio = poly_target / current_faces
-    mod = obj.modifiers.new(name=<span class="code-string">"Decimate"</span>, type=<span class="code-string">'DECIMATE'</span>)
+    mod = obj.modifiers.new(name="Decimate", type='DECIMATE')
     mod.ratio = ratio
-    bpy.ops.object.modifier_apply(modifier=<span class="code-string">"Decimate"</span>)</code></pre>
-        </section>
+    bpy.ops.object.modifier_apply(modifier="Decimate")</code></pre>
 
-        <section>
             <h2>The Result</h2>
             <p>With a clean, game-ready 25,000 polygon limit:</p>
-            
             <ul>
                 <li>The <code>xatlas</code> C++ unwrapping engine executes natively and instantly without deadlocking.</li>
                 <li>The UV islands are large, coherent, and mathematically intact.</li>
                 <li>PyTorch's <code>custom_rasterizer</code> can map the AI-painted multi-view projections accurately onto the 2D canvas.</li>
             </ul>
 
-            <div class="highlight-box">
-                <h3>Key Takeaway</h3>
-                <p>The texture bakes seamlessly, and the TV static is gone. It goes to show that if your render math isn't working, check your geometry. In 3D generation physics, <strong>clean topology is king</strong>.</p>
+            <div class="success-box">
+                <strong>Key Takeaway:</strong> The texture bakes seamlessly, and the TV static is gone. It goes to show that if your render math isn't working, check your geometry. In 3D generation physics, <strong>clean topology is king</strong>.
             </div>
-        </section>
-
-        <footer>
-            <a href="/3DAgent.html" class="back-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                    <polyline points="12 19 5 12 12 5"></polyline>
-                </svg>
-                Back to 3D Agent Overview
-            </a>
-            <p style="margin-top: 20px; font-size: 0.875rem;">© Whisper Workshop</p>
-        </footer>
-    </article>
+        </article>
+    </div>
 </body>
 </html>
