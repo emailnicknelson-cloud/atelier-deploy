@@ -1,41 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3DAgent — Problem Space, Opportunity Space &amp; Product Vision</title>
-    <meta name="description" content="3DAgent is a multi-agent orchestration pipeline that produces production-quality Blender files from text prompts. Strategic analysis of the problem space, opportunity space, and product vision.">
+    <meta name="description"
+        content="3DAgent is a multi-agent orchestration pipeline that produces production-quality Blender files from text prompts. Strategic analysis of the problem space, opportunity space, and product vision.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --bg-primary: #0a0b10;
             --bg-secondary: #12131a;
             --bg-card: #181a24;
             --bg-card-hover: #1e2030;
-            --border-subtle: rgba(255,255,255,0.06);
-            --border-accent: rgba(0,240,255,0.2);
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-accent: rgba(0, 240, 255, 0.2);
             --text-primary: #e8ecf1;
             --text-secondary: #8b92a5;
             --text-muted: #5a6178;
             --accent-cyan: #00f0ff;
-            --accent-cyan-dim: rgba(0,240,255,0.1);
+            --accent-cyan-dim: rgba(0, 240, 255, 0.1);
             --accent-amber: #ffb000;
-            --accent-amber-dim: rgba(255,176,0,0.1);
+            --accent-amber-dim: rgba(255, 176, 0, 0.1);
             --accent-green: #00ff66;
-            --accent-green-dim: rgba(0,255,102,0.1);
+            --accent-green-dim: rgba(0, 255, 102, 0.1);
             --accent-red: #ff4466;
-            --accent-red-dim: rgba(255,68,102,0.1);
+            --accent-red-dim: rgba(255, 68, 102, 0.1);
             --accent-purple: #a78bfa;
-            --accent-purple-dim: rgba(167,139,250,0.1);
+            --accent-purple-dim: rgba(167, 139, 250, 0.1);
             --gradient-hero: linear-gradient(135deg, #0a0b10 0%, #111827 50%, #0a0b10 100%);
             --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             --font-mono: 'JetBrains Mono', 'Consolas', monospace;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        html { scroll-behavior: smooth; }
+        html {
+            scroll-behavior: smooth;
+        }
 
         body {
             font-family: var(--font-sans);
@@ -51,7 +61,7 @@
             top: 0;
             width: 100%;
             z-index: 100;
-            background: rgba(10,11,16,0.85);
+            background: rgba(10, 11, 16, 0.85);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border-subtle);
             padding: 0.8rem 2rem;
@@ -59,6 +69,7 @@
             align-items: center;
             justify-content: space-between;
         }
+
         nav .logo {
             font-weight: 800;
             font-size: 1.1rem;
@@ -66,7 +77,12 @@
             color: var(--accent-cyan);
             text-decoration: none;
         }
-        nav .nav-links { display: flex; gap: 1.5rem; }
+
+        nav .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
         nav .nav-links a {
             color: var(--text-secondary);
             text-decoration: none;
@@ -74,7 +90,10 @@
             font-weight: 500;
             transition: color 0.2s;
         }
-        nav .nav-links a:hover { color: var(--text-primary); }
+
+        nav .nav-links a:hover {
+            color: var(--text-primary);
+        }
 
         /* --- HERO --- */
         .hero {
@@ -84,13 +103,18 @@
             position: relative;
             overflow: hidden;
         }
+
         .hero::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(ellipse at 50% 0%, rgba(0,240,255,0.05) 0%, transparent 60%);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(0, 240, 255, 0.05) 0%, transparent 60%);
             pointer-events: none;
         }
+
         .hero h1 {
             font-size: clamp(2.2rem, 5vw, 3.5rem);
             font-weight: 800;
@@ -102,6 +126,7 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+
         .hero .subtitle {
             font-size: 1.15rem;
             color: var(--text-secondary);
@@ -110,6 +135,7 @@
             font-weight: 400;
             line-height: 1.7;
         }
+
         .hero .badge {
             display: inline-block;
             background: var(--accent-cyan-dim);
@@ -130,11 +156,15 @@
             margin: 0 auto;
             padding: 0 2rem;
         }
+
         section {
             padding: 5rem 0;
             border-bottom: 1px solid var(--border-subtle);
         }
-        section:last-child { border-bottom: none; }
+
+        section:last-child {
+            border-bottom: none;
+        }
 
         h2 {
             font-size: 1.8rem;
@@ -143,6 +173,7 @@
             margin-bottom: 0.5rem;
             color: var(--text-primary);
         }
+
         h3 {
             font-size: 1.2rem;
             font-weight: 600;
@@ -150,6 +181,7 @@
             margin-bottom: 0.8rem;
             color: var(--text-primary);
         }
+
         .section-lead {
             color: var(--text-secondary);
             font-size: 1.05rem;
@@ -164,11 +196,13 @@
             border-radius: 10px;
             border: 1px solid var(--border-subtle);
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.88rem;
         }
+
         thead th {
             background: var(--bg-card);
             color: var(--text-secondary);
@@ -180,14 +214,25 @@
             text-align: left;
             border-bottom: 1px solid var(--border-subtle);
         }
+
         tbody td {
             padding: 0.85rem 1.1rem;
             border-bottom: 1px solid var(--border-subtle);
             vertical-align: top;
         }
-        tbody tr:last-child td { border-bottom: none; }
-        tbody tr:hover { background: var(--bg-card); }
-        td strong { color: var(--text-primary); font-weight: 600; }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: var(--bg-card);
+        }
+
+        td strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
 
         /* --- CARDS --- */
         .card-grid {
@@ -196,6 +241,7 @@
             gap: 1.2rem;
             margin: 2rem 0;
         }
+
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
@@ -203,10 +249,12 @@
             padding: 1.5rem;
             transition: border-color 0.3s, background 0.3s;
         }
+
         .card:hover {
             border-color: var(--border-accent);
             background: var(--bg-card-hover);
         }
+
         .card .card-icon {
             width: 36px;
             height: 36px;
@@ -217,16 +265,19 @@
             font-size: 1.1rem;
             margin-bottom: 0.8rem;
         }
+
         .card h4 {
             font-size: 1rem;
             font-weight: 600;
             margin-bottom: 0.4rem;
         }
+
         .card p {
             font-size: 0.85rem;
             color: var(--text-secondary);
             line-height: 1.6;
         }
+
         .card .card-tag {
             display: inline-block;
             font-size: 0.7rem;
@@ -250,9 +301,18 @@
             white-space: nowrap;
             line-height: 2;
         }
-        .pipeline-flow .local { color: var(--accent-green); }
-        .pipeline-flow .gate { color: var(--accent-amber); }
-        .pipeline-flow .arrow { color: var(--text-muted); }
+
+        .pipeline-flow .local {
+            color: var(--accent-green);
+        }
+
+        .pipeline-flow .gate {
+            color: var(--accent-amber);
+        }
+
+        .pipeline-flow .arrow {
+            color: var(--text-muted);
+        }
 
         /* --- CALLOUT --- */
         .callout {
@@ -263,24 +323,33 @@
             line-height: 1.7;
             border-left: 3px solid;
         }
+
         .callout.important {
             background: var(--accent-amber-dim);
             border-color: var(--accent-amber);
             color: var(--text-primary);
         }
-        .callout.important strong { color: var(--accent-amber); }
+
+        .callout.important strong {
+            color: var(--accent-amber);
+        }
 
         /* --- BULLET LISTS --- */
-        ul, ol {
+        ul,
+        ol {
             padding-left: 1.2rem;
             margin: 0.8rem 0;
         }
+
         li {
             margin-bottom: 0.5rem;
             font-size: 0.92rem;
             color: var(--text-secondary);
         }
-        li strong { color: var(--text-primary); }
+
+        li strong {
+            color: var(--text-primary);
+        }
 
         /* --- DIRECTION CARDS --- */
         .direction {
@@ -292,18 +361,24 @@
             position: relative;
             transition: border-color 0.3s;
         }
-        .direction:hover { border-color: var(--border-accent); }
+
+        .direction:hover {
+            border-color: var(--border-accent);
+        }
+
         .direction h4 {
             font-size: 1.05rem;
             font-weight: 700;
             margin-bottom: 0.2rem;
         }
+
         .direction .who {
             font-size: 0.8rem;
             color: var(--text-muted);
             font-weight: 500;
             margin-bottom: 0.6rem;
         }
+
         .direction .confidence {
             position: absolute;
             top: 1.5rem;
@@ -321,6 +396,7 @@
             margin-bottom: 1.8rem;
             align-items: flex-start;
         }
+
         .principle .num {
             flex-shrink: 0;
             width: 32px;
@@ -334,11 +410,13 @@
             font-weight: 700;
             font-size: 0.85rem;
         }
+
         .principle .content h4 {
             font-size: 0.95rem;
             font-weight: 600;
             margin-bottom: 0.3rem;
         }
+
         .principle .content p {
             font-size: 0.88rem;
             color: var(--text-secondary);
@@ -352,7 +430,11 @@
             padding: 1rem 0;
             border-bottom: 1px solid var(--border-subtle);
         }
-        .priority-item:last-child { border-bottom: none; }
+
+        .priority-item:last-child {
+            border-bottom: none;
+        }
+
         .priority-item .priority-num {
             flex-shrink: 0;
             font-family: var(--font-mono);
@@ -361,17 +443,34 @@
             color: var(--accent-cyan);
             padding-top: 0.1rem;
         }
-        .priority-item strong { color: var(--text-primary); }
-        .priority-item span { color: var(--text-secondary); font-size: 0.88rem; }
+
+        .priority-item strong {
+            color: var(--text-primary);
+        }
+
+        .priority-item span {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+        }
 
         /* --- RISK LIST --- */
         .risk {
             padding: 1rem 0;
             border-bottom: 1px solid var(--border-subtle);
         }
-        .risk:last-child { border-bottom: none; }
-        .risk strong { color: var(--accent-amber); }
-        .risk .counter { color: var(--text-secondary); font-size: 0.88rem; }
+
+        .risk:last-child {
+            border-bottom: none;
+        }
+
+        .risk strong {
+            color: var(--accent-amber);
+        }
+
+        .risk .counter {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+        }
 
         code {
             font-family: var(--font-mono);
@@ -384,282 +483,384 @@
 
         /* --- RESPONSIVE --- */
         @media (max-width: 640px) {
-            nav { padding: 0.6rem 1rem; }
-            .hero { padding: 6rem 1.2rem 3rem; }
-            .container { padding: 0 1.2rem; }
-            section { padding: 3rem 0; }
-            .card-grid { grid-template-columns: 1fr; }
-            .direction .confidence { position: static; margin-bottom: 0.5rem; }
+            nav {
+                padding: 0.6rem 1rem;
+            }
+
+            .hero {
+                padding: 6rem 1.2rem 3rem;
+            }
+
+            .container {
+                padding: 0 1.2rem;
+            }
+
+            section {
+                padding: 3rem 0;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .direction .confidence {
+                position: static;
+                margin-bottom: 0.5rem;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<nav>
-    <a href="#" class="logo">3DAgent</a>
-    <div class="nav-links">
-        <a href="#problem">Problem</a>
-        <a href="#architecture">Architecture</a>
-        <a href="#opportunity">Opportunity</a>
-        <a href="#constraints">Constraints</a>
-        <a href="#roadmap">Roadmap</a>
-    </div>
-</nav>
-
-<!-- =================== HERO =================== -->
-<div class="hero">
-    <div class="badge">Strategic 2-Pager</div>
-    <h1>3DAgent: Problem Space,<br>Opportunity Space &amp; Product Vision</h1>
-    <p class="subtitle">A multi-agent orchestration pipeline that produces production-quality Blender files from text prompts. Not a model — a factory.</p>
-</div>
-
-<!-- =================== PROBLEM =================== -->
-<section id="problem">
-    <div class="container">
-        <h2>The $150B Content Bottleneck</h2>
-        <p class="section-lead">3D asset creation is the single most expensive, slowest, and most exclusionary bottleneck in the digital content supply chain.</p>
-
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr><th>Segment</th><th>Pain</th><th>Cost of Status Quo</th></tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Indie game studios</strong></td>
-                        <td>Need 200–2000 props to populate a world. Each costs $50–$500 from a freelancer. Timelines slip by months.</td>
-                        <td>$10K–$100K per title, 3–6 month wait</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Technical artists</strong></td>
-                        <td>60% of production time goes into repetitive setup work (UVs, materials, lighting, rigging, export). The creative 40% is the only part that matters.</td>
-                        <td>Hidden cost: ~$40K/yr of wasted senior-rate labor per artist</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Non-technical creators</strong></td>
-                        <td>Architects, educators, product designers, tabletop game makers — completely locked out. Blender's learning curve alone is 6–12 months.</td>
-                        <td>∞ (they can't participate at all)</td>
-                    </tr>
-                </tbody>
-            </table>
+    <nav>
+        <a href="#" class="logo">3DAgent</a>
+        <div class="nav-links">
+            <a href="#problem">Problem</a>
+            <a href="#architecture">Architecture</a>
+            <a href="#opportunity">Opportunity</a>
+            <a href="#constraints">Constraints</a>
+            <a href="#roadmap">Roadmap</a>
         </div>
+    </nav>
 
-        <h3>Why Existing "AI 3D" Doesn't Solve It</h3>
-        <ul>
-            <li><strong>Mesh generators</strong> (Meshy, Tripo, CSM, Rodin, Luma Genie) → Output raw geometry blobs. No UV unwrap, no PBR materials, no rig. An artist still spends 2–4 hours finishing each one.</li>
-            <li><strong>Research models</strong> (Point-E, Shap-E) → Low-poly proof-of-concepts with no textures. Not production-viable.</li>
-            <li><strong>LLM + Blender scripting</strong> (ChatGPT generates Blender Python) → Works for one-off tricks. Crashes ~70% of the time. No pipeline, no quality control, no memory.</li>
-        </ul>
-        <p style="margin-top: 1.5rem; color: var(--text-primary); font-weight: 500;">The fundamental gap: nobody produces a <strong>complete, pipeline-finished <code>.blend</code> file</strong> — with clean topology, UV maps, PBR materials, rigging, professional lighting, compositor setup, and a final Cycles render — from a text prompt — without human intervention. <em>That's what we do.</em></p>
+    <!-- =================== HERO =================== -->
+    <div class="hero">
+        <div class="badge">Strategic 2-Pager</div>
+        <h1>3DAgent: Problem Space,<br>Opportunity Space &amp; Product Vision</h1>
+        <p class="subtitle">A multi-agent orchestration pipeline that produces production-quality Blender files from
+            text prompts. Powered by SDXL-Lightning & Hunyuan3D-2 Turbo. Not just a model — a factory.</p>
     </div>
-</section>
 
-<!-- =================== ARCHITECTURE =================== -->
-<section id="architecture">
-    <div class="container">
-        <h2>What 3DAgent Actually Is</h2>
-        <p class="section-lead">10+ specialized AI agents collaboratively produce production-quality Blender files. It's not a model — it's a <em>factory</em>.</p>
+    <!-- =================== PROBLEM =================== -->
+    <section id="problem">
+        <div class="container">
+            <h2>The $150B Content Bottleneck</h2>
+            <p class="section-lead">3D asset creation is the single most expensive, slowest, and most exclusionary
+                bottleneck in the digital content supply chain.</p>
 
-        <div class="pipeline-flow">
-            Text Prompt <span class="arrow">→</span>
-            Director <span class="arrow">→</span>
-            Modeler <span class="arrow">→</span>
-            <span class="gate">[Quality Gate]</span> <span class="arrow">→</span>
-            <span class="local">UV Mapper ✦</span> <span class="arrow">→</span>
-            <span class="local">Optimizer ✦</span> <span class="arrow">→</span>
-            Rigger <span class="arrow">→</span>
-            Material Artist <span class="arrow">→</span>
-            <span class="local">Material Clamp ✦</span> <span class="arrow">→</span>
-            Lighter <span class="arrow">→</span>
-            Compositor <span class="arrow">→</span>
-            <span class="local">Renderer ✦</span> <span class="arrow">→</span>
-            <span class="local">Tech Artist ✦</span> <span class="arrow">→</span>
-            QA <span class="arrow">→</span>
-            Export
-            <br><br>
-            <span style="font-size: 0.72rem; color: var(--text-muted);">
-                <span class="local">✦ = Local script (zero tokens)</span>&nbsp;&nbsp;|&nbsp;&nbsp;
-                <span class="gate">[ ] = Quality gate</span>&nbsp;&nbsp;|&nbsp;&nbsp;
-                All others = Gemini LLM agents
-            </span>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Segment</th>
+                            <th>Pain</th>
+                            <th>Cost of Status Quo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Indie game studios</strong></td>
+                            <td>Need 200–2000 props to populate a world. Each costs $50–$500 from a freelancer.
+                                Timelines slip by months.</td>
+                            <td>$10K–$100K per title, 3–6 month wait</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Technical artists</strong></td>
+                            <td>60% of production time goes into repetitive setup work (UVs, materials, lighting,
+                                rigging, export). The creative 40% is the only part that matters.</td>
+                            <td>Hidden cost: ~$40K/yr of wasted senior-rate labor per artist</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Non-technical creators</strong></td>
+                            <td>Architects, educators, product designers, tabletop game makers — completely locked out.
+                                Blender's learning curve alone is 6–12 months.</td>
+                            <td>∞ (they can't participate at all)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Why Existing "AI 3D" Doesn't Solve It</h3>
+            <ul>
+                <li><strong>Mesh generators</strong> (Meshy, Tripo, CSM, Rodin, Luma Genie) → Output raw geometry blobs.
+                    No UV unwrap, no PBR materials, no rig. An artist still spends 2–4 hours finishing each one.</li>
+                <li><strong>Research models</strong> (Point-E, Shap-E) → Low-poly proof-of-concepts with no textures.
+                    Not production-viable.</li>
+                <li><strong>LLM + Blender scripting</strong> (ChatGPT generates Blender Python) → Works for one-off
+                    tricks. Crashes ~70% of the time. No pipeline, no quality control, no memory.</li>
+            </ul>
+            <p style="margin-top: 1.5rem; color: var(--text-primary); font-weight: 500;">The fundamental gap: nobody
+                produces a <strong>complete, pipeline-finished <code>.blend</code> file</strong> — with clean topology,
+                UV maps, PBR materials, rigging, professional lighting, compositor setup, and a final Cycles render —
+                from a text prompt — without human intervention. <em>That's what we do.</em></p>
         </div>
+    </section>
 
-        <div style="margin-top: 2.5rem;">
-            <div class="principle">
-                <div class="num">1</div>
-                <div class="content">
-                    <h4>Multi-agent specialization over monolithic generation</h4>
-                    <p>Each agent has domain-specific Blender API knowledge. The Modeler knows bmesh topology. The Material Artist knows PBR-accurate roughness values. The Lighter knows 3-point studio setups. The <em>pipeline itself</em> is the product.</p>
+    <!-- =================== ARCHITECTURE =================== -->
+    <section id="architecture">
+        <div class="container">
+            <h2>What 3DAgent Actually Is</h2>
+            <p class="section-lead">10+ specialized AI agents collaboratively produce production-quality Blender files.
+                It's not a model — it's a <em>factory</em>.</p>
+
+            <div class="pipeline-flow">
+                Text Prompt <span class="arrow">→</span>
+                Director <span class="arrow">→</span>
+                Modeler / SDXL / Hunyuan3D <span class="arrow">→</span>
+                <span class="gate">[Quality Gate]</span> <span class="arrow">→</span>
+                <span class="local">RetopAgent ✦</span> <span class="arrow">→</span>
+                <span class="local">UV Mapper ✦</span> <span class="arrow">→</span>
+                <span class="local">Optimizer ✦</span> <span class="arrow">→</span>
+                <span class="local">Auto-Rigger (Tripo) ✦</span> <span class="arrow">→</span>
+                Material & Lighter <span class="arrow">→</span>
+                Mocap (QuickMagic/RADiCAL) <span class="arrow">→</span>
+                Export
+                <br><br>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">
+                    <span class="local">✦ = Local/Zero-Token Autonomous Agent</span>&nbsp;&nbsp;|&nbsp;&nbsp;
+                    <span class="gate">[ ] = 9-Gate Quality Validation</span>&nbsp;&nbsp;|&nbsp;&nbsp;
+                    All others = LLM Orchestrators
+                </span>
+            </div>
+
+            <div style="margin-top: 2.5rem;">
+                <div class="principle">
+                    <div class="num">1</div>
+                    <div class="content">
+                        <h4>Multi-agent specialization over monolithic generation</h4>
+                        <p>Each agent has domain-specific Blender API knowledge. The pipeline features a Unified
+                            Character & Prop Engine that bridges geometry generation with animation and materials.</p>
+                    </div>
+                </div>
+                <div class="principle">
+                    <div class="num">2</div>
+                    <div class="content">
+                        <h4>Deterministic safety nets at zero token cost</h4>
+                        <p>Local scripts like the RetopAgent use curvature-weighted decimation and QuadriFlow to
+                            consistently hit industry-standard targets of 2,500-4,000 faces, bypassing expensive LLM
+                            geometry manipulation.</p>
+                    </div>
+                </div>
+                <div class="principle">
+                    <div class="num">3</div>
+                    <div class="content">
+                        <h4>Self-correcting execution with persistent memory</h4>
+                        <p>A 9-gate Quality Validation automatically handles retries. Manual Prompt Chunking bypasses
+                            the CLIP 77-token limit for infinite length prompts at $0 token cost.</p>
+                    </div>
                 </div>
             </div>
-            <div class="principle">
-                <div class="num">2</div>
-                <div class="content">
-                    <h4>Deterministic safety nets at zero token cost</h4>
-                    <p>Five local scripts (UV, Optimizer, Material Clamp, Tech Artist, Export) run algorithmically — no LLM, no tokens. They guarantee baseline quality <em>even when AI agents fail</em>. Graceful degradation, not catastrophic failure.</p>
+
+            <h3 style="margin-top: 2.5rem;">Current Metrics</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Current</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Pipeline success rate</strong></td>
+                            <td>95–100%</td>
+                            <td>Powered by 9-Gate Quality Validation</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Face Count Target</strong></td>
+                            <td>2,500–4,000</td>
+                            <td>Curvature-weighted decimation via RetopAgent</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cost per asset</strong></td>
+                            <td>~$0.50–$2.00</td>
+                            <td>Offset by $0 token SDXL chunking and local routing</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Time per asset</strong></td>
+                            <td>~3.5 minutes</td>
+                            <td>Using Hunyuan3D-2 Turbo + local orchestration</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Market Value Target</strong></td>
+                            <td>$100–$800</td>
+                            <td>Animated character pivot vs static prop ($3-$15)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Asset Categories</strong></td>
+                            <td>11 Classifications</td>
+                            <td>Props, weapons, furniture, fully rigged characters, etc.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- =================== OPPORTUNITY =================== -->
+    <section id="opportunity">
+        <div class="container">
+            <h2>The Opportunity Space</h2>
+            <p class="section-lead">Our unique capabilities: design reasoning before execution, multi-step
+                orchestration, persistent learning, and quality gates as first-class citizens.</p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">🧠
+                    </div>
+                    <h4>Design Reasoning</h4>
+                    <p>The Director agent decomposes "medieval blacksmith forge" into constituent meshes, materials, and
+                        spatial relationships. Architectural thinking, not random generation.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon" style="background: var(--accent-purple-dim); color: var(--accent-purple);">🔗
+                    </div>
+                    <h4>Multi-Step Orchestration</h4>
+                    <p>Each agent reads the current .blend file state via introspection, writes a targeted script, and
+                        hands off. The file evolves through 10+ transformation steps.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);">📚
+                    </div>
+                    <h4>Persistent Learning</h4>
+                    <p>ChromaDB semantic retrieval surfaces best past scripts for similar prompts. The 112th barrel
+                        benefits from the 1st barrel's lessons. Compound intelligence.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);">🛡️
+                    </div>
+                    <h4>Quality Gates</h4>
+                    <p>Geometry validation and visual quality scoring happen <em>inside</em> the pipeline. Bad geometry
+                        is caught before materials are applied.</p>
                 </div>
             </div>
-            <div class="principle">
-                <div class="num">3</div>
-                <div class="content">
-                    <h4>Self-correcting execution with persistent memory</h4>
-                    <p>A 30+ rule sanitizer auto-fixes known Blender API mistakes. A correction loop feeds tracebacks back to the LLM. ChromaDB stores every successful script for semantic retrieval. First-attempt ~30% success → 95%+ pipeline completion rate.</p>
-                </div>
+
+            <h3 style="margin-top: 3rem;">Three Strategic Directions</h3>
+
+            <div class="direction" style="border-left: 3px solid var(--accent-green);">
+                <span class="confidence"
+                    style="background: var(--accent-green-dim); color: var(--accent-green);">Highest Confidence</span>
+                <h4>Direction A: The "200 Props in an Afternoon" Machine</h4>
+                <div class="who">Target: Indie game devs populating worlds</div>
+                <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.5rem;">At 5–10m camera
+                    distance, our assets look great. Procedural textures carry visual weight where mesh detail can't.
+                    <strong style="color: var(--accent-green);">$100–$400 vs. $10K–$100K</strong> for a world full of
+                    props.</p>
+                <p style="font-size: 0.82rem; color: var(--text-muted);">Build: Batch queue, prompt library, style
+                    consistency, GLB/FBX export presets</p>
+            </div>
+
+            <div class="direction" style="border-left: 3px solid var(--accent-cyan);">
+                <span class="confidence" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">Broader
+                    Market</span>
+                <h4>Direction B: The "Artist's 70% Head Start"</h4>
+                <div class="who">Target: 3D artists who want to skip setup</div>
+                <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.5rem;">We generate the
+                    boring 60% (UVs, shapes, material setup, rig, lighting). Artist refines the creative 40%.</p>
+                <p style="font-size: 0.82rem; color: var(--text-muted);">Build: Clean topology, artist-friendly naming,
+                    non-destructive modifiers, export-ready hierarchy</p>
+            </div>
+
+            <div class="direction" style="border-left: 3px solid var(--accent-purple);">
+                <span class="confidence"
+                    style="background: var(--accent-purple-dim); color: var(--accent-purple);">Highest Value</span>
+                <h4>Direction C: The "Animated Character Studio" (P11)</h4>
+                <div class="who">Target: Studios needing rapid, game-ready rigged NPCs</div>
+                <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Pivoting from static
+                    props ($3-$15) to animated characters ($100-$800). We combine autonomous retopology
+                    (MeshAnythingV2), automated one-click rigging, and phone-video mocap (QuickMagic/RADiCAL).</p>
+                <p style="font-size: 0.82rem; color: var(--text-muted);">Build: RetopAgent protocol, unified skeleton
+                    standards, animation retargeting pipelines</p>
             </div>
         </div>
+    </section>
 
-        <h3 style="margin-top: 2.5rem;">Current Metrics</h3>
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr><th>Metric</th><th>Current</th><th>Notes</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td><strong>Pipeline success rate</strong></td><td>95–100%</td><td>10/10 on latest full test</td></tr>
-                    <tr><td><strong>Tokens per asset</strong></td><td>~185K–600K+</td><td>Clean runs ~185K; complex assets with retries 400K–600K+</td></tr>
-                    <tr><td><strong>Cost per asset</strong></td><td>~$0.50–$2.00</td><td>On Gemini pricing; Modeler correction loops are the main driver</td></tr>
-                    <tr><td><strong>Time per asset</strong></td><td>3–8 minutes</td><td>Local Blender + LLM API calls</td></tr>
-                    <tr><td><strong>Token optimization</strong></td><td>5 agents local (0 tokens)</td><td>UV, Optimizer, Material Clamp, Tech Artist, Export</td></tr>
-                    <tr><td><strong>Biggest token consumer</strong></td><td>Modeler (60–70%)</td><td>Correction loops + 193KB API ref injection on retries</td></tr>
-                    <tr><td><strong>Memory entries</strong></td><td>199 scripts + 166 seeds</td><td>Growing with every run</td></tr>
-                    <tr><td><strong>Validated projects</strong></td><td>112 generated</td><td>Props, weapons, furniture, environment</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</section>
+    <!-- =================== CONSTRAINTS =================== -->
+    <section id="constraints">
+        <div class="container">
+            <h2>Honest Constraints &amp; Risks</h2>
+            <p class="section-lead">What we can't do yet — and what could go wrong.</p>
 
-<!-- =================== OPPORTUNITY =================== -->
-<section id="opportunity">
-    <div class="container">
-        <h2>The Opportunity Space</h2>
-        <p class="section-lead">Our unique capabilities: design reasoning before execution, multi-step orchestration, persistent learning, and quality gates as first-class citizens.</p>
-
-        <div class="card-grid">
-            <div class="card">
-                <div class="card-icon" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">🧠</div>
-                <h4>Design Reasoning</h4>
-                <p>The Director agent decomposes "medieval blacksmith forge" into constituent meshes, materials, and spatial relationships. Architectural thinking, not random generation.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Limitation</th>
+                            <th>Why</th>
+                            <th>Mitigation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Complex organic geometry</strong></td>
+                            <td>Now mitigated by Hunyuan3D-2 / SDXL integrations</td>
+                            <td>Transitioning from primitive props directly to hero shapes</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mesh-level surface detail</strong></td>
+                            <td>Raw generation can be messy</td>
+                            <td>RetopAgent cleans and decimates to preserve sharp edges and quad topology</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Manual Rigging Bottleneck</strong></td>
+                            <td>Traditionally required human weight-painting</td>
+                            <td>Solved via Tripo AI one-click rigging and automated mocap integrations</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Deterministic output</strong></td>
+                            <td>Same prompt → different geometry each time</td>
+                            <td>Feature for batch (variety), controlled by Manual Prompt Chunking</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <div class="card">
-                <div class="card-icon" style="background: var(--accent-purple-dim); color: var(--accent-purple);">🔗</div>
-                <h4>Multi-Step Orchestration</h4>
-                <p>Each agent reads the current .blend file state via introspection, writes a targeted script, and hands off. The file evolves through 10+ transformation steps.</p>
+
+            <h3 style="margin-top: 2rem;">Key Risks</h3>
+            <div class="risk">
+                <strong>Gemini API changes / pricing shifts</strong><br>
+                <span class="counter">Counter: Model fallback chain (<code>2.5-pro → 2.5-flash → 2.0-flash</code>). 50%
+                    of pipeline works with zero API.</span>
             </div>
-            <div class="card">
-                <div class="card-icon" style="background: var(--accent-green-dim); color: var(--accent-green);">📚</div>
-                <h4>Persistent Learning</h4>
-                <p>ChromaDB semantic retrieval surfaces best past scripts for similar prompts. The 112th barrel benefits from the 1st barrel's lessons. Compound intelligence.</p>
+            <div class="risk">
+                <strong>Mesh generation models get good enough</strong><br>
+                <span class="counter">Counter: They won't have our pipeline finishing, quality gates, or persistent
+                    memory.</span>
             </div>
-            <div class="card">
-                <div class="card-icon" style="background: var(--accent-amber-dim); color: var(--accent-amber);">🛡️</div>
-                <h4>Quality Gates</h4>
-                <p>Geometry validation and visual quality scoring happen <em>inside</em> the pipeline. Bad geometry is caught before materials are applied.</p>
+            <div class="risk">
+                <strong>Blender version drift</strong><br>
+                <span class="counter">Counter: Sanitizer handles 30+ known 2.x→4.0 breakages. Safe API abstracts fragile
+                    calls.</span>
             </div>
         </div>
+    </section>
 
-        <h3 style="margin-top: 3rem;">Three Strategic Directions</h3>
+    <section id="roadmap">
+        <div class="container">
+            <div class="callout important">
+                <strong>The pipeline has successfully pivoted to high-value animated characters. The GUI must reflect
+                    this.</strong> Bringing the RetopAgent into the visual dashboard and enabling one-click
+                rigging/mocap workflows are the highest leverage investments for user value.
+            </div>
 
-        <div class="direction" style="border-left: 3px solid var(--accent-green);">
-            <span class="confidence" style="background: var(--accent-green-dim); color: var(--accent-green);">Highest Confidence</span>
-            <h4>Direction A: The "200 Props in an Afternoon" Machine</h4>
-            <div class="who">Target: Indie game devs populating worlds</div>
-            <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.5rem;">At 5–10m camera distance, our assets look great. Procedural textures carry visual weight where mesh detail can't. <strong style="color: var(--accent-green);">$100–$400 vs. $10K–$100K</strong> for a world full of props.</p>
-            <p style="font-size: 0.82rem; color: var(--text-muted);">Build: Batch queue, prompt library, style consistency, GLB/FBX export presets</p>
+            <h3>Immediate Priorities (Month 1-2)</h3>
+            <div class="priority-item"><span class="priority-num">01</span><span><strong>GUI Integration</strong> —
+                    Expose RetopAgent settings, topology visualizer, and target face counts in the neumorphic
+                    dashboard</span></div>
+            <div class="priority-item"><span class="priority-num">02</span><span><strong>Character Studio (P11)</strong>
+                    — Solidify the automated rigging pipeline and phone-to-FBX mocap flow</span></div>
+            <div class="priority-item"><span class="priority-num">03</span><span><strong>Portfolio Expansion</strong> —
+                    Generate 200+ assets across marketplaces, proving velocity and the new $100-$800 unit
+                    economics</span></div>
+
+            <h3 style="margin-top: 2rem;">Scaling Phase (Month 6-12)</h3>
+            <div class="priority-item"><span class="priority-num">04</span><span><strong>ComfyUI 3D Nodes</strong> —
+                    Package post-processing IP into custom nodes for ecosystem distribution ($1K-$5K/month
+                    target)</span></div>
+            <div class="priority-item"><span class="priority-num">05</span><span><strong>Freelance Vanguard</strong> —
+                    Leverage asset factory efficiency for rapid-turnaround freelance service clients</span></div>
+            <div class="priority-item"><span class="priority-num">06</span><span><strong>Agent Builder</strong> —
+                    Abstract the multi-agent orchestration for others to build bespoke AI 3D pipelines ($1K-$20K/month
+                    target)</span></div>
         </div>
+    </section>
 
-        <div class="direction" style="border-left: 3px solid var(--accent-cyan);">
-            <span class="confidence" style="background: var(--accent-cyan-dim); color: var(--accent-cyan);">Broader Market</span>
-            <h4>Direction B: The "Artist's 70% Head Start"</h4>
-            <div class="who">Target: 3D artists who want to skip setup</div>
-            <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.5rem;">We generate the boring 60% (UVs, shapes, material setup, rig, lighting). Artist refines the creative 40%.</p>
-            <p style="font-size: 0.82rem; color: var(--text-muted);">Build: Clean topology, artist-friendly naming, non-destructive modifiers, export-ready hierarchy</p>
-        </div>
-
-        <div class="direction" style="border-left: 3px solid var(--accent-purple);">
-            <span class="confidence" style="background: var(--accent-purple-dim); color: var(--accent-purple);">Highest Quality Bar</span>
-            <h4>Direction C: The "Product Viz Pipeline"</h4>
-            <div class="who">Target: E-commerce companies needing 3D renders</div>
-            <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Bottles, cups, packaging — simple geometry is actually our strength. Photorealistic renders from text.</p>
-            <p style="font-size: 0.82rem; color: var(--text-muted);">Build: HDRI lighting library, photorealistic material presets, turntable export</p>
-        </div>
-    </div>
-</section>
-
-<!-- =================== CONSTRAINTS =================== -->
-<section id="constraints">
-    <div class="container">
-        <h2>Honest Constraints &amp; Risks</h2>
-        <p class="section-lead">What we can't do yet — and what could go wrong.</p>
-
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr><th>Limitation</th><th>Why</th><th>Mitigation</th></tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Complex organic geometry</strong></td>
-                        <td>LLMs script with primitives + modifiers, not sculpted meshes</td>
-                        <td>Position as props/environment, not hero characters</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Mesh-level surface detail</strong></td>
-                        <td>No sculpt brushes, no retopology. Detail from procedural textures.</td>
-                        <td>Lean into material quality — procedural textures carry weight at game distances</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Characters &amp; animation</strong></td>
-                        <td>Character topology needs human-level edge flow understanding</td>
-                        <td>Out of scope for v1. Revisit with mesh generation models.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Deterministic output</strong></td>
-                        <td>Same prompt → different geometry each time</td>
-                        <td>Feature for batch (variety), risk for "exact match" use cases</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <h3 style="margin-top: 2rem;">Key Risks</h3>
-        <div class="risk">
-            <strong>Gemini API changes / pricing shifts</strong><br>
-            <span class="counter">Counter: Model fallback chain (<code>2.5-pro → 2.5-flash → 2.0-flash</code>). 50% of pipeline works with zero API.</span>
-        </div>
-        <div class="risk">
-            <strong>Mesh generation models get good enough</strong><br>
-            <span class="counter">Counter: They won't have our pipeline finishing, quality gates, or persistent memory.</span>
-        </div>
-        <div class="risk">
-            <strong>Blender version drift</strong><br>
-            <span class="counter">Counter: Sanitizer handles 30+ known 2.x→4.0 breakages. Safe API abstracts fragile calls.</span>
-        </div>
-    </div>
-</section>
-
-<!-- =================== ROADMAP =================== -->
-<section id="roadmap">
-    <div class="container">
-        <div class="callout important">
-            <strong>The pipeline is good enough to ship for Direction A. The GUI is not.</strong> The single highest-leverage investment is making the pipeline <em>feel</em> like a $200 product through a premium, polished interface. Token cost optimization (currently 185K–600K/asset) is a close second — reducing Modeler retries and trimming API ref injection would directly improve unit economics.
-        </div>
-
-        <h3>Immediate Priorities (Pre-Launch)</h3>
-        <div class="priority-item"><span class="priority-num">01</span><span><strong>GUI overhaul</strong> — Batch queue, prompt library, drag-to-compare renders, export format picker, cost estimator, progress visualization</span></div>
-        <div class="priority-item"><span class="priority-num">02</span><span><strong>Asset portfolio</strong> — Validate 50+ assets across categories. Gallery view that doubles as social proof</span></div>
-        <div class="priority-item"><span class="priority-num">03</span><span><strong>Robustness hardening</strong> — Timeout protection, crash recovery, progress estimation, <code>.blend</code> checkpointing</span></div>
-
-        <h3 style="margin-top: 2rem;">Medium-Term (Post-Launch)</h3>
-        <div class="priority-item"><span class="priority-num">04</span><span><strong>Style presets</strong> — "Low-poly stylized", "Photorealistic PBR", "Hand-painted" — each adjusts material prompts + render settings</span></div>
-        <div class="priority-item"><span class="priority-num">05</span><span><strong>Reference image workflow</strong> — Drop in a concept sketch, pipeline targets that visual style</span></div>
-        <div class="priority-item"><span class="priority-num">06</span><span><strong>Marketplace integration</strong> — One-click publish to Sketchfab, Turbosquid, Unity Asset Store with auto-generated thumbnails</span></div>
-    </div>
-</section>
-
-<footer style="text-align: center; padding: 3rem 2rem; border-top: 1px solid var(--border-subtle); color: var(--text-muted); font-size: 0.78rem;">
-    3DAgent — Whisper Workshop · 2026
-</footer>
+    <footer
+        style="text-align: center; padding: 3rem 2rem; border-top: 1px solid var(--border-subtle); color: var(--text-muted); font-size: 0.78rem;">
+        3DAgent — Whisper Workshop · 2026
+    </footer>
 
 </body>
+
 </html>
