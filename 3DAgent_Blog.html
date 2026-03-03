@@ -3,470 +3,262 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Agent Blog - Whisper Workshop</title>
+    <title>3D Agent Blog — Whisper Workshop</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: #e2e8f0;
-            line-height: 1.7;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 900px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #24292e;
+            max-width: 800px;
             margin: 0 auto;
             padding: 40px 20px;
+            background: #fff;
         }
-
-        header {
-            text-align: center;
-            margin-bottom: 60px;
-            padding: 40px 0;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-        }
-
+        
         h1 {
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-            letter-spacing: -0.02em;
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a1a1a;
         }
-
+        
         .subtitle {
-            color: #94a3b8;
-            font-size: 1.1rem;
-        }
-
-        .blog-post {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-            border-radius: 16px;
-            padding: 40px;
+            color: #586069;
+            font-size: 18px;
             margin-bottom: 40px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
-
-        .post-header {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        
+        details {
+            margin: 24px 0;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            background: #fff;
         }
-
-        .post-title {
-            font-size: 1.8rem;
-            color: #f8fafc;
-            margin-bottom: 10px;
-            line-height: 1.3;
-        }
-
-        .post-meta {
+        
+        summary {
+            padding: 20px 24px;
+            font-weight: 600;
+            font-size: 20px;
+            cursor: pointer;
+            background: #f6f8fa;
+            border-radius: 6px;
+            list-style: none;
             display: flex;
-            gap: 20px;
-            color: #64748b;
-            font-size: 0.9rem;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
         }
-
-        .tag {
-            background: rgba(96, 165, 250, 0.15);
-            color: #60a5fa;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
+        
+        summary:hover {
+            background: #f1f4f8;
         }
-
+        
+        summary::-webkit-details-marker {
+            display: none;
+        }
+        
+        summary::after {
+            content: "▼";
+            font-size: 12px;
+            color: #6a737d;
+            transition: transform 0.2s;
+        }
+        
+        details[open] summary::after {
+            transform: rotate(180deg);
+        }
+        
+        details[open] summary {
+            border-bottom: 1px solid #e1e4e8;
+            border-radius: 6px 6px 0 0;
+        }
+        
+        .post-content {
+            padding: 24px;
+        }
+        
+        .post-meta {
+            font-size: 14px;
+            color: #6a737d;
+            font-weight: normal;
+        }
+        
         h2 {
-            color: #60a5fa;
-            font-size: 1.4rem;
-            margin: 30px 0 15px 0;
+            font-size: 24px;
             font-weight: 600;
+            margin-top: 32px;
+            margin-bottom: 16px;
+            color: #1a1a1a;
         }
-
+        
         h3 {
-            color: #94a3b8;
-            font-size: 1.1rem;
-            margin: 25px 0 12px 0;
+            font-size: 18px;
             font-weight: 600;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: #2f363d;
         }
-
+        
         p {
             margin-bottom: 16px;
-            color: #cbd5e1;
         }
-
-        .highlight-box {
-            background: rgba(96, 165, 250, 0.1);
-            border-left: 4px solid #60a5fa;
-            padding: 20px;
-            margin: 25px 0;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .warning-box {
-            background: rgba(251, 146, 60, 0.1);
-            border-left: 4px solid #fb923c;
-            padding: 20px;
-            margin: 25px 0;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .success-box {
-            background: rgba(74, 222, 128, 0.1);
-            border-left: 4px solid #4ade80;
-            padding: 20px;
-            margin: 25px 0;
-            border-radius: 0 8px 8px 0;
-        }
-
+        
         code {
-            background: rgba(15, 23, 42, 0.8);
-            color: #f472b6;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.9em;
+            background: #f6f8fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            font-size: 85%;
         }
-
+        
         pre {
-            background: rgba(15, 23, 42, 0.9);
-            padding: 20px;
-            border-radius: 8px;
+            background: #f6f8fa;
+            padding: 16px;
+            border-radius: 6px;
             overflow-x: auto;
-            margin: 20px 0;
-            border: 1px solid rgba(148, 163, 184, 0.1);
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            font-size: 14px;
+            line-height: 1.45;
+            margin: 16px 0;
         }
-
+        
         pre code {
             background: none;
             padding: 0;
-            color: #e2e8f0;
-            line-height: 1.6;
         }
-
+        
+        strong {
+            font-weight: 600;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid #e1e4e8;
+            margin: 32px 0;
+        }
+        
         .metric-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin: 25px 0;
-        }
-
-        .metric {
-            background: rgba(15, 23, 42, 0.6);
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
             padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid rgba(148, 163, 184, 0.1);
+            background: #f6f8fa;
+            border-radius: 6px;
         }
-
+        
+        .metric {
+            text-align: center;
+        }
+        
         .metric-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #60a5fa;
+            font-size: 28px;
+            font-weight: 600;
+            color: #0366d6;
             display: block;
         }
-
+        
         .metric-label {
-            color: #64748b;
-            font-size: 0.9rem;
-            margin-top: 5px;
+            font-size: 12px;
+            color: #6a737d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-
-        .thought-chain {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(96, 165, 250, 0.2);
-            border-radius: 12px;
-            padding: 25px;
-            margin: 20px 0;
-        }
-
-        .thought-header {
-            color: #60a5fa;
-            font-weight: bold;
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-        }
-
+        
         ul, ol {
-            margin: 15px 0 15px 25px;
-            color: #cbd5e1;
+            padding-left: 24px;
+            margin-bottom: 16px;
         }
-
+        
         li {
             margin-bottom: 8px;
         }
-
-        .pipeline-comparison {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin: 25px 0;
+        
+        .highlight-box {
+            background: #fff5b4;
+            border-left: 4px solid #ffd33d;
+            padding: 16px 20px;
+            margin: 24px 0;
+            border-radius: 0 6px 6px 0;
         }
-
-        @media (max-width: 768px) {
-            .pipeline-comparison {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .pipeline-box {
-            background: rgba(15, 23, 42, 0.6);
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid rgba(148, 163, 184, 0.1);
-        }
-
-        .pipeline-title {
-            color: #f8fafc;
-            font-weight: bold;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-        }
-
-        .old-pipeline {
-            border-left: 4px solid #ef4444;
-        }
-
-        .new-pipeline {
-            border-left: 4px solid #22c55e;
-        }
-
-        .divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.3), transparent);
-            margin: 60px 0;
-        }
-
-        strong {
-            color: #f8fafc;
-        }
-
-        em {
-            color: #94a3b8;
+        
+        .code-label {
+            font-size: 12px;
+            color: #6a737d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>3D Agent Blog</h1>
-            <p class="subtitle">Technical Deep Dives from Whisper Workshop</p>
-        </header>
 
-        <!-- POST 2: Topology Optimization (New) -->
-        <article class="blog-post">
-            <div class="post-header">
-                <h2 class="post-title">How I Used Chain-of-Thought Reasoning to Cut Our 3D Mesh Poly Count by 80%</h2>
-                <div class="post-meta">
-                    <span>March 2026</span>
-                    <span class="tag">Pipeline Optimization</span>
-                    <span class="tag">Blender</span>
-                    <span class="tag">Topology</span>
-                </div>
-            </div>
+    <h1>3D Agent Blog</h1>
+    <p class="subtitle">Technical deep dives from the Whisper Workshop pipeline</p>
 
-            <p>Our AI-generated 3D asset pipeline was producing meshes with <strong>10,000 faces and 24,000 vertices</strong>. For a simple cargo crate prop, marketplace standards demand under 5,000 faces. Something was deeply wrong with our topology cleaner, but it wasn't obvious at first glance — the script looked reasonable, and each individual operation made sense in isolation.</p>
-
-            <p>I used a structured sequential thinking process to break the problem apart. Here's exactly how that reasoning chain went.</p>
-
-            <div class="thought-chain">
-                <div class="thought-header">THOUGHT 1: MAP THE PIPELINE</div>
-                <p>Before optimizing, I mapped every operation in order with its input and output:</p>
-                <ol>
-                    <li>Import raw mesh (1.2M faces from marching cubes)</li>
-                    <li>Remove doubles (merge by distance)</li>
-                    <li>Dissolve degenerate geometry</li>
-                    <li>Recalculate normals</li>
-                    <li>Decimate to 5,000 faces</li>
-                    <li>Export intermediate for visualization</li>
-                    <li>Mark sharp edges (>30 degrees)</li>
-                    <li>Voxel Remesh (voxel_size = max_dim / 40)</li>
-                    <li>Decimate AGAIN if over 5,000</li>
-                    <li>Edge Split at 30 degrees</li>
-                    <li>Smart UV Project</li>
-                    <li>Export</li>
-                </ol>
-                <p>Ten steps. That's a lot for a topology cleaner. But the real insight came from asking: <em>what does each step actually do to the face count?</em></p>
-            </div>
-
-            <div class="thought-chain">
-                <div class="thought-header">THOUGHT 2: FOLLOW THE FACE COUNT</div>
-                <p>Step 5 decimates from 1.2 million down to 5,000. Clean. Efficient. Good.</p>
-                
-                <p><strong>Step 8 — Voxel Remesh</strong> — completely regenerates the mesh. It throws away the entire existing topology and creates a brand new uniform grid. The 5,000 faces from step 5? Gone. Deleted. The first decimation was entirely wasted computation.</p>
-                
-                <p>The voxel size was set to <code>max_dim / 40</code>. For a unit cube, that produces roughly 10,000 faces. The formula is approximately <code>surface_area / voxel_size^2</code>. So the divisor of 40 was giving us 10K faces by coincidence of the math, not by design.</p>
-                
-                <p>Then step 9 decimates AGAIN if the remesh overshot. We were decimating twice, with the first pass completely negated.</p>
-                
-                <div class="warning-box">
-                    <strong>Architectural Flaw #1:</strong> Double decimation with a topology-destroying operation in between.
-                </div>
-            </div>
-
-            <div class="thought-chain">
-                <div class="thought-header">THOUGHT 3: THE VERTEX MULTIPLIER</div>
-                <p>We had 10,000 faces but 24,000 vertices. That ratio is wrong — 10K faces should have roughly 5-7K unique vertices. Where did the extra 17,000 vertices come from?</p>
-                
-                <p><strong>Edge Split. Step 10.</strong></p>
-                
-                <p>Edge Split duplicates vertices at every edge where the angle between adjacent faces exceeds the threshold (30 degrees). On a voxel-remeshed mesh, most edges are at 90 degrees because voxel remesh creates a uniform grid. So the Edge Split was duplicating vertices at nearly every single edge in the mesh.</p>
-                
-                <p>But here's the thing: <strong>game engines don't need Edge Split meshes.</strong> Unity and Unreal both use custom normals and smooth groups to achieve hard edges. Edge Split is a Blender visualization technique, not a game-engine requirement. We were inflating our vertex count by 2-3x for zero gameplay benefit.</p>
-            </div>
-
-            <div class="thought-chain">
-                <div class="thought-header">THOUGHT 4: THE WRONG TOOL FOR QUADRIFICATION</div>
-                <p>The voxel remesh was labeled as "quadrification" — converting the triangulated marching-cubes output to quads. But voxel remesh <strong>doesn't produce quads</strong>. It produces uniform triangles. The stated goal of the operation wasn't even being achieved.</p>
-                
-                <p>True quad remeshing requires Quadriflow, Instant Meshes, or similar tools. But more importantly: <strong>marketplace assets don't need quads.</strong> Unity and Unreal triangulate every mesh on import. The entire quadrification step was solving a problem that didn't exist.</p>
-            </div>
-
-            <div class="thought-chain">
-                <div class="thought-header">THOUGHT 5: THE SECRET WEAPON</div>
-                <p>With the architectural flaws identified, I asked: what would the <strong>OPTIMAL</strong> pipeline look like?</p>
-                
-                <p>That's when I realized the key insight: <strong>Planar Decimate.</strong></p>
-                
-                <p>Hunyuan3D's marching cubes algorithm produces meshes with an interesting property: enormous flat surfaces (sides of a crate, for example) are tessellated with thousands of tiny coplanar triangles. These triangles all lie on the same plane and contribute zero visual detail. But standard collapse decimation treats them the same as detail-carrying triangles elsewhere on the mesh.</p>
-                
-                <p><strong>Planar Decimate</strong> (Blender's <code>dissolve_limited</code>) dissolves coplanar faces within an angle threshold. At 5 degrees, it eliminates 60-80% of faces on flat surfaces in a single operation — before collapse decimation even starts.</p>
-                
-                <p>This means the collapse decimation's entire poly budget goes to actual detail. Sharp corners, panel lines, rivets, surface features — they all survive because the budget isn't wasted on flat surfaces that could be one polygon.</p>
-                
-                <div class="highlight-box">
-                    <strong>Industry Insight:</strong> 3D scanners use this exact technique. Scan data comes in dense and uniform, just like marching cubes output. The standard pipeline is always: clean, planar decimate, then collapse decimate. We had skipped the most important step.
-                </div>
-            </div>
-
-            <h2>THE REWRITE</h2>
+    <!-- POST 1: Vertex Soup -->
+    <details open>
+        <summary>
+            <span>Debugging the "Vertex Soup" Texturing Deadlock</span>
+            <span class="post-meta">Mar 3, 2026</span>
+        </summary>
+        <div class="post-content">
+            <p><strong>Technical Deep Dive — 3D Generation Pipeline</strong></p>
             
-            <div class="pipeline-comparison">
-                <div class="pipeline-box old-pipeline">
-                    <div class="pipeline-title">Old Pipeline (10 steps, 3 redundant)</div>
-                    <p style="font-family: monospace; font-size: 0.9rem; line-height: 1.8;">
-                    Import → Clean → Decimate → Viz → Mark Sharp → Voxel Remesh → Decimate Again → Edge Split → UV → Export
-                    </p>
-                </div>
-                
-                <div class="pipeline-box new-pipeline">
-                    <div class="pipeline-title">New Pipeline (7 steps, 0 redundant)</div>
-                    <p style="font-family: monospace; font-size: 0.9rem; line-height: 1.8;">
-                    Import → Clean → Planar Decimate → Collapse Decimate → Viz → Auto Smooth → UV → Export
-                    </p>
-                </div>
-            </div>
-
-            <h3>Changes:</h3>
-            <ul>
-                <li>❌ Removed <strong>Voxel Remesh</strong> (uncalibrated, destroys detail, doesn't produce quads)</li>
-                <li>❌ Removed <strong>Edge Split</strong> (inflates vertices 2-3x, unnecessary for game engines)</li>
-                <li>❌ Removed first <strong>Decimate</strong> (was negated by voxel remesh anyway)</li>
-                <li>✅ Added <strong>Planar Decimate</strong> (dissolves flat surface tessellation)</li>
-                <li>✅ Replaced Edge Split with <strong>Auto Smooth</strong> (custom normals, zero vertex inflation)</li>
-                <li>✅ Lowered target to <strong>3,000 faces</strong> (no Edge Split inflation to account for)</li>
-            </ul>
-
-            <h2>THE RESULT</h2>
-            
-            <div class="metric-grid">
-                <div class="metric">
-                    <span class="metric-value">2,500-3,500</span>
-                    <div class="metric-label">Target Faces</div>
-                </div>
-                <div class="metric">
-                    <span class="metric-value">2,500-4,000</span>
-                    <div class="metric-label">Target Vertices</div>
-                </div>
-                <div class="metric">
-                    <span class="metric-value" style="color: #4ade80;">80%</span>
-                    <div class="metric-label">Vertex Reduction</div>
-                </div>
-            </div>
-
-            <p>Down from 10,000 faces and 24,000 vertices. An <strong>80% reduction in vertex count</strong> with better detail retention.</p>
-
-            <div class="success-box">
-                <strong>The Key Insight:</strong> Every individual operation in the original pipeline was technically correct. Remove doubles works. Decimation works. Voxel remesh works. Edge split works. The bugs were in the <strong>SEQUENCE</strong> — in how the operations interacted with each other and whether they were the right tool for the actual goal.
-            </div>
-
-            <p>This is why structured reasoning matters for pipeline optimization. You can't see the interaction effects by looking at each step in isolation. You have to follow the data (in this case, face count and vertex count) through every transformation and ask: <em>is this step actually contributing to the goal, or is it working against another step?</em></p>
-
-            <p>Three operations were working against each other. Removing them made the pipeline faster, simpler, and produced better results. <strong>Less code, better output.</strong> That's the kind of optimization that compounds.</p>
-        </article>
-
-        <div class="divider"></div>
-
-        <!-- POST 1: Vertex Soup (Existing) -->
-        <article class="blog-post">
-            <div class="post-header">
-                <h2 class="post-title">Debugging the "Vertex Soup" Texturing Deadlock in Text-to-3D Pipelines</h2>
-                <div class="post-meta">
-                    <span>February 2026</span>
-                    <span class="tag">Text-to-3D</span>
-                    <span class="tag">Hunyuan3D</span>
-                    <span class="tag">UV Mapping</span>
-                </div>
-            </div>
-
             <p>When your AI generates perfect multi-view paintings but your textures look like broken television static, the culprit isn't your rasterizer—it's your geometry.</p>
 
             <p>If you've ever tried building an automated Text-to-3D pipeline and mysteriously encountered final baked textures that look like broken television static or pitch-black geometry, you are not alone. Our journey to fix this led us deep into the math of UV projection mapping, C++ rendering libraries, and PyTorch rasterization—only to discover the culprit was entirely geometric.</p>
 
             <h2>The Symptoms</h2>
+            
             <p>Our generation pipeline (using <strong>Hunyuan3D</strong>) consistently failed at the texturing phase. The AI would generate beautiful, coherent multi-view paintings of the asset (in this case, a wooden barrel), but the final 3D <code>.glb</code> output had a fidelity score of <strong>33/100</strong>. The textures were completely destroyed, resembling black squares or pulverized RGB noise.</p>
 
             <p>Further compounding the issue, the <code>xatlas</code> C++ library—responsible for generating the 2D UV island mapping—would randomly deadlock during multiprocessing, forcing a fallback to Blender's <code>Smart UV Project</code>.</p>
 
-            <div class="metric-grid">
-                <div class="metric">
-                    <span class="metric-value">1.26M</span>
-                    <div class="metric-label">Original Faces</div>
-                </div>
-                <div class="metric">
-                    <span class="metric-value">1024²</span>
-                    <div class="metric-label">Texture Resolution</div>
-                </div>
-                <div class="metric">
-                    <span class="metric-value" style="color: #ef4444;">33/100</span>
-                    <div class="metric-label">Initial Fidelity</div>
-                </div>
-            </div>
-
             <h2>The Red Herrings</h2>
+            
             <p>We initially chased several ghosts:</p>
+            
             <ol>
                 <li><strong>Trimesh Loading:</strong> We suspected <code>trimesh.load(process=False)</code> was preserving "vertex soup" (where vertices duplicated at UV seams were never welded), destroying the rigid 1:1 vertex-to-face indices PyTorch requires.</li>
                 <li><strong>Y-Axis Inversion:</strong> We intercepted PyTorch's <code>save_mesh</code> export to manually flip the V-coordinate of the UV atlas, theorizing a mismatch between Blender's OpenGL orientation (V=0 at bottom) and DirectX (V=0 at top).</li>
                 <li><strong>Rasterizer Misalignment:</strong> We analyzed the C++ bindings of <code>custom_rasterizer</code> and PyTorch's <code>bake_from_multiview</code> differential rendering code, looking for 0-based vs 1-based indexing mismatches.</li>
             </ol>
+
             <p>None of these solved the problem. The AI was mathematically painting the exact right pixels, but the UV map was crushing them.</p>
 
             <h2>The Root Cause</h2>
+            
             <h3>Microscopic Polygon Density</h3>
+            
             <p>The breakthrough came when we looked physically at the raw mesh generated by the marching-cubes algorithm before texturing. It was composed of <strong>1.26 MILLION microscopic faces</strong> for a single wooden barrel.</p>
 
-            <div class="warning-box">
-                When you attempt to pack 1.26 million individual triangles onto a single 1024x1024 pixel texture grid, you physically run out of pixels. Each UV island was computationally shattered into sub-pixel dust. Blender's <code>Smart UV Project</code> did its best to pack them, but the result was microscopic noise. This massive computational overhead is also exactly what caused <code>xatlas</code> to freeze and deadlock into an infinite loop.
+            <div class="metric-grid">
+                <div class="metric">
+                    <span class="metric-value">1.26M</span>
+                    <span class="metric-label">Original Faces</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-value">1024²</span>
+                    <span class="metric-label">Texture Resolution</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-value">33/100</span>
+                    <span class="metric-label">Initial Fidelity</span>
+                </div>
             </div>
 
+            <p>When you attempt to pack 1.26 million individual triangles onto a single 1024x1024 pixel texture grid, you physically run out of pixels. Each UV island was computationally shattered into sub-pixel dust. Blender's <code>Smart UV Project</code> did its best to pack them, but the result was microscopic noise. This massive computational overhead is also exactly what caused <code>xatlas</code> to freeze and deadlock into an infinite loop.</p>
+
             <h2>The Fix</h2>
+            
             <h3>Pre-Texturing Decimation</h3>
+            
             <p>The solution was surprisingly straightforward: <strong>Decimate the mesh topology before computing UVs.</strong></p>
 
             <p>By injecting a headless Blender clean-up script immediately after the shape generation phase, we aggressively crushed the polygon count:</p>
 
+            <div class="code-label">Blender Python</div>
             <pre><code># Decimate the marching-cubes mesh from 1.2M down to ~25,000 faces
 poly_target = 25000
 current_faces = len(obj.data.polygons)
@@ -478,17 +270,197 @@ if current_faces > poly_target:
     bpy.ops.object.modifier_apply(modifier="Decimate")</code></pre>
 
             <h2>The Result</h2>
+            
             <p>With a clean, game-ready 25,000 polygon limit:</p>
+            
             <ul>
                 <li>The <code>xatlas</code> C++ unwrapping engine executes natively and instantly without deadlocking.</li>
                 <li>The UV islands are large, coherent, and mathematically intact.</li>
                 <li>PyTorch's <code>custom_rasterizer</code> can map the AI-painted multi-view projections accurately onto the 2D canvas.</li>
             </ul>
 
-            <div class="success-box">
+            <div class="highlight-box">
                 <strong>Key Takeaway:</strong> The texture bakes seamlessly, and the TV static is gone. It goes to show that if your render math isn't working, check your geometry. In 3D generation physics, <strong>clean topology is king</strong>.
             </div>
-        </article>
-    </div>
+        </div>
+    </details>
+
+    <!-- POST 2: Retopology -->
+    <details>
+        <summary>
+            <span>Why I Almost Replaced My Entire 3D Pipeline (And Why a One-Liner Fixed It Instead)</span>
+            <span class="post-meta">Mar 3, 2026</span>
+        </summary>
+        <div class="post-content">
+            <p><strong>Or: How Sequential Thinking Saved Me From Yak-Shaving a Retopology System Nobody Asked For</strong></p>
+
+            <h2>The Temptation</h2>
+            
+            <p>Here's a thing that happens when you work with AI-generated 3D meshes: you stare at the wireframe and feel personally offended.</p>
+
+            <p>Hunyuan3D-2 generates gorgeous silhouettes. The shapes are correct, the proportions are spot-on, and then you flip to wireframe view and it looks like someone draped a fishing net over the model during a hurricane. A million vertices of pure marching-cubes chaos. Triangle soup that would make a topology purist weep into their SubD cage.</p>
+
+            <p>So naturally, my first instinct was: <strong>"I should replace the entire decimation pipeline with a proper retopology system. QuadriFlow. Instant Meshes. Maybe even train an AI retopology model. Go full production studio."</strong></p>
+
+            <p>This is the engineering equivalent of replacing your kitchen faucet and somehow ending up renovating the entire bathroom.</p>
+
+            <h2>Sequential Thinking Says: Hold On</h2>
+            
+            <p>I ran this through an 8-layer Sequential Thinking analysis before writing a single line of code. And thank god I did, because layer 4 dropped the plot twist:</p>
+
+            <p><strong>AI-generated meshes are NOT sculpts.</strong></p>
+
+            <p>Every retopology tool on the market — QuadriFlow, Instant Meshes, ZBrush ZRemesher — was designed for clean artist sculpts where every surface wobble is intentional detail. But Hunyuan3D's marching cubes output has <strong>surface noise</strong>. Tiny high-frequency bumps across every surface that exist because of the neural network's reconstruction, not because someone sculpted them.</p>
+
+            <p>When you point QuadriFlow at this, something terrible happens: it faithfully follows the noise. It creates beautiful, clean quad topology that perfectly preserves every single artifact you didn't want. Wavy quads on what should be a flat barrel side. Rippled edge loops on what should be a straight sword blade.</p>
+
+            <p>Meanwhile, our boring old collapse decimation? It acts as a low-pass filter. It smooths away the noise while preserving the silhouette. The thing I wanted to replace was actually solving a problem I didn't know I had.</p>
+
+            <h2>The One-Liner</h2>
+            
+            <p>The real weakness of the pipeline wasn't the decimation algorithm — it was the topological polish AFTER decimation. The mesh was geometrically correct but looked amateur in wireframe view because it was 100% triangles.</p>
+
+            <p>The fix? <strong>One line of Blender Python:</strong></p>
+
+            <div class="code-label">The Fix</div>
+            <pre><code>bpy.ops.mesh.tris_convert_to_quads(face_threshold=1.0472, shape_threshold=1.0472)</code></pre>
+
+            <p>That's it. Run after decimation, this converts ~60% of coplanar triangle pairs into clean quads. The wireframe goes from "fishing net in a hurricane" to "actually looks like a game artist made this." One second of compute time. Zero risk.</p>
+
+            <p>I also added two lines for sharp edge marking before decimation:</p>
+
+            <div class="code-label">Sharp Edge Preservation</div>
+            <pre><code>bpy.ops.mesh.edges_select_sharp(sharpness=0.523599)  # 30 degrees
+bpy.ops.mesh.mark_sharp()</code></pre>
+
+            <p>This preserves hard-surface definition through the decimation. Your barrel bands stay crisp. Your sword cross-guard keeps its edge. The things that make game props look intentional instead of melted.</p>
+
+            <div class="metric-grid">
+                <div class="metric">
+                    <span class="metric-value">5</span>
+                    <span class="metric-label">Lines of Code</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-value">&lt;2s</span>
+                    <span class="metric-label">Compute Time</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-value">~60%</span>
+                    <span class="metric-label">Quad Ratio</span>
+                </div>
+            </div>
+
+            <h2>But Wait, I Still Built The QuadriFlow Thing</h2>
+            
+            <p>Because sometimes you DO want all-quad topology. Marketplace listings with wireframe screenshots. Portfolio pieces. Paid asset packs where buyers inspect topology.</p>
+
+            <p>So I added it as an opt-in premium mode. GUI checkbox: <strong>"Premium Quad Topology (+10s, all-quad QuadriFlow)."</strong></p>
+
+            <p>The trick is the two-stage approach: <strong>collapse decimate 1M → 10K first</strong> (removes AI noise), <strong>THEN QuadriFlow 10K → 2K</strong> (produces clean quads on a noise-free surface). You can't skip the first stage or QuadriFlow follows the noise. You can't skip the second stage or you're stuck with triangle soup.</p>
+
+            <h2>The Concept Image Picker (A.K.A. The Feature I Didn't Know I Needed)</h2>
+            
+            <p>While fixing the topology pipeline, we noticed something else: the concept images were hit-or-miss. Sometimes SDXL-Lightning would generate a perfect 3D-ready reference on the first try. Sometimes it would generate a zoomed-in close-up with dramatic rim lighting that made Hunyuan3D produce geometry with shadow-shaped holes in it.</p>
+
+            <p><strong>The old workflow:</strong> generate one concept, pray, feed it to the 3D pipeline, wait 3 minutes, discover the concept was bad, start over.</p>
+
+            <p><strong>The new workflow:</strong> generate <strong>NINE concepts in ~9 seconds</strong> (SDXL-Lightning does ~1 image/second with the model already loaded), show them in a 3×3 picker grid, and let the user choose the best one BEFORE burning 3 minutes of GPU time on 3D generation.</p>
+
+            <h3>Strategic Refinement (Not Random Refinement)</h3>
+            
+            <p>My first implementation of the "Refine" button was lazy: take the selected image, run it through img2img with the same prompt and 4 different random seeds. Technically works. Practically useless.</p>
+
+            <p>The problem? Random seeds don't know about your 3D pipeline. They don't know that a gradient background will break rembg's mask. They don't know that dramatic shadows get interpreted as geometry holes by Hunyuan3D. They don't know that a perspective-distorted view produces proportionally wrong meshes.</p>
+
+            <p>Sequential Thinking layer 2 produced this realization: <strong>each refinement variant should target a specific downstream failure mode.</strong></p>
+
+            <p>So instead of 4 random images, the refine button now generates <strong>4 STRATEGIC variants:</strong></p>
+
+            <h3>CLEAN BG (strength 0.50)</h3>
+            <ul>
+                <li><strong>Prompt focus:</strong> "pure white background, floating object, no ground shadow, completely isolated"</li>
+                <li><strong>What it fixes:</strong> rembg mask bleeding, background gradients, ground shadow contamination</li>
+                <li><strong>Why 0.50:</strong> needs 2 denoising steps to actually change the background</li>
+            </ul>
+
+            <h3>SHARP DETAIL (strength 0.50)</h3>
+            <ul>
+                <li><strong>Prompt focus:</strong> "ultra sharp, crisp edges, well-defined silhouette, 8K resolution"</li>
+                <li><strong>What it fixes:</strong> blurry silhouettes that cause Hunyuan3D geometry holes</li>
+                <li><strong>Why 0.50:</strong> same headroom — sharpen edges without changing the object</li>
+            </ul>
+
+            <h3>FLAT LIGHT (strength 0.60)</h3>
+            <ul>
+                <li><strong>Prompt focus:</strong> "flat even lighting, no shadows, diffuse illumination, all surfaces visible"</li>
+                <li><strong>What it fixes:</strong> shadow-induced geometry holes, baked shadows in textures</li>
+                <li><strong>Why 0.60:</strong> needs 2-3 steps to actively flatten dramatic lighting</li>
+            </ul>
+
+            <h3>3D READY (strength 0.65)</h3>
+            <ul>
+                <li><strong>Prompt focus:</strong> "orthographic projection, centered object, 3/4 view, PBR material reference"</li>
+                <li><strong>What it fixes:</strong> perspective distortion, non-orthographic angles, incomplete views</li>
+                <li><strong>Why 0.65:</strong> strongest modification — restructures composition toward 3D-optimal</li>
+            </ul>
+
+            <p>The strength values aren't arbitrary either. SDXL-Lightning uses a 4-step schedule. At strength 0.35 (my original "default"), you get floor(4 × 0.35) = 1 effective denoising step. Barely any visible change. At 0.50, you get 2 steps — enough to meaningfully address the targeted issue while preserving the composition the user liked enough to hit "Refine."</p>
+
+            <p>The picker dialog labels each card with its variant name (CLEAN BG, SHARP DETAIL, etc.) in amber text, so the user knows exactly what each refinement optimized for. The original image sits in position 1 labeled "ORIGINAL" in cyan. You can refine again recursively — hit REFINE on a FLAT LIGHT variant, and you'll get 4 more strategic passes on top of the already-improved lighting.</p>
+
+            <h2>The Lesson</h2>
+            
+            <p>I almost spent a week building a retopology system that would have produced WORSE results than 5 lines of code inserted into the existing pipeline.</p>
+
+            <p>The concept picker almost shipped with 4 random imgs that would have been useless for debugging concept quality issues.</p>
+
+            <p>Both times, Sequential Thinking caught the mistake before I wrote the code. Not because I'm especially clever — because the structured reasoning forced me to ask <strong>"what actually goes wrong downstream?"</strong> instead of <strong>"what sounds sophisticated to build?"</strong></p>
+
+            <div class="highlight-box">
+                <strong>The best optimization isn't always the most complex one.</strong> Sometimes it's <code>bpy.ops.mesh.tris_convert_to_quads()</code> and knowing when NOT to build the thing you're excited about.
+            </div>
+
+            <h2>Current Pipeline Status</h2>
+            
+            <div class="code-label">Full Pipeline</div>
+            <pre><code>Text prompt
+→ SDXL-Lightning concept generation (9 candidates, ~9 seconds)
+→ User selection with strategic refinement (img2img, 4 targeted variants)
+→ Hunyuan3D-2 shape generation
+→ Collapse decimation with sharp edge preservation
+→ Tris-to-quads conversion (60% quad topology, +1 second)
+→ Optional QuadriFlow premium mode (100% quads, +10 seconds)
+→ Planar dissolve, UV unwrap, studio renders
+→ Hero render + 5 view angles + turntable animation
+→ Fidelity scoring against concept image
+→ GLB + FBX + .blend export</code></pre>
+
+            <div class="metric-grid">
+                <div class="metric">
+                    <span class="metric-value">$0.00</span>
+                    <span class="metric-label">Cost Per Asset</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-value">~3min</span>
+                    <span class="metric-label">Fast Mode</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-value">~15min</span>
+                    <span class="metric-label">Full Textures + Quad</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-value">~300</span>
+                    <span class="metric-label">Lines Added</span>
+                </div>
+            </div>
+
+            <p><strong>Total code that was "almost" added:</strong> ~2,000 lines of retopology infrastructure that would have been worse.</p>
+
+            <div class="highlight-box">
+                Sometimes the best engineering decision is the one you don't make.
+            </div>
+        </div>
+    </details>
+
 </body>
 </html>
