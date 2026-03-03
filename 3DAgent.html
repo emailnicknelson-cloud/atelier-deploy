@@ -295,11 +295,27 @@
             padding: 1.5rem 2rem;
             margin: 2rem 0;
             font-family: var(--font-mono);
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             color: var(--accent-cyan);
-            overflow-x: auto;
-            white-space: nowrap;
-            line-height: 2;
+            line-height: 1.8;
+        }
+
+        .pipeline-flow-steps {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem 0.8rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+
+        .pipeline-flow-legend {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem 1.5rem;
         }
 
         .pipeline-flow .local {
@@ -595,23 +611,24 @@
                 It's not a model — it's a <em>factory</em>.</p>
 
             <div class="pipeline-flow">
-                Text Prompt <span class="arrow">→</span>
-                Director <span class="arrow">→</span>
-                Modeler / SDXL / Hunyuan3D <span class="arrow">→</span>
-                <span class="gate">[Quality Gate]</span> <span class="arrow">→</span>
-                <span class="local">RetopAgent ✦</span> <span class="arrow">→</span>
-                <span class="local">UV Mapper ✦</span> <span class="arrow">→</span>
-                <span class="local">Optimizer ✦</span> <span class="arrow">→</span>
-                <span class="local">Auto-Rigger (Tripo) ✦</span> <span class="arrow">→</span>
-                Material & Lighter <span class="arrow">→</span>
-                Mocap (QuickMagic/RADiCAL) <span class="arrow">→</span>
-                Export
-                <br><br>
-                <span style="font-size: 0.72rem; color: var(--text-muted);">
-                    <span class="local">✦ = Local/Zero-Token Autonomous Agent</span>&nbsp;&nbsp;|&nbsp;&nbsp;
-                    <span class="gate">[ ] = 9-Gate Quality Validation</span>&nbsp;&nbsp;|&nbsp;&nbsp;
-                    All others = LLM Orchestrators
-                </span>
+                <div class="pipeline-flow-steps">
+                    <span>Text Prompt</span> <span class="arrow">→</span>
+                    <span>Director</span> <span class="arrow">→</span>
+                    <span>Modeler / SDXL / Hunyuan3D</span> <span class="arrow">→</span>
+                    <span class="gate">[Quality Gate]</span> <span class="arrow">→</span>
+                    <span class="local">RetopAgent ✦</span> <span class="arrow">→</span>
+                    <span class="local">UV Mapper ✦</span> <span class="arrow">→</span>
+                    <span class="local">Optimizer ✦</span> <span class="arrow">→</span>
+                    <span class="local">Auto-Rigger (Tripo) ✦</span> <span class="arrow">→</span>
+                    <span>Material &amp; Lighter</span> <span class="arrow">→</span>
+                    <span>Mocap (QuickMagic/RADiCAL)</span> <span class="arrow">→</span>
+                    <span>Export</span>
+                </div>
+                <div class="pipeline-flow-legend">
+                    <span><span class="local">✦</span> Local/Zero-Token Autonomous Agent</span>
+                    <span><span class="gate">[ ]</span> 9-Gate Quality Validation</span>
+                    <span>All others = LLM Orchestrators</span>
+                </div>
             </div>
 
             <div style="margin-top: 2.5rem;">
@@ -737,7 +754,8 @@
                 <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.5rem;">At 5–10m camera
                     distance, our assets look great. Procedural textures carry visual weight where mesh detail can't.
                     <strong style="color: var(--accent-green);">$100–$400 vs. $10K–$100K</strong> for a world full of
-                    props.</p>
+                    props.
+                </p>
                 <p style="font-size: 0.82rem; color: var(--text-muted);">Build: Batch queue, prompt library, style
                     consistency, GLB/FBX export presets</p>
             </div>
