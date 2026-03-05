@@ -361,6 +361,8 @@
                 Blender 5.2 Warpath</a>
             <a href="#article-curvature-budget" class="toc-link">The Geometry Budget: Why We Stopped Throwing Away
                 Polygons</a>
+            <a href="#article-italian-greyhound" class="toc-link">The Italian Greyhound Moment: Charting the Course from
+                Debt to Asset Factory</a>
         </aside>
 
         <main class="content-area">
@@ -370,7 +372,8 @@
                 <h2>Why AI-Generated 3D Models Look Like Melted Plastic (And How We Fixed It)</h2>
 
                 <p>Every AI 3D generator has a dirty secret. That gorgeous mesh it spits out? Zoom in. It's 1.2 million
-                    triangles of absolute chaos &mdash; a tangled spiderweb of geometry that would make a game engine weep
+                    triangles of absolute chaos &mdash; a tangled spiderweb of geometry that would make a game engine
+                    weep
                     and
                     a technical artist reach for the whiskey.</p>
                 <p>We spent months staring at this problem. Here's what we learned.</p>
@@ -379,7 +382,8 @@
                 <p>Tools like Hunyuan3D, Tripo, and Meshy are genuinely incredible. Type "medieval war hammer" and you
                     get a war hammer. The shape is right. The texture is beautiful. Ship it, right?</p>
                 <p>Wrong.</p>
-                <p>Open that mesh in Blender. Turn on wireframe view. What you're looking at isn't a 3D model &mdash; it's a
+                <p>Open that mesh in Blender. Turn on wireframe view. What you're looking at isn't a 3D model &mdash;
+                    it's a
                     point cloud wearing a trench coat. No edge flow. No quad topology. No clean UV islands. Every single
                     face is a triangle, and they're distributed with the organizational logic of confetti.</p>
                 <ul>
@@ -449,7 +453,8 @@
 
                 <h3>Strategic Refinement</h3>
                 <p>While fixing topology, we noticed concept images from SDXL were hit-or-miss. We built a 3x3 concept
-                    picker grid. But I realized refinement shouldn't be random seeds &mdash; it needs to be targeted.</p>
+                    picker grid. But I realized refinement shouldn't be random seeds &mdash; it needs to be targeted.
+                </p>
                 <ul>
                     <li><strong>CLEAN BG</strong> (strength 0.50): Fixes rembg mask bleeding.</li>
                     <li><strong>SHARP DETAIL</strong> (strength 0.50): Fixes blurry silhouettes causing geometry holes.
@@ -496,7 +501,8 @@
                 <h2>Debugging the "Vertex Soup" Texturing Deadlock</h2>
 
                 <p>If you've encountered baked textures that look like broken television static or pitch-black geometry,
-                    you are not alone. Our journey led us deep into UV map math, C++, and PyTorch&mdash;only to discover the
+                    you are not alone. Our journey led us deep into UV map math, C++, and PyTorch&mdash;only to discover
+                    the
                     culprit was geometric.</p>
 
                 <h3>The Symptoms</h3>
@@ -902,7 +908,8 @@ if current_faces > poly_target:
                     countless development cycles &mdash; already has this exact capability. Deep in
                     <code>retopo_executor.py</code>,
                     there&rsquo;s
-                    a function called <code>_add_curvature_weights()</code> that does precisely what we need:</p>
+                    a function called <code>_add_curvature_weights()</code> that does precisely what we need:
+                </p>
 
                 <pre><code>for v in bm.verts:
     curvature = 0.0
@@ -985,12 +992,320 @@ if current_faces > poly_target:
                 <p>The scalpel was already in the toolbox. We just needed to pick it up.</p>
             </article>
 
+            <!-- ARTICLE 10 -->
+            <article id="article-italian-greyhound">
+                <h2>The Italian Greyhound Moment: Charting the Course from Debt to Asset Factory</h2>
+
+                <p>Today, an Italian Greyhound ran through our pipeline. Not a template. Not a preset. A fly-by-wire
+                    text
+                    prompt typed into a text box, concept approved with one click, and 13 minutes later: a fully
+                    textured, AAA-baked, hero-rendered, marketplace-ready 3D asset sitting in the deliverables
+                    folder.</p>
+
+                <p>No API calls. No cloud tokens burned. Pure local GPU power.</p>
+
+                <p>This is the moment where the pipeline stops being a project and starts being a product. But before we
+                    chart where we&rsquo;re going, let&rsquo;s talk about how we got here &mdash; and what it actually
+                    cost.</p>
+
+                <hr>
+
+                <h3>The Pre-Dev Burn: A Token-Nomics Autopsy</h3>
+                <p>Here&rsquo;s the part nobody tells you about AI-assisted development.</p>
+
+                <p>Before this workspace existed &mdash; before a single line of pipeline code was written &mdash;
+                    hundreds of billions of tokens were burned across 12+ conversations trying to build an LLM-scripted
+                    3D pipeline from scratch. Every major AI assistant &mdash; Claude, GPT-4, Gemini &mdash; cheerfully
+                    helped write Python scripts to procedurally generate 3D models using Blender&rsquo;s Python API.
+                    Thousands of lines of code. Weeks of iteration. Thousands of dollars in API costs.</p>
+
+                <p>Not a single one of them mentioned that Hunyuan3D-2, an open-source model from Tencent, already
+                    solved text-to-3D locally. For free. On a single consumer GPU.</p>
+
+                <p><strong>Estimated pre-development token burn:</strong></p>
+
+                <table style="width:100%; border-collapse:collapse; margin:1.5rem 0; font-size:0.95rem;">
+                    <thead>
+                        <tr style="border-bottom:2px solid var(--border-accent);">
+                            <th style="text-align:left; padding:0.6rem 0.8rem; color:var(--accent-cyan);">Phase</th>
+                            <th style="text-align:left; padding:0.6rem 0.8rem; color:var(--accent-cyan);">Provider</th>
+                            <th style="text-align:right; padding:0.6rem 0.8rem; color:var(--accent-cyan);">Est. Tokens
+                            </th>
+                            <th style="text-align:right; padding:0.6rem 0.8rem; color:var(--accent-cyan);">Est. Cost
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody style="color:var(--text-secondary);">
+                        <tr style="border-bottom:1px solid var(--border-subtle);">
+                            <td style="padding:0.5rem 0.8rem;">Exploration (12+ conversations)</td>
+                            <td style="padding:0.5rem 0.8rem;">Claude 3.5 Sonnet</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~80M in / ~30M out</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~$690</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border-subtle);">
+                            <td style="padding:0.5rem 0.8rem;">Dead-end LLM scripting</td>
+                            <td style="padding:0.5rem 0.8rem;">GPT-4o</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~48M in / ~22M out</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~$340</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border-subtle);">
+                            <td style="padding:0.5rem 0.8rem;">Pivot research &amp; architecture</td>
+                            <td style="padding:0.5rem 0.8rem;">Gemini / Mixed</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~25M in / ~12M out</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~$150</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border-subtle);">
+                            <td style="padding:0.5rem 0.8rem;">Bad architecture iterations</td>
+                            <td style="padding:0.5rem 0.8rem;">Claude Opus</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~10M in / ~5M out</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~$525</td>
+                        </tr>
+                        <tr style="border-top:2px solid var(--border-accent); font-weight:600;">
+                            <td style="padding:0.6rem 0.8rem; color:var(--accent-amber);">Pre-dev subtotal</td>
+                            <td style="padding:0.6rem 0.8rem;"></td>
+                            <td style="text-align:right; padding:0.6rem 0.8rem; color:var(--accent-amber);">~163M in /
+                                ~69M out</td>
+                            <td style="text-align:right; padding:0.6rem 0.8rem; color:var(--accent-amber);">~$1,705</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>That&rsquo;s the honest accounting. And notice what it bought: <em>zero usable output.</em> Every one
+                    of those tokens went toward writing procedural generation scripts that couldn&rsquo;t produce a mesh
+                    worth listing. The LLMs were confidently solving the wrong problem. Meanwhile, the thing that
+                    actually works &mdash; Hunyuan3D-2mini generating a 1.5-million-face mesh in 5 seconds on a local
+                    RTX 3080 &mdash; costs exactly <strong>$0.00</strong> per asset.</p>
+
+                <hr>
+
+                <h3>The Development Phase: Where Tokens Started Earning</h3>
+                <p>Once we discovered the local model ecosystem, the token economics flipped entirely. Every AI
+                    conversation was building on a real foundation: post-processing pipelines, Blender automation,
+                    quality validation, compatibility layers. The tokens were writing code that ships.</p>
+
+                <p><strong>Estimated development token burn (this workspace):</strong></p>
+
+                <table style="width:100%; border-collapse:collapse; margin:1.5rem 0; font-size:0.95rem;">
+                    <thead>
+                        <tr style="border-bottom:2px solid var(--border-accent);">
+                            <th style="text-align:left; padding:0.6rem 0.8rem; color:var(--accent-cyan);">System Built
+                            </th>
+                            <th style="text-align:right; padding:0.6rem 0.8rem; color:var(--accent-cyan);">Est. Tokens
+                            </th>
+                            <th style="text-align:right; padding:0.6rem 0.8rem; color:var(--accent-cyan);">Est. Cost
+                            </th>
+                            <th style="text-align:left; padding:0.6rem 0.8rem; color:var(--accent-cyan);">Revenue
+                                Potential</th>
+                        </tr>
+                    </thead>
+                    <tbody style="color:var(--text-secondary);">
+                        <tr style="border-bottom:1px solid var(--border-subtle);">
+                            <td style="padding:0.5rem 0.8rem;">Pipeline core (<code>generate_single_asset.py</code>)
+                            </td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~8M</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~$60</td>
+                            <td style="padding:0.5rem 0.8rem;">Foundation for everything</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border-subtle);">
+                            <td style="padding:0.5rem 0.8rem;">GUI (<code>gui.py</code>, 4500+ lines)</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~15M</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~$110</td>
+                            <td style="padding:0.5rem 0.8rem;">Desktop app product ($49&ndash;$99)</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border-subtle);">
+                            <td style="padding:0.5rem 0.8rem;">RetopAgent (4 scripts, 2000+ lines)</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~12M</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~$90</td>
+                            <td style="padding:0.5rem 0.8rem;">Blender add-on ($29&ndash;$49)</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border-subtle);">
+                            <td style="padding:0.5rem 0.8rem;">AAA Bake pipeline</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~6M</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~$45</td>
+                            <td style="padding:0.5rem 0.8rem;">Premium asset differentiation</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border-subtle);">
+                            <td style="padding:0.5rem 0.8rem;">Blender compat / headless scripts</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~8M</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~$60</td>
+                            <td style="padding:0.5rem 0.8rem;">Cross-version reliability</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border-subtle);">
+                            <td style="padding:0.5rem 0.8rem;">Concept gen / prompt chunking</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~4M</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~$30</td>
+                            <td style="padding:0.5rem 0.8rem;">Batch automation</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border-subtle);">
+                            <td style="padding:0.5rem 0.8rem;">Hero overlay / fidelity scorer</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~3M</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~$25</td>
+                            <td style="padding:0.5rem 0.8rem;">Marketplace polish</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border-subtle);">
+                            <td style="padding:0.5rem 0.8rem;">Config, finisher, batch systems</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~5M</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~$40</td>
+                            <td style="padding:0.5rem 0.8rem;">Scale infrastructure</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border-subtle);">
+                            <td style="padding:0.5rem 0.8rem;">Debugging (cp1252, VRAM, APIs)</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~10M</td>
+                            <td style="text-align:right; padding:0.5rem 0.8rem;">~$75</td>
+                            <td style="padding:0.5rem 0.8rem;">Pipeline stability</td>
+                        </tr>
+                        <tr style="border-top:2px solid var(--border-accent); font-weight:600;">
+                            <td style="padding:0.6rem 0.8rem; color:var(--accent-green);">Dev subtotal</td>
+                            <td style="text-align:right; padding:0.6rem 0.8rem; color:var(--accent-green);">~71M</td>
+                            <td style="text-align:right; padding:0.6rem 0.8rem; color:var(--accent-green);">~$535</td>
+                            <td style="padding:0.6rem 0.8rem; color:var(--accent-green);">$500&ndash;$50K/mo</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>Add the hardware upgrade &mdash; the Ryzen 9 5900XT, the RAM doubling, the Windows 11 migration
+                    &mdash; and you&rsquo;re looking at another $350&ndash;$400 that was non-optional. The old 2700X
+                    with 16GB couldn&rsquo;t run the inference pipeline without swap-thrashing. The code was ready; the
+                    rig wasn&rsquo;t. That upgrade wasn&rsquo;t a luxury. It was clearing the bottleneck that stood
+                    between &ldquo;prototype&rdquo; and &ldquo;production.&rdquo;</p>
+
+                <p><strong>Total project investment: ~$2,500&ndash;$2,600.</strong> Roughly $1,700 in pre-development
+                    API
+                    token burn, $535 in productive development tokens, and $350+ in hardware. That&rsquo;s the full,
+                    honest cost of bootstrapping an autonomous 3D asset factory from zero.</p>
+
+                <p>The question isn&rsquo;t whether we&rsquo;ll recoup that. The question is how fast. A single themed
+                    asset pack ($79) covers a month of API costs. A Blender add-on at $29 &times; 100 users pays back
+                    the entire project. And every asset produced from here forward costs three cents.</p>
+
+                <hr>
+
+                <h3>The Pipeline Today: What Actually Works</h3>
+                <p>Here&rsquo;s the honest state of the system, right now:</p>
+
+                <p><strong>Fully Operational:</strong></p>
+                <ul>
+                    <li>SDXL-Lightning 4-step concept generation with multi-candidate selection</li>
+                    <li>Hunyuan3D-2mini shape generation (~5 seconds, 1.5M faces)</li>
+                    <li>Hunyuan3D texture painting with xatlas UV unwrapping</li>
+                    <li>Adaptive curvature-weighted decimation (asset-type-aware face ceilings)</li>
+                    <li>AAA PBR Bake (high-to-low poly albedo + normal projection)</li>
+                    <li>Headless topology cleaner with sharp edge preservation</li>
+                    <li>Headless finisher (UV, materials, hero render, turntable, 3-panel viz)</li>
+                    <li>Full GUI with speedrun timer, concept approval, progress tracking</li>
+                    <li>Blender 5.2 compatibility layer</li>
+                    <li>Hero render with marketplace overlay (badges, branding, vignette)</li>
+                </ul>
+
+                <p><strong>Freshly Fixed:</strong></p>
+                <ul>
+                    <li>RetopAgent Unicode crash &mdash; 16 arrow characters and a full set of box-drawing decorations
+                        across 7 files were silently crashing the pipeline on Windows (cp1252 vs UTF-8). Replaced with
+                        ASCII. RetopAgent now runs.</li>
+                    <li>Qt dropdown styling &mdash; <code>QAbstractItemView</code> popups are separate top-level windows
+                        that don&rsquo;t inherit app stylesheets. Had to apply styling directly to each combobox
+                        <code>view()</code>.
+                    </li>
+                </ul>
+
+                <hr>
+
+                <h3>The Roadmap: Four Phases to Revenue</h3>
+
+                <p><strong>Phase 1: STABILIZE</strong> &mdash; The pipeline works. Now make it reliable.</p>
+                <ul>
+                    <li>Fix the fidelity score threshold (currently 100/100 = every asset shows FAIL)</li>
+                    <li>Validate RetopAgent end-to-end post-crash-fix</li>
+                    <li>VRAM stress test on edge-case assets</li>
+                    <li>Confirm the 9-gate quality validator produces parseable output</li>
+                </ul>
+
+                <p><strong>Phase 2: POLISH</strong> &mdash; Make the output marketplace-ready.</p>
+                <ul>
+                    <li>Standardized folder structure: <code>/Assets/[Name]/Textures</code>,
+                        <code>/Source</code>, <code>/Renders</code>
+                    </li>
+                    <li>LOD chain generation (LOD0/1/2) &mdash; a 2&ndash;3&times; price multiplier per asset</li>
+                    <li>GLB metadata embedding (face count, date, prompt in extras fields)</li>
+                    <li>Quality audit across 10 diverse asset types</li>
+                    <li>Batch mode hardening for autonomous generation</li>
+                </ul>
+
+                <p><strong>Phase 3: SCALE</strong> &mdash; Multiply volume. Unlock the character pipeline.</p>
+                <ul>
+                    <li>Character rigging integration (Tripo AI / local Rigify)</li>
+                    <li>MeshAnythingV2 stabilization for artist-quality topology</li>
+                    <li>Marketplace listing automation (title, description, tags from asset profile)</li>
+                    <li>First 50 assets listed across 3 marketplaces</li>
+                </ul>
+
+                <p><strong>Phase 4: AUTOMATE &amp; MONETIZE</strong> &mdash; Passive income streams and ecosystem
+                    products.</p>
+                <ul>
+                    <li>Fully autonomous batch pipeline (50 assets/day hands-free)</li>
+                    <li>Blender Mesh Finisher add-on ($2K&ndash;$10K/month target)</li>
+                    <li>ComfyUI 3D post-processing nodes ($1K&ndash;$5K/month)</li>
+                    <li>&ldquo;Zero to Asset Pipeline&rdquo; course</li>
+                    <li>API service for developers</li>
+                </ul>
+
+                <hr>
+
+                <h3>The Real Token-Nomics</h3>
+                <p>Here&rsquo;s the math that actually matters:</p>
+
+                <p><strong>Cost per asset (fully local pipeline):</strong></p>
+                <ul>
+                    <li>Concept generation: $0.00 (SDXL-Lightning, local)</li>
+                    <li>3D generation: $0.00 (Hunyuan3D-2mini, local)</li>
+                    <li>Texture painting: $0.00 (Hunyuan3D Paint, local)</li>
+                    <li>Post-processing: $0.00 (Blender headless, local)</li>
+                    <li>Electricity: ~$0.02&ndash;0.05 per asset (13 min GPU time)</li>
+                    <li><strong>Total: ~$0.03/asset</strong></li>
+                </ul>
+
+                <p><strong>Revenue per asset:</strong></p>
+                <ul>
+                    <li>Individual listing: $3&ndash;$15</li>
+                    <li>As part of themed pack: $1.50&ndash;$4 per asset (50-pack at $79)</li>
+                    <li>As rigged character: $100&ndash;$800</li>
+                </ul>
+
+                <p><strong>Break-even math:</strong></p>
+                <ul>
+                    <li>At $0.03/asset cost and $5/asset average revenue: <strong>first sale</strong></li>
+                    <li>To recoup $2,600 total investment: ~520 individual sales or 33 pack sales</li>
+                    <li>Monthly passive at 200 catalog items selling 2&times;/month: <strong>$2,000/month</strong></li>
+                </ul>
+
+                <p>The $1,700 in pre-dev API burn stings. But consider the alternative: hiring a 3D technical artist at
+                    $50&ndash;$80/hour to build equivalent tooling would run $15,000&ndash;$25,000. The AI-assisted
+                    development path &mdash; even with every dead end and pivot &mdash; delivered a complete autonomous
+                    pipeline at roughly 10&cent; on the dollar. And unlike a contractor, the LLM conversations are
+                    archived, searchable, and reproducible.</p>
+
+                <hr>
+
+                <h3>What the Italian Greyhound Taught Us</h3>
+                <p>The run wasn&rsquo;t perfect. The fidelity score showed FAIL (because the threshold is
+                    miscalibrated, not because the asset is bad). RetopAgent fell back to the standard cleaner (because
+                    it was crashing on Unicode characters, not because the algorithm is wrong).</p>
+
+                <p>But the mesh came through. The dog stands. The textures paint. The hero renders. The overlay
+                    brands.</p>
+
+                <p>The pipeline plays the piece start to finish. Now we tune the orchestra.</p>
+
+                <p><em>Pipeline runtime: 13:28. Tokens burned on this blog post: approximately 4,000. Every one of them
+                        earned.</em></p>
+            </article>
+
         </main>
     </div>
 
     <footer
         style="text-align: center; padding: 3rem 2rem; border-top: 1px solid var(--border-subtle); color: var(--text-muted); font-size: 0.78rem;">
-        3DAgent &mdash; Whisper Workshop 
+        3DAgent &mdash; Whisper Workshop
     </footer>
 
     <script>
