@@ -354,6 +354,8 @@
                 Assets</a>
             <a href="#article-pure-cuda-execution" class="toc-link">Unleashing the Beast: Pure CUDA Execution &amp; AAA
                 Asset Baking!</a>
+            <a href="#article-hardware-upgrade" class="toc-link">The Rig That Built the Pipeline (And Why It Just Got a
+                Lot Faster)</a>
         </aside>
 
         <main class="content-area">
@@ -363,7 +365,8 @@
                 <h2>Why AI-Generated 3D Models Look Like Melted Plastic (And How We Fixed It)</h2>
 
                 <p>Every AI 3D generator has a dirty secret. That gorgeous mesh it spits out? Zoom in. It's 1.2 million
-                    triangles of absolute chaos â€” a tangled spiderweb of geometry that would make a game engine weep and
+                    triangles of absolute chaos â€” a tangled spiderweb of geometry that would make a game engine weep
+                    and
                     a technical artist reach for the whiskey.</p>
                 <p>We spent months staring at this problem. Here's what we learned.</p>
 
@@ -464,7 +467,8 @@
                     reasonable in isolation.</p>
 
                 <h3>Follow the Face Count</h3>
-                <p>I mapped every operation. Step 5 reduced faces to 5,000. Clean. But Step 8â€”Voxel Remeshâ€”completely
+                <p>I mapped every operation. Step 5 reduced faces to 5,000. Clean. But Step 8â€”Voxel
+                    Remeshâ€”completely
                     regenerated the mesh based on a voxel bounding box, bumping it right back to 10K. The first
                     decimation was entirely wasted compute.</p>
 
@@ -599,6 +603,114 @@ if current_faces > poly_target:
                     power delivering studio-ready 3D assets faster than ever before. </p>
 
                 <p>Stay tuned for our next update, where we might just tackle rendering these beauties out!</p>
+            </article>
+
+            <!-- ARTICLE 7 -->
+            <article id="article-hardware-upgrade">
+                <h2>The Rig That Built the Pipeline (And Why It Just Got a Lot Faster)</h2>
+
+                <p>There&rsquo;s a conversation that every solo developer has with themselves eventually. It usually
+                    starts with a progress bar, a fan that sounds like a leaf blower, and the quiet realization that
+                    your hardware is no longer keeping up with your ambition.</p>
+
+                <p>Our entire 3D asset pipeline &mdash; RetopAgent, SDXL-Lightning concept generation, Hunyuan3D shape
+                    modeling, headless Blender baking &mdash; was built on a Ryzen 7 2700X with 16GB of RAM running
+                    Windows 10. And honestly? That chip earned its retirement. Every blog post you&rsquo;ve read on this
+                    page, every decimation breakthrough, every topology fix &mdash; all of it was developed, tested, and
+                    iterated on that 2018-era Zen+ processor.</p>
+
+                <p>But the pipeline grew faster than the hardware did.</p>
+
+                <h3>The Breaking Point</h3>
+                <p>When you&rsquo;re running a multi-stage AI pipeline that chains concept generation into 3D modeling
+                    into intelligent retopology into PBR baking, you feel every bottleneck. The 2700X&rsquo;s 8 cores
+                    were perpetually maxed. Blender CPU renders during the bake phase would lock out the entire system.
+                    And 16GB of RAM? That was fine when we were decimating single meshes. It stopped being fine the
+                    moment we started stacking SDXL inference alongside Hunyuan3D shape generation alongside a headless
+                    Blender instance doing ray-cast normal map bakes.</p>
+
+                <p>The machine wasn&rsquo;t failing. It was just&hellip; always at the wall. Swap file thrashing.
+                    Context switches everywhere. The RTX 3080 sitting there with 10GB of VRAM, waiting for work, while
+                    the CPU scrambled to feed it data fast enough.</p>
+
+                <p>If you read our &ldquo;Unleashing the Beast&rdquo; post about ripping out CPU offloading and going
+                    pure CUDA, you know we already solved the software side of this problem. We cleared the VRAM runway.
+                    We deleted the governors. We let the GPU scream.</p>
+
+                <p>But we were still feeding that GPU through an 8-core straw.</p>
+
+                <h3>The Upgrade</h3>
+                <ul>
+                    <li><strong>CPU:</strong> Ryzen 7 2700X (8C/16T, Zen+) &rarr; Ryzen 9 5900XT (16C/32T, Zen 3)</li>
+                    <li><strong>RAM:</strong> 16GB &rarr; 32GB</li>
+                    <li><strong>OS:</strong> Windows 10 &rarr; Windows 11</li>
+                    <li><strong>GPU:</strong> RTX 3080 (unchanged &mdash; she was already doing the heavy lifting)</li>
+                </ul>
+                <p>No new GPU. No exotic cooling. Just the two components that were actually holding everything back.
+                </p>
+
+                <h3>Why This Matters for the Pipeline</h3>
+                <p>The 5900XT isn&rsquo;t just &ldquo;more cores.&rdquo; It&rsquo;s a fundamentally different processor
+                    architecture. Zen 3 unified the L3 cache across each CCX, which means each core can access the full
+                    32MB pool instead of fighting over 16MB halves. For a workload like ours &mdash; where
+                    Python&rsquo;s GIL means single-threaded IPC matters just as much as core count &mdash; this is the
+                    upgrade that actually moves the needle.</p>
+
+                <p>Let me put it in pipeline terms:</p>
+
+                <p>RetopAgent runs bmesh operations in Python. That&rsquo;s single-threaded bpy. The 2700X&rsquo;s Zen+
+                    IPC was decent for 2018. The 5900XT&rsquo;s Zen 3 IPC is roughly 40-50% faster, clock-for-clock.
+                    Every curvature analysis pass, every edge collapse, every planar decimate &mdash; they all just got
+                    meaningfully faster without touching a single line of code.</p>
+
+                <p>Blender CPU rendering during the bake phase now has double the threads to work with. A 16-thread
+                    normal map bake becomes a 32-thread normal map bake. That&rsquo;s not a subtle difference.</p>
+
+                <p>The RAM doubling is less glamorous but maybe more important. 16GB meant we were playing memory Tetris
+                    &mdash; carefully sequencing pipeline stages so the SDXL models could be fully unloaded before
+                    Blender spun up. 32GB means we stop thinking about it. The garbage collection and CUDA cache
+                    clearing we built? Still there, still smart. But now it&rsquo;s optimization instead of survival.
+                </p>
+
+                <p>And Windows 11 &mdash; look, I know, nobody writes love letters about operating system upgrades. But
+                    Windows 11&rsquo;s thread scheduler is specifically aware of Zen 3&rsquo;s preferred-core topology.
+                    It knows which cores boost highest. It knows the CCX layout. On Windows 10, the 5900XT would work
+                    fine. On Windows 11, it works <em>right</em>.</p>
+
+                <h3>The Part Nobody Tells You</h3>
+                <p>Here&rsquo;s the thing about upgrading the machine that runs your pipeline: nothing changes and
+                    everything changes.</p>
+
+                <p>The code is identical. The pipeline stages are the same. RetopAgent still runs its 9-gate quality
+                    validation. SDXL-Lightning still generates concepts at $0 token cost. The PBR bake still ray-casts
+                    normals headlessly through Blender. Every script, every threshold, every carefully tuned parameter
+                    &mdash; untouched.</p>
+
+                <p>But the wall is gone. The ambient pressure of &ldquo;is this going to swap?&rdquo; is gone. The
+                    five-second pause while Python garbage-collects between stages shrank to two. The fan doesn&rsquo;t
+                    sound like a leaf blower anymore.</p>
+
+                <p>It&rsquo;s the kind of upgrade where you don&rsquo;t realize how much friction you were tolerating
+                    until it disappears.</p>
+
+                <h3>What the 3080 Gets Out of This</h3>
+                <p>Remember &mdash; the GPU was never the bottleneck. We solved that in software when we went pure CUDA.
+                    But a GPU is only as fast as the CPU feeding it work.</p>
+
+                <p>The 2700X was a perfectly adequate host for the 3080. The 5900XT is a proper dance partner. PCIe lane
+                    saturation, texture upload stalls, draw call overhead &mdash; all of it benefits from a CPU that
+                    isn&rsquo;t constantly at 100% utilization just managing the Python runtime.</p>
+
+                <p>We built this pipeline to scream. Now the whole rig can keep up.</p>
+
+                <h3>What&rsquo;s Next</h3>
+                <p>Same mission. Same pipeline. Same relentless focus on shipping studio-quality 3D assets autonomously.
+                    Just faster, with more headroom, and without the anxiety of watching RAM usage climb toward the
+                    ceiling.</p>
+
+                <p>The foundation was always the code. The hardware just needed to stop being the excuse.</p>
+
+                <p>Time to build.</p>
             </article>
 
         </main>
