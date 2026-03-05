@@ -359,6 +359,8 @@
                 Lot Faster)</a>
             <a href="#article-concept-gate-blender5" class="toc-link">The Concept Gate, the Speedrun Timer &amp; the
                 Blender 5.2 Warpath</a>
+            <a href="#article-curvature-budget" class="toc-link">The Geometry Budget: Why We Stopped Throwing Away
+                Polygons</a>
         </aside>
 
         <main class="content-area">
@@ -844,6 +846,140 @@ if current_faces > poly_target:
 
                 <p>Next session: running a full end-to-end generation with AAA PBR Bake on Blender 5.2 to see those
                     baked maps actually land. The infrastructure is finally ready. Time to let it cook. &#x1F525;</p>
+            </article>
+
+            <!-- ARTICLE 9 -->
+            <article id="article-curvature-budget">
+                <h2>The Geometry Budget: Why We Stopped Throwing Away Polygons and Started Spending Them</h2>
+
+                <p>Every time our pipeline generates a raw 3D mesh, it spits out roughly 1,003,844 faces. That&rsquo;s a
+                    million triangles of dense, chaotic, gorgeous neural geometry &mdash; and our 10GB RTX 3080
+                    can&rsquo;t texture it without choking.</p>
+
+                <p>So we decimate. We crush it down to 250,000 faces for VRAM safety, then hand it to the texture
+                    painter. And for months, that worked. Ship it.</p>
+
+                <p>But here&rsquo;s the line that should have kept us up at night:</p>
+
+                <pre><code>tex_input_mesh = raw_mesh.simplify_quadric_decimation(250_000)</code></pre>
+
+                <p>That single call deletes 750,000 faces. And it deletes them <em>democratically</em>. Every triangle
+                    gets the same chance of survival, whether it&rsquo;s one of forty triangles describing a flat shield
+                    face or the only triangle holding the curve of an eye socket.</p>
+
+                <p>We just realized: we&rsquo;ve been running a lottery when we should have been running a budget.</p>
+
+                <h3>The Fork in the Road</h3>
+                <p>Here&rsquo;s the decision we&rsquo;re sitting at right now. Two philosophies for how to spend 250,000
+                    faces:</p>
+
+                <p><strong>Philosophy A: Uniform Decimation (What We&rsquo;ve Been Doing)</strong><br>
+                    Treat every face equally. The algorithm minimizes global geometric error &mdash; the mathematical
+                    distance between the simplified mesh and the original. It&rsquo;s fast, it&rsquo;s one line of code,
+                    and it produces meshes that are <em>statistically</em> close to the original.</p>
+
+                <p>But statistics lie. A flat plane with 500 triangles and an ornate crossguard with 500 triangles are
+                    not equally important. After uniform decimation, both end up with ~125. The plane looks identical.
+                    The crossguard looks like it was carved with a brick.</p>
+
+                <p><strong>Philosophy B: Curvature-Weighted Decimation (Where We&rsquo;re Going)</strong><br>
+                    Treat faces like a budget. Flat, low-curvature regions &mdash; the broad sides of swords, the faces
+                    of crates, the shafts of columns &mdash; are <em>cheap</em>. They can collapse from hundreds of
+                    triangles to a dozen and look pixel-identical. They&rsquo;re the geometric equivalent of bulk
+                    filler.</p>
+
+                <p>High-curvature regions &mdash; edges, fillets, filigree, facial features, inscriptions &mdash; are
+                    <em>expensive</em>. Every triangle there is load-bearing. Lose one, and the silhouette changes. The
+                    detail smears. The intricacy that makes a fantasy dagger look hand-forged turns into a plastic toy.
+                </p>
+
+                <p>The idea: identify the structural skeleton (primitives, flat spans) and let it absorb the decimation.
+                    Then use the freed budget to <em>protect</em> the intricate zones.</p>
+
+                <h3>We Already Built This. We Just Forgot to Use It.</h3>
+                <p>Here&rsquo;s the kicker. Our RetopAgent &mdash; the intelligent retopology conductor we built months
+                    ago &mdash; already has this exact capability. Deep in <code>retopo_executor.py</code>,
+                    there&rsquo;s
+                    a function called <code>_add_curvature_weights()</code> that does precisely what we need:</p>
+
+                <pre><code>for v in bm.verts:
+    curvature = 0.0
+    for e in v.link_edges:
+        if len(e.link_faces) == 2:
+            curvature += e.calc_face_angle()
+    weight = min(curvature / (math.pi * edge_count) * 2.0, 1.0)
+    vg.add([v.index], weight, 'REPLACE')</code></pre>
+
+                <p>It walks every vertex, measures the dihedral angles of its connected edges, and assigns a 0-to-1
+                    weight. Flat area? Weight near zero. Sharp crease or curved surface? Weight near one. Then the
+                    Blender Decimate modifier reads this weight map and <em>inverts</em> it &mdash; collapsing
+                    low-weight
+                    (flat) vertices first, leaving the high-weight (detailed) vertices standing.</p>
+
+                <p>This intelligence powers every RetopAgent run. But our AAA Bake pre-pass &mdash; the one that
+                    actually needs it most, because it&rsquo;s preparing the mesh for the texture painter &mdash; was
+                    using dumb trimesh QEM instead.</p>
+
+                <p>The fix is almost embarrassingly simple: instead of calling trimesh&rsquo;s blind
+                    <code>simplify_quadric_decimation()</code> in Python, we spawn a quick Blender headless subprocess
+                    that loads the raw mesh, computes the curvature vertex group, applies a weighted Collapse modifier,
+                    and exports the result.
+                </p>
+
+                <p>Same face count. Same VRAM safety. Radically different face <em>distribution</em>.</p>
+
+                <h3>What This Actually Looks Like</h3>
+                <p>Imagine a fantasy treasure chest. The lid has ornate metalwork &mdash; rivets, a keyhole plate,
+                    decorative hinges. The body is six flat wooden panels.</p>
+
+                <p><strong>Before (Uniform):</strong> 250,000 faces spread evenly. The flat panels have thousands of
+                    unnecessary triangles. The ornate lid hardware is reduced to smooth blobs.</p>
+
+                <p><strong>After (Curvature-Weighted):</strong> 250,000 faces spent wisely. The flat panels collapse to
+                    maybe 200 triangles each &mdash; still geometrically perfect rectangles. The freed budget flows to
+                    the lid hardware, which retains its rivets, its keyhole silhouette, its hinge articulation.</p>
+
+                <p>Same polygon budget. One version looks like a game asset. The other looks like what it is: an AI mesh
+                    that got put through a blender.</p>
+
+                <h3>The Two-Phase Approach</h3>
+                <p>We&rsquo;re also adopting something our RetopAgent already does for hard-surface assets: two-phase
+                    decimation.</p>
+
+                <p><strong>Phase A &mdash; The Neural Denoise Pass.</strong> Hunyuan3D&rsquo;s raw output contains
+                    thousands of faces that are pure inference noise &mdash; micro-jitter from the voxel grid,
+                    stairstepping artifacts on what should be smooth surfaces. A gentle 0.9-ratio pass strips this noise
+                    without touching the actual geometry. Think of it as cleaning the canvas before painting.</p>
+
+                <p><strong>Phase B &mdash; The Curvature-Weighted Budget Pass.</strong> Now the real decimation happens,
+                    guided by the curvature map. Flat regions absorb the cuts. Detailed regions keep their density. The
+                    skeleton stays; the intricacy survives.</p>
+
+                <h3>Why This Matters for Texture Quality</h3>
+                <p>This isn&rsquo;t just about polygon counts. It&rsquo;s about what happens <em>next</em>.</p>
+
+                <p>After decimation, this mesh goes straight into the Hunyuan3D Paint Pipeline for texture generation.
+                    The texture diffusion model paints directly onto the mesh surface. If your ornate details have been
+                    flattened into smooth blobs, the texture painter has nothing to paint <em>onto</em>. It&rsquo;ll
+                    generate a smooth gradient where there should be a rivet shadow. A smeared brown wash where there
+                    should be distinct wood grain following carved channels.</p>
+
+                <p>By preserving geometric detail in the zones that matter, we&rsquo;re giving the texture model a
+                    better canvas. The geometry <em>guides</em> the texture. Rivets cast correct shadows. Edges catch
+                    highlights. Carved lines create natural color boundaries.</p>
+
+                <p>Better geometry in, better textures out. The downstream quality compounds.</p>
+
+                <h3>The Bigger Lesson</h3>
+                <p>We spent months building an intelligent decimation system &mdash; curvature analysis, vertex
+                    weighting, two-phase passes, the whole conductor orchestra. And then we put a dumb one-liner in the
+                    most critical path of our highest-quality pipeline mode.</p>
+
+                <p>It&rsquo;s the classic engineering blind spot: the prototype hack that ships to production because it
+                    &ldquo;works.&rdquo; And it did work. It just worked like a sledgehammer when we needed a scalpel.
+                </p>
+
+                <p>The scalpel was already in the toolbox. We just needed to pick it up.</p>
             </article>
 
         </main>
