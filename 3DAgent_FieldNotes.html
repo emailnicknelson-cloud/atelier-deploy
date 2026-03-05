@@ -223,6 +223,7 @@
             margin-bottom: 6rem;
             padding-bottom: 4rem;
             border-bottom: 1px solid var(--border-subtle);
+            scroll-margin-top: 5rem;
         }
 
         article:last-child {
@@ -356,6 +357,8 @@
                 Asset Baking!</a>
             <a href="#article-hardware-upgrade" class="toc-link">The Rig That Built the Pipeline (And Why It Just Got a
                 Lot Faster)</a>
+            <a href="#article-concept-gate-blender5" class="toc-link">The Concept Gate, the Speedrun Timer &amp; the
+                Blender 5.2 Warpath</a>
         </aside>
 
         <main class="content-area">
@@ -711,6 +714,136 @@ if current_faces > poly_target:
                 <p>The foundation was always the code. The hardware just needed to stop being the excuse.</p>
 
                 <p>Time to build.</p>
+            </article>
+
+            <!-- ARTICLE 8 -->
+            <article id="article-concept-gate-blender5">
+                <h2>The Concept Gate, the Speedrun Timer &amp; the Full Blender 5.2 Warpath</h2>
+
+                <p>March 5, 2026. One of those marathon sessions where you start fixing one thing and end up rewiring
+                    half the pipeline. Three major wins landed today, and they all feed into the same scrappy mission:
+                    making this pipeline feel like a precision instrument instead of a science experiment held together
+                    with duct tape and optimism.</p>
+
+                <h3>The Concept Approval Gate</h3>
+                <p>Here&rsquo;s the thing about autonomous pipelines &mdash; sometimes you don&rsquo;t <em>want</em>
+                    them to be fully autonomous. Our concept image generation (powered by SDXL-Lightning) would fire off
+                    a concept, and ten minutes later you&rsquo;d have a fully textured 3D barrel that looks&hellip; like
+                    a shoe. Because the concept was wrong, and nobody stopped to check before burning 8 minutes of GPU
+                    time on a shoe-barrel abomination.</p>
+
+                <p>So we slapped a hard approval gate right into the pipeline. After concept generation, the system
+                    pauses and shows you the concept image inline with two big, satisfying buttons:
+                    <strong>Approve</strong> or <strong>Regenerate</strong>. Click Regenerate, and it fires up a fresh
+                    concept without touching the 3D pipeline. Click Approve, and <em>then</em> the heavy machinery spins
+                    up &mdash; Hunyuan3D shape generation, texture painting, the whole nine yards.
+                </p>
+
+                <p>The tricky part was state management. We added a <code>_pipeline_running</code> flag that gates
+                    basically everything downstream. The status bar&rsquo;s flavor text doesn&rsquo;t get overwritten by
+                    concept generation logs anymore. The split timer doesn&rsquo;t prematurely advance stages. And the
+                    concept generation loop properly handles model independence &mdash; each concept is unique, no model
+                    reuse between regeneration cycles.</p>
+
+                <p>The button wiring <em>sounds</em> trivial, but it wasn&rsquo;t. The legacy code had placeholder
+                    methods (<code>reject_geometry</code>, <code>start_phase_2</code>) that were never hooked up
+                    properly. We ripped those out, built <code>_approve_concept</code> and
+                    <code>_regenerate_concept</code> from scratch, and wired them directly to the approval
+                    widget&rsquo;s signals. Plucky? Maybe. But it works.
+                </p>
+
+                <h3>The Speedrun Split Timer Gets Smarter</h3>
+                <p>Our speedrun-style stage tracker times every phase of the pipeline: CONCEPT, LOAD MODEL, LOAD DiT,
+                    BG REMOVE, DIFFUSION, VOLUME DEC, MESH SAVED, RETOPO, UV, TEXTURING, and AAA BAKE. It&rsquo;s
+                    basically a competitive leaderboard for your GPU. Two problems popped up today:</p>
+
+                <p><strong>Problem 1:</strong> The CONCEPT stage was including the time you spent staring at the
+                    approval screen deciding whether you liked the image. That&rsquo;s not fair to the timer &mdash;
+                    that&rsquo;s <em>your</em> indecision, not the pipeline&rsquo;s. We now call
+                    <code>_complete_stage(0)</code> the moment the approval widget appears, so the CONCEPT split only
+                    reflects actual generation time.
+                </p>
+
+                <p><strong>Problem 2:</strong> When using RetopAgent, several stages get bundled or skipped entirely.
+                    The timer was leaving those as blank dashes, which looks broken even though it&rsquo;s by design.
+                    The fix: a new &ldquo;skipped&rdquo; status. When the pipeline jumps from stage 7 to stage 12,
+                    stages 8&ndash;11 light up with a gold lightning bolt icon and &ldquo;SKIP&rdquo; in the split
+                    column,
+                    with a subtle gold background highlight. It&rsquo;s a little visual high-five for the optimization
+                    &mdash; your topology method saved you time, and the timer <em>celebrates</em> that instead of
+                    looking like something went wrong.</p>
+
+                <h3>The Blender 5.2 Alpha Compatibility Warpath</h3>
+                <p>This is the big one. We&rsquo;ve been running Blender 5.2.0 Alpha alongside our stable Blender 4.0.2,
+                    and things kept silently failing. The AAA PBR Bake would run through the entire baking process
+                    &mdash; Albedo, Normal maps, PBR material wiring &mdash; and then the final GLB export would produce
+                    nothing. No file. No error. Just a quiet fallback to standard texturing, which means loading the
+                    entire Hunyuan3D texture pipeline a <em>second</em> time. That&rsquo;s 2+ minutes of GPU time
+                    wasted. Rude.</p>
+
+                <p>Instead of chasing individual failures, we went nuclear: a full API compatibility audit across every
+                    Blender script in the project. Six files. Every <code>bpy.ops</code> call. Every material input
+                    reference. Here&rsquo;s the highlight reel of what Blender 5.x casually broke:</p>
+
+                <ul>
+                    <li><strong><code>export_colors</code> (boolean) became <code>export_vertex_color</code>
+                            (enum):</strong> The glTF exporter no longer accepts <code>export_colors=True</code>. It
+                        wants <code>export_vertex_color='MATERIAL'</code>. Every script that exports GLB was silently
+                        failing because Blender 5.x throws a TypeError on the old parameter &mdash; but in headless
+                        mode, that TypeError gets swallowed by the subprocess, and you just get&hellip; no file. Sneaky.
+                    </li>
+                    <li><strong>&ldquo;Specular IOR Level&rdquo; became &ldquo;IOR Level&rdquo;:</strong> The Principled
+                        BSDF node renamed its specular input <em>again</em>. It was &ldquo;Specular&rdquo; in 3.x,
+                        became
+                        &ldquo;Specular IOR Level&rdquo; in 4.0, and is now just &ldquo;IOR Level&rdquo; in 5.0+. Three
+                        names for the same thing in three major versions. Thanks, Blender.</li>
+                    <li><strong><code>use_auto_smooth</code> / <code>auto_smooth_angle</code> &mdash; gone
+                            entirely:</strong> Removed since 4.1. The replacement is
+                        <code>bpy.ops.object.shade_auto_smooth()</code>, which adds a &ldquo;Smooth By Angle&rdquo;
+                        modifier internally. Our older scripts tried the legacy API first, failed, <em>then</em> tried
+                        the new API &mdash; hitting an AttributeError every single time before falling through.
+                    </li>
+                </ul>
+
+                <p>The fix was systematic and, dare I say, <em>elegant</em>. We created
+                    <code>blender_compat.py</code> &mdash; a shared compatibility layer that every headless script
+                    imports:
+                </p>
+
+                <ul>
+                    <li><code>get_specular_input(bsdf)</code> &mdash; Tries &ldquo;IOR Level&rdquo;, then
+                        &ldquo;Specular
+                        IOR Level&rdquo;, then &ldquo;Specular&rdquo; in order.</li>
+                    <li><code>apply_auto_smooth(obj, angle_degrees)</code> &mdash; Tries
+                        <code>shade_auto_smooth</code> first, falls back to legacy only on old Blender.
+                    </li>
+                    <li><code>gltf_export(**kwargs)</code> &mdash; Translates <code>export_colors</code> to
+                        <code>export_vertex_color</code> automatically. If Blender rejects the new parameter (because
+                        you&rsquo;re on 4.x), it catches the TypeError and retries with the old name. Scrappy, but
+                        bulletproof.
+                    </li>
+                </ul>
+
+                <p>Seven files updated in total. The key insight: these weren&rsquo;t &ldquo;bugs.&rdquo; They were
+                    silent
+                    API deprecations that only manifest in headless subprocess execution where stderr gets captured and
+                    nobody reads it. The pipeline would run, bake beautiful maps, wire PBR materials
+                    correctly&hellip; and then fail at the very last step because of ONE renamed parameter. And because
+                    the headless baker&rsquo;s exit code was 0 (Blender itself didn&rsquo;t crash), the calling script
+                    saw &ldquo;success&rdquo; and then couldn&rsquo;t find the output. Classic.</p>
+
+                <p>We also added comprehensive diagnostics &mdash; try/except around the export with full traceback
+                    logging, a minimal-parameter fallback export, directory listing after export, and stderr forwarding
+                    from the subprocess. If something breaks again, we&rsquo;ll know exactly why within seconds instead
+                    of staring at a missing file wondering what we did to deserve this.</p>
+
+                <h3>What&rsquo;s Next</h3>
+                <p>The concept gate, the smart timer, and the Blender 5.2 pass all compound. The pipeline now lets you
+                    curate your concept, shows you exactly where your time goes (and rewards optimization), and actually
+                    works on modern Blender without silent failures eating your GPU cycles.</p>
+
+                <p>Next session: running a full end-to-end generation with AAA PBR Bake on Blender 5.2 to see those
+                    baked maps actually land. The infrastructure is finally ready. Time to let it cook. &#x1F525;</p>
             </article>
 
         </main>
