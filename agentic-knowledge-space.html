@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentic Self-Direction Patterns — Knowledge Space</title>
+<meta name="description" content="Interactive knowledge space for agentic self-direction patterns, execution loops, and autonomous AI design.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0b0f;
+  --bg-surface: #12131a;
+  --bg-card: #181923;
+  --bg-card-hover: #1e2030;
+  --border: #2a2d3e;
+  --border-hover: #3d4160;
+  --text: #e2e4f0;
+  --text-dim: #8b8fa8;
+  --text-muted: #5c6080;
+  --accent: #7c5cfc;
+  --accent-light: #a78bfa;
+  --accent-glow: rgba(124,92,252,0.15);
+  --green: #34d399;
+  --amber: #fbbf24;
+  --red: #f87171;
+  --cyan: #22d3ee;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+/* === HERO === */
+.hero {
+  position: relative;
+  padding: 80px 40px 50px;
+  text-align: center;
+  background: linear-gradient(135deg, #0e0f18 0%, #151730 50%, #0e0f18 100%);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, var(--accent-glow) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero h1 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--accent-light), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 12px;
+}
+.hero p {
+  color: var(--text-dim);
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto 28px;
+}
+/* === SEARCH === */
+.search-wrap {
+  max-width: 520px;
+  margin: 0 auto;
+  position: relative;
+}
+.search-wrap svg {
+  position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted);
+  width: 18px; height: 18px;
+  pointer-events: none;
+}
+#search {
+  width: 100%;
+  padding: 14px 18px 14px 44px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+#search::placeholder { color: var(--text-muted); }
+#search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+.search-count {
+  position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted); font-size: 0.8rem;
+}
+/* === LAYOUT === */
+.layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 0;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+/* === SIDEBAR === */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 24px 16px;
+  border-right: 1px solid var(--border);
+  background: var(--bg-surface);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.sidebar h3 {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin: 20px 0 8px;
+  padding-left: 12px;
+}
+.sidebar h3:first-child { margin-top: 0; }
+.sidebar a {
+  display: block;
+  padding: 7px 12px;
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition), color var(--transition);
+  border-left: 2px solid transparent;
+  margin-bottom: 2px;
+}
+.sidebar a:hover { background: var(--bg-card); color: var(--text); }
+.sidebar a.active {
+  color: var(--accent-light);
+  background: var(--accent-glow);
+  border-left-color: var(--accent);
+}
+/* === MAIN === */
+.main { padding: 40px 48px 100px; min-width: 0; }
+.section { margin-bottom: 56px; }
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+.section-desc {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+}
+/* === CARDS === */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  cursor: pointer;
+  transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-light));
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+.card:hover { border-color: var(--border-hover); transform: translateY(-2px); box-shadow: var(--shadow); }
+.card:hover::before { opacity: 1; }
+.card.expanded { border-color: var(--accent); }
+.card.expanded::before { opacity: 1; }
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.card-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.card-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--accent-glow);
+  color: var(--accent-light);
+}
+.card-desc {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  line-height: 1.55;
+}
+.card-expand {
+  display: none;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.card.expanded .card-expand { display: block; }
+.card-expand .prompt-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.card-expand blockquote {
+  background: var(--bg-surface);
+  border-left: 3px solid var(--accent);
+  padding: 14px 16px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.85rem;
+  color: var(--text);
+  font-style: italic;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+}
+.card-expand blockquote:hover {
+  background: #1a1b28;
+  border-left-color: var(--accent-light);
+  box-shadow: 0 0 0 1px var(--accent-glow);
+}
+.card-expand blockquote:hover .copy-badge { opacity: 1; transform: translateY(0); }
+.copy-badge {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent-light);
+  background: rgba(124,92,252,0.15);
+  border: 1px solid rgba(124,92,252,0.3);
+  padding: 3px 9px 3px 7px;
+  border-radius: 999px;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+  user-select: none;
+}
+.copy-badge svg { width: 11px; height: 11px; flex-shrink: 0; }
+@keyframes bq-flash {
+  0%   { background: rgba(124,92,252,0.25); border-left-color: var(--accent-light); }
+  60%  { background: rgba(52,211,153,0.15); border-left-color: var(--green); }
+  100% { background: var(--bg-surface); border-left-color: var(--accent); }
+}
+.blockquote-copied { animation: bq-flash 0.7s ease forwards; }
+/* === COPY TOAST === */
+#copy-toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  background: #1e2030;
+  border: 1px solid var(--green);
+  color: var(--green);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 999px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5), 0 0 0 1px rgba(52,211,153,0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 9999;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#copy-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+#copy-toast svg { width: 15px; height: 15px; flex-shrink: 0; }
+.card-expand .rationale {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+.card-expand .patterns-used {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-bottom: 12px;
+}
+.card-expand .patterns-used span {
+  font-size: 0.72rem;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  background: var(--bg);
+}
+.card-chevron {
+  width: 18px; height: 18px;
+  color: var(--text-muted);
+  transition: transform var(--transition);
+  flex-shrink: 0;
+}
+.card.expanded .card-chevron { transform: rotate(180deg); }
+.card.hidden { display: none; }
+/* === MATRIX === */
+.matrix-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+}
+.matrix-wrap table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 800px;
+  font-size: 0.72rem;
+}
+.matrix-wrap th, .matrix-wrap td {
+  padding: 8px 6px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+.matrix-wrap th {
+  background: var(--bg-surface);
+  color: var(--text-dim);
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+.matrix-wrap th:first-child, .matrix-wrap td:first-child {
+  text-align: left;
+  padding-left: 12px;
+  font-weight: 600;
+  position: sticky;
+  left: 0;
+  background: var(--bg-surface);
+  z-index: 1;
+}
+.matrix-wrap td.synergy { background: rgba(52,211,153,0.12); color: var(--green); }
+.matrix-wrap td.tension { background: rgba(251,191,36,0.12); color: var(--amber); }
+.matrix-wrap td.self { background: var(--bg-surface); color: var(--text-muted); }
+.matrix-notes {
+  margin-top: 16px;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  line-height: 1.65;
+}
+.matrix-notes strong { color: var(--text); }
+/* === RESPONSIVE === */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar {
+    position: relative; height: auto;
+    border-right: none; border-bottom: 1px solid var(--border);
+    display: flex; flex-wrap: wrap; gap: 4px; padding: 12px;
+  }
+  .sidebar h3 { width: 100%; margin: 8px 0 4px; }
+  .sidebar a { font-size: 0.75rem; padding: 5px 10px; }
+  .main { padding: 24px 20px 80px; }
+  .card-grid { grid-template-columns: 1fr; }
+}
+/* === ANIMATIONS === */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.section { animation: fadeIn 0.5s ease both; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Agentic Self-Direction Patterns</h1>
+  <p>An interactive knowledge space for autonomous AI design — patterns, combinations, and experimental parameters.</p>
+  <div class="search-wrap">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="text" id="search" placeholder="Search patterns, combinations, parameters..." autocomplete="off">
+    <span class="search-count" id="searchCount"></span>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+  <!-- SIDEBAR — populated by JS -->
+  <nav class="sidebar" id="sidebar"></nav>
+
+  <!-- MAIN — populated by JS -->
+  <div class="main" id="main"></div>
+</div>
+
+<!-- DATA + LOGIC -->
+<script>
+// ===== CORE PATTERN DATA =====
+const coreCategories = [
+  {
+    id: "goal-setting", icon: "🎯", title: "Goal-Setting Patterns",
+    desc: "How the agent defines, structures, and commits to objectives.",
+    patterns: [
+      { name: "Self-Goal", desc: "Agent defines its own goal, success criteria, and pursues until proven complete." },
+      { name: "Goal Decomposition", desc: "Agent breaks a large goal into sub-goals recursively and resolves each." },
+      { name: "Backtracking Goal", desc: "Agent sets a goal, attempts it, detects failure, revises the goal, and retries." },
+      { name: "Constraint Discovery", desc: "Agent explores what is and isn't possible before committing to a goal." }
+    ]
+  },
+  {
+    id: "execution-loops", icon: "🔁", title: "Execution Loop Patterns",
+    desc: "Cyclic action-observation frameworks that drive task completion.",
+    patterns: [
+      { name: "ReAct", desc: "Reason → Act → Observe, repeated until task complete." },
+      { name: "OODA Loop", desc: "Observe → Orient → Decide → Act (military-origin, good for adversarial tasks)." },
+      { name: "Plan-and-Execute", desc: "Generate full plan first, then step through it with state tracking." },
+      { name: "Reflexion", desc: "Act → get feedback → self-critique in natural language → retry with memory of mistakes." }
+    ]
+  },
+  {
+    id: "self-improvement", icon: "🧠", title: "Self-Improvement Patterns",
+    desc: "Mechanisms for the agent to evaluate and upgrade its own performance.",
+    patterns: [
+      { name: "Self-Critique", desc: "Agent evaluates its own output against the original goal before delivering." },
+      { name: "Constitutional AI", desc: "Agent checks its output against a set of rules/principles it carries." },
+      { name: "Meta-Cognition", desc: "Agent monitors how it's thinking and adjusts strategy mid-task." },
+      { name: "Recursive Self-Improvement", desc: "Agent modifies its own prompt/instructions to perform better next iteration." }
+    ]
+  },
+  {
+    id: "exploration", icon: "🗺️", title: "Exploration Patterns",
+    desc: "Strategies for navigating solution spaces and filling knowledge gaps.",
+    patterns: [
+      { name: "Tree of Thought (ToT)", desc: "Agent branches multiple reasoning paths simultaneously, evaluates, prunes." },
+      { name: "Beam Search Execution", desc: "Keep top-N candidate action sequences, not just one." },
+      { name: "Curiosity-Driven", desc: "Agent generates and answers its own questions to fill knowledge gaps before acting." },
+      { name: "Socratic Self-Questioning", desc: "Agent challenges its own assumptions with adversarial questions." }
+    ]
+  },
+  {
+    id: "multi-agent", icon: "🔗", title: "Multi-Agent Coordination",
+    desc: "Patterns for distributing work across multiple agent roles.",
+    patterns: [
+      { name: "Orchestrator/Worker", desc: "One agent delegates to specialized sub-agents." },
+      { name: "Debate Pattern", desc: "Two agents argue opposing sides; a judge agent decides." },
+      { name: "Peer Review", desc: "Agent A produces output, Agent B critiques, A revises." },
+      { name: "Swarm/Stigmergy", desc: "Many simple agents leaving 'traces' that guide collective behavior." }
+    ]
+  },
+  {
+    id: "stopping", icon: "🛑", title: "Stopping & Validation",
+    desc: "Exit conditions and verification mechanisms for reliable completion.",
+    patterns: [
+      { name: "Proof-Gated Completion", desc: "Task isn't done until agent can demonstrate/prove the outcome." },
+      { name: "Human-in-the-Loop Gate", desc: "Agent pauses at high-stakes decision points for approval." },
+      { name: "Confidence Threshold", desc: "Agent only acts when internal confidence exceeds a threshold." },
+      { name: "Falsification Test", desc: "Agent tries to disprove its own result before declaring success." }
+    ]
+  }
+];
+
+// ===== COMBINATION DATA =====
+const combinations = [
+  {
+    id: "doubles", icon: "🔀", title: "Double Combinations",
+    desc: "Two-pattern stacks — the foundational pairings.",
+    combos: [
+      { name: "Self-Goal + Proof-Gated Completion", patterns: ["Self-Goal","Proof-Gated Completion"],
+        prompt: "Set your own goal for: [thing]. Make it outcome-based, include the validation/proof needed, then pursue it until complete.",
+        rationale: "The agent owns the full task lifecycle — it defines what success looks like, establishes how to prove it, and self-terminates only when the proof is satisfied." },
+      { name: "ReAct + Reflexion", patterns: ["ReAct","Reflexion"],
+        prompt: "Attempt [task]. After each action, observe the result and critique your own reasoning in one sentence. If the critique reveals a flaw, correct your approach and retry. Stop only when your critique finds nothing to improve.",
+        rationale: "ReAct keeps the agent grounded in real observations. Reflexion adds a self-correction layer so failure builds memory rather than being silently repeated." },
+      { name: "Goal Decomposition + Orchestrator/Worker", patterns: ["Goal Decomposition","Orchestrator/Worker"],
+        prompt: "Break [complex task] into the smallest independent sub-tasks possible. For each sub-task, define the worker responsible, the exact input it receives, and the exact output it must return. Execute all sub-tasks in dependency order and assemble the final result.",
+        rationale: "Decomposition prevents any single agent from holding too much context. The orchestrator only manages routing and assembly — workers stay focused." },
+      { name: "Tree of Thought + Falsification Test", patterns: ["Tree of Thought","Falsification Test"],
+        prompt: "For [problem], generate three distinct solution approaches. For each approach, actively try to find a case where it would fail or produce a wrong answer. Eliminate any approach that fails its own falsification test. Present only the approach that survived.",
+        rationale: "ToT prevents premature commitment. The falsification test forces the agent to steel-man against itself rather than just picking the most confident-sounding branch." },
+      { name: "Constitutional AI + Human-in-the-Loop Gate", patterns: ["Constitutional AI","Human-in-the-Loop Gate"],
+        prompt: "Complete [task] following these constraints: [rule 1], [rule 2], [rule 3]. Before finalizing any output that affects [high-stakes domain], pause and summarize what you are about to do, why it complies with each rule, and what the irreversible consequences are. Wait for approval.",
+        rationale: "The constitution keeps the agent aligned during routine operation. The gate activates only for consequential decisions, preserving human oversight where it matters most." },
+      { name: "Curiosity-Driven + Socratic Self-Questioning", patterns: ["Curiosity-Driven","Socratic Self-Questioning"],
+        prompt: "Before working on [topic], list every assumption you are making. For each, ask: 'What if this is wrong?' Generate the strongest counter-evidence. Only begin once you have stated which assumptions survived and which were revised.",
+        rationale: "The agent surfaces hidden priors before they contaminate the output. Socratic questioning prevents motivated reasoning." },
+      { name: "Backtracking Goal + Confidence Threshold", patterns: ["Backtracking Goal","Confidence Threshold"],
+        prompt: "Attempt [task] and rate confidence 0–100. If below 80, identify the weakest part, revise only that, and re-rate. Repeat until 80 or five revisions. Report final confidence alongside the answer.",
+        rationale: "The threshold prevents both under-refinement and over-refinement. Targeting only the weakest component each pass is efficient." }
+    ]
+  }
+];
+
+// (Triples, Quads, Quints, Sextuples will be injected in Pass 3)
+
+// ===== LAB PARAMETERS + COMBINATIONS defined below =====
+const triplesCombos = [
+  { name: "Self-Goal + Reflexion + Proof-Gated Completion", patterns: ["Self-Goal","Reflexion","Proof-Gated Completion"],
+    prompt: "Set your own goal for: [thing]. Make it specific and measurable. After every attempt, write a one-sentence critique of your own output. Use that critique to revise your approach. Continue until you can provide concrete evidence that the goal has been fully achieved.",
+    rationale: "Self-Goal gives ownership. Reflexion prevents stagnation by turning each failure into a lesson. Proof-Gated Completion closes the loop — the agent cannot exit until it produces real evidence." },
+  { name: "Goal Decomposition + Tree of Thought + Falsification Test", patterns: ["Goal Decomposition","Tree of Thought","Falsification Test"],
+    prompt: "Break [complex problem] into its core independent sub-problems. For each sub-problem, generate two or three distinct solution approaches. For every approach, attempt to construct a counterexample or failure case. Discard approaches that fail. Execute only the surviving approaches in dependency order.",
+    rationale: "Decomposition scopes each decision. Tree of Thought ensures no sub-problem is solved with the first idea. Falsification kills weak branches before they poison downstream work." },
+  { name: "Curiosity-Driven + Constitutional AI + Human-in-the-Loop Gate", patterns: ["Curiosity-Driven","Constitutional AI","Human-in-the-Loop Gate"],
+    prompt: "Before starting [task], surface every assumption and information gap. Fill gaps with targeted research. Complete the task under constraints: [rule 1], [rule 2], [rule 3]. At any irreversible decision point, stop — summarize the decision, the constraint it implicates, and the consequence of being wrong. Wait for approval.",
+    rationale: "Curiosity-Driven front-loading eliminates acting on false assumptions. The constitution governs behavior throughout. The gate reserves human attention for the moments where it actually matters." },
+  { name: "ReAct + Peer Review + Backtracking Goal", patterns: ["ReAct","Peer Review","Backtracking Goal"],
+    prompt: "Implement [specific output]. After completing it, adopt the perspective of a senior expert who did not write it. Identify the single most likely defect. If found, roll back only the affected part, fix it, and re-review. Repeat until a full expert review finds nothing to flag.",
+    rationale: "ReAct grounds each iteration in a concrete artifact. Peer Review forces a deliberate context switch. Backtracking Goal ensures only the defective component is re-done." },
+  { name: "OODA Loop + Falsification Test + Confidence Threshold", patterns: ["OODA Loop","Falsification Test","Confidence Threshold"],
+    prompt: "Operating in [adversarial context]: Observe the current state and orient by identifying the most dangerous assumption. Attempt to disprove it. If it survives, rate situational confidence 0–100. If below 75, run the loop again targeting the next most dangerous assumption. Act only when confidence reaches 75 or four loops complete.",
+    rationale: "OODA forces continuous re-orientation. Falsification targets the highest-risk assumption each loop. The Confidence Threshold creates a rational exit condition." },
+  { name: "Constraint Discovery + Goal Decomposition + Swarm/Stigmergy", patterns: ["Constraint Discovery","Goal Decomposition","Swarm/Stigmergy"],
+    prompt: "Before planning [task], probe boundaries: identify three things you definitely cannot do, three you definitely can, and three uncertain. Decompose into independent work units — none depending on uncertain constraints. Prioritize by how much each unblocks others. Execute highest-priority first; treat each completion as a signal that updates the constraint map.",
+    rationale: "Constraint Discovery prevents decomposing around impossibilities. Decomposition into constraint-safe units prevents cascading failures. The Swarm/Stigmergy dynamic emerges from treating completed units as environmental signals." }
+];
+const quadsCombos = [
+  { name: "Self-Goal + Goal Decomposition + Reflexion + Proof-Gated", patterns: ["Self-Goal","Goal Decomposition","Reflexion","Proof-Gated Completion"],
+    prompt: "Define your own specific, measurable goal for: [thing]. Decompose it into the smallest independent sub-goals. Attempt each in dependency order. After each attempt, write a one-sentence critique. If flawed, revise only that sub-goal and retry. Once all complete, construct concrete evidence proving the top-level goal was achieved. Do not stop until that evidence exists.",
+    rationale: "Self-Goal gives ownership. Decomposition prevents contamination. Reflexion turns failures into targeted corrections. Proof-Gated Completion ensures real evidence, not rationalized completion." },
+  { name: "Constraint Discovery + ToT + Falsification + Peer Review", patterns: ["Constraint Discovery","Tree of Thought","Falsification Test","Peer Review"],
+    prompt: "Before planning [task], map constraints: possible, impossible, uncertain. Generate three distinct approaches using only possible/uncertain space. For each, construct the strongest counterexample. Eliminate failures. For survivors, adopt a domain expert perspective — identify remaining blind spots. Revise based on that review.",
+    rationale: "Constraint mapping prevents false-assumption plans. ToT explores genuinely. Falsification eliminates weak branches. Peer Review catches survivorship bias." },
+  { name: "ReAct + OODA Loop + Backtracking Goal + Confidence Threshold", patterns: ["ReAct","OODA Loop","Backtracking Goal","Confidence Threshold"],
+    prompt: "Execute [task]: Observe state → Orient to highest-risk gap → Decide next atomic action → Act → Rate confidence 0–100. If below 70, identify the decision that caused the drop, roll it back, choose differently. Continue until confidence reaches 90 or 10 actions taken. Report final confidence, action log, and rollbacks.",
+    rationale: "ReAct anchors to observable reality. OODA forces continuous re-orientation. Backtracking makes corrections surgical. The Confidence Threshold provides a rational, numeric exit condition." },
+  { name: "Curiosity-Driven + Socratic + Constitutional AI + Proof-Gated", patterns: ["Curiosity-Driven","Socratic Self-Questioning","Constitutional AI","Proof-Gated Completion"],
+    prompt: "Before tackling [task], generate every question whose answer would meaningfully change your approach. Rank by impact. Answer the top five. For each remaining assumption, challenge it: 'What is the strongest reason this is wrong?' Complete the task under constraints [rule 1-3]. At completion, produce a verification artifact showing output satisfies task and violates no constraints.",
+    rationale: "Curiosity-Driven questioning surfaces decision-changing information. Socratic questioning prevents motivated reasoning. Constitutional AI keeps alignment. Proof-Gated means demonstrable artifact, not plausible answer." },
+  { name: "Orchestrator/Worker + Debate + Falsification + Confidence", patterns: ["Orchestrator/Worker","Debate Pattern","Falsification Test","Confidence Threshold"],
+    prompt: "Decompose [complex decision] into sub-questions. For each, spawn two opposing workers arguing options A and B. Each must also attempt to falsify its own position. A judge evaluates both positions and self-falsifications, selects the stronger one, and rates confidence 0–100. If below 80, generate a synthesizing third position and re-evaluate.",
+    rationale: "Orchestration scopes each debate. The Debate Pattern forces genuine opposing views. Falsification eliminates arguments that can't survive self-scrutiny. Confidence Threshold governs when synthesis is needed." },
+  { name: "Plan-and-Execute + Swarm/Stigmergy + Meta-Cognition + HitL Gate", patterns: ["Plan-and-Execute","Swarm/Stigmergy","Meta-Cognition","Human-in-the-Loop Gate"],
+    prompt: "Generate a complete execution plan for [task]: every step, dependencies, expected output. Audit your planning — flag assumptions about difficulty/feasibility without evidence as high-uncertainty. Execute step by step. Treat each completed step as a signal updating uncertainty flags. At high-uncertainty steps, pause with a summary and wait for approval. Output result, updated plan, and uncertainty audit.",
+    rationale: "Plan-and-Execute provides structure. Swarm/Stigmergy means completed steps reshape remaining plan. Meta-Cognition surfaces unreliable planning. The Human-in-the-Loop Gate fires only at uncertainty peaks." }
+];
+const quintsCombos = [
+  { name: "Self-Goal + Constraint Discovery + Decomposition + Reflexion + Proof-Gated", patterns: ["Self-Goal","Constraint Discovery","Goal Decomposition","Reflexion","Proof-Gated Completion"],
+    prompt: "Define your own goal for: [thing]. Before planning, probe boundaries: three things you can do, three you cannot, three uncertain. Plan only from possible/uncertain space. Decompose into smallest independent sub-goals — none depending on unresolved uncertainty. Attempt each in order. After each, write a one-sentence critique. If flawed, revise only that sub-goal. When all complete, produce one concrete artifact proving the top-level goal was achieved.",
+    rationale: "Own the goal → map what's possible → divide into safe units → correct without restart → prove it happened." },
+  { name: "Curiosity-Driven + Socratic + ToT + Falsification + Peer Review", patterns: ["Curiosity-Driven","Socratic Self-Questioning","Tree of Thought","Falsification Test","Peer Review"],
+    prompt: "Before [task], generate ten questions whose answers would most change your strategy. Answer each. For unanswerable ones, declare known unknowns. Challenge every remaining assumption. Generate three distinct approaches. For each, construct its most devastating counterexample. Eliminate failures. For survivors, adopt a senior expert role — identify the critical gap. Revise. Execute the strongest surviving approach.",
+    rationale: "The front-loaded audit prevents acting on a misunderstood problem. Socratic questioning strips motivated reasoning. ToT ensures genuine exploration. Falsification kills weak branches. Peer Review catches survivorship bias." },
+  { name: "ReAct + OODA + Reflexion + Backtracking + Confidence", patterns: ["ReAct","OODA Loop","Reflexion","Backtracking Goal","Confidence Threshold"],
+    prompt: "Execute [task] in a tight loop. Each cycle: Observe → Orient to highest-risk gap → Decide next atomic action → Act → Observe result → Write one-sentence critique. If critique reveals a flaw, roll back only that action and substitute. Rate trajectory confidence 0–100. If below 65, re-orient from scratch ignoring prior plan. Continue until confidence reaches 90 or 12 cycles. Report: confidence, cycle log, critiques, rollbacks.",
+    rationale: "ReAct grounds every cycle. OODA forces re-orientation. Reflexion converts observations into explicit lessons. Backtracking limits corrections to the failing action. Confidence Threshold introduces clean completion and emergency re-orientation modes." },
+  { name: "Orchestrator + Debate + Constitutional AI + Falsification + Proof-Gated", patterns: ["Orchestrator/Worker","Debate Pattern","Constitutional AI","Falsification Test","Proof-Gated Completion"],
+    prompt: "Decompose [decision or design] into independent sub-decisions. For each, instantiate Advocate A and Advocate B. Each argues their strongest case and must also attempt to falsify it. Both must comply with [rule 1-3] — violations are disqualified. A judge evaluates compliant positions and selects winners. Assemble the full design. Produce a verification artifact before delivery.",
+    rationale: "Orchestration scopes debate. Debate forces adversarial reasoning. Constitutional AI disqualifies non-compliant positions. Falsification eliminates weak arguments. Proof-Gated ensures demonstrably correct output." },
+  { name: "Plan-Execute + Meta-Cognition + Swarm + HitL + Recursive Self-Improvement", patterns: ["Plan-and-Execute","Meta-Cognition","Swarm/Stigmergy","Human-in-the-Loop Gate","Recursive Self-Improvement"],
+    prompt: "Generate a complete plan for [task]: every step, dependencies, expected output, confidence estimate (0–100). Audit your planning — identify three lowest-confidence steps and explain why. Flag as high-uncertainty checkpoints. Execute in order. After each step, update confidence for all remaining steps. At checkpoints, pause and report changes since planning. Wait for approval. After completion, rewrite the plan as it should have been. Output both plans side by side.",
+    rationale: "Plan-and-Execute creates structure. Meta-Cognition surfaces uncertainty before it becomes failure. Swarm/Stigmergy makes each step a signal that reshapes estimates. Human-in-the-Loop Gate fires at uncertainty peaks. Recursive Self-Improvement makes the rewritten plan the agent's own training artifact." },
+  { name: "Constraint Discovery + Decomposition + Beam Search + Confidence + Proof-Gated", patterns: ["Constraint Discovery","Goal Decomposition","Beam Search Execution","Confidence Threshold","Proof-Gated Completion"],
+    prompt: "Before planning [task], map constraint space: achievable, not, uncertain. Decompose into independent sub-goals avoiding uncertain constraints. For each, generate three candidate paths scored on feasibility, reversibility, and evidence quality. Execute only the top-scoring path. After each sub-goal, rate confidence 0–100. If below 72, promote the second-ranked path. When all complete, produce a verification artifact. Do not deliver without it.",
+    rationale: "Constraint Discovery prevents impossible foundations. Decomposition isolates failures. Beam Search maintains ranked fallback paths. Confidence Threshold governs path switching. Proof-Gated closes the system." },
+  { name: "Self-Goal + Curiosity-Driven + ToT + Beam Search + Confidence + Proof-Gated", patterns: ["Self-Goal","Curiosity-Driven","Tree of Thought","Beam Search Execution","Confidence Threshold","Proof-Gated Completion"],
+    prompt: "Define your own specific goal for: [thing]. Before generating any approach, produce seven questions whose answers would most change how you pursue this goal. Answer each. Generate three distinct approaches respecting known unknowns. For each, generate three execution paths scored on feasibility, reversibility, evidence quality. Execute the top path. If confidence drops below 68, promote second-ranked. If below 50, switch approaches entirely. Produce a verification artifact upon completion.",
+    rationale: "Self-Goal gives ownership. Curiosity-Driven front-loads information. ToT explores approach space. Beam Search maintains ranked fallbacks at two levels. Confidence governs switching. Proof-Gated closes every exit. Failure produces a failure analysis, making failed runs as valuable as successful ones." }
+];
+const sextupleCombos = [
+  { name: "Self-Goal + Constraint + Decomposition + Reflexion + Peer Review + Proof-Gated", patterns: ["Self-Goal","Constraint Discovery","Goal Decomposition","Reflexion","Peer Review","Proof-Gated Completion"],
+    prompt: "Define your own specific goal for: [thing]. Probe constraint space: three can-do, three cannot, three uncertain. Plan from possible/uncertain only. Decompose into smallest independent sub-goals. Execute in dependency order. After each, write a one-sentence critique. If flawed, revise only that sub-goal. Once all complete, switch to expert-review mode: identify the single most critical unresolved gap. Revise it. Produce one verification artifact. Do not deliver without it.",
+    rationale: "Own → bound → divide → self-correct → externally critique → prove. Nothing ships that hasn't passed all six gates." },
+  { name: "Curiosity + Socratic + ToT + Falsification + Debate + Proof-Gated", patterns: ["Curiosity-Driven","Socratic Self-Questioning","Tree of Thought","Falsification Test","Debate Pattern","Proof-Gated Completion"],
+    prompt: "Before [task], generate ten questions whose answers would most change your strategy. Answer each. Declare unanswerable ones as known unknowns. Challenge every remaining assumption. Generate three approaches. For each, instantiate a Challenger to construct its most devastating counterexample. Eliminate failures. For survivors, run a structured debate: Advocate vs. Critic, both must self-falsify. A Judge selects the winner. Execute. Produce a verification artifact.",
+    rationale: "The stack is designed to be impossible to shortcut — every layer blocks a specific class of premature convergence." },
+  { name: "ReAct + OODA + Reflexion + Backtracking + Confidence + Recursive Self-Improvement", patterns: ["ReAct","OODA Loop","Reflexion","Backtracking Goal","Confidence Threshold","Recursive Self-Improvement"],
+    prompt: "Execute [task] in a tight loop. Each cycle: Observe → Orient to highest-risk gap → Decide next action → Act → Observe result → One-sentence critique. If flaw found, roll back only that action and substitute. Rate confidence 0–100. If below 65, re-orient from scratch. If above 90, task complete. Cap at 15 cycles. At completion, rewrite the execution loop instructions as they should have been written. Identify the two assumptions that caused the most rework.",
+    rationale: "This stack does not just execute tasks. It gets better at executing tasks." },
+  { name: "Orchestrator + Debate + Constitutional AI + Falsification + Meta-Cognition + Proof-Gated", patterns: ["Orchestrator/Worker","Debate Pattern","Constitutional AI","Falsification Test","Meta-Cognition","Proof-Gated Completion"],
+    prompt: "Decompose [complex system] into independent sub-decisions. Before assigning workers, audit your decomposition — identify two sub-decisions where your framing is most likely wrong. For each sub-decision, instantiate Advocate A and B. Both must self-falsify. All positions must comply with [rules] — violations disqualified. Judge evaluates, weighted by self-falsification quality. Assemble output. Produce verification artifact.",
+    rationale: "No part of this stack can be skipped without creating a visible, traceable gap in the output." },
+  { name: "Plan-Execute + Constraint Discovery + Swarm + Meta-Cognition + HitL + Recursive Self-Improvement", patterns: ["Plan-and-Execute","Constraint Discovery","Swarm/Stigmergy","Meta-Cognition","Human-in-the-Loop Gate","Recursive Self-Improvement"],
+    prompt: "Before planning [task], map constraints: achievable, not, uncertain. Generate a complete plan: every step, dependencies, output, constraint dependencies, confidence estimates. Audit your plan — identify three lowest-confidence steps and explain why. Execute in order. After each step, update all remaining confidence estimates. At high-uncertainty checkpoints, pause and wait for approval. After completion, rewrite the plan as it should have been. Identify the root-cause constraint assumption.",
+    rationale: "Every run makes the next one structurally smarter." }
+];
+
+const labParameters = [
+  { name: "Entropy Budgeting", icon: "🎯", desc: "Agent is given a fixed exploration budget — max branches, questions, or iterations. Must allocate deliberately, spending more on high-uncertainty decisions.",
+    prompt: "You have a budget of [N] total exploration moves across this entire task — branches, questions, alternatives, or retries all draw from the same pool. Allocate them deliberately. Spend more where uncertainty is highest. Track your remaining budget at each step. When exhausted, commit to your best current answer." },
+  { name: "Temporal Anchoring", icon: "⏱️", desc: "Agent tracks when each piece of information was acquired and applies confidence decay to older evidence. Recency is treated as a signal quality modifier.",
+    prompt: "Before acting on any information, note when you acquired it relative to your current position. Apply a staleness penalty: information from more than [N] steps ago is provisional until reconfirmed. If deciding based on stale information, reconfirm first or flag as unverified prior." },
+  { name: "Inversion Framing", icon: "🔄", desc: "Before solving the primary problem, agent fully solves the inverse — what would make this fail? The primary solution is built by explicitly avoiding each identified failure mode.",
+    prompt: "Before solving [task], fully solve its inverse: construct the most complete answer to 'what would most reliably produce the worst outcome here?' List every failure mode. Then build your actual solution by explicitly addressing or inverting each failure mode." },
+  { name: "Minimal Footprint", icon: "🪶", desc: "Agent is constrained to affect only the minimum necessary. Must justify any action beyond the narrowest interpretation and actively prune unrequired side-effects.",
+    prompt: "Complete [task] with the minimum possible footprint. Before each action, ask: 'Is this the narrowest intervention that achieves the required outcome?' At completion, list every action and confirm each was necessary." },
+  { name: "Stakeholder Simulation", icon: "👥", desc: "Before finalizing output, agent simulates the experience of distinct affected parties — end user, skeptic, edge-case user — and revises accordingly.",
+    prompt: "Before delivering output for [task], simulate three stakeholders: (1) primary intended user, (2) a skeptic looking for flaws, (3) an edge-case user. For each, identify: what's useful, what would confuse/fail them, what need goes unmet. Revise to address the most significant gaps." },
+  { name: "Reversibility Scoring", icon: "↩️", desc: "Before each action, agent scores reversibility (0–10). Actions below threshold require explicit justification. Agent actively prefers reversible paths.",
+    prompt: "Before each action in [task], score reversibility 0–10 (0 = permanent, 10 = fully undoable). If below [threshold]: (a) identify a more reversible alternative and explain why it's inferior, or (b) justify why the irreversible action is necessary. Default to most reversible option when outcomes are comparable." },
+  { name: "Signal vs. Noise Filtering", icon: "📡", desc: "Agent explicitly separates input into signal (causally relevant) and noise (present but not causal). Only signal informs decisions.",
+    prompt: "Before any decision in [task], classify all information into: SIGNAL (causally connected — if this changes, outcome changes) and NOISE (present but not causally relevant). Decide based only on signal. For each signal item, state the causal mechanism connecting it to the outcome." },
+  { name: "Horizon Scanning", icon: "🌊", desc: "Before committing to any action, agent maps second and third-order consequences. Actions with dangerous second-order effects are deprioritized even if first-order effects are desirable.",
+    prompt: "Before any significant action in [task], map its consequence chain: (1st order) direct result, (2nd order) what that causes, (3rd order) what the 2nd-order effect causes. Flag any chain with an undesirable outcome at any level. Redesign the action to sever dangerous consequence chains." },
+  { name: "Semantic Compression", icon: "🗜️", desc: "At each major decision point, agent compresses entire current understanding into fewest possible words that preserve all decision-relevant information.",
+    prompt: "At each major decision point in [task], compress your current understanding into a single statement of no more than 30 words that captures everything decision-relevant. Use this compressed statement — not the full context — as the basis for your next decision. Log each compression." },
+  { name: "Contrastive Anchoring", icon: "⚖️", desc: "Agent defines success by contrast — identifies the closest possible failure state and specifies the minimum distinguishing feature separating them.",
+    prompt: "Before delivering output for [task], identify the closest failure state — output most similar to yours but still wrong. Specify the single minimum distinguishing feature. Verify that feature is clearly present in your actual output. Do not deliver if you cannot name or confirm it." },
+  { name: "Resource-Constrained Execution", icon: "💰", desc: "Agent operates under explicit resource limits (steps, tool calls, time) and must make deliberate tradeoffs as it approaches those limits.",
+    prompt: "You have a limit of [N] steps to complete [task]. Before starting, allocate your budget: which parts consume the most steps, which are highest priority? Track consumption. At 75%, assess if on track. At 90%, commit to current best answer and use remaining budget only for highest-value finishing actions." },
+  { name: "Causal Tracing", icon: "🔗", desc: "For each decision, agent explicitly predicts the causal chain before acting. At completion, compares predicted chains to actual ones. Gaps are the primary learning output.",
+    prompt: "Before each major decision in [task], write a one-line prediction: 'If I do [action], then [result] because [mechanism], which leads to [downstream effect].' After the action, observe the actual result. At completion, compare every predicted chain to what happened. Identify divergences and state the correct causal mechanism." }
+];
+
+const matrixLabels = ["Entropy Budget","Temporal Anchor","Inversion","Min Footprint","Stakeholder Sim","Reversibility","Signal Filter","Horizon Scan","Semantic Compress","Contrastive Anchor","Resource Constrain","Causal Trace"];
+const matrixGrid = [
+  ["-","S","S","S","T","S","S","T","S","S","S","S"],
+  ["S","-","T","S","S","S","S","S","S","T","S","S"],
+  ["S","T","-","S","S","S","S","S","S","S","T","S"],
+  ["S","S","S","-","T","S","S","S","S","S","S","S"],
+  ["T","S","S","T","-","S","S","S","S","S","T","S"],
+  ["S","S","S","S","S","-","S","S","S","S","S","S"],
+  ["S","S","S","S","S","S","-","S","S","S","S","S"],
+  ["T","S","S","S","S","S","S","-","S","S","T","S"],
+  ["S","S","S","S","S","S","S","S","-","S","S","S"],
+  ["S","T","S","S","S","S","S","S","S","-","S","S"],
+  ["S","S","T","S","T","S","S","T","S","S","-","S"],
+  ["S","S","S","S","S","S","S","S","S","S","S","-"]
+];
+
+const matrixNotes = [
+  "Entropy Budget + Stakeholder Simulation: Simulating multiple stakeholders is expensive. Combine only when the budget is large enough.",
+  "Temporal Anchor + Inversion: Inversion is done upfront; temporal anchoring assumes information accrues over time. At the start, there's little to anchor temporally.",
+  "Resource Constrain + Inversion: Inversion is a full pre-solve of the negative case — expensive. If constrained, you may only afford a partial inversion.",
+  "Resource Constrain + Horizon Scan: Horizon Scanning is computationally expensive. In tight budgets, cap to 2nd-order only.",
+  "Entropy Budget + Horizon Scan: Both constrain exploration differently — budgets limit branching; Horizon Scan expands consequence chains. Monitor for combined paralysis."
+];
+
+</script>
+
+<!-- RENDER LOGIC -->
+<script>
+(function() {
+  const sidebar = document.getElementById('sidebar');
+  const main = document.getElementById('main');
+  const searchInput = document.getElementById('search');
+  const searchCount = document.getElementById('searchCount');
+  const chevronSVG = '<svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>';
+  const copyIconSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+
+  // Utility: create element
+  function el(tag, cls, html) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (html) e.innerHTML = html;
+    return e;
+  }
+
+  // Build a basic pattern card (no expand)
+  function basicCard(p) {
+    const c = el('div','card');
+    c.dataset.search = (p.name + ' ' + p.desc).toLowerCase();
+    c.innerHTML = '<div class="card-header"><span class="card-name">' + p.name + '</span></div><div class="card-desc">' + p.desc + '</div>';
+    return c;
+  }
+
+  // Build a combo card (expandable)
+  function comboCard(c, level) {
+    const card = el('div','card');
+    card.dataset.search = (c.name + ' ' + c.prompt + ' ' + c.rationale + ' ' + c.patterns.join(' ')).toLowerCase();
+    const badge = level ? '<span class="card-badge">' + level + '</span>' : '';
+    card.innerHTML = '<div class="card-header"><span class="card-name">' + c.name + '</span>' + badge + chevronSVG + '</div>' +
+      '<div class="card-desc">' + c.patterns.length + ' patterns combined</div>' +
+      '<div class="card-expand">' +
+        '<div class="patterns-used">' + c.patterns.map(function(p){return '<span>' + p + '</span>';}).join('') + '</div>' +
+        '<div class="prompt-label">Precision Prompt</div>' +
+        '<blockquote>' + c.prompt + '<span class="copy-badge">' + copyIconSVG + 'Copy</span></blockquote>' +
+        '<div class="prompt-label">Why It Works</div>' +
+        '<div class="rationale">' + c.rationale + '</div>' +
+      '</div>';
+    card.addEventListener('click', function() { card.classList.toggle('expanded'); });
+    return card;
+  }
+
+  // Build a lab parameter card (expandable)
+  function labCard(p) {
+    const card = el('div','card');
+    card.dataset.search = (p.name + ' ' + p.desc + ' ' + p.prompt).toLowerCase();
+    card.innerHTML = '<div class="card-header"><span class="card-name">' + p.icon + ' ' + p.name + '</span>' + chevronSVG + '</div>' +
+      '<div class="card-desc">' + p.desc + '</div>' +
+      '<div class="card-expand">' +
+        '<div class="prompt-label">Prompt Primitive</div>' +
+        '<blockquote>' + p.prompt + '<span class="copy-badge">' + copyIconSVG + 'Copy</span></blockquote>' +
+      '</div>';
+    card.addEventListener('click', function() { card.classList.toggle('expanded'); });
+    return card;
+  }
+
+  // Build a section
+  function addSection(id, icon, title, desc) {
+    const sec = el('div','section');
+    sec.id = id;
+    sec.innerHTML = '<h2 class="section-title">' + icon + ' ' + title + '</h2><p class="section-desc">' + desc + '</p>';
+    const grid = el('div','card-grid');
+    sec.appendChild(grid);
+    main.appendChild(sec);
+    return grid;
+  }
+
+  // --- Render core categories ---
+  coreCategories.forEach(function(cat) {
+    const grid = addSection(cat.id, cat.icon, cat.title, cat.desc);
+    cat.patterns.forEach(function(p) { grid.appendChild(basicCard(p)); });
+  });
+
+  // --- Render combination sections ---
+  var comboSections = [
+    { data: combinations[0].combos, id: 'doubles', icon: '🔀', title: 'Double Combinations', desc: 'Two-pattern stacks — the foundational pairings.', level: '2×' },
+    { data: triplesCombos, id: 'triples', icon: '⚡', title: 'Triple Combinations', desc: 'Three-pattern stacks for high-stakes, complex, or fully autonomous tasks.', level: '3×' },
+    { data: quadsCombos, id: 'quads', icon: '⚡⚡', title: 'Quadruple Combinations', desc: 'Four-pattern stacks for maximum autonomy, precision, and robustness.', level: '4×' },
+    { data: quintsCombos, id: 'quints', icon: '⚡⚡⚡', title: 'Quintuple Combinations', desc: 'Five-pattern sovereign execution frameworks — not just prompts.', level: '5×' },
+    { data: sextupleCombos, id: 'sextuples', icon: '🌌', title: 'Sextuple Combinations', desc: 'Six-pattern agentic operating systems — complete execution philosophies.', level: '6×' }
+  ];
+  comboSections.forEach(function(s) {
+    var grid = addSection(s.id, s.icon, s.title, s.desc);
+    s.data.forEach(function(c) { grid.appendChild(comboCard(c, s.level)); });
+  });
+
+  // --- Render Lab Parameters ---
+  var labGrid = addSection('lab-parameters', '🔬', 'Lab Parameters', 'The 12 experimental parameters — atomic behavioral levers extending the original pattern library.');
+  labParameters.forEach(function(p) { labGrid.appendChild(labCard(p)); });
+
+  // --- Render Matrix ---
+  var matrixSec = el('div','section');
+  matrixSec.id = 'matrix';
+  matrixSec.innerHTML = '<h2 class="section-title">📐 Parameter Interaction Matrix</h2><p class="section-desc">Synergy (✅) and tension (⚠️) relationships between the 12 lab parameters.</p>';
+  var wrap = el('div','matrix-wrap');
+  var thead = '<thead><tr><th></th>' + matrixLabels.map(function(l){return '<th>' + l + '</th>';}).join('') + '</tr></thead>';
+  var tbody = '<tbody>' + matrixGrid.map(function(row, i) {
+    return '<tr><td>' + matrixLabels[i] + '</td>' + row.map(function(v) {
+      if (v === '-') return '<td class="self">—</td>';
+      if (v === 'T') return '<td class="tension">⚠️</td>';
+      return '<td class="synergy">✅</td>';
+    }).join('') + '</tr>';
+  }).join('') + '</tbody>';
+  wrap.innerHTML = '<table>' + thead + tbody + '</table>';
+  matrixSec.appendChild(wrap);
+  var notes = el('div','matrix-notes');
+  notes.innerHTML = '<strong>Notes on tensions:</strong><br>' + matrixNotes.map(function(n){return '• ' + n;}).join('<br>');
+  matrixSec.appendChild(notes);
+  main.appendChild(matrixSec);
+
+  // --- Sidebar ---
+  function addSidebarGroup(label, links) {
+    sidebar.appendChild(el('h3', null, label));
+    links.forEach(function(l) {
+      var a = document.createElement('a');
+      a.href = '#' + l.id;
+      a.textContent = l.text;
+      a.dataset.target = l.id;
+      sidebar.appendChild(a);
+    });
+  }
+  addSidebarGroup('Core Patterns', coreCategories.map(function(c){return {id:c.id, text:c.icon+' '+c.title.replace(' Patterns','')};}));
+  addSidebarGroup('Combinations', comboSections.map(function(s){return {id:s.id, text:s.icon+' '+s.title.replace(' Combinations','')};}));
+  addSidebarGroup('Laboratory', [{id:'lab-parameters',text:'🔬 Parameters'},{id:'matrix',text:'📐 Interaction Matrix'}]);
+
+  // --- Scroll Spy ---
+  var sidebarLinks = sidebar.querySelectorAll('a');
+  var sections = main.querySelectorAll('.section');
+  function updateScrollSpy() {
+    var scrollY = window.scrollY + 120;
+    var active = null;
+    sections.forEach(function(s) { if (s.offsetTop <= scrollY) active = s.id; });
+    sidebarLinks.forEach(function(a) {
+      a.classList.toggle('active', a.dataset.target === active);
+    });
+  }
+  window.addEventListener('scroll', updateScrollSpy);
+  updateScrollSpy();
+
+  // --- Search ---
+  searchInput.addEventListener('input', function() {
+    var q = this.value.toLowerCase().trim();
+    var allCards = main.querySelectorAll('.card');
+    var visible = 0;
+    allCards.forEach(function(card) {
+      var match = !q || card.dataset.search.indexOf(q) !== -1;
+      card.classList.toggle('hidden', !match);
+      if (match) visible++;
+    });
+    searchCount.textContent = q ? visible + ' match' + (visible !== 1 ? 'es' : '') : '';
+  });
+
+  // --- Copy to Clipboard ---
+  // Inject toast element
+  var toast = document.createElement('div');
+  toast.id = 'copy-toast';
+  toast.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copied to clipboard';
+  document.body.appendChild(toast);
+
+  var toastTimer = null;
+  function showToast() {
+    toast.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function() { toast.classList.remove('show'); }, 2200);
+  }
+
+  // Delegated click handler — intercepts clicks on blockquotes inside .card-expand
+  main.addEventListener('click', function(e) {
+    var bq = e.target.closest('.card-expand blockquote');
+    if (!bq) return;
+    // Stop the event propagating to the card so it doesn't toggle expand
+    e.stopPropagation();
+    // Get the text content minus the copy badge text
+    var badge = bq.querySelector('.copy-badge');
+    var textToCopy = badge
+      ? bq.textContent.replace(badge.textContent, '').trim()
+      : bq.textContent.trim();
+    navigator.clipboard.writeText(textToCopy).then(function() {
+      bq.classList.remove('blockquote-copied');
+      // Force reflow to restart animation
+      void bq.offsetWidth;
+      bq.classList.add('blockquote-copied');
+      showToast();
+    }).catch(function() {
+      // Fallback for browsers without clipboard API
+      var ta = document.createElement('textarea');
+      ta.value = textToCopy;
+      ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); showToast(); } catch(err) {}
+      document.body.removeChild(ta);
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
