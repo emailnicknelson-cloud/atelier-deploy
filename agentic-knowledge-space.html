@@ -3,65 +3,67 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agentic Self-Direction Patterns — Knowledge Space</title>
-<meta name="description" content="Interactive knowledge space for agentic self-direction patterns, execution loops, and autonomous AI design.">
+<title>cthdrl — Pattern Space</title>
+<meta name="description" content="Pattern systems for autonomous agents. Execution loops, combination stacks, and experimental parameters.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0a0b0f;
-  --bg-surface: #12131a;
-  --bg-card: #181923;
-  --bg-card-hover: #1e2030;
-  --border: #2a2d3e;
-  --border-hover: #3d4160;
-  --text: #e2e4f0;
-  --text-dim: #8b8fa8;
-  --text-muted: #5c6080;
-  --accent: #7c5cfc;
-  --accent-light: #a78bfa;
-  --accent-glow: rgba(124,92,252,0.15);
-  --green: #34d399;
-  --amber: #fbbf24;
-  --red: #f87171;
-  --cyan: #22d3ee;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 4px 24px rgba(0,0,0,0.4);
-  --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+  --bg: #000000;
+  --bg-surface: #080808;
+  --bg-card: #0a0a0a;
+  --bg-card-hover: #111111;
+  --border: rgba(231,222,209,0.12);
+  --border-hover: rgba(231,222,209,0.35);
+  --text: #e7ded1;
+  --text-dim: rgba(231,222,209,0.55);
+  --text-muted: rgba(231,222,209,0.3);
+  --accent: #e7ded1;
+  --accent-light: #e7ded1;
+  --accent-glow: rgba(231,222,209,0.06);
+  --green: rgba(231,222,209,0.65);
+  --amber: rgba(231,222,209,0.4);
+  --red: rgba(231,222,209,0.5);
+  --cyan: #e7ded1;
+  --radius: 0px;
+  --radius-sm: 0px;
+  --shadow: 0 1px 0 var(--border);
+  --transition: 0.2s ease;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; scroll-padding-top: 90px; }
 body {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Space Mono', ui-monospace, monospace;
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
 }
+h1, h2, .section-title {
+  font-family: 'Montserrat', ui-sans-serif, sans-serif;
+  font-weight: 400;
+}
 /* === HERO === */
 .hero {
   position: relative;
   padding: 80px 40px 50px;
   text-align: center;
-  background: linear-gradient(135deg, #0e0f18 0%, #151730 50%, #0e0f18 100%);
+  background: #000000;
   border-bottom: 1px solid var(--border);
   overflow: hidden;
 }
 .hero::before {
   content: '';
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 50% 0%, var(--accent-glow) 0%, transparent 70%);
+  background: none;
   pointer-events: none;
 }
 .hero h1 {
   font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 800;
+  font-weight: 400;
   letter-spacing: -0.03em;
-  background: linear-gradient(135deg, var(--accent-light), var(--cyan));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #e7ded1;
   margin-bottom: 12px;
 }
 .hero p {
@@ -151,7 +153,7 @@ body {
 .section { margin-bottom: 56px; }
 .section-title {
   font-size: 1.5rem;
-  font-weight: 700;
+  font-weight: 400;
   margin-bottom: 6px;
   letter-spacing: -0.02em;
 }
@@ -159,6 +161,7 @@ body {
   color: var(--text-dim);
   font-size: 0.9rem;
   margin-bottom: 24px;
+  font-family: 'Space Mono', ui-monospace, monospace;
 }
 /* === CARDS === */
 .card-grid {
@@ -179,12 +182,12 @@ body {
 .card::before {
   content: '';
   position: absolute; top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--accent), var(--accent-light));
+  height: 1px;
+  background: #e7ded1;
   opacity: 0;
   transition: opacity var(--transition);
 }
-.card:hover { border-color: var(--border-hover); transform: translateY(-2px); box-shadow: var(--shadow); }
+.card:hover { border-color: var(--border-hover); transform: none; box-shadow: var(--shadow); }
 .card:hover::before { opacity: 1; }
 .card.expanded { border-color: var(--accent); }
 .card.expanded::before { opacity: 1; }
@@ -201,13 +204,14 @@ body {
 }
 .card-badge {
   font-size: 0.65rem;
-  font-weight: 600;
+  font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: var(--accent-glow);
-  color: var(--accent-light);
+  padding: 2px 7px;
+  border-radius: 0;
+  border: 1px solid var(--border-hover);
+  background: transparent;
+  color: var(--text-muted);
 }
 .card-desc {
   font-size: 0.85rem;
@@ -230,22 +234,21 @@ body {
 }
 .card-expand blockquote {
   background: var(--bg-surface);
-  border-left: 3px solid var(--accent);
+  border-left: 1px solid var(--accent);
   padding: 14px 16px;
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  border-radius: 0;
   font-size: 0.85rem;
   color: var(--text);
-  font-style: italic;
+  font-style: normal;
   line-height: 1.6;
   margin-bottom: 12px;
   position: relative;
   cursor: pointer;
-  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+  transition: background var(--transition), border-color var(--transition);
 }
 .card-expand blockquote:hover {
-  background: #1a1b28;
+  background: #0f0f0f;
   border-left-color: var(--accent-light);
-  box-shadow: 0 0 0 1px var(--accent-glow);
 }
 .card-expand blockquote:hover .copy-badge { opacity: 1; transform: translateY(0); }
 .copy-badge {
@@ -273,8 +276,8 @@ body {
 }
 .copy-badge svg { width: 11px; height: 11px; flex-shrink: 0; }
 @keyframes bq-flash {
-  0%   { background: rgba(124,92,252,0.25); border-left-color: var(--accent-light); }
-  60%  { background: rgba(52,211,153,0.15); border-left-color: var(--green); }
+  0%   { background: rgba(231,222,209,0.1); border-left-color: var(--accent-light); }
+  60%  { background: rgba(231,222,209,0.05); border-left-color: var(--text-dim); }
   100% { background: var(--bg-surface); border-left-color: var(--accent); }
 }
 .blockquote-copied { animation: bq-flash 0.7s ease forwards; }
@@ -347,13 +350,12 @@ body {
 }
 .stat-num {
   font-size: 2rem;
-  font-weight: 800;
+  font-weight: 400;
   letter-spacing: -0.04em;
   line-height: 1;
-  background: linear-gradient(135deg, var(--accent-light), var(--cyan));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #e7ded1;
   font-variant-numeric: tabular-nums;
+  font-family: 'Montserrat', ui-sans-serif, sans-serif;
 }
 .stat-label {
   font-size: 0.72rem;
@@ -471,10 +473,10 @@ body {
   background: var(--bg-surface);
   z-index: 1;
 }
-.matrix-wrap td.synergy-1 { background: rgba(52,211,153,0.07); }
-.matrix-wrap td.synergy-2 { background: rgba(52,211,153,0.14); }
-.matrix-wrap td.synergy-3 { background: rgba(52,211,153,0.22); }
-.matrix-wrap td.tension { background: rgba(251,191,36,0.18); color: var(--amber); }
+.matrix-wrap td.synergy-1 { background: rgba(231,222,209,0.03); }
+.matrix-wrap td.synergy-2 { background: rgba(231,222,209,0.07); }
+.matrix-wrap td.synergy-3 { background: rgba(231,222,209,0.12); }
+.matrix-wrap td.tension { background: transparent; color: var(--text); border: 1px solid rgba(231,222,209,0.25); }
 .matrix-wrap td.self { background: var(--bg-surface); color: var(--text-muted); }
 /* Matrix tooltip */
 .matrix-tip {
@@ -531,8 +533,8 @@ body {
 
 <!-- HERO -->
 <div class="hero">
-  <h1>Agentic Self-Direction Patterns</h1>
-  <p>An interactive knowledge space for autonomous AI design — patterns, combinations, and experimental parameters.</p>
+  <h1>cthdrl</h1>
+  <p>Pattern systems for autonomous agents — execution loops, combination stacks, experimental parameters.</p>
   <div class="search-wrap">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
     <input type="text" id="search" placeholder="Search patterns, combinations, parameters..." autocomplete="off">
@@ -811,7 +813,7 @@ const matrixNotes = [
   }
 
   // Pip color ramp: 2=blue, 3=cyan, 4=teal, 5=lime, 6=violet
-  var pipColors = ['#7c5cfc','#22d3ee','#34d399','#a3e635','#a78bfa'];
+  var pipColors = ['rgba(231,222,209,0.45)','rgba(231,222,209,0.58)','rgba(231,222,209,0.71)','rgba(231,222,209,0.85)','#e7ded1'];
 
   // Build a combo card (expandable)
   function comboCard(c, level) {
