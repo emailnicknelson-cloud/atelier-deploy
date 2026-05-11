@@ -331,6 +331,111 @@ body {
 }
 .card.expanded .card-chevron { transform: rotate(180deg); }
 .card.hidden { display: none; }
+/* === STATS STRIP === */
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.stat-num {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--accent-light), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-variant-numeric: tabular-nums;
+}
+.stat-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+/* === PIPS === */
+.pip-row {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+  margin-bottom: 2px;
+  align-items: center;
+}
+.pip {
+  width: 18px;
+  height: 5px;
+  border-radius: 2px;
+  background: var(--accent);
+  opacity: 0.9;
+  transition: opacity var(--transition);
+}
+.pip-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-left: 6px;
+  font-variant-numeric: tabular-nums;
+}
+.card:hover .pip { opacity: 1; }
+/* === COMPLEXITY LEGEND === */
+.complexity-legend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.complexity-legend .leg-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+.leg-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+.leg-pips {
+  display: flex;
+  gap: 2px;
+}
+.leg-pip {
+  width: 12px;
+  height: 4px;
+  border-radius: 2px;
+}
+/* === SIDEBAR COUNT BADGE === */
+.sidebar a .nav-count {
+  margin-left: auto;
+  font-size: 0.65rem;
+  background: var(--bg);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 1px 6px;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.sidebar a {
+  display: flex;
+  align-items: center;
+}
 /* === MATRIX === */
 .matrix-wrap {
   overflow-x: auto;
@@ -348,6 +453,7 @@ body {
   padding: 8px 6px;
   text-align: center;
   border: 1px solid var(--border);
+  position: relative;
 }
 .matrix-wrap th {
   background: var(--bg-surface);
@@ -365,9 +471,33 @@ body {
   background: var(--bg-surface);
   z-index: 1;
 }
-.matrix-wrap td.synergy { background: rgba(52,211,153,0.12); color: var(--green); }
-.matrix-wrap td.tension { background: rgba(251,191,36,0.12); color: var(--amber); }
+.matrix-wrap td.synergy-1 { background: rgba(52,211,153,0.07); }
+.matrix-wrap td.synergy-2 { background: rgba(52,211,153,0.14); }
+.matrix-wrap td.synergy-3 { background: rgba(52,211,153,0.22); }
+.matrix-wrap td.tension { background: rgba(251,191,36,0.18); color: var(--amber); }
 .matrix-wrap td.self { background: var(--bg-surface); color: var(--text-muted); }
+/* Matrix tooltip */
+.matrix-tip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1c2e;
+  border: 1px solid var(--border-hover);
+  color: var(--text);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  width: 200px;
+  z-index: 100;
+  pointer-events: none;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  text-align: left;
+  white-space: normal;
+}
+.matrix-wrap td:hover .matrix-tip { display: block; }
 .matrix-notes {
   margin-top: 16px;
   padding: 16px 20px;
@@ -408,6 +538,7 @@ body {
     <input type="text" id="search" placeholder="Search patterns, combinations, parameters..." autocomplete="off">
     <span class="search-count" id="searchCount"></span>
   </div>
+  <div class="hero-stats" id="heroStats"></div>
 </div>
 
 <!-- LAYOUT -->
@@ -577,12 +708,12 @@ const quintsCombos = [
     rationale: "Plan-and-Execute creates structure. Meta-Cognition surfaces uncertainty before it becomes failure. Swarm/Stigmergy makes each step a signal that reshapes estimates. Human-in-the-Loop Gate fires at uncertainty peaks. Recursive Self-Improvement makes the rewritten plan the agent's own training artifact." },
   { name: "Constraint Discovery + Decomposition + Beam Search + Confidence + Proof-Gated", patterns: ["Constraint Discovery","Goal Decomposition","Beam Search Execution","Confidence Threshold","Proof-Gated Completion"],
     prompt: "Before planning [task], map constraint space: achievable, not, uncertain. Decompose into independent sub-goals avoiding uncertain constraints. For each, generate three candidate paths scored on feasibility, reversibility, and evidence quality. Execute only the top-scoring path. After each sub-goal, rate confidence 0–100. If below 72, promote the second-ranked path. When all complete, produce a verification artifact. Do not deliver without it.",
-    rationale: "Constraint Discovery prevents impossible foundations. Decomposition isolates failures. Beam Search maintains ranked fallback paths. Confidence Threshold governs path switching. Proof-Gated closes the system." },
-  { name: "Self-Goal + Curiosity-Driven + ToT + Beam Search + Confidence + Proof-Gated", patterns: ["Self-Goal","Curiosity-Driven","Tree of Thought","Beam Search Execution","Confidence Threshold","Proof-Gated Completion"],
-    prompt: "Define your own specific goal for: [thing]. Before generating any approach, produce seven questions whose answers would most change how you pursue this goal. Answer each. Generate three distinct approaches respecting known unknowns. For each, generate three execution paths scored on feasibility, reversibility, evidence quality. Execute the top path. If confidence drops below 68, promote second-ranked. If below 50, switch approaches entirely. Produce a verification artifact upon completion.",
-    rationale: "Self-Goal gives ownership. Curiosity-Driven front-loads information. ToT explores approach space. Beam Search maintains ranked fallbacks at two levels. Confidence governs switching. Proof-Gated closes every exit. Failure produces a failure analysis, making failed runs as valuable as successful ones." }
+    rationale: "Constraint Discovery prevents impossible foundations. Decomposition isolates failures. Beam Search maintains ranked fallback paths. Confidence Threshold governs path switching. Proof-Gated closes the system." }
 ];
 const sextupleCombos = [
+  { name: "Self-Goal + Curiosity-Driven + ToT + Beam Search + Confidence + Proof-Gated", patterns: ["Self-Goal","Curiosity-Driven","Tree of Thought","Beam Search Execution","Confidence Threshold","Proof-Gated Completion"],
+    prompt: "Define your own specific goal for: [thing]. Before generating any approach, produce seven questions whose answers would most change how you pursue this goal. Answer each. Generate three distinct approaches respecting known unknowns. For each, generate three execution paths scored on feasibility, reversibility, evidence quality. Execute the top path. If confidence drops below 68, promote second-ranked. If below 50, switch approaches entirely. Produce a verification artifact upon completion.",
+    rationale: "Self-Goal gives ownership. Curiosity-Driven front-loads information. ToT explores approach space. Beam Search maintains ranked fallbacks at two levels. Confidence governs switching. Proof-Gated closes every exit. Failure produces a failure analysis, making failed runs as valuable as successful ones." },
   { name: "Self-Goal + Constraint + Decomposition + Reflexion + Peer Review + Proof-Gated", patterns: ["Self-Goal","Constraint Discovery","Goal Decomposition","Reflexion","Peer Review","Proof-Gated Completion"],
     prompt: "Define your own specific goal for: [thing]. Probe constraint space: three can-do, three cannot, three uncertain. Plan from possible/uncertain only. Decompose into smallest independent sub-goals. Execute in dependency order. After each, write a one-sentence critique. If flawed, revise only that sub-goal. Once all complete, switch to expert-review mode: identify the single most critical unresolved gap. Revise it. Produce one verification artifact. Do not deliver without it.",
     rationale: "Own → bound → divide → self-correct → externally critique → prove. Nothing ships that hasn't passed all six gates." },
@@ -679,13 +810,21 @@ const matrixNotes = [
     return c;
   }
 
+  // Pip color ramp: 2=blue, 3=cyan, 4=teal, 5=lime, 6=violet
+  var pipColors = ['#7c5cfc','#22d3ee','#34d399','#a3e635','#a78bfa'];
+
   // Build a combo card (expandable)
   function comboCard(c, level) {
     const card = el('div','card');
     card.dataset.search = (c.name + ' ' + c.prompt + ' ' + c.rationale + ' ' + c.patterns.join(' ')).toLowerCase();
     const badge = level ? '<span class="card-badge">' + level + '</span>' : '';
+    const n = c.patterns.length;
+    const pipColor = pipColors[Math.min(n - 2, pipColors.length - 1)];
+    const pips = Array.from({length: n}, function() {
+      return '<span class="pip" style="background:' + pipColor + '"></span>';
+    }).join('');
     card.innerHTML = '<div class="card-header"><span class="card-name">' + c.name + '</span>' + badge + chevronSVG + '</div>' +
-      '<div class="card-desc">' + c.patterns.length + ' patterns combined</div>' +
+      '<div class="pip-row">' + pips + '<span class="pip-label">' + n + ' pattern' + (n!==1?'s':'') + '</span></div>' +
       '<div class="card-expand">' +
         '<div class="patterns-used">' + c.patterns.map(function(p){return '<span>' + p + '</span>';}).join('') + '</div>' +
         '<div class="prompt-label">Precision Prompt</div>' +
@@ -730,32 +869,79 @@ const matrixNotes = [
 
   // --- Render combination sections ---
   var comboSections = [
-    { data: combinations[0].combos, id: 'doubles', icon: '🔀', title: 'Double Combinations', desc: 'Two-pattern stacks — the foundational pairings.', level: '2×' },
-    { data: triplesCombos, id: 'triples', icon: '⚡', title: 'Triple Combinations', desc: 'Three-pattern stacks for high-stakes, complex, or fully autonomous tasks.', level: '3×' },
-    { data: quadsCombos, id: 'quads', icon: '⚡⚡', title: 'Quadruple Combinations', desc: 'Four-pattern stacks for maximum autonomy, precision, and robustness.', level: '4×' },
-    { data: quintsCombos, id: 'quints', icon: '⚡⚡⚡', title: 'Quintuple Combinations', desc: 'Five-pattern sovereign execution frameworks — not just prompts.', level: '5×' },
-    { data: sextupleCombos, id: 'sextuples', icon: '🌌', title: 'Sextuple Combinations', desc: 'Six-pattern agentic operating systems — complete execution philosophies.', level: '6×' }
+    { data: combinations[0].combos, id: 'doubles', icon: '🔀', title: 'Double Combinations', desc: 'Two-pattern stacks — the foundational pairings.', level: '2×', n: 2 },
+    { data: triplesCombos, id: 'triples', icon: '⚡', title: 'Triple Combinations', desc: 'Three-pattern stacks for high-stakes, complex, or fully autonomous tasks.', level: '3×', n: 3 },
+    { data: quadsCombos, id: 'quads', icon: '⚡⚡', title: 'Quadruple Combinations', desc: 'Four-pattern stacks for maximum autonomy, precision, and robustness.', level: '4×', n: 4 },
+    { data: quintsCombos, id: 'quints', icon: '⚡⚡⚡', title: 'Quintuple Combinations', desc: 'Five-pattern sovereign execution frameworks — not just prompts.', level: '5×', n: 5 },
+    { data: sextupleCombos, id: 'sextuples', icon: '🌌', title: 'Sextuple Combinations', desc: 'Six-pattern agentic operating systems — complete execution philosophies.', level: '6×', n: 6 }
   ];
+
   comboSections.forEach(function(s) {
     var grid = addSection(s.id, s.icon, s.title, s.desc);
     s.data.forEach(function(c) { grid.appendChild(comboCard(c, s.level)); });
   });
+
+  // Complexity legend — injected AFTER #doubles exists in DOM
+  var firstComboSection = document.getElementById('doubles');
+  if (firstComboSection) {
+    var legendEl = document.createElement('div');
+    legendEl.className = 'complexity-legend';
+    legendEl.innerHTML = '<span class="leg-label">Complexity →</span>' +
+      comboSections.map(function(s) {
+        var pips = Array.from({length: s.n}, function() {
+          return '<span class="leg-pip" style="background:' + pipColors[Math.min(s.n-2, pipColors.length-1)] + '; opacity:' + (0.5 + (s.n-2)*0.1).toFixed(1) + '"></span>';
+        }).join('');
+        return '<span class="leg-item"><span class="leg-pips">' + pips + '</span><span>' + s.n + '×</span></span>';
+      }).join('<span style="color:var(--border);font-size:0.9rem">│</span>');
+    firstComboSection.insertBefore(legendEl, firstComboSection.querySelector('.card-grid'));
+  }
 
   // --- Render Lab Parameters ---
   var labGrid = addSection('lab-parameters', '🔬', 'Lab Parameters', 'The 12 experimental parameters — atomic behavioral levers extending the original pattern library.');
   labParameters.forEach(function(p) { labGrid.appendChild(labCard(p)); });
 
   // --- Render Matrix ---
+  // Build tension lookup: key = "i,j" → note string
+  var tensionLookup = {};
+  matrixNotes.forEach(function(note) {
+    // Each note starts with "Label1 + Label2: ..."
+    var parts = note.split(': ');
+    var pair = parts[0];
+    var names = pair.split(' + ');
+    var a = names[0].trim();
+    var b = names[1] ? names[1].trim() : '';
+    // Find indices
+    var ai = matrixLabels.indexOf(a);
+    var bi = matrixLabels.indexOf(b);
+    if (ai !== -1 && bi !== -1) {
+      tensionLookup[ai + ',' + bi] = note;
+      tensionLookup[bi + ',' + ai] = note;
+    }
+  });
+
+  // Synergy intensity: count synergies per row to compute local density
+  var synergyCounts = matrixGrid.map(function(row) {
+    return row.filter(function(v) { return v === 'S'; }).length;
+  });
+  var maxSyn = Math.max.apply(null, synergyCounts);
+
   var matrixSec = el('div','section');
   matrixSec.id = 'matrix';
-  matrixSec.innerHTML = '<h2 class="section-title">📐 Parameter Interaction Matrix</h2><p class="section-desc">Synergy (✅) and tension (⚠️) relationships between the 12 lab parameters.</p>';
+  matrixSec.innerHTML = '<h2 class="section-title">📐 Parameter Interaction Matrix</h2><p class="section-desc">Hover any cell for details. Synergy intensity reflects connection density; tensions surface known tradeoffs.</p>';
   var wrap = el('div','matrix-wrap');
   var thead = '<thead><tr><th></th>' + matrixLabels.map(function(l){return '<th>' + l + '</th>';}).join('') + '</tr></thead>';
   var tbody = '<tbody>' + matrixGrid.map(function(row, i) {
-    return '<tr><td>' + matrixLabels[i] + '</td>' + row.map(function(v) {
+    return '<tr><td>' + matrixLabels[i] + '</td>' + row.map(function(v, j) {
       if (v === '-') return '<td class="self">—</td>';
-      if (v === 'T') return '<td class="tension">⚠️</td>';
-      return '<td class="synergy">✅</td>';
+      if (v === 'T') {
+        var key = i + ',' + j;
+        var tipText = tensionLookup[key] ? tensionLookup[key] : 'Known tension — use with care.';
+        return '<td class="tension">⚠️<span class="matrix-tip">' + tipText + '</span></td>';
+      }
+      // Synergy: 3 intensity levels based on row density
+      var density = synergyCounts[i] / maxSyn;
+      var cls = density > 0.75 ? 'synergy-3' : density > 0.5 ? 'synergy-2' : 'synergy-1';
+      return '<td class="' + cls + '"><span class="matrix-tip">Synergy: ' + matrixLabels[i] + ' × ' + matrixLabels[j] + '</span>✓</td>';
     }).join('') + '</tr>';
   }).join('') + '</tbody>';
   wrap.innerHTML = '<table>' + thead + tbody + '</table>';
@@ -766,19 +952,58 @@ const matrixNotes = [
   main.appendChild(matrixSec);
 
   // --- Sidebar ---
+  // Build count map: sectionId → card count
+  function getSectionCardCount(id) {
+    var sec = document.getElementById(id);
+    if (!sec) return 0;
+    return sec.querySelectorAll('.card').length;
+  }
+
   function addSidebarGroup(label, links) {
     sidebar.appendChild(el('h3', null, label));
     links.forEach(function(l) {
       var a = document.createElement('a');
       a.href = '#' + l.id;
-      a.textContent = l.text;
       a.dataset.target = l.id;
+      var count = getSectionCardCount(l.id);
+      var countBadge = count > 0 ? '<span class="nav-count">' + count + '</span>' : '';
+      a.innerHTML = '<span>' + l.text + '</span>' + countBadge;
       sidebar.appendChild(a);
     });
   }
   addSidebarGroup('Core Patterns', coreCategories.map(function(c){return {id:c.id, text:c.icon+' '+c.title.replace(' Patterns','')};}));
   addSidebarGroup('Combinations', comboSections.map(function(s){return {id:s.id, text:s.icon+' '+s.title.replace(' Combinations','')};}));
   addSidebarGroup('Laboratory', [{id:'lab-parameters',text:'🔬 Parameters'},{id:'matrix',text:'📐 Interaction Matrix'}]);
+
+  // --- Hero Stats ---
+  var totalPatterns = coreCategories.reduce(function(acc,cat){return acc + cat.patterns.length;}, 0);
+  var totalCombos = combinations[0].combos.length + triplesCombos.length + quadsCombos.length + quintsCombos.length + sextupleCombos.length;
+  var totalLab = labParameters.length;
+  var statsEl = document.getElementById('heroStats');
+  if (statsEl) {
+    statsEl.innerHTML = [
+      {num: totalPatterns, label: 'Core Patterns'},
+      {num: totalCombos, label: 'Combinations'},
+      {num: totalLab, label: 'Lab Parameters'}
+    ].map(function(s) {
+      return '<div class="stat-item"><span class="stat-num" id="stat-' + s.label.replace(/\s+/g,'-').toLowerCase() + '">' + s.num + '</span><span class="stat-label">' + s.label + '</span></div>';
+    }).join('');
+    // Animate counters
+    statsEl.querySelectorAll('.stat-num').forEach(function(el) {
+      var target = parseInt(el.textContent, 10);
+      var start = 0;
+      var duration = 900;
+      var startTime = null;
+      function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        var progress = Math.min((timestamp - startTime) / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(start + eased * (target - start));
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  }
 
   // --- Scroll Spy ---
   var sidebarLinks = sidebar.querySelectorAll('a');
