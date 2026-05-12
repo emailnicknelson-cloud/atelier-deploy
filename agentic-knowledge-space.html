@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙️</text></svg>">
   <title>Agentic Self-Direction Patterns | Autonomous AI Execution Loops & Prompts</title>
   <meta name="description" content="Comprehensive library of autonomous AI agent patterns, execution loops (ReAct, OODA, Reflexion), prompt architectures, and sovereign self-direction frameworks.">
   <meta property="og:title" content="Agentic Self-Direction Patterns">
@@ -1465,6 +1466,471 @@
     <!-- MAIN — populated by JS -->
     <div class="main" id="main"></div>
   </div>
+
+
+  <noscript>
+    <div style="padding: 2rem; background: #000; color: #fff;">
+      <h2>Table of Contents</h2>
+      <ul>
+        <li><strong>Goal-Setting Patterns</strong><ul>
+          <li><a href="#pattern-self-goal">Self-Goal</a></li>
+          <li><a href="#pattern-goal-decomposition">Goal Decomposition</a></li>
+          <li><a href="#pattern-backtracking-goal">Backtracking Goal</a></li>
+          <li><a href="#pattern-constraint-discovery">Constraint Discovery</a></li>
+        </ul></li>
+        <li><strong>Execution Loop Patterns</strong><ul>
+          <li><a href="#pattern-react">ReAct</a></li>
+          <li><a href="#pattern-ooda-loop">OODA Loop</a></li>
+          <li><a href="#pattern-plan-and-execute">Plan-and-Execute</a></li>
+          <li><a href="#pattern-reflexion">Reflexion</a></li>
+        </ul></li>
+        <li><strong>Self-Improvement Patterns</strong><ul>
+          <li><a href="#pattern-self-critique">Self-Critique</a></li>
+          <li><a href="#pattern-constitutional-ai">Constitutional AI</a></li>
+          <li><a href="#pattern-meta-cognition">Meta-Cognition</a></li>
+          <li><a href="#pattern-recursive-self-improvement">Recursive Self-Improvement</a></li>
+        </ul></li>
+        <li><strong>Exploration Patterns</strong><ul>
+          <li><a href="#pattern-tree-of-thought-tot-">Tree of Thought (ToT)</a></li>
+          <li><a href="#pattern-beam-search-execution">Beam Search Execution</a></li>
+          <li><a href="#pattern-curiosity-driven">Curiosity-Driven</a></li>
+          <li><a href="#pattern-socratic-self-questioning">Socratic Self-Questioning</a></li>
+        </ul></li>
+        <li><strong>Multi-Agent Coordination</strong><ul>
+          <li><a href="#pattern-orchestrator-worker">Orchestrator/Worker</a></li>
+          <li><a href="#pattern-debate-pattern">Debate Pattern</a></li>
+          <li><a href="#pattern-peer-review">Peer Review</a></li>
+          <li><a href="#pattern-swarm-stigmergy">Swarm/Stigmergy</a></li>
+        </ul></li>
+        <li><strong>Stopping & Validation</strong><ul>
+          <li><a href="#pattern-proof-gated-completion">Proof-Gated Completion</a></li>
+          <li><a href="#pattern-human-in-the-loop-gate">Human-in-the-Loop Gate</a></li>
+          <li><a href="#pattern-confidence-threshold">Confidence Threshold</a></li>
+          <li><a href="#pattern-falsification-test">Falsification Test</a></li>
+        </ul></li>
+        <li><strong>Combinations</strong><ul>
+          <li><em>Double</em><ul>
+            <li><a href="#combo-self-goal-proof-gated-completion">Self-Goal + Proof-Gated Completion</a></li>
+            <li><a href="#combo-react-reflexion">ReAct + Reflexion</a></li>
+            <li><a href="#combo-goal-decomposition-orchestrator-worker">Goal Decomposition + Orchestrator/Worker</a></li>
+            <li><a href="#combo-tree-of-thought-falsification-test">Tree of Thought + Falsification Test</a></li>
+            <li><a href="#combo-constitutional-ai-human-in-the-loop-gate">Constitutional AI + Human-in-the-Loop Gate</a></li>
+            <li><a href="#combo-curiosity-driven-socratic-self-questioning">Curiosity-Driven + Socratic Self-Questioning</a></li>
+            <li><a href="#combo-backtracking-goal-confidence-threshold">Backtracking Goal + Confidence Threshold</a></li>
+          </ul></li>
+          <li><em>Triple</em><ul>
+            <li><a href="#combo-self-goal-reflexion-proof-gated-completion">Self-Goal + Reflexion + Proof-Gated Completion</a></li>
+            <li><a href="#combo-goal-decomposition-tree-of-thought-falsification-test">Goal Decomposition + Tree of Thought + Falsification Test</a></li>
+            <li><a href="#combo-curiosity-driven-constitutional-ai-human-in-the-loop-gate">Curiosity-Driven + Constitutional AI + Human-in-the-Loop Gate</a></li>
+            <li><a href="#combo-react-peer-review-backtracking-goal">ReAct + Peer Review + Backtracking Goal</a></li>
+            <li><a href="#combo-ooda-loop-falsification-test-confidence-threshold">OODA Loop + Falsification Test + Confidence Threshold</a></li>
+            <li><a href="#combo-constraint-discovery-goal-decomposition-swarm-stigmergy">Constraint Discovery + Goal Decomposition + Swarm/Stigmergy</a></li>
+          </ul></li>
+          <li><em>Quadruple</em><ul>
+            <li><a href="#combo-self-goal-goal-decomposition-reflexion-proof-gated">Self-Goal + Goal Decomposition + Reflexion + Proof-Gated</a></li>
+            <li><a href="#combo-constraint-discovery-tot-falsification-peer-review">Constraint Discovery + ToT + Falsification + Peer Review</a></li>
+            <li><a href="#combo-react-ooda-loop-backtracking-goal-confidence-threshold">ReAct + OODA Loop + Backtracking Goal + Confidence Threshold</a></li>
+            <li><a href="#combo-curiosity-driven-socratic-constitutional-ai-proof-gated">Curiosity-Driven + Socratic + Constitutional AI + Proof-Gated</a></li>
+            <li><a href="#combo-orchestrator-worker-debate-falsification-confidence">Orchestrator/Worker + Debate + Falsification + Confidence</a></li>
+            <li><a href="#combo-plan-and-execute-swarm-stigmergy-meta-cognition-hitl-gate">Plan-and-Execute + Swarm/Stigmergy + Meta-Cognition + HitL Gate</a></li>
+          </ul></li>
+          <li><em>Quintuple</em><ul>
+            <li><a href="#combo-self-goal-constraint-discovery-decomposition-reflexion-proof-gated">Self-Goal + Constraint Discovery + Decomposition + Reflexion + Proof-Gated</a></li>
+            <li><a href="#combo-curiosity-driven-socratic-tot-falsification-peer-review">Curiosity-Driven + Socratic + ToT + Falsification + Peer Review</a></li>
+            <li><a href="#combo-react-ooda-reflexion-backtracking-confidence">ReAct + OODA + Reflexion + Backtracking + Confidence</a></li>
+            <li><a href="#combo-orchestrator-debate-constitutional-ai-falsification-proof-gated">Orchestrator + Debate + Constitutional AI + Falsification + Proof-Gated</a></li>
+            <li><a href="#combo-plan-execute-meta-cognition-swarm-hitl-recursive-self-improvement">Plan-Execute + Meta-Cognition + Swarm + HitL + Recursive Self-Improvement</a></li>
+            <li><a href="#combo-constraint-discovery-decomposition-beam-search-confidence-proof-gated">Constraint Discovery + Decomposition + Beam Search + Confidence + Proof-Gated</a></li>
+          </ul></li>
+          <li><em>Sextuple</em><ul>
+            <li><a href="#combo-self-goal-curiosity-driven-tot-beam-search-confidence-proof-gated">Self-Goal + Curiosity-Driven + ToT + Beam Search + Confidence + Proof-Gated</a></li>
+            <li><a href="#combo-self-goal-constraint-decomposition-reflexion-peer-review-proof-gated">Self-Goal + Constraint + Decomposition + Reflexion + Peer Review + Proof-Gated</a></li>
+            <li><a href="#combo-curiosity-socratic-tot-falsification-debate-proof-gated">Curiosity + Socratic + ToT + Falsification + Debate + Proof-Gated</a></li>
+            <li><a href="#combo-react-ooda-reflexion-backtracking-confidence-recursive-self-improvement">ReAct + OODA + Reflexion + Backtracking + Confidence + Recursive Self-Improvement</a></li>
+            <li><a href="#combo-orchestrator-debate-constitutional-ai-falsification-meta-cognition-proof-gated">Orchestrator + Debate + Constitutional AI + Falsification + Meta-Cognition + Proof-Gated</a></li>
+            <li><a href="#combo-plan-execute-constraint-discovery-swarm-meta-cognition-hitl-recursive-self-improvement">Plan-Execute + Constraint Discovery + Swarm + Meta-Cognition + HitL + Recursive Self-Improvement</a></li>
+          </ul></li>
+        </ul></li>
+        <li><strong>Lab Parameters</strong><ul>
+          <li><a href="#lab-entropy-budgeting">Entropy Budgeting</a></li>
+          <li><a href="#lab-temporal-anchoring">Temporal Anchoring</a></li>
+          <li><a href="#lab-inversion-framing">Inversion Framing</a></li>
+          <li><a href="#lab-minimal-footprint">Minimal Footprint</a></li>
+          <li><a href="#lab-stakeholder-simulation">Stakeholder Simulation</a></li>
+          <li><a href="#lab-reversibility-scoring">Reversibility Scoring</a></li>
+          <li><a href="#lab-signal-vs-noise-filtering">Signal vs. Noise Filtering</a></li>
+          <li><a href="#lab-horizon-scanning">Horizon Scanning</a></li>
+          <li><a href="#lab-semantic-compression">Semantic Compression</a></li>
+          <li><a href="#lab-contrastive-anchoring">Contrastive Anchoring</a></li>
+          <li><a href="#lab-resource-constrained-execution">Resource-Constrained Execution</a></li>
+          <li><a href="#lab-causal-tracing">Causal Tracing</a></li>
+        </ul></li>
+      </ul>
+
+      <hr>
+
+      <h3>Goal-Setting Patterns</h3>
+      <p>How the agent defines, structures, and commits to objectives.</p>
+      <article id="pattern-self-goal">
+        <h4>Self-Goal</h4>
+        <p>Agent defines its own goal, success criteria, and pursues until proven complete.</p>
+      </article>
+      <article id="pattern-goal-decomposition">
+        <h4>Goal Decomposition</h4>
+        <p>Agent breaks a large goal into sub-goals recursively and resolves each.</p>
+      </article>
+      <article id="pattern-backtracking-goal">
+        <h4>Backtracking Goal</h4>
+        <p>Agent sets a goal, attempts it, detects failure, revises the goal, and retries.</p>
+      </article>
+      <article id="pattern-constraint-discovery">
+        <h4>Constraint Discovery</h4>
+        <p>Agent explores what is and isn't possible before committing to a goal.</p>
+      </article>
+      <h3>Execution Loop Patterns</h3>
+      <p>Cyclic action-observation frameworks that drive task completion.</p>
+      <article id="pattern-react">
+        <h4>ReAct</h4>
+        <p>Reason → Act → Observe, repeated until task complete.</p>
+      </article>
+      <article id="pattern-ooda-loop">
+        <h4>OODA Loop</h4>
+        <p>Observe → Orient → Decide → Act (military-origin, good for adversarial tasks).</p>
+      </article>
+      <article id="pattern-plan-and-execute">
+        <h4>Plan-and-Execute</h4>
+        <p>Generate full plan first, then step through it with state tracking.</p>
+      </article>
+      <article id="pattern-reflexion">
+        <h4>Reflexion</h4>
+        <p>Act → get feedback → self-critique in natural language → retry with memory of mistakes.</p>
+      </article>
+      <h3>Self-Improvement Patterns</h3>
+      <p>Mechanisms for the agent to evaluate and upgrade its own performance.</p>
+      <article id="pattern-self-critique">
+        <h4>Self-Critique</h4>
+        <p>Agent evaluates its own output against the original goal before delivering.</p>
+      </article>
+      <article id="pattern-constitutional-ai">
+        <h4>Constitutional AI</h4>
+        <p>Agent checks its output against a set of rules/principles it carries.</p>
+      </article>
+      <article id="pattern-meta-cognition">
+        <h4>Meta-Cognition</h4>
+        <p>Agent monitors how it's thinking and adjusts strategy mid-task.</p>
+      </article>
+      <article id="pattern-recursive-self-improvement">
+        <h4>Recursive Self-Improvement</h4>
+        <p>Agent modifies its own prompt/instructions to perform better next iteration.</p>
+      </article>
+      <h3>Exploration Patterns</h3>
+      <p>Strategies for navigating solution spaces and filling knowledge gaps.</p>
+      <article id="pattern-tree-of-thought-tot-">
+        <h4>Tree of Thought (ToT)</h4>
+        <p>Agent branches multiple reasoning paths simultaneously, evaluates, prunes.</p>
+      </article>
+      <article id="pattern-beam-search-execution">
+        <h4>Beam Search Execution</h4>
+        <p>Keep top-N candidate action sequences, not just one.</p>
+      </article>
+      <article id="pattern-curiosity-driven">
+        <h4>Curiosity-Driven</h4>
+        <p>Agent generates and answers its own questions to fill knowledge gaps before acting.</p>
+      </article>
+      <article id="pattern-socratic-self-questioning">
+        <h4>Socratic Self-Questioning</h4>
+        <p>Agent challenges its own assumptions with adversarial questions.</p>
+      </article>
+      <h3>Multi-Agent Coordination</h3>
+      <p>Patterns for distributing work across multiple agent roles.</p>
+      <article id="pattern-orchestrator-worker">
+        <h4>Orchestrator/Worker</h4>
+        <p>One agent delegates to specialized sub-agents.</p>
+      </article>
+      <article id="pattern-debate-pattern">
+        <h4>Debate Pattern</h4>
+        <p>Two agents argue opposing sides; a judge agent decides.</p>
+      </article>
+      <article id="pattern-peer-review">
+        <h4>Peer Review</h4>
+        <p>Agent A produces output, Agent B critiques, A revises.</p>
+      </article>
+      <article id="pattern-swarm-stigmergy">
+        <h4>Swarm/Stigmergy</h4>
+        <p>Many simple agents leaving 'traces' that guide collective behavior.</p>
+      </article>
+      <h3>Stopping & Validation</h3>
+      <p>Exit conditions and verification mechanisms for reliable completion.</p>
+      <article id="pattern-proof-gated-completion">
+        <h4>Proof-Gated Completion</h4>
+        <p>Task isn't done until agent can demonstrate/prove the outcome.</p>
+      </article>
+      <article id="pattern-human-in-the-loop-gate">
+        <h4>Human-in-the-Loop Gate</h4>
+        <p>Agent pauses at high-stakes decision points for approval.</p>
+      </article>
+      <article id="pattern-confidence-threshold">
+        <h4>Confidence Threshold</h4>
+        <p>Agent only acts when internal confidence exceeds a threshold.</p>
+      </article>
+      <article id="pattern-falsification-test">
+        <h4>Falsification Test</h4>
+        <p>Agent tries to disprove its own result before declaring success.</p>
+      </article>
+      <h3>Double Combinations</h3>
+      <article id="combo-self-goal-proof-gated-completion">
+        <h4>Self-Goal + Proof-Gated Completion</h4>
+        <p><strong>Patterns used:</strong> Self-Goal, Proof-Gated Completion</p>
+        <p><strong>Prompt:</strong> Set your own goal for: [thing]. Make it outcome-based, include the validation/proof needed, then pursue it until complete.</p>
+        <p><strong>Rationale:</strong> The agent owns the full task lifecycle — it defines what success looks like, establishes how to prove it, and self-terminates only when the proof is satisfied.</p>
+      </article>
+      <article id="combo-react-reflexion">
+        <h4>ReAct + Reflexion</h4>
+        <p><strong>Patterns used:</strong> ReAct, Reflexion</p>
+        <p><strong>Prompt:</strong> Attempt [task]. After each action, observe the result and critique your own reasoning in one sentence. If the critique reveals a flaw, correct your approach and retry. Stop only when your critique finds nothing to improve.</p>
+        <p><strong>Rationale:</strong> ReAct keeps the agent grounded in real observations. Reflexion adds a self-correction layer so failure builds memory rather than being silently repeated.</p>
+      </article>
+      <article id="combo-goal-decomposition-orchestrator-worker">
+        <h4>Goal Decomposition + Orchestrator/Worker</h4>
+        <p><strong>Patterns used:</strong> Goal Decomposition, Orchestrator/Worker</p>
+        <p><strong>Prompt:</strong> Break [complex task] into the smallest independent sub-tasks possible. For each sub-task, define the worker responsible, the exact input it receives, and the exact output it must return. Execute all sub-tasks in dependency order and assemble the final result.</p>
+        <p><strong>Rationale:</strong> Decomposition prevents any single agent from holding too much context. The orchestrator only manages routing and assembly — workers stay focused.</p>
+      </article>
+      <article id="combo-tree-of-thought-falsification-test">
+        <h4>Tree of Thought + Falsification Test</h4>
+        <p><strong>Patterns used:</strong> Tree of Thought, Falsification Test</p>
+        <p><strong>Prompt:</strong> For [problem], generate three distinct solution approaches. For each approach, actively try to find a case where it would fail or produce a wrong answer. Eliminate any approach that fails its own falsification test. Present only the approach that survived.</p>
+        <p><strong>Rationale:</strong> ToT prevents premature commitment. The falsification test forces the agent to steel-man against itself rather than just picking the most confident-sounding branch.</p>
+      </article>
+      <article id="combo-constitutional-ai-human-in-the-loop-gate">
+        <h4>Constitutional AI + Human-in-the-Loop Gate</h4>
+        <p><strong>Patterns used:</strong> Constitutional AI, Human-in-the-Loop Gate</p>
+        <p><strong>Prompt:</strong> Complete [task] following these constraints: [rule 1], [rule 2], [rule 3]. Before finalizing any output that affects [high-stakes domain], pause and summarize what you are about to do, why it complies with each rule, and what the irreversible consequences are. Wait for approval.</p>
+        <p><strong>Rationale:</strong> The constitution keeps the agent aligned during routine operation. The gate activates only for consequential decisions, preserving human oversight where it matters most.</p>
+      </article>
+      <article id="combo-curiosity-driven-socratic-self-questioning">
+        <h4>Curiosity-Driven + Socratic Self-Questioning</h4>
+        <p><strong>Patterns used:</strong> Curiosity-Driven, Socratic Self-Questioning</p>
+        <p><strong>Prompt:</strong> Before working on [topic], list every assumption you are making. For each, ask: 'What if this is wrong?' Generate the strongest counter-evidence. Only begin once you have stated which assumptions survived and which were revised.</p>
+        <p><strong>Rationale:</strong> The agent surfaces hidden priors before they contaminate the output. Socratic questioning prevents motivated reasoning.</p>
+      </article>
+      <article id="combo-backtracking-goal-confidence-threshold">
+        <h4>Backtracking Goal + Confidence Threshold</h4>
+        <p><strong>Patterns used:</strong> Backtracking Goal, Confidence Threshold</p>
+        <p><strong>Prompt:</strong> Attempt [task] and rate confidence 0–100. If below 80, identify the weakest part, revise only that, and re-rate. Repeat until 80 or five revisions. Report final confidence alongside the answer.</p>
+        <p><strong>Rationale:</strong> The threshold prevents both under-refinement and over-refinement. Targeting only the weakest component each pass is efficient.</p>
+      </article>
+      <h3>Triple Combinations</h3>
+      <article id="combo-self-goal-reflexion-proof-gated-completion">
+        <h4>Self-Goal + Reflexion + Proof-Gated Completion</h4>
+        <p><strong>Patterns used:</strong> Self-Goal, Reflexion, Proof-Gated Completion</p>
+        <p><strong>Prompt:</strong> Set your own goal for: [thing]. Make it specific and measurable. After every attempt, write a one-sentence critique of your own output. Use that critique to revise your approach. Continue until you can provide concrete evidence that the goal has been fully achieved.</p>
+        <p><strong>Rationale:</strong> Self-Goal gives ownership. Reflexion prevents stagnation by turning each failure into a lesson. Proof-Gated Completion closes the loop — the agent cannot exit until it produces real evidence.</p>
+      </article>
+      <article id="combo-goal-decomposition-tree-of-thought-falsification-test">
+        <h4>Goal Decomposition + Tree of Thought + Falsification Test</h4>
+        <p><strong>Patterns used:</strong> Goal Decomposition, Tree of Thought, Falsification Test</p>
+        <p><strong>Prompt:</strong> Break [complex problem] into its core independent sub-problems. For each sub-problem, generate two or three distinct solution approaches. For every approach, attempt to construct a counterexample or failure case. Discard approaches that fail. Execute only the surviving approaches in dependency order.</p>
+        <p><strong>Rationale:</strong> Decomposition scopes each decision. Tree of Thought ensures no sub-problem is solved with the first idea. Falsification kills weak branches before they poison downstream work.</p>
+      </article>
+      <article id="combo-curiosity-driven-constitutional-ai-human-in-the-loop-gate">
+        <h4>Curiosity-Driven + Constitutional AI + Human-in-the-Loop Gate</h4>
+        <p><strong>Patterns used:</strong> Curiosity-Driven, Constitutional AI, Human-in-the-Loop Gate</p>
+        <p><strong>Prompt:</strong> Before starting [task], surface every assumption and information gap. Fill gaps with targeted research. Complete the task under constraints: [rule 1], [rule 2], [rule 3]. At any irreversible decision point, stop — summarize the decision, the constraint it implicates, and the consequence of being wrong. Wait for approval.</p>
+        <p><strong>Rationale:</strong> Curiosity-Driven front-loading eliminates acting on false assumptions. The constitution governs behavior throughout. The gate reserves human attention for the moments where it actually matters.</p>
+      </article>
+      <article id="combo-react-peer-review-backtracking-goal">
+        <h4>ReAct + Peer Review + Backtracking Goal</h4>
+        <p><strong>Patterns used:</strong> ReAct, Peer Review, Backtracking Goal</p>
+        <p><strong>Prompt:</strong> Implement [specific output]. After completing it, adopt the perspective of a senior expert who did not write it. Identify the single most likely defect. If found, roll back only the affected part, fix it, and re-review. Repeat until a full expert review finds nothing to flag.</p>
+        <p><strong>Rationale:</strong> ReAct grounds each iteration in a concrete artifact. Peer Review forces a deliberate context switch. Backtracking Goal ensures only the defective component is re-done.</p>
+      </article>
+      <article id="combo-ooda-loop-falsification-test-confidence-threshold">
+        <h4>OODA Loop + Falsification Test + Confidence Threshold</h4>
+        <p><strong>Patterns used:</strong> OODA Loop, Falsification Test, Confidence Threshold</p>
+        <p><strong>Prompt:</strong> Operating in [adversarial context]: Observe the current state and orient by identifying the most dangerous assumption. Attempt to disprove it. If it survives, rate situational confidence 0–100. If below 75, run the loop again targeting the next most dangerous assumption. Act only when confidence reaches 75 or four loops complete.</p>
+        <p><strong>Rationale:</strong> OODA forces continuous re-orientation. Falsification targets the highest-risk assumption each loop. The Confidence Threshold creates a rational exit condition.</p>
+      </article>
+      <article id="combo-constraint-discovery-goal-decomposition-swarm-stigmergy">
+        <h4>Constraint Discovery + Goal Decomposition + Swarm/Stigmergy</h4>
+        <p><strong>Patterns used:</strong> Constraint Discovery, Goal Decomposition, Swarm/Stigmergy</p>
+        <p><strong>Prompt:</strong> Before planning [task], probe boundaries: identify three things you definitely cannot do, three you definitely can, and three uncertain. Decompose into independent work units — none depending on uncertain constraints. Prioritize by how much each unblocks others. Execute highest-priority first; treat each completion as a signal that updates the constraint map.</p>
+        <p><strong>Rationale:</strong> Constraint Discovery prevents decomposing around impossibilities. Decomposition into constraint-safe units prevents cascading failures. The Swarm/Stigmergy dynamic emerges from treating completed units as environmental signals.</p>
+      </article>
+      <h3>Quadruple Combinations</h3>
+      <article id="combo-self-goal-goal-decomposition-reflexion-proof-gated">
+        <h4>Self-Goal + Goal Decomposition + Reflexion + Proof-Gated</h4>
+        <p><strong>Patterns used:</strong> Self-Goal, Goal Decomposition, Reflexion, Proof-Gated Completion</p>
+        <p><strong>Prompt:</strong> Define your own specific, measurable goal for: [thing]. Decompose it into the smallest independent sub-goals. Attempt each in dependency order. After each attempt, write a one-sentence critique. If flawed, revise only that sub-goal and retry. Once all complete, construct concrete evidence proving the top-level goal was achieved. Do not stop until that evidence exists.</p>
+        <p><strong>Rationale:</strong> Self-Goal gives ownership. Decomposition prevents contamination. Reflexion turns failures into targeted corrections. Proof-Gated Completion ensures real evidence, not rationalized completion.</p>
+      </article>
+      <article id="combo-constraint-discovery-tot-falsification-peer-review">
+        <h4>Constraint Discovery + ToT + Falsification + Peer Review</h4>
+        <p><strong>Patterns used:</strong> Constraint Discovery, Tree of Thought, Falsification Test, Peer Review</p>
+        <p><strong>Prompt:</strong> Before planning [task], map constraints: possible, impossible, uncertain. Generate three distinct approaches using only possible/uncertain space. For each, construct the strongest counterexample. Eliminate failures. For survivors, adopt a domain expert perspective — identify remaining blind spots. Revise based on that review.</p>
+        <p><strong>Rationale:</strong> Constraint mapping prevents false-assumption plans. ToT explores genuinely. Falsification eliminates weak branches. Peer Review catches survivorship bias.</p>
+      </article>
+      <article id="combo-react-ooda-loop-backtracking-goal-confidence-threshold">
+        <h4>ReAct + OODA Loop + Backtracking Goal + Confidence Threshold</h4>
+        <p><strong>Patterns used:</strong> ReAct, OODA Loop, Backtracking Goal, Confidence Threshold</p>
+        <p><strong>Prompt:</strong> Execute [task]: Observe state → Orient to highest-risk gap → Decide next atomic action → Act → Rate confidence 0–100. If below 70, identify the decision that caused the drop, roll it back, choose differently. Continue until confidence reaches 90 or 10 actions taken. Report final confidence, action log, and rollbacks.</p>
+        <p><strong>Rationale:</strong> ReAct anchors to observable reality. OODA forces continuous re-orientation. Backtracking makes corrections surgical. The Confidence Threshold provides a rational, numeric exit condition.</p>
+      </article>
+      <article id="combo-curiosity-driven-socratic-constitutional-ai-proof-gated">
+        <h4>Curiosity-Driven + Socratic + Constitutional AI + Proof-Gated</h4>
+        <p><strong>Patterns used:</strong> Curiosity-Driven, Socratic Self-Questioning, Constitutional AI, Proof-Gated Completion</p>
+        <p><strong>Prompt:</strong> Before tackling [task], generate every question whose answer would meaningfully change your approach. Rank by impact. Answer the top five. For each remaining assumption, challenge it: 'What is the strongest reason this is wrong?' Complete the task under constraints [rule 1-3]. At completion, produce a verification artifact showing output satisfies task and violates no constraints.</p>
+        <p><strong>Rationale:</strong> Curiosity-Driven questioning surfaces decision-changing information. Socratic questioning prevents motivated reasoning. Constitutional AI keeps alignment. Proof-Gated means demonstrable artifact, not plausible answer.</p>
+      </article>
+      <article id="combo-orchestrator-worker-debate-falsification-confidence">
+        <h4>Orchestrator/Worker + Debate + Falsification + Confidence</h4>
+        <p><strong>Patterns used:</strong> Orchestrator/Worker, Debate Pattern, Falsification Test, Confidence Threshold</p>
+        <p><strong>Prompt:</strong> Decompose [complex decision] into sub-questions. For each, spawn two opposing workers arguing options A and B. Each must also attempt to falsify its own position. A judge evaluates both positions and self-falsifications, selects the stronger one, and rates confidence 0–100. If below 80, generate a synthesizing third position and re-evaluate.</p>
+        <p><strong>Rationale:</strong> Orchestration scopes each debate. The Debate Pattern forces genuine opposing views. Falsification eliminates arguments that can't survive self-scrutiny. Confidence Threshold governs when synthesis is needed.</p>
+      </article>
+      <article id="combo-plan-and-execute-swarm-stigmergy-meta-cognition-hitl-gate">
+        <h4>Plan-and-Execute + Swarm/Stigmergy + Meta-Cognition + HitL Gate</h4>
+        <p><strong>Patterns used:</strong> Plan-and-Execute, Swarm/Stigmergy, Meta-Cognition, Human-in-the-Loop Gate</p>
+        <p><strong>Prompt:</strong> Generate a complete execution plan for [task]: every step, dependencies, expected output. Audit your planning — flag assumptions about difficulty/feasibility without evidence as high-uncertainty. Execute step by step. Treat each completed step as a signal updating uncertainty flags. At high-uncertainty steps, pause with a summary and wait for approval. Output result, updated plan, and uncertainty audit.</p>
+        <p><strong>Rationale:</strong> Plan-and-Execute provides structure. Swarm/Stigmergy means completed steps reshape remaining plan. Meta-Cognition surfaces unreliable planning. The Human-in-the-Loop Gate fires only at uncertainty peaks.</p>
+      </article>
+      <h3>Quintuple Combinations</h3>
+      <article id="combo-self-goal-constraint-discovery-decomposition-reflexion-proof-gated">
+        <h4>Self-Goal + Constraint Discovery + Decomposition + Reflexion + Proof-Gated</h4>
+        <p><strong>Patterns used:</strong> Self-Goal, Constraint Discovery, Goal Decomposition, Reflexion, Proof-Gated Completion</p>
+        <p><strong>Prompt:</strong> Define your own goal for: [thing]. Before planning, probe boundaries: three things you can do, three you cannot, three uncertain. Plan only from possible/uncertain space. Decompose into smallest independent sub-goals — none depending on unresolved uncertainty. Attempt each in order. After each, write a one-sentence critique. If flawed, revise only that sub-goal. When all complete, produce one concrete artifact proving the top-level goal was achieved.</p>
+        <p><strong>Rationale:</strong> Own the goal → map what's possible → divide into safe units → correct without restart → prove it happened.</p>
+      </article>
+      <article id="combo-curiosity-driven-socratic-tot-falsification-peer-review">
+        <h4>Curiosity-Driven + Socratic + ToT + Falsification + Peer Review</h4>
+        <p><strong>Patterns used:</strong> Curiosity-Driven, Socratic Self-Questioning, Tree of Thought, Falsification Test, Peer Review</p>
+        <p><strong>Prompt:</strong> Before [task], generate ten questions whose answers would most change your strategy. Answer each. For unanswerable ones, declare known unknowns. Challenge every remaining assumption. Generate three distinct approaches. For each, construct its most devastating counterexample. Eliminate failures. For survivors, adopt a senior expert role — identify the critical gap. Revise. Execute the strongest surviving approach.</p>
+        <p><strong>Rationale:</strong> The front-loaded audit prevents acting on a misunderstood problem. Socratic questioning strips motivated reasoning. ToT ensures genuine exploration. Falsification kills weak branches. Peer Review catches survivorship bias.</p>
+      </article>
+      <article id="combo-react-ooda-reflexion-backtracking-confidence">
+        <h4>ReAct + OODA + Reflexion + Backtracking + Confidence</h4>
+        <p><strong>Patterns used:</strong> ReAct, OODA Loop, Reflexion, Backtracking Goal, Confidence Threshold</p>
+        <p><strong>Prompt:</strong> Execute [task] in a tight loop. Each cycle: Observe → Orient to highest-risk gap → Decide next atomic action → Act → Observe result → Write one-sentence critique. If critique reveals a flaw, roll back only that action and substitute. Rate trajectory confidence 0–100. If below 65, re-orient from scratch ignoring prior plan. Continue until confidence reaches 90 or 12 cycles. Report: confidence, cycle log, critiques, rollbacks.</p>
+        <p><strong>Rationale:</strong> ReAct grounds every cycle. OODA forces re-orientation. Reflexion converts observations into explicit lessons. Backtracking limits corrections to the failing action. Confidence Threshold introduces clean completion and emergency re-orientation modes.</p>
+      </article>
+      <article id="combo-orchestrator-debate-constitutional-ai-falsification-proof-gated">
+        <h4>Orchestrator + Debate + Constitutional AI + Falsification + Proof-Gated</h4>
+        <p><strong>Patterns used:</strong> Orchestrator/Worker, Debate Pattern, Constitutional AI, Falsification Test, Proof-Gated Completion</p>
+        <p><strong>Prompt:</strong> Decompose [decision or design] into independent sub-decisions. For each, instantiate Advocate A and Advocate B. Each argues their strongest case and must also attempt to falsify it. Both must comply with [rule 1-3] — violations are disqualified. A judge evaluates compliant positions and selects winners. Assemble the full design. Produce a verification artifact before delivery.</p>
+        <p><strong>Rationale:</strong> Orchestration scopes debate. Debate forces adversarial reasoning. Constitutional AI disqualifies non-compliant positions. Falsification eliminates weak arguments. Proof-Gated ensures demonstrably correct output.</p>
+      </article>
+      <article id="combo-plan-execute-meta-cognition-swarm-hitl-recursive-self-improvement">
+        <h4>Plan-Execute + Meta-Cognition + Swarm + HitL + Recursive Self-Improvement</h4>
+        <p><strong>Patterns used:</strong> Plan-and-Execute, Meta-Cognition, Swarm/Stigmergy, Human-in-the-Loop Gate, Recursive Self-Improvement</p>
+        <p><strong>Prompt:</strong> Generate a complete plan for [task]: every step, dependencies, expected output, confidence estimate (0–100). Audit your planning — identify three lowest-confidence steps and explain why. Flag as high-uncertainty checkpoints. Execute in order. After each step, update confidence for all remaining steps. At checkpoints, pause and report changes since planning. Wait for approval. After completion, rewrite the plan as it should have been. Output both plans side by side.</p>
+        <p><strong>Rationale:</strong> Plan-and-Execute creates structure. Meta-Cognition surfaces uncertainty before it becomes failure. Swarm/Stigmergy makes each step a signal that reshapes estimates. Human-in-the-Loop Gate fires at uncertainty peaks. Recursive Self-Improvement makes the rewritten plan the agent's own training artifact.</p>
+      </article>
+      <article id="combo-constraint-discovery-decomposition-beam-search-confidence-proof-gated">
+        <h4>Constraint Discovery + Decomposition + Beam Search + Confidence + Proof-Gated</h4>
+        <p><strong>Patterns used:</strong> Constraint Discovery, Goal Decomposition, Beam Search Execution, Confidence Threshold, Proof-Gated Completion</p>
+        <p><strong>Prompt:</strong> Before planning [task], map constraint space: achievable, not, uncertain. Decompose into independent sub-goals avoiding uncertain constraints. For each, generate three candidate paths scored on feasibility, reversibility, and evidence quality. Execute only the top-scoring path. After each sub-goal, rate confidence 0–100. If below 72, promote the second-ranked path. When all complete, produce a verification artifact. Do not deliver without it.</p>
+        <p><strong>Rationale:</strong> Constraint Discovery prevents impossible foundations. Decomposition isolates failures. Beam Search maintains ranked fallback paths. Confidence Threshold governs path switching. Proof-Gated closes the system.</p>
+      </article>
+      <h3>Sextuple Combinations</h3>
+      <article id="combo-self-goal-curiosity-driven-tot-beam-search-confidence-proof-gated">
+        <h4>Self-Goal + Curiosity-Driven + ToT + Beam Search + Confidence + Proof-Gated</h4>
+        <p><strong>Patterns used:</strong> Self-Goal, Curiosity-Driven, Tree of Thought, Beam Search Execution, Confidence Threshold, Proof-Gated Completion</p>
+        <p><strong>Prompt:</strong> Define your own specific goal for: [thing]. Before generating any approach, produce seven questions whose answers would most change how you pursue this goal. Answer each. Generate three distinct approaches respecting known unknowns. For each, generate three execution paths scored on feasibility, reversibility, evidence quality. Execute the top path. If confidence drops below 68, promote second-ranked. If below 50, switch approaches entirely. Produce a verification artifact upon completion.</p>
+        <p><strong>Rationale:</strong> Self-Goal gives ownership. Curiosity-Driven front-loads information. ToT explores approach space. Beam Search maintains ranked fallbacks at two levels. Confidence governs switching. Proof-Gated closes every exit. Failure produces a failure analysis, making failed runs as valuable as successful ones.</p>
+      </article>
+      <article id="combo-self-goal-constraint-decomposition-reflexion-peer-review-proof-gated">
+        <h4>Self-Goal + Constraint + Decomposition + Reflexion + Peer Review + Proof-Gated</h4>
+        <p><strong>Patterns used:</strong> Self-Goal, Constraint Discovery, Goal Decomposition, Reflexion, Peer Review, Proof-Gated Completion</p>
+        <p><strong>Prompt:</strong> Define your own specific goal for: [thing]. Probe constraint space: three can-do, three cannot, three uncertain. Plan from possible/uncertain only. Decompose into smallest independent sub-goals. Execute in dependency order. After each, write a one-sentence critique. If flawed, revise only that sub-goal. Once all complete, switch to expert-review mode: identify the single most critical unresolved gap. Revise it. Produce one verification artifact. Do not deliver without it.</p>
+        <p><strong>Rationale:</strong> Own → bound → divide → self-correct → externally critique → prove. Nothing ships that hasn't passed all six gates.</p>
+      </article>
+      <article id="combo-curiosity-socratic-tot-falsification-debate-proof-gated">
+        <h4>Curiosity + Socratic + ToT + Falsification + Debate + Proof-Gated</h4>
+        <p><strong>Patterns used:</strong> Curiosity-Driven, Socratic Self-Questioning, Tree of Thought, Falsification Test, Debate Pattern, Proof-Gated Completion</p>
+        <p><strong>Prompt:</strong> Before [task], generate ten questions whose answers would most change your strategy. Answer each. Declare unanswerable ones as known unknowns. Challenge every remaining assumption. Generate three approaches. For each, instantiate a Challenger to construct its most devastating counterexample. Eliminate failures. For survivors, run a structured debate: Advocate vs. Critic, both must self-falsify. A Judge selects the winner. Execute. Produce a verification artifact.</p>
+        <p><strong>Rationale:</strong> The stack is designed to be impossible to shortcut — every layer blocks a specific class of premature convergence.</p>
+      </article>
+      <article id="combo-react-ooda-reflexion-backtracking-confidence-recursive-self-improvement">
+        <h4>ReAct + OODA + Reflexion + Backtracking + Confidence + Recursive Self-Improvement</h4>
+        <p><strong>Patterns used:</strong> ReAct, OODA Loop, Reflexion, Backtracking Goal, Confidence Threshold, Recursive Self-Improvement</p>
+        <p><strong>Prompt:</strong> Execute [task] in a tight loop. Each cycle: Observe → Orient to highest-risk gap → Decide next action → Act → Observe result → One-sentence critique. If flaw found, roll back only that action and substitute. Rate confidence 0–100. If below 65, re-orient from scratch. If above 90, task complete. Cap at 15 cycles. At completion, rewrite the execution loop instructions as they should have been written. Identify the two assumptions that caused the most rework.</p>
+        <p><strong>Rationale:</strong> This stack does not just execute tasks. It gets better at executing tasks.</p>
+      </article>
+      <article id="combo-orchestrator-debate-constitutional-ai-falsification-meta-cognition-proof-gated">
+        <h4>Orchestrator + Debate + Constitutional AI + Falsification + Meta-Cognition + Proof-Gated</h4>
+        <p><strong>Patterns used:</strong> Orchestrator/Worker, Debate Pattern, Constitutional AI, Falsification Test, Meta-Cognition, Proof-Gated Completion</p>
+        <p><strong>Prompt:</strong> Decompose [complex system] into independent sub-decisions. Before assigning workers, audit your decomposition — identify two sub-decisions where your framing is most likely wrong. For each sub-decision, instantiate Advocate A and B. Both must self-falsify. All positions must comply with [rules] — violations disqualified. Judge evaluates, weighted by self-falsification quality. Assemble output. Produce verification artifact.</p>
+        <p><strong>Rationale:</strong> No part of this stack can be skipped without creating a visible, traceable gap in the output.</p>
+      </article>
+      <article id="combo-plan-execute-constraint-discovery-swarm-meta-cognition-hitl-recursive-self-improvement">
+        <h4>Plan-Execute + Constraint Discovery + Swarm + Meta-Cognition + HitL + Recursive Self-Improvement</h4>
+        <p><strong>Patterns used:</strong> Plan-and-Execute, Constraint Discovery, Swarm/Stigmergy, Meta-Cognition, Human-in-the-Loop Gate, Recursive Self-Improvement</p>
+        <p><strong>Prompt:</strong> Before planning [task], map constraints: achievable, not, uncertain. Generate a complete plan: every step, dependencies, output, constraint dependencies, confidence estimates. Audit your plan — identify three lowest-confidence steps and explain why. Execute in order. After each step, update all remaining confidence estimates. At high-uncertainty checkpoints, pause and wait for approval. After completion, rewrite the plan as it should have been. Identify the root-cause constraint assumption.</p>
+        <p><strong>Rationale:</strong> Every run makes the next one structurally smarter.</p>
+      </article>
+      <h3>Lab Parameters</h3>
+      <article id="lab-entropy-budgeting">
+        <h4>Entropy Budgeting</h4>
+        <p>Agent is given a fixed exploration budget — max branches, questions, or iterations. Must allocate deliberately, spending more on high-uncertainty decisions.</p>
+        <p><strong>Prompt:</strong> You have a budget of [N] total exploration moves across this entire task — branches, questions, alternatives, or retries all draw from the same pool. Allocate them deliberately. Spend more where uncertainty is highest. Track your remaining budget at each step. When exhausted, commit to your best current answer.</p>
+      </article>
+      <article id="lab-temporal-anchoring">
+        <h4>Temporal Anchoring</h4>
+        <p>Agent tracks when each piece of information was acquired and applies confidence decay to older evidence. Recency is treated as a signal quality modifier.</p>
+        <p><strong>Prompt:</strong> Before acting on any information, note when you acquired it relative to your current position. Apply a staleness penalty: information from more than [N] steps ago is provisional until reconfirmed. If deciding based on stale information, reconfirm first or flag as unverified prior.</p>
+      </article>
+      <article id="lab-inversion-framing">
+        <h4>Inversion Framing</h4>
+        <p>Before solving the primary problem, agent fully solves the inverse — what would make this fail? The primary solution is built by explicitly avoiding each identified failure mode.</p>
+        <p><strong>Prompt:</strong> Before solving [task], fully solve its inverse: construct the most complete answer to 'what would most reliably produce the worst outcome here?' List every failure mode. Then build your actual solution by explicitly addressing or inverting each failure mode.</p>
+      </article>
+      <article id="lab-minimal-footprint">
+        <h4>Minimal Footprint</h4>
+        <p>Agent is constrained to affect only the minimum necessary. Must justify any action beyond the narrowest interpretation and actively prune unrequired side-effects.</p>
+        <p><strong>Prompt:</strong> Complete [task] with the minimum possible footprint. Before each action, ask: 'Is this the narrowest intervention that achieves the required outcome?' At completion, list every action and confirm each was necessary.</p>
+      </article>
+      <article id="lab-stakeholder-simulation">
+        <h4>Stakeholder Simulation</h4>
+        <p>Before finalizing output, agent simulates the experience of distinct affected parties — end user, skeptic, edge-case user — and revises accordingly.</p>
+        <p><strong>Prompt:</strong> Before delivering output for [task], simulate three stakeholders: (1) primary intended user, (2) a skeptic looking for flaws, (3) an edge-case user. For each, identify: what's useful, what would confuse/fail them, what need goes unmet. Revise to address the most significant gaps.</p>
+      </article>
+      <article id="lab-reversibility-scoring">
+        <h4>Reversibility Scoring</h4>
+        <p>Before each action, agent scores reversibility (0–10). Actions below threshold require explicit justification. Agent actively prefers reversible paths.</p>
+        <p><strong>Prompt:</strong> Before each action in [task], score reversibility 0–10 (0 = permanent, 10 = fully undoable). If below [threshold]: (a) identify a more reversible alternative and explain why it's inferior, or (b) justify why the irreversible action is necessary. Default to most reversible option when outcomes are comparable.</p>
+      </article>
+      <article id="lab-signal-vs-noise-filtering">
+        <h4>Signal vs. Noise Filtering</h4>
+        <p>Agent explicitly separates input into signal (causally relevant) and noise (present but not causal). Only signal informs decisions.</p>
+        <p><strong>Prompt:</strong> Before any decision in [task], classify all information into: SIGNAL (causally connected — if this changes, outcome changes) and NOISE (present but not causally relevant). Decide based only on signal. For each signal item, state the causal mechanism connecting it to the outcome.</p>
+      </article>
+      <article id="lab-horizon-scanning">
+        <h4>Horizon Scanning</h4>
+        <p>Before committing to any action, agent maps second and third-order consequences. Actions with dangerous second-order effects are deprioritized even if first-order effects are desirable.</p>
+        <p><strong>Prompt:</strong> Before any significant action in [task], map its consequence chain: (1st order) direct result, (2nd order) what that causes, (3rd order) what the 2nd-order effect causes. Flag any chain with an undesirable outcome at any level. Redesign the action to sever dangerous consequence chains.</p>
+      </article>
+      <article id="lab-semantic-compression">
+        <h4>Semantic Compression</h4>
+        <p>At each major decision point, agent compresses entire current understanding into fewest possible words that preserve all decision-relevant information.</p>
+        <p><strong>Prompt:</strong> At each major decision point in [task], compress your current understanding into a single statement of no more than 30 words that captures everything decision-relevant. Use this compressed statement — not the full context — as the basis for your next decision. Log each compression.</p>
+      </article>
+      <article id="lab-contrastive-anchoring">
+        <h4>Contrastive Anchoring</h4>
+        <p>Agent defines success by contrast — identifies the closest possible failure state and specifies the minimum distinguishing feature separating them.</p>
+        <p><strong>Prompt:</strong> Before delivering output for [task], identify the closest failure state — output most similar to yours but still wrong. Specify the single minimum distinguishing feature. Verify that feature is clearly present in your actual output. Do not deliver if you cannot name or confirm it.</p>
+      </article>
+      <article id="lab-resource-constrained-execution">
+        <h4>Resource-Constrained Execution</h4>
+        <p>Agent operates under explicit resource limits (steps, tool calls, time) and must make deliberate tradeoffs as it approaches those limits.</p>
+        <p><strong>Prompt:</strong> You have a limit of [N] steps to complete [task]. Before starting, allocate your budget: which parts consume the most steps, which are highest priority? Track consumption. At 75%, assess if on track. At 90%, commit to current best answer and use remaining budget only for highest-value finishing actions.</p>
+      </article>
+      <article id="lab-causal-tracing">
+        <h4>Causal Tracing</h4>
+        <p>For each decision, agent explicitly predicts the causal chain before acting. At completion, compares predicted chains to actual ones. Gaps are the primary learning output.</p>
+        <p><strong>Prompt:</strong> Before each major decision in [task], write a one-line prediction: 'If I do [action], then [result] because [mechanism], which leads to [downstream effect].' After the action, observe the actual result. At completion, compare every predicted chain to what happened. Identify divergences and state the correct causal mechanism.</p>
+      </article>
+    </div>
+  </noscript>
 
   <!-- DATA + LOGIC -->
   <script>
