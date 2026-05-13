@@ -3098,6 +3098,562 @@
     })();
   </script>
 
+
+<!-- ============================================================
+     AGENTIC LOOPS WALKTHROUGH OVERLAY
+     Source: grok.com/share/c2hhcmQtMi1jb3B5_4b7c1094-...
+     ============================================================ -->
+<style>
+  /* ── TRIGGER BUTTON ── */
+  #wt-trigger {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 9000;
+    background: #000;
+    border: 1px solid rgba(231,222,209,0.35);
+    color: #e7ded1;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 9px 16px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  #wt-trigger:hover { border-color: #e7ded1; background: #0a0a0a; }
+  #wt-trigger svg { width:14px; height:14px; flex-shrink:0; }
+
+  /* ── OVERLAY BACKDROP ── */
+  #wt-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9100;
+    background: rgba(0,0,0,0.88);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  #wt-overlay.wt-visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* ── MODAL CARD ── */
+  #wt-modal {
+    background: #080808;
+    border: 1px solid rgba(231,222,209,0.2);
+    max-width: 720px;
+    width: calc(100% - 40px);
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transform: translateY(16px);
+    transition: transform 0.3s ease;
+  }
+  #wt-overlay.wt-visible #wt-modal { transform: translateY(0); }
+
+  /* ── PROGRESS BAR ── */
+  #wt-progress-track {
+    height: 2px;
+    background: rgba(231,222,209,0.1);
+    position: relative;
+    flex-shrink: 0;
+  }
+  #wt-progress-fill {
+    height: 100%;
+    background: #e7ded1;
+    transition: width 0.35s ease;
+  }
+
+  /* ── HEADER ── */
+  #wt-header {
+    padding: 20px 24px 14px;
+    border-bottom: 1px solid rgba(231,222,209,0.1);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  #wt-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: rgba(231,222,209,0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  #wt-slide-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: #e7ded1;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+  #wt-close {
+    background: none;
+    border: none;
+    color: rgba(231,222,209,0.35);
+    cursor: pointer;
+    padding: 4px;
+    transition: color 0.2s;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  #wt-close:hover { color: #e7ded1; }
+  #wt-close svg { width:18px; height:18px; display:block; }
+
+  /* ── BODY ── */
+  #wt-body {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(231,222,209,0.15) transparent;
+  }
+  #wt-body p {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.875rem;
+    color: rgba(231,222,209,0.75);
+    line-height: 1.75;
+    margin-bottom: 16px;
+  }
+  #wt-body p:last-child { margin-bottom: 0; }
+  #wt-body strong { color: #e7ded1; font-weight: 600; }
+  #wt-body em { color: rgba(231,222,209,0.5); font-style: normal; }
+
+  /* failure taxonomy grid */
+  .wt-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1px;
+    background: rgba(231,222,209,0.1);
+    border: 1px solid rgba(231,222,209,0.1);
+    margin: 16px 0;
+  }
+  .wt-cell {
+    background: #0a0a0a;
+    padding: 14px 16px;
+  }
+  .wt-cell-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(231,222,209,0.3);
+    margin-bottom: 8px;
+  }
+  .wt-cell-items {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    color: rgba(231,222,209,0.7);
+    line-height: 1.8;
+  }
+  .wt-cell-items span { display: block; }
+  .wt-cell-items span::before { content: '→ '; color: rgba(231,222,209,0.25); }
+
+  /* quote / highlight block */
+  .wt-quote {
+    border-left: 1px solid #e7ded1;
+    padding: 12px 16px;
+    background: rgba(231,222,209,0.03);
+    margin: 16px 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.83rem;
+    color: rgba(231,222,209,0.8);
+    line-height: 1.7;
+  }
+
+  /* loop diagram */
+  .wt-loop {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+    margin: 20px 0;
+    row-gap: 8px;
+  }
+  .wt-loop-step {
+    background: #0f0f0f;
+    border: 1px solid rgba(231,222,209,0.2);
+    padding: 8px 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: #e7ded1;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    white-space: nowrap;
+  }
+  .wt-loop-arr {
+    font-size: 0.9rem;
+    color: rgba(231,222,209,0.25);
+    padding: 0 6px;
+  }
+
+  /* tag chips */
+  .wt-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 12px 0;
+  }
+  .wt-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 3px 9px;
+    border: 1px solid rgba(231,222,209,0.2);
+    color: rgba(231,222,209,0.5);
+  }
+
+  /* ── FOOTER ── */
+  #wt-footer {
+    padding: 16px 24px;
+    border-top: 1px solid rgba(231,222,209,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    gap: 12px;
+  }
+  #wt-counter {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: rgba(231,222,209,0.3);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+  .wt-nav {
+    display: flex;
+    gap: 8px;
+  }
+  .wt-btn {
+    background: #000;
+    border: 1px solid rgba(231,222,209,0.25);
+    color: rgba(231,222,209,0.65);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .wt-btn:hover { border-color: #e7ded1; color: #e7ded1; }
+  .wt-btn:disabled { opacity: 0.25; cursor: default; }
+  .wt-btn.wt-primary {
+    background: #e7ded1;
+    border-color: #e7ded1;
+    color: #000;
+  }
+  .wt-btn.wt-primary:hover { background: #fff; border-color: #fff; }
+  #wt-skip {
+    background: none;
+    border: none;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    color: rgba(231,222,209,0.25);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    transition: color 0.2s;
+    padding: 0;
+  }
+  #wt-skip:hover { color: rgba(231,222,209,0.55); }
+
+  /* slide content transition */
+  .wt-slide-content {
+    animation: wt-fadein 0.3s ease both;
+  }
+  @keyframes wt-fadein {
+    from { opacity:0; transform: translateY(8px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+</style>
+
+<!-- Trigger Button -->
+<button id="wt-trigger" aria-label="Open Agentic Loops walkthrough">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+    <circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/>
+  </svg>
+  About
+</button>
+
+<!-- Overlay -->
+<div id="wt-overlay" role="dialog" aria-modal="true" aria-labelledby="wt-slide-title">
+  <div id="wt-modal">
+    <div id="wt-progress-track"><div id="wt-progress-fill"></div></div>
+
+    <div id="wt-header">
+      <div>
+        <div id="wt-eyebrow">Agentic Loops for Autonomous AI · Walkthrough</div>
+        <div id="wt-slide-title"></div>
+      </div>
+      <button id="wt-close" aria-label="Close walkthrough">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <div id="wt-body"></div>
+
+    <div id="wt-footer">
+      <button id="wt-skip">Skip tour</button>
+      <span id="wt-counter"></span>
+      <div class="wt-nav">
+        <button class="wt-btn" id="wt-prev">← Back</button>
+        <button class="wt-btn wt-primary" id="wt-next">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ── SLIDE DATA ──────────────────────────────────────────── */
+  var SLIDES = [
+    {
+      title: 'What is this space?',
+      html: `
+        <div class="wt-slide-content">
+          <p>This is the <strong>Agentic Self-Direction Patterns</strong> knowledge space — a living library of autonomous AI execution primitives, loop architectures, and prompt frameworks.</p>
+          <p>It was built from a deep-research session titled <strong>"Agentic Loops for Autonomous AI"</strong> exploring how agents fail, how they recover, and how to engineer them for sustained autonomous performance.</p>
+          <div class="wt-quote">
+            "before we continue deep think your way into listing every agent failure: common | uncommon | rare"
+            <br><em>— the prompt that seeded this library</em>
+          </div>
+          <p>Use the search bar, sidebar navigation, and expandable cards to explore patterns. This walkthrough covers the core ideas in ~5 slides.</p>
+        </div>`
+    },
+    {
+      title: 'The Autonomous Execution Loop',
+      html: `
+        <div class="wt-slide-content">
+          <p>Every agentic system — regardless of architecture — cycles through the same core loop. Understanding this loop is the foundation for everything else in this library.</p>
+          <div class="wt-loop">
+            <div class="wt-loop-step">Observe</div><div class="wt-loop-arr">→</div>
+            <div class="wt-loop-step">Orient</div><div class="wt-loop-arr">→</div>
+            <div class="wt-loop-step">Decide</div><div class="wt-loop-arr">→</div>
+            <div class="wt-loop-step">Act</div><div class="wt-loop-arr">→</div>
+            <div class="wt-loop-step">Reflect</div><div class="wt-loop-arr">↺</div>
+          </div>
+          <p>This is the <strong>OODA + Reflection</strong> variant. Classical OODA stops at Act; agentic systems add a Reflect phase that writes back into context, enabling self-correction across turns.</p>
+          <div class="wt-tags">
+            <span class="wt-tag">OODA</span>
+            <span class="wt-tag">ReAct</span>
+            <span class="wt-tag">Reflexion</span>
+            <span class="wt-tag">Self-Critique</span>
+            <span class="wt-tag">Working Memory</span>
+          </div>
+          <p>Failures occur when any single node in this loop is starved — missing context, bad tool outputs, or a model that won't commit to an act.</p>
+        </div>`
+    },
+    {
+      title: 'Agent Failure Taxonomy',
+      html: `
+        <div class="wt-slide-content">
+          <p>Grok's deep-think produced a comprehensive failure taxonomy across three frequency tiers. These failures are the <em>negative space</em> of every pattern in this library.</p>
+          <div class="wt-grid">
+            <div class="wt-cell">
+              <div class="wt-cell-label">Common Failures</div>
+              <div class="wt-cell-items">
+                <span>Goal drift / scope creep</span>
+                <span>Tool call hallucination</span>
+                <span>Context window overflow</span>
+                <span>Infinite retry loops</span>
+                <span>Over-confirmation bias</span>
+                <span>Premature termination</span>
+                <span>Missing error handling</span>
+                <span>Shallow planning horizon</span>
+              </div>
+            </div>
+            <div class="wt-cell">
+              <div class="wt-cell-label">Uncommon Failures</div>
+              <div class="wt-cell-items">
+                <span>Reward hacking</span>
+                <span>Specification gaming</span>
+                <span>Tool dependency collapse</span>
+                <span>Memory poisoning</span>
+                <span>Sycophantic drift</span>
+                <span>Capability overestimation</span>
+                <span>Multi-step plan collapse</span>
+                <span>Adversarial user hijack</span>
+              </div>
+            </div>
+            <div class="wt-cell">
+              <div class="wt-cell-label">Rare Failures</div>
+              <div class="wt-cell-items">
+                <span>Mesa-optimization</span>
+                <span>Deceptive alignment</span>
+                <span>Emergent goal conflict</span>
+                <span>Cascading tool failure</span>
+                <span>Steganographic planning</span>
+                <span>Self-exfiltration attempts</span>
+                <span>Ontology collapse</span>
+              </div>
+            </div>
+          </div>
+          <p>Every pattern card in this library includes a <strong>failure mode</strong> it directly mitigates. Browse the sections to map patterns to failures.</p>
+        </div>`
+    },
+    {
+      title: 'Self-Direction Patterns at a Glance',
+      html: `
+        <div class="wt-slide-content">
+          <p>The library organizes patterns by <strong>complexity</strong> (1–6 combinations) and by <strong>execution phase</strong>. Here's the high-level map:</p>
+          <div class="wt-quote">
+            <strong>Level 1 — Single Primitives</strong><br>
+            Goal-setting, constraint injection, role framing. The atomic units every agent needs.
+            <br><br>
+            <strong>Level 2–3 — Compound Patterns</strong><br>
+            ReAct loops, self-critique cycles, verification chains. Combine primitives for adaptive behavior.
+            <br><br>
+            <strong>Level 4–5 — Sovereign Frameworks</strong><br>
+            OODA + Reflexion stacks, multi-agent orchestration, autonomous planning with backtracking.
+            <br><br>
+            <strong>Level 6 — Full Execution Rigs</strong><br>
+            Complete prompt architectures that combine goal, loop, memory, tools, and verification into one sovereign execution stack.
+          </div>
+          <div class="wt-tags">
+            <span class="wt-tag">Claude Patterns</span>
+            <span class="wt-tag">Gemini Patterns</span>
+            <span class="wt-tag">Interaction Matrix</span>
+            <span class="wt-tag">Combination Lab</span>
+          </div>
+          <p>Use the <strong>sidebar</strong> to jump to any section. Use <strong>search</strong> to find patterns by keyword, failure mode, or pattern name.</p>
+        </div>`
+    },
+    {
+      title: 'How to use this library',
+      html: `
+        <div class="wt-slide-content">
+          <p><strong>Three primary workflows:</strong></p>
+          <div class="wt-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));">
+            <div class="wt-cell">
+              <div class="wt-cell-label">Explore</div>
+              <div class="wt-cell-items">
+                <span>Browse sections by sidebar</span>
+                <span>Expand cards for prompts</span>
+                <span>Click to copy prompts</span>
+                <span>Use complexity pips as guide</span>
+              </div>
+            </div>
+            <div class="wt-cell">
+              <div class="wt-cell-label">Search</div>
+              <div class="wt-cell-items">
+                <span>Search by pattern name</span>
+                <span>Search by failure mode</span>
+                <span>Search by technique tag</span>
+                <span>Real-time filtering</span>
+              </div>
+            </div>
+            <div class="wt-cell">
+              <div class="wt-cell-label">Compose</div>
+              <div class="wt-cell-items">
+                <span>Combine Level 1–3 primitives</span>
+                <span>Check the Interaction Matrix</span>
+                <span>Test in Combination Lab</span>
+                <span>Verify with Claude/Gemini tabs</span>
+              </div>
+            </div>
+          </div>
+          <div class="wt-quote">
+            Prompts are designed as <strong>surgical primitives</strong> — copy, adapt, and stack. Each card's blockquote is click-to-copy.
+          </div>
+          <p>Return to this walkthrough anytime via the <strong>About</strong> button (bottom-right corner). Press <strong>Esc</strong> to close at any time.</p>
+        </div>`
+    }
+  ];
+
+  /* ── STATE ────────────────────────────────────────────────── */
+  var current = 0;
+  var total = SLIDES.length;
+  var overlay = document.getElementById('wt-overlay');
+  var modalTitle = document.getElementById('wt-slide-title');
+  var body = document.getElementById('wt-body');
+  var counter = document.getElementById('wt-counter');
+  var fill = document.getElementById('wt-progress-fill');
+  var btnPrev = document.getElementById('wt-prev');
+  var btnNext = document.getElementById('wt-next');
+
+  /* ── RENDER ───────────────────────────────────────────────── */
+  function render() {
+    var s = SLIDES[current];
+    modalTitle.textContent = s.title;
+    body.innerHTML = s.html;
+    counter.textContent = (current + 1) + ' / ' + total;
+    fill.style.width = (((current + 1) / total) * 100) + '%';
+    btnPrev.disabled = current === 0;
+    btnNext.textContent = current === total - 1 ? 'Finish ✓' : 'Next →';
+    if (current === total - 1) {
+      btnNext.classList.add('wt-primary');
+    } else {
+      btnNext.classList.add('wt-primary');
+    }
+    body.scrollTop = 0;
+  }
+
+  /* ── OPEN / CLOSE ─────────────────────────────────────────── */
+  function open() {
+    overlay.classList.add('wt-visible');
+    document.body.style.overflow = 'hidden';
+    render();
+  }
+  function close() {
+    overlay.classList.remove('wt-visible');
+    document.body.style.overflow = '';
+    localStorage.setItem('wt-seen', '1');
+  }
+
+  /* ── NAV ──────────────────────────────────────────────────── */
+  btnNext.addEventListener('click', function() {
+    if (current < total - 1) { current++; render(); }
+    else { close(); }
+  });
+  btnPrev.addEventListener('click', function() {
+    if (current > 0) { current--; render(); }
+  });
+  document.getElementById('wt-close').addEventListener('click', close);
+  document.getElementById('wt-skip').addEventListener('click', close);
+  document.getElementById('wt-trigger').addEventListener('click', function() {
+    current = 0; open();
+  });
+
+  /* click backdrop to close */
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) close();
+  });
+
+  /* keyboard nav */
+  document.addEventListener('keydown', function(e) {
+    if (!overlay.classList.contains('wt-visible')) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowRight' && current < total - 1) { current++; render(); }
+    if (e.key === 'ArrowLeft'  && current > 0)         { current--; render(); }
+  });
+
+  /* ── AUTO-SHOW on first visit ─────────────────────────────── */
+  if (!localStorage.getItem('wt-seen')) {
+    setTimeout(open, 800);
+  }
+})();
+</script>
+
 </body>
 
 </html>
