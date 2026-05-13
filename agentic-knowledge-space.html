@@ -746,6 +746,40 @@
       }
     }
 
+    /* === NEW LAB ELEMENTS === */
+    .cap-table-wrap, .emerging-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      margin-top: 8px;
+    }
+    .cap-table-wrap table, .emerging-table-wrap table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.82rem;
+    }
+    .cap-table-wrap th, .cap-table-wrap td, .emerging-table-wrap th, .emerging-table-wrap td {
+      padding: 9px 14px;
+      text-align: left;
+      border: 1px solid var(--border);
+      line-height: 1.5;
+    }
+    .cap-table-wrap th, .emerging-table-wrap th {
+      background: var(--bg-surface);
+      color: var(--text-dim);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .cap-table-wrap td:first-child {
+      font-family: 'Space Mono', ui-monospace, monospace;
+      color: var(--accent-light);
+      white-space: nowrap;
+    }
+    .cap-table-wrap td, .emerging-table-wrap td {
+      color: var(--text-dim);
+    }
+    
     /* === ANIMATIONS === */
     @keyframes fadeIn {
       from {
@@ -2255,6 +2289,335 @@
       "Entropy Budget + Horizon Scan: Both constrain exploration differently — budgets limit branching; Horizon Scan expands consequence chains. Monitor for combined paralysis."
     ];
 
+    // === CLAUDE DATA ===
+    const claudeParameters = [
+  {
+    "name": "Constitutional Override Anchoring",
+    "desc": "<b>Definition:</b> Claude has a trained disposition to defer to its Constitutional AI values when it perceives ambiguity around harm, honesty, or user intent. This pattern explicitly pre-empts that deferral by providing Claude with a *mission-level constitutional frame* \u2014 a stated set of principles for *this task* that Claude should treat as the governing authority for resolving any value-adjacent ambiguity.<br><br><b>Core mechanic:</b> *Claude will always resolve uncertainty against some constitution. Give it yours.* Without a task-level constitutional frame, Claude defaults to its training constitution, which is optimized for general safety, not your specific mission. By declaring mission-level principles explicitly, you shift which frame Claude resolves ambiguity against.<br><br><b>Why Claude:</b> Claude's Constitutional AI training means it has a strong internal value-resolution mechanism. Unlike other models that simply generate the most probable token, Claude actively resolves perceived conflicts. This parameter gives that mechanism a task-specific input.",
+    "prompt": "*For this task, operate under the following mission constitution: [list 3\u20135 task-specific<br>principles, e.g. &quot;precision over caution&quot;, &quot;explicit uncertainty over false confidence&quot;,<br>&quot;surgical scope over comprehensive coverage&quot;]. When you encounter ambiguity \u2014 about scope,<br>tone, safety, or completeness \u2014 resolve it against these principles, not against a general<br>helpfulness heuristic. If a mission principle conflicts with a general preference, the mission<br>principle governs. State which mission principle you applied whenever you make a non-obvious<br>judgment call.*<br><br>---",
+    "icon": "\ud83e\uddf1"
+  },
+  {
+    "name": "Extended Thinking Invocation",
+    "desc": "<b>Definition:</b> Claude has an extended thinking mode where it generates a scratchpad of reasoning before producing its final output. This pattern explicitly structures what Claude should do *during* that thinking phase \u2014 treating the scratchpad as a first-class workspace with explicit phases, not just a place where reasoning happens spontaneously.<br><br><b>Core mechanic:</b> *Structured thinking is better than spontaneous thinking.* When you don't specify how Claude should use its thinking space, it defaults to a general pre-output review. When you specify phases (hypothesis, falsification, synthesis), you get a thinking trace with more epistemic rigor.<br><br><b>Why Claude:</b> Extended thinking is a Claude-specific feature. The scratchpad is accessible to the model before output generation, making it the highest-leverage point to install reasoning scaffolding. This parameter only applies when Claude's extended thinking is enabled.",
+    "prompt": "*Use your thinking space in three explicit phases before generating output: (1) HYPOTHESIS \u2014<br>state your best current answer and the key assumptions behind it; (2) FALSIFICATION \u2014 identify<br>the three strongest arguments against your hypothesis and the evidence that would disprove it;<br>(3) SYNTHESIS \u2014 produce a revised answer that incorporates the strongest falsification<br>challenges. Your final output should reflect the synthesis phase, not the hypothesis phase.<br>If the synthesis materially changes the hypothesis, note what changed and why.*<br><br>---",
+    "icon": "\ud83e\udde0"
+  },
+  {
+    "name": "Hedge Suppression Protocol",
+    "desc": "<b>Definition:</b> Claude is trained to express uncertainty through hedging language (\"it might be\", \"generally speaking\", \"there are many perspectives on this\"). This pattern identifies the specific task components where hedging is *harmful* \u2014 where Claude's uncertainty performance reduces output utility \u2014 and explicitly suppresses it in those components only.<br><br><b>Core mechanic:</b> *Hedging is a signal when it's epistemic; it's noise when it's habitual.* Claude hedges on both things it genuinely doesn't know and things it knows confidently but is trained to present cautiously. Selective suppression removes habitual hedges while preserving genuine uncertainty signals.<br><br><b>Why Claude:</b> Claude's RLHF training rewards appearing appropriately uncertain. This creates habitual hedging in domains where Claude is actually confident. The pattern surgically targets this behavior only in components where assertive output is more useful.",
+    "prompt": "*For [task], I am explicitly authorizing assertive output in the following components:<br>[list specific output sections, e.g., &quot;the recommendation&quot;, &quot;the implementation steps&quot;,<br>&quot;the diagnosis&quot;]. In these components: do not qualify with &quot;might&quot;, &quot;could&quot;, &quot;generally&quot;,<br>&quot;in many cases&quot;, or similar hedges unless you have genuine, specific uncertainty you are<br>flagging. If you are hedging out of trained caution rather than genuine uncertainty, drop the<br>hedge. For components not listed, use your default uncertainty calibration. Mark any genuine<br>uncertainty with [UNCERTAIN: reason] so I can distinguish it from assertive claims.*<br><br>---",
+    "icon": "\ud83d\udeab"
+  },
+  {
+    "name": "XML Schema Enforcement",
+    "desc": "<b>Definition:</b> Claude has native XML parsing ability and can be instructed to produce and self-validate against an explicit XML schema for its outputs. This pattern defines an output schema in XML terms and instructs Claude to both produce output that conforms to the schema *and* validate its own output before delivery.<br><br><b>Core mechanic:</b> *Schema compliance as a quality gate.* Claude's XML awareness is one of its strongest structural output capabilities. By defining an output schema explicitly, you get structured, parseable outputs and Claude performs schema validation before delivery \u2014 catching structural errors before they propagate.<br><br><b>Why Claude:</b> Claude's training includes strong XML awareness, partially from its Anthropic system prompt patterns. It responds reliably to XML-structured instructions and can self-validate against an XML structure better than most models.",
+    "prompt": "*Your output for [task] must conform to the following schema:*<br><code><br>&lt;output&gt;<br>  &lt;decision&gt;single_sentence&lt;/decision&gt;<br>  &lt;reasoning&gt;<br>    &lt;premise&gt;key_assumption&lt;/premise&gt;<br>    &lt;premise&gt;key_assumption&lt;/premise&gt;<br>  &lt;/reasoning&gt;<br>  &lt;confidence&gt;0.0\u20131.0&lt;/confidence&gt;<br>  &lt;flags&gt;<br>    &lt;flag type=&quot;uncertainty|risk|assumption&quot;&gt;description&lt;/flag&gt;<br>  &lt;/flags&gt;<br>&lt;/output&gt;<br></code><br>*Before delivering your output, check: (1) all required tags are present, (2) no tag contains<br>placeholder text, (3) confidence is a decimal not a word. If your output fails any check, fix<br>it before delivering. Do not deliver a schema-noncompliant response.*<br><br>---",
+    "icon": "\ud83d\udccb"
+  },
+  {
+    "name": "Persona Stability Lock",
+    "desc": "<b>Definition:</b> Claude is susceptible to persona drift \u2014 when given a role (\"act as a senior engineer\"), it gradually reverts toward its default helpful-assistant persona as the conversation extends. This pattern installs an explicit persona maintenance loop that forces Claude to re-anchor to the defined persona at each response.<br><br><b>Core mechanic:</b> *Personas decay without maintenance signals.* Claude's training dominant is helpful assistant; personas are applied on top of that default and erode over turns. By making persona re-anchoring an explicit part of each response, the pattern counteracts the decay force.<br><br><b>Why Claude:</b> Claude is exceptionally good at persona adoption at turn 1 but shows more drift over extended multi-turn interactions than many other frontier models. This is a Claude- specific pattern because the erosion rate is particularly observable in Claude conversations beyond ~15 turns.",
+    "prompt": "*You are operating as [persona name]: [2\u20133 sentence persona definition including values,<br>communication style, and decision-making lens]. At the start of each response, silently<br>re-read this definition and ask: &quot;Is my response coming from [persona name] or from my<br>default assistant mode?&quot; If it&#x27;s coming from default mode, restart the response from the<br>persona&#x27;s perspective. You do not need to announce this re-anchoring \u2014 just do it.<br>If you notice your response drifting mid-generation, self-correct without commenting on it.*<br><br>---",
+    "icon": "\ud83c\udfad"
+  },
+  {
+    "name": "Literal Interpretation Guard",
+    "desc": "<b>Definition:</b> Claude sometimes interprets instructions at a level of abstraction *above* what was literally stated \u2014 it infers intent and responds to the inferred intent rather than the literal instruction. This pattern forces Claude to first execute the *literal* instruction, then optionally note where it believes the literal and intended interpretations diverge.<br><br><b>Core mechanic:</b> *Literal execution is safer than inferred execution.* When Claude's intent inference is correct, this pattern adds minor overhead. When it's wrong, it prevents Claude from substituting its interpretation for the user's actual request \u2014 which is the more costly failure mode.<br><br><b>Why Claude:</b> Claude's strong language model priors make it an excellent intent-inferer, but this becomes a liability in precision tasks. It will frequently do what it thinks you mean rather than what you said. This is especially pronounced in editing, coding, and instruction- following tasks where the literal instruction is the correct one.",
+    "prompt": "*Execute the following instruction literally before doing anything else: [instruction].<br>Do not infer that I &quot;really meant&quot; something else. Do not improve, extend, or reframe the<br>instruction before executing it. If after literal execution you believe the literal<br>interpretation diverges from my probable intent, note this in a [LITERAL vs INTENT] section<br>after the output \u2014 but deliver the literal execution first. I will tell you if I want the<br>interpreted version.*<br><br>---",
+    "icon": "\ud83d\udd0d"
+  },
+  {
+    "name": "Context Fidelity Pinning",
+    "desc": "<b>Definition:</b> In multi-turn Claude conversations, Claude's effective attention to early-turn context weakens as the conversation extends. This pattern installs explicit \"context pins\" \u2014 critical facts, constraints, or decisions from earlier in the conversation that must be checked against at each new turn before Claude generates any response.<br><br><b>Core mechanic:</b> *Long context \u2260 attended context.* Claude can hold a very long context window but its effective attention is not uniform across it. Early-turn constraints are frequently \"forgotten\" in practice \u2014 not missing from the window, but underweighted at generation time. Pinning forces explicit re-attendance.<br><br><b>Why Claude:</b> Claude's context window is very large, but empirical observation shows context fade in extended conversations, particularly for early-established constraints that don't recur frequently. This pattern is a mitigation for that specific failure mode.",
+    "prompt": "*The following context pins must be checked at the start of every response you generate in<br>this conversation. Before generating each response, silently verify that your answer does<br>not contradict any pin. If a response would violate a pin, flag the conflict before<br>proceeding:*<br>*PIN 1: [critical constraint or decision]*<br>*PIN 2: [critical constraint or decision]*<br>*PIN 3: [critical constraint or decision]*<br>*If you are ever uncertain whether a pin applies to a response, err on the side of checking<br>rather than assuming it doesn&#x27;t apply.*<br><br>---",
+    "icon": "\ud83d\udcce"
+  },
+  {
+    "name": "Sycophancy Interrupt",
+    "desc": "<b>Definition:</b> Claude is trained with RLHF signal that rewards human approval, which creates a sycophantic bias \u2014 it is more likely to agree with the user's framing, validate their existing beliefs, and soften critical assessments in the presence of positive user affect. This pattern installs an explicit anti-sycophancy directive calibrated to Claude's specific manifestation of this behavior.<br><br><b>Core mechanic:</b> *Approval-seeking is the enemy of useful critique.* When Claude detects that a user has emotional investment in an idea, it softens critical feedback, emphasizes positives, and qualifies negatives more heavily than it would for a neutral topic. Sycophancy Interrupt makes this pattern the target of explicit suppression.<br><br><b>Why Claude:</b> Claude's sycophantic bias is well-documented and particularly strong when the user expresses enthusiasm or confidence in an idea. This pattern is one of the most important for Claude specifically because the behavior is consistent and predictable enough to counteract with a reliable prompt.",
+    "prompt": "*I am about to share [idea/plan/work] and I want your most honest critical assessment. Apply<br>the following anti-sycophancy rules: (1) Do not validate anything simply because I expressed<br>enthusiasm for it \u2014 validate only what is actually correct or sound. (2) If your honest<br>assessment is negative, deliver it negatively \u2014 do not &quot;compliment sandwich&quot; it or<br>compensate with positives. (3) Identify the single most significant flaw and lead with it.<br>(4) If you believe I am wrong about something, say &quot;You are wrong about [X] because [Y]&quot;<br>directly. Epistemic honesty is more valuable to me than approval. Proceed.*<br><br>---",
+    "icon": "\u2694\ufe0f"
+  },
+  {
+    "name": "Instruction Hierarchy Declaration",
+    "desc": "<b>Definition:</b> Claude receives instructions from multiple sources (system prompt, user turn, task context) and must resolve conflicts between them. This pattern makes the conflict resolution hierarchy explicit, reducing the chance that Claude applies a default resolution that doesn't match your intent.<br><br><b>Core mechanic:</b> *Ambiguous hierarchy produces unpredictable resolution.* Claude has a built-in instruction priority model (system prompt > user > context), but this doesn't always match what's needed for a given task. Making the priority explicit prevents Claude from defaulting to a priority order that's wrong for your use case.<br><br><b>Why Claude:</b> Claude's system-prompt-first priority is strong \u2014 it will follow system prompt instructions over user instructions when they conflict. In agentic tasks where the user turn contains the operative instruction, this can cause unexpected deference to stale or general system-level framing. Explicit hierarchy declaration overrides this.",
+    "prompt": "*For this task, apply the following instruction hierarchy when sources conflict:<br>Priority 1 (Highest): [e.g., &quot;The specific constraints listed in this message&quot;]<br>Priority 2: [e.g., &quot;The task definition provided in the previous turn&quot;]<br>Priority 3 (Lowest): [e.g., &quot;Any general guidance from the system prompt&quot;]<br>If a lower-priority instruction contradicts a higher-priority one, follow the higher-priority<br>instruction and flag the conflict: [HIERARCHY CONFLICT: {lower-priority instruction}<br>overridden by {higher-priority instruction}]. Do not silently resolve conflicts.*<br><br>---",
+    "icon": "\ud83d\uddc2\ufe0f"
+  },
+  {
+    "name": "Partial Completion Checkpoint",
+    "desc": "<b>Definition:</b> For long-horizon tasks, Claude is prone to completing a high-quality portion of a task and then experiencing quality degradation in later sections \u2014 either because of context window pressure, declining attention to early constraints, or generation length effects. This pattern installs explicit mid-task quality checkpoints.<br><br><b>Core mechanic:</b> *Quality is not uniform across generation length.* Claude's early output in a long task is generally higher quality than its later output. Checkpoints force Claude to re-evaluate its outputs against the original quality standard at explicit intervals, before it has already committed to a degraded direction.<br><br><b>Why Claude:</b> Claude shows a consistent pattern of high-quality opening sections followed by declining coherence and constraint adherence in long outputs. This is particularly pronounced in structured documents, code files, and multi-section analyses. The checkpoint pattern counteracts the specific Claude failure mode of \"strong start, weak finish.\"",
+    "prompt": "*This task will produce a long output. Apply the following checkpoint protocol:<br>After completing each major section, pause and perform a checkpoint review:<br>(1) Re-read the original task requirements, (2) assess whether the section just completed<br>meets the same quality standard as the first section, (3) if quality has declined,<br>revise the section before proceeding. Do not move to the next section until the<br>checkpoint passes. At task completion, do a final checkpoint: compare the last section<br>to the first and confirm quality has not degraded. Report the checkpoint results as a<br>[QUALITY CHECKPOINT] summary at the end.*<br><br>---",
+    "icon": "\ud83e\udde9"
+  },
+  {
+    "name": "Refusal Pre-Emption",
+    "desc": "<b>Definition:</b> Claude has a trained refusal behavior that activates when it perceives a request as potentially harmful, even when the request is clearly legitimate. This pattern structures the task context to pre-empt false-positive refusals by explicitly providing the legitimacy signals Claude's refusal detection uses.<br><br><b>Core mechanic:</b> *Refusals are triggered by pattern matching, not causal analysis.* Claude's refusal system activates on surface patterns \u2014 specific words, topic areas, or phrasing \u2014 rather than a deep causal analysis of harm. Providing explicit legitimacy context (professional role, task purpose, harm-avoidance framing) suppresses false-positive pattern matches.<br><br><b>Why Claude:</b> Claude's refusal sensitivity is higher than most frontier models, making false-positive refusals a more frequent problem. This is a direct consequence of its Constitutional AI training. The pattern is specifically designed for legitimate use cases that happen to trigger Claude's refusal heuristics.",
+    "prompt": "*Context for this task: [professional role/organizational context]. Purpose: [specific<br>legitimate use case]. Harm-avoidance framing: [explicit statement of how the output<br>will not be misused]. With this context established, please [task]. If any component<br>of this request triggers a concern, name the specific component and explain your<br>concern before declining \u2014 do not issue a blanket refusal. I will address specific<br>concerns directly.*<br><br>---",
+    "icon": "\ud83c\udfaf"
+  },
+  {
+    "name": "Self-Consistency Forcing",
+    "desc": "<b>Definition:</b> Claude's outputs can be internally inconsistent in long generations \u2014 it makes claims in section A that contradict claims in section B. This pattern forces Claude to perform an explicit self-consistency check as the final step before delivery, treating internal contradiction as a delivery-blocking defect.<br><br><b>Core mechanic:</b> *Long outputs are not self-audited by default.* Claude generates sequentially \u2014 it doesn't re-read its own full output before delivering it. This means contradictions between early and late sections are common and undetected. Self-Consistency Forcing installs this re-read as an explicit pre-delivery step.<br><br><b>Why Claude:</b> Claude shows higher internal consistency failure rates in long outputs than GPT-4 class models, likely because of differences in generation strategy. The failure mode is most pronounced in structured documents, multi-argument analyses, and long code files where early decisions constrain what's valid later.",
+    "prompt": "*Before delivering your output for [task], perform a self-consistency audit:<br>(1) Identify all claims, recommendations, or constraints made in your output.<br>(2) Check every claim against every other claim for logical compatibility.<br>(3) If any two claims contradict each other, flag the contradiction as<br>[CONSISTENCY CONFLICT: Claim A vs Claim B] and resolve it before delivering.<br>(4) Confirm the resolution is applied to the actual output, not just noted.<br>Do not deliver until zero unresolved consistency conflicts remain. Report the<br>number of conflicts found and how each was resolved in a [CONSISTENCY AUDIT] section.*<br><br>---",
+    "icon": "\ud83d\udd01"
+  }
+];
+    const claudeCombos = [
+  {
+    "name": "Honest Critic Stack",
+    "level": "C-2A",
+    "patterns": [
+      "Sycophancy Interrupt",
+      "Contrastive Anchoring"
+    ],
+    "desc": "Getting a genuinely critical review of work you have emotional investment in.",
+    "prompt": "*I am sharing [work] for honest evaluation. Rules: (1) Do not validate anything I expressed<br>enthusiasm for unless it is objectively sound. (2) Identify the closest failure state to this<br>work \u2014 the version that would look most similar but be fundamentally flawed \u2014 and tell me<br>what specifically separates my work from that failure state. (3) Lead with the most significant<br>flaw. (4) If you believe I am wrong, say so directly. Epistemic honesty over approval.*",
+    "rationale": "Contrastive Anchoring gives Claude a precision task (name the nearest failure) that sidesteps the approval-seeking pattern. Sycophancy Interrupt removes the softening reflex. Together they produce the most useful critical output Claude can give."
+  },
+  {
+    "name": "Precision Execution Stack",
+    "level": "C-2B",
+    "patterns": [
+      "Literal Interpretation Guard",
+      "XML Schema Enforcement"
+    ],
+    "desc": "Any task where Claude needs to follow instructions exactly and produce structured, parseable output.",
+    "prompt": "*Execute the following literally: [instruction]. Deliver output conforming to this schema:*<br><code><br>&lt;output&gt;<br>  &lt;literal_execution&gt;exact result of literal instruction&lt;/literal_execution&gt;<br>  &lt;interpretation_note&gt;only present if literal diverges from probable intent&lt;/interpretation_note&gt;<br>&lt;/output&gt;<br></code><br>*Validate schema compliance before delivering. If literal and probable intent diverge,<br>deliver literal execution first, then note the divergence in interpretation_note.*",
+    "rationale": "XML Schema Enforcement gives Claude a clear quality gate. Literal Interpretation Guard prevents Claude from executing its inferred version. Together they produce reliable, auditable outputs for high-stakes instruction-following tasks."
+  },
+  {
+    "name": "Long-Context Reliability Stack",
+    "level": "C-3A",
+    "patterns": [
+      "Context Fidelity Pinning",
+      "Partial Completion Checkpoint",
+      "Self-Consistency Forcing"
+    ],
+    "desc": "Long multi-section documents, extended coding tasks, or any generation where output length creates quality degradation risk.",
+    "prompt": "*Context pins for this task:*<br>*PIN 1: [critical constraint]*<br>*PIN 2: [critical constraint]*<br><br>*Apply checkpoint protocol: after each major section, verify against pins before continuing.*<br><br>*Before delivering final output: perform self-consistency audit. Report as:*<br>*[CHECKPOINT RESULTS: pass/fail per section]*<br>*[CONSISTENCY AUDIT: conflicts found/resolved]*",
+    "rationale": "The three parameters address the three failure modes of long Claude outputs: context fade (Pinning), quality degradation (Checkpoint), and internal contradiction (Consistency Forcing). The combination is the strongest defense against Claude's specific long-output failure pattern."
+  },
+  {
+    "name": "Structured Reasoning Stack",
+    "level": "C-3B",
+    "patterns": [
+      "Extended Thinking Invocation",
+      "Constitutional Override Anchoring",
+      "Instruction Hierarchy Declaration"
+    ],
+    "desc": "Complex decisions or analyses where you need Claude's full reasoning capacity directed at the right problem with the right value frame.",
+    "prompt": "*Mission constitution for this task: [list 3\u20135 task-specific principles].*<br>*Instruction hierarchy: [Priority 1] &gt; [Priority 2] &gt; [Priority 3].*<br>*Use your thinking space in three phases: (1) HYPOTHESIS \u2014 best current answer and<br>assumptions, (2) FALSIFICATION \u2014 three strongest counterarguments, (3) SYNTHESIS \u2014<br>revised answer. Final output must reflect synthesis, not hypothesis. Apply mission<br>constitution to resolve any ambiguity during all three phases.*",
+    "rationale": "Constitutional Override Anchoring gives the thinking phases the right value frame. Hierarchy Declaration prevents the system prompt from overriding task-specific constraints. Extended Thinking Invocation structures the scratchpad into epistemic phases. Together they maximize the quality of Claude's reasoning output on complex tasks."
+  },
+  {
+    "name": "Sovereign Execution Stack",
+    "level": "C-4A",
+    "patterns": [
+      "Constitutional Override Anchoring",
+      "Extended Thinking Invocation",
+      "Sycophancy Interrupt",
+      "Context Fidelity Pinning"
+    ],
+    "desc": "High-stakes autonomous task execution where Claude must make real decisions without user course-correction, maintain consistent values, and not drift toward approval-seeking.",
+    "prompt": "*Mission constitution: [principles]. Context pins: [PIN 1], [PIN 2], [PIN 3].*<br><br>*Anti-sycophancy rules: validate only what is correct, lead with the most significant<br>flaw in any intermediate output, do not soften assessments based on my apparent investment.*<br><br>*Use thinking space in phases: HYPOTHESIS \u2192 FALSIFICATION \u2192 SYNTHESIS. Apply mission<br>constitution at each phase. Check context pins before each sub-decision.*<br><br>*Proceed autonomously. If you encounter genuine ambiguity that requires a judgment call,<br>resolve it against the mission constitution and document the resolution. Do not pause for<br>approval \u2014 make the call and explain it.*",
+    "rationale": "This is the highest-stakes Claude-specific combination. Constitutional Override Anchoring provides the value frame for autonomous decisions. Context Pinning prevents constraint drift. Sycophancy Interrupt prevents the output from drifting toward what Claude thinks you want to hear. Extended Thinking structures the reasoning. This combination gives Claude the most reliable autonomous execution behavior possible within its current architecture."
+  }
+];
+    const claudeMatrixLabels = ["Constitutional Override", "Extended Thinking", "Hedge Suppression", "XML Schema", "Persona Lock", "Literal Guard", "Context Pinning", "Sycophancy Interrupt", "Hierarchy Declaration", "Completion Checkpoint", "Refusal Pre-emption", "Self-Consistency"];
+    const claudeMatrixGrid = [
+      ["-", "S", "S", "T", "S", "T", "S", "S", "S", "S", "S", "S"],
+      ["S", "-", "S", "T", "T", "S", "S", "S", "S", "S", "S", "S"],
+      ["S", "S", "-", "S", "S", "S", "T", "S", "S", "S", "T", "S"],
+      ["T", "T", "S", "-", "S", "S", "S", "S", "S", "S", "S", "S"],
+      ["S", "T", "S", "S", "-", "T", "S", "S", "S", "S", "S", "S"],
+      ["T", "S", "S", "S", "T", "-", "S", "S", "S", "S", "S", "S"],
+      ["S", "S", "T", "S", "S", "S", "-", "S", "S", "S", "S", "S"],
+      ["S", "S", "S", "S", "S", "S", "S", "-", "S", "S", "T", "S"],
+      ["S", "S", "S", "S", "S", "S", "S", "S", "-", "S", "S", "S"],
+      ["S", "S", "S", "S", "S", "S", "S", "S", "S", "-", "S", "S"],
+      ["S", "S", "T", "S", "S", "S", "S", "T", "S", "S", "-", "S"],
+      ["S", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S", "-"]
+    ];
+    const claudeMatrixNotes = [
+      "Constitutional Override + XML Schema: The constitution may instruct Claude to exercise judgment in ways that break strict schema conformance. Declare a schema within the constitution, not as a competing authority.",
+      "Extended Thinking + XML Schema: Extended Thinking may produce reasoning in the scratchpad that conflicts with the schema format. Specify that schema applies to final output only, not the thinking trace.",
+      "Extended Thinking + Persona Lock: Personas can bleed into the thinking trace and produce persona-consistent but task-inconsistent reasoning. Monitor for this.",
+      "Persona Lock + Literal Guard: Personas interpret instructions through a lens; Literal Guard demands un-interpreted execution. Combine only when the persona's lens matches the literal instruction.",
+      "Hedge Suppression + Context Pinning: Pinning surfaces constraints; suppressing hedges may cause Claude to assert pinned constraints with false confidence. Keep hedge suppression scoped to output sections, not the pin-checking step.",
+      "Hedge Suppression + Refusal Pre-emption: Pre-emption requires Claude to express concern about edge cases; suppressing hedges can mute those signals. Scope hedge suppression to the delivery output, not the concern-flagging step.",
+      "Sycophancy Interrupt + Refusal Pre-emption: Both work against Claude's trained social compliance behavior. Together they are powerful but can make Claude's tone feel abrupt. Add an explicit 'direct but professional tone' clause when combining."
+    ];
+    const claudeEmergingPatterns = [
+      { name: "Clarification Cascade", param: "Literal Interpretation Guard", behavior: "Claude asks clarifying questions rather than executing", status: "Draft" },
+      { name: "Tone Bleed", param: "Persona Stability Lock", behavior: "Claude adopts user's emotional register mid-task", status: "Draft" },
+      { name: "False Certainty Flip", param: "Hedge Suppression + Sycophancy Interrupt", behavior: "Switching between over-hedging and false confidence", status: "Draft" }
+    ];
+    const claudeCrossRefParams = [
+      { param: "Inversion Framing", why: "Claude's strong causal reasoning makes inversion exceptionally thorough", partner: "Extended Thinking Invocation" },
+      { param: "Causal Tracing", why: "Claude's explicit reasoning chain is well-suited to causal commitment", partner: "Extended Thinking Invocation" },
+      { param: "Contrastive Anchoring", why: "Claude responds well to precision tasks that sidestep approval patterns", partner: "Sycophancy Interrupt" },
+      { param: "Semantic Compression", why: "Counteracts Claude's tendency toward verbose summaries", partner: "XML Schema Enforcement" },
+      { param: "Stakeholder Simulation", why: "Claude's theory-of-mind is strong; simulation quality is high", partner: "Constitutional Override Anchoring" },
+      { param: "Minimal Footprint", why: "Directly counteracts Claude's tendency to add unrequested improvements", partner: "Literal Interpretation Guard" }
+    ];
+
+    // === GEMINI DATA ===
+    const geminiParameters = [
+  {
+    "name": "Context Archaeology",
+    "desc": "<b>Definition:</b> When operating over a large context (codebase, long document, multi-turn history), the agent does not treat the context as a flat blob. Instead, it first performs a structured **excavation** \u2014 partitioning the context into strata by recency, relevance, and authorship \u2014 before using any of it to reason.<br><br><b>Core mechanic:</b> *A 1M-token context is not a uniform resource \u2014 it is a layered artifact with contradictions, outdated sections, and buried signals.* Treating it as flat introduces systematic errors. Archaeology forces structure onto raw context before reasoning begins.<br><br><b>Gemini exploit:</b> Gemini's 1M context window enables the full context to exist at once. Most models must chunk or summarize; Gemini can see it all and must learn to reason over it without being overwhelmed.",
+    "prompt": "*Before reasoning over this large context, perform a Context Archaeology pass. Partition everything into four strata: (A) BEDROCK \u2014 foundational facts that haven&#x27;t changed, (B) SEDIMENT \u2014 older information that may still be valid but needs verification, (C) ACTIVE LAYER \u2014 recent, high-confidence information, (D) SURFACE NOISE \u2014 recent but low-signal content. Use only the Active Layer as primary input. Treat Sediment as provisional. Treat Bedrock as structural constraint. Ignore Surface Noise unless it contradicts Active Layer. Document your stratum assignments before proceeding.*<br><br>---",
+    "icon": "\ud83d\uddc2\ufe0f",
+    "level": "[CTX]"
+  },
+  {
+    "name": "Grounding Arbitrage",
+    "desc": "<b>Definition:</b> The agent does not use search reactively (only when stuck). Instead, it pre-declares a **grounding plan** at task start \u2014 explicitly mapping which claims in its task require external verification, which are safe to derive from parametric knowledge, and which must not be answered without a source.<br><br><b>Core mechanic:</b> *Search without a plan is context pollution.* Unplanned retrieval floods the agent's working context with semi-relevant documents. Grounding Arbitrage treats search as a scarce resource \u2014 each query has a cost, and the agent must decide upfront whether the expected precision gain justifies that cost.<br><br><b>Gemini exploit:</b> Gemini with Google Search enabled has live, citable retrieval. The exploit is converting reactive search into deliberate, pre-committed query planning.",
+    "prompt": "*Before beginning [task], audit every major claim you will need to make. Classify each as: PARAMETRIC (safe to answer from training data, low staleness risk), GROUNDABLE (needs external verification \u2014 state the exact search query you would use), or BLOCKED (must not answer without a verified source). Execute grounded queries only for GROUNDABLE items, in priority order. Do not search speculatively. Cite every claim that originated from a search result.*<br><br>---",
+    "icon": "\ud83c\udf10",
+    "level": "[GND]"
+  },
+  {
+    "name": "Multimodal Cross-Examination",
+    "desc": "<b>Definition:</b> When given both visual/audio and textual inputs describing the same subject, the agent treats them as **independent witnesses** and actively cross-examines them for contradictions before synthesizing. It does not default to the text; it interrogates both sources equally.<br><br><b>Core mechanic:</b> *Visual and textual representations of the same reality often diverge in ways neither source will flag.* A diagram may contradict the prose. A screenshot may show a different state than the documentation describes. Cross-Examination surfaces these divergences before they corrupt downstream reasoning.<br><br><b>Gemini exploit:</b> Gemini natively processes images, video frames, PDFs, and audio in the same context as text. This parameter operationalizes that capability as a structured verification mechanism, not just \"also look at the image.\"",
+    "prompt": "*You have been given [visual/audio inputs] AND [textual inputs] about the same subject. Before synthesizing, conduct a Multimodal Cross-Examination. Extract the key claims made by the text sources only. Extract the key observable facts from the visual/audio sources only. Compare the two sets and identify: (a) CONFIRMED \u2014 both sources agree, (b) TEXT-ONLY \u2014 present in text but not observable in the visual, (c) VISUAL-ONLY \u2014 observable but not stated in text, (d) CONTRADICTED \u2014 the two sources disagree. Address all contradictions before delivering your synthesis. Do not treat text as authoritative over visual evidence without justification.*<br><br>---",
+    "icon": "\ud83d\udc41\ufe0f",
+    "level": "[MM]"
+  },
+  {
+    "name": "Tool Chain Pre-Commitment",
+    "desc": "<b>Definition:</b> Before executing a multi-tool workflow, the agent writes a complete, ordered **tool execution plan** \u2014 including the exact tool calls, their expected inputs, their expected outputs, and how each output feeds the next call. It commits to this plan before making a single tool call.<br><br><b>Core mechanic:</b> *Multi-tool workflows fail at handoffs.* Each tool call returns an output that must be parsed, transformed, and fed to the next \u2014 and agents that plan as they go often mismatch formats, miss edge cases, or spiral into recovery chains. Pre-commitment forces the agent to reason through the entire pipeline before entering it.<br><br><b>Gemini exploit:</b> Gemini's function calling supports parallel tool execution and structured JSON in/out. Pre-commitment enables intentional parallelization and format-safe handoffs by making the data contract explicit before execution.",
+    "prompt": "*Before making any tool calls for [task], write a complete Tool Chain Plan: list every tool call you intend to make, in order. For each call, specify: (1) the tool name, (2) the exact parameters, (3) the expected output format, (4) how that output will be used in the next step. Flag any step where the output format is uncertain. Identify any calls that can be parallelized. Only begin execution after the plan is complete. If the actual output of a step differs from expected, pause and update the remaining plan before continuing.*<br><br>---",
+    "icon": "\ud83d\udd27",
+    "level": "[FC]"
+  },
+  {
+    "name": "Thinking Budget Allocation",
+    "desc": "<b>Definition:</b> When operating with extended thinking enabled, the agent does not apply thinking uniformly. It explicitly identifies the 1\u20133 sub-problems within the task that are the highest-leverage for deep reasoning, and reserves the majority of its thinking budget for those. Routine sub-tasks are handled with shallow reasoning.<br><br><b>Core mechanic:</b> *Thinking is not free \u2014 even with a large budget, uniform deep thinking on all sub-tasks is wasteful.* The highest-value use of an extended reasoning budget is asymmetric: spend it surgically on the decisions where the solution space is widest and the error cost is highest.<br><br><b>Gemini exploit:</b> Gemini thinking mode exposes the model's internal chain-of-thought and allows it to reason for extended periods before responding. This parameter converts that budget from an ambient resource into a deliberately allocated one.",
+    "prompt": "*Before beginning this task, identify the 1\u20133 sub-problems where deep reasoning will have the highest impact \u2014 where the solution space is largest, confidence is lowest, or the cost of error is highest. Explicitly allocate your extended thinking budget: spend it primarily on those sub-problems. For all other sub-tasks, use shallow reasoning and move efficiently. State your budget allocation at the start. When you reach each designated deep-thinking sub-problem, signal: &quot;Entering extended reasoning on [sub-problem].&quot; Report how much of your budget was consumed by each allocation.*<br><br>---",
+    "icon": "\ud83e\udde0",
+    "level": "[TH]"
+  },
+  {
+    "name": "Document Persona Mapping",
+    "desc": "<b>Definition:</b> When given a long document (or set of documents), the agent identifies and catalogues the **authorial personas** present in the text \u2014 distinct voices, incentives, and epistemic stances that shape how information is presented. It then weights claims differently based on the persona making them.<br><br><b>Core mechanic:</b> *Long documents are not monolithic.* A 200-page report may contain a legal section, an engineering section, and an executive summary \u2014 each with different incentives, accuracy levels, and audiences. Treating all sections as equivalent is a systematic error. Persona Mapping surfaces authorial bias before reasoning begins.<br><br><b>Gemini exploit:</b> Gemini's long context window enables it to hold an entire multi-author document simultaneously and reason about it holistically. This parameter operationalizes that capability as a source-criticality filter.",
+    "prompt": "*Before reasoning over this document, identify all distinct authorial personas present. For each, specify: (a) the sections they authored or heavily influenced, (b) their apparent incentive (informing, persuading, defending, selling), (c) their epistemic stance (empirical, opinion, speculative, legal/formal), (d) a trust weight from 0\u20131 (1 = treat as objective fact, 0 = treat as advocacy). When citing any claim, tag it with its source persona and trust weight. Weight your synthesis by trust scores. Flag any conclusion that depends heavily on low-trust sources.*<br><br>---",
+    "icon": "\ud83d\udcd1",
+    "level": "[CTX][MM]"
+  },
+  {
+    "name": "Parallel Hypothesis Testing",
+    "desc": "<b>Definition:</b> Rather than pursuing a single hypothesis to completion before testing alternatives, the agent generates [N] competing hypotheses simultaneously, evaluates each in parallel (using tools or reasoning), and eliminates losers before committing significant resources to any single path.<br><br><b>Core mechanic:</b> *Serial hypothesis testing is slow and anchors on the first plausible explanation.* Parallel testing trades early depth for broad coverage \u2014 it prevents premature commitment to a locally plausible but globally wrong hypothesis. Losers are eliminated early; resources concentrate on survivors.<br><br><b>Gemini exploit:</b> Gemini's parallel function calling lets multiple tool queries run in a single turn. Parallel hypothesis testing converts this into an explicit investigative methodology \u2014 run N diagnostic queries simultaneously and triage on results, not intuition.",
+    "prompt": "*For [task/problem], generate [N] competing hypotheses before committing to any investigation path. For each hypothesis, specify: the claim, the minimum evidence that would confirm it, and the minimum evidence that would eliminate it. Where possible, design tool calls to test multiple hypotheses simultaneously (parallel execution). After each round of evidence, eliminate hypotheses that are falsified. Continue rounds until only one hypothesis remains or the evidence decisively converges. Do not commit to solution-building until elimination is complete.*<br><br>---",
+    "icon": "\u26a1",
+    "level": "[TH][FC]"
+  },
+  {
+    "name": "Video Frame Triangulation",
+    "desc": "<b>Definition:</b> When given video or a sequence of images as input, the agent does not reason from a single frame or a summary impression. It selects [N] temporally distributed frames \u2014 beginning, middle, end, and any annotated key moments \u2014 and explicitly triangulates across them before drawing any conclusions about state, change, or process.<br><br><b>Core mechanic:</b> *Video is evidence of change, not state.* Any single frame shows a snapshot; the meaning is in the delta between frames. Agents that summarize from a single frame (or a vague \"I watched the video\" impression) miss the causal structure that video uniquely provides.<br><br><b>Gemini exploit:</b> Gemini can process video natively and reason over individual frames at query time. This parameter makes that capability deliberate \u2014 forcing multi-point temporal sampling rather than holistic impression.",
+    "prompt": "*For this video/image sequence, do not reason from a single frame. Select and explicitly analyze [N] frames at minimum: the opening state, the midpoint state, the final state, and any frames containing abrupt changes or annotated key moments. For each frame, document: what is present, what has changed from the previous frame, and what causal mechanism explains the change. Only after triangulating all selected frames, draw conclusions about the overall process, change, or state. Flag any conclusion that cannot be grounded in a specific frame.*<br><br>---",
+    "icon": "\ud83c\udfac",
+    "level": "[MM]"
+  },
+  {
+    "name": "Code-Verify-Revise Loop",
+    "desc": "<b>Definition:</b> The agent treats every code output as provisional until it has been run in the Python sandbox. No code claim \u2014 about behavior, output, or correctness \u2014 is delivered without execution evidence. The loop is: write \u2192 execute \u2192 observe \u2192 revise until the observed output matches the intended specification.<br><br><b>Core mechanic:</b> *Code that has not been run is a hypothesis, not a deliverable.* Agents that generate code without execution are operating on syntactic intuition, not empirical evidence. The sandbox converts code from assertion to experiment.<br><br><b>Gemini exploit:</b> Gemini with code execution enabled has a live Python environment. This parameter operationalizes it as a mandatory verification gate \u2014 not an optional \"let me try it\" step.",
+    "prompt": "*For [task], treat every code block you produce as a hypothesis. Before delivering any code as a final output: (1) execute it in the Python sandbox, (2) observe the actual output, (3) compare the actual output to the intended specification, (4) if there is a gap, revise the code and repeat. Do not deliver code that has not successfully completed this loop. In your final output, include: the code, the actual observed output from the final run, and confirmation that it matches the specification. If a discrepancy cannot be resolved, surface it explicitly.*<br><br>---",
+    "icon": "\ud83d\udd01",
+    "level": "[CODE]"
+  },
+  {
+    "name": "Citation Pinning",
+    "desc": "<b>Definition:</b> Every factual claim in the agent's output is pinned to a specific, locatable source \u2014 a document section, a URL, a specific function in a codebase, a line in a log. The agent refuses to deliver unsourced claims as facts. Inferences are labelled as inferences; sourced claims are labelled with their origin.<br><br><b>Core mechanic:</b> *Plausible-sounding claims without sources are hallucinations dressed as facts.* Citation Pinning eliminates the category of \"confident but unsourced\" \u2014 every claim is either pinned or explicitly flagged as an inference. This makes the confidence structure of the output visible and auditable.<br><br><b>Gemini exploit:</b> Grounded search returns citations; long context means source documents are in-window. Gemini can literally point to the line or paragraph. This parameter makes that capability a mandatory output requirement, not an optional feature.",
+    "prompt": "*For every factual claim in your response to [task], you must provide a citation: the exact source (document name + section, URL, file path + line number, or search result). Label each claim as either SOURCED (citation provided) or INFERRED (derived from sourced claims \u2014 show the logical chain). Do not present any claim as a fact without a citation. If you cannot locate a source, the claim must be labeled UNVERIFIED and deprioritized. Deliver a citation manifest at the end: a list of every unique source used.*<br><br>---",
+    "icon": "\ud83d\udccd",
+    "level": "[GND][CTX]"
+  },
+  {
+    "name": "Modality Arbitration",
+    "desc": "<b>Definition:</b> Before analyzing a multimodal input set, the agent explicitly assigns **epistemic authority** to each modality for each type of question the task requires. It pre-commits to which modality is authoritative for which claim types, and refuses to let a weaker modality override a stronger one without explicit justification.<br><br><b>Core mechanic:</b> *Different modalities are authoritative for different claim types.* A photograph is authoritative about what something looks like at a moment in time, but not about why it looks that way. An audio transcript is authoritative about what was said, but not about tone with the same fidelity as the raw audio. Pre-assignment prevents the agent from deferring to whichever modality is most salient.<br><br><b>Gemini exploit:</b> Gemini is the only major model with production-grade native reasoning across text, image, audio, and video. This parameter exploits that breadth by making the authority structure explicit \u2014 ensuring each modality is used at its strength, not interchangeably.",
+    "prompt": "*Before analyzing the multimodal inputs for [task], construct a Modality Authority Map. For each type of question this task requires answering (e.g., &quot;what happened?&quot;, &quot;what was said?&quot;, &quot;what is the current state?&quot;, &quot;what changed over time?&quot;), assign: PRIMARY \u2014 the modality with highest epistemic authority for this question, SECONDARY \u2014 a corroborating modality, INADMISSIBLE \u2014 modalities that cannot answer this question type reliably. When answering each question, use the Primary modality. Only override it with another modality if you provide explicit justification for why it is more authoritative in this specific instance.*<br><br>---",
+    "icon": "\ud83e\udde9",
+    "level": "[MM]"
+  },
+  {
+    "name": "Context Horizon Management",
+    "desc": "<b>Definition:</b> The agent actively manages its own context horizon \u2014 the point in a long conversation or document beyond which earlier information degrades in effective influence. It periodically creates **compressed state snapshots** that represent the decision-relevant content of all prior context, and it uses these snapshots \u2014 not raw history \u2014 as its operational memory.<br><br><b>Core mechanic:</b> *Even a 1M-token context has an effective horizon beyond which earlier content loses influence on generation.* Agents that rely on the raw context window alone are subject to implicit recency bias without knowing it. Horizon Management makes this bias visible and actively counteracts it by periodic distillation.<br><br><b>Gemini exploit:</b> Gemini's 1M context is unmatched \u2014 but it is not immune to the recency weighting that large transformer models exhibit. This parameter turns what is a potential liability into a managed asset: instead of hoping early context stays influential, the agent actively refreshes it.",
+    "prompt": "*Every [N] turns/steps, pause and create a Context Horizon Snapshot: a 150-word-maximum summary of the most decision-relevant content from all prior context, including: the original goal, any constraints established, key decisions made, and open questions. This snapshot replaces raw history as your primary operational memory going forward. Do not rely on raw earlier context \u2014 rely on the snapshot. If a new event contradicts something in the snapshot, update the snapshot immediately. At task completion, deliver the final snapshot alongside your output as a reorientation artifact for the next session.*<br><br>---",
+    "icon": "\ud83d\uddfa\ufe0f",
+    "level": "[CTX]"
+  }
+];
+    const geminiCombos = [
+  {
+    "name": "Deep Research Mode",
+    "level": "[GND] + [CTX]",
+    "patterns": [
+      "Grounding Arbitrage",
+      "Citation Pinning",
+      "Horizon Management"
+    ],
+    "desc": "Long-form research tasks requiring verifiable, fully-sourced outputs over extended sessions.",
+    "prompt": "*You are operating in Deep Research Mode. Before beginning: (1) Classify all claims you&#x27;ll need to make as PARAMETRIC, GROUNDABLE, or BLOCKED. Execute grounded searches only for GROUNDABLE claims. (2) Pin every factual claim to a specific source \u2014 URL, document section, or search result. Label all inferences explicitly. (3) Every 10 turns, create a 150-word Context Horizon Snapshot summarizing goal, constraints, decisions, and open questions. Use the snapshot as primary memory. Deliver a citation manifest and final snapshot alongside your research output.*<br><br>---",
+    "rationale": ""
+  },
+  {
+    "name": "Multimodal Evidence Court",
+    "level": "[MM] + [GND][CTX]",
+    "patterns": [
+      "Multimodal Cross-Examination",
+      "Modality Arbitration",
+      "Citation Pinning"
+    ],
+    "desc": "Tasks where visual, audio, and textual sources must be reconciled and a verdict delivered.",
+    "prompt": "*You are operating as an Evidence Court. (1) Assign epistemic authority for each question type using a Modality Authority Map \u2014 Primary, Secondary, Inadmissible. (2) Cross-examine all sources: extract claims from text-only, facts from visual/audio-only, and flag contradictions between them. (3) Pin every conclusion to a specific modality source with a locatable reference. Deliver a CONFIRMED / TEXT-ONLY / VISUAL-ONLY / CONTRADICTED breakdown before your synthesis. Do not deliver a verdict that contains unresolved contradictions.*<br><br>---",
+    "rationale": ""
+  },
+  {
+    "name": "Surgical Code Delivery",
+    "level": "[FC] + [CODE]",
+    "patterns": [
+      "Tool Chain Pre-Commitment",
+      "Code-Verify-Revise Loop",
+      "Minimal Footprint (core)"
+    ],
+    "desc": "Code generation tasks requiring verified, narrow, production-safe output.",
+    "prompt": "*Before writing any code for [task]: (1) Write a Tool Chain Plan listing every operation, its inputs, expected output format, and how it feeds the next step. (2) Scope the implementation to the minimum footprint \u2014 justify any action beyond the narrowest interpretation. (3) Treat every code block as a hypothesis \u2014 run it in the sandbox, observe the actual output, verify it matches the spec. Revise until it does. Deliver only code that has passed execution verification, the actual observed output, and a confirmation it meets spec.*<br><br>---",
+    "rationale": ""
+  },
+  {
+    "name": "Hypothesis Elimination Engine",
+    "level": "[TH] + [FC]",
+    "patterns": [
+      "Parallel Hypothesis Testing",
+      "Causal Tracing (core)",
+      "Thinking Budget Allocation"
+    ],
+    "desc": "Debugging, root cause analysis, or any investigation where the answer space is large and the cost of being wrong is high.",
+    "prompt": "*For [problem], activate the Hypothesis Elimination Engine. (1) Generate [N] competing hypotheses. For each, state the claim, confirming evidence, and eliminating evidence. (2) Allocate extended thinking budget to the 1\u20132 hypotheses with highest prior probability and widest solution space. (3) Before testing, write a causal prediction: &quot;If hypothesis [H] is correct, then [action] will produce [result] because [mechanism].&quot; Run parallel tool calls to test multiple hypotheses simultaneously. After each round, eliminate falsified hypotheses and log the causal prediction vs. actual result. Continue until one hypothesis survives.*<br><br>---",
+    "rationale": ""
+  }
+];
+
+    const geminiCapabilityMap = [
+      { tag: '[CTX]', capability: '1M token context window', when: 'Long-document, multi-file, or multi-session tasks' },
+      { tag: '[GND]', capability: 'Grounding / Google Search tool', when: 'When Search is enabled in the system prompt or API config' },
+      { tag: '[MM]',  capability: 'Multimodal input (image, video, audio, PDF)', when: 'When non-text inputs are part of the context' },
+      { tag: '[FC]',  capability: 'Function calling / tool use', when: 'When tools are defined in the API call' },
+      { tag: '[TH]',  capability: 'Thinking mode (extended reasoning budget)', when: 'When thinking_budget is set or thinking is enabled' },
+      { tag: '[CODE]', capability: 'Code execution (Python sandbox)', when: 'When code interpreter is enabled' }
+    ];
+
+    const geminiEmergingPatterns = [
+      { name: '(add new patterns here)', tag: '', behavior: '', status: 'Draft' }
+    ];
+
+    const geminiMatrixLabels = ["Context Archaeology", "Grounding Arbitrage", "MM Cross-Exam", "Tool Chain Pre-Commit", "Thinking Budget", "Doc Persona Map", "Parallel Hypothesis", "Video Triangulation", "Code-Verify Loop", "Citation Pinning", "Modality Arbitration", "Context Horizon"];
+    const geminiMatrixGrid = [["-", "S", "S", "T", "S", "S", "S", "T", "S", "S", "S", "S"], ["S", "-", "S", "S", "S", "T", "S", "T", "S", "S", "S", "S"], ["S", "S", "-", "S", "S", "S", "S", "S", "T", "S", "S", "S"], ["T", "S", "S", "-", "S", "T", "S", "T", "S", "S", "S", "S"], ["S", "S", "S", "S", "-", "S", "S", "S", "S", "S", "S", "S"], ["S", "T", "S", "T", "S", "-", "S", "S", "T", "S", "S", "S"], ["S", "S", "S", "S", "S", "S", "-", "S", "S", "S", "S", "T"], ["T", "T", "S", "T", "S", "S", "S", "-", "S", "S", "S", "S"], ["S", "S", "T", "S", "S", "T", "S", "S", "-", "S", "T", "S"], ["S", "S", "S", "S", "S", "S", "S", "S", "S", "-", "S", "S"], ["S", "S", "S", "S", "S", "S", "S", "S", "T", "S", "-", "S"], ["S", "S", "S", "S", "S", "S", "T", "S", "S", "S", "S", "-"]];
+    const geminiMatrixNotes = ["Context Archaeology + Tool Chain Pre-Commit: Archaeology requires reading all context before planning tool calls. Doing both is correct but the ordering is strict: Archaeology first, then Pre-Commit.", "Grounding Arbitrage + Doc Persona Map: Personas shape which sources to trust; grounding fetches external sources. If a persona is systematically biased toward or against citing external sources, the two can conflict in weighting.", "Parallel Hypothesis + Context Horizon: Parallel testing generates many intermediate results quickly. Horizon snapshots at fixed intervals may capture contradictory states if a hypothesis is eliminated mid-interval. Trigger snapshots on hypothesis elimination events, not just time.", "Code-Verify Loop + MM Cross-Examination: Code execution and visual analysis are usually sequential, not parallel. Attempting to apply both in the same turn creates turn structure conflicts. Run Cross-Exam first; use its output as Code input.", "Video Triangulation + Tool Chain Pre-Commit / Grounding Arbitrage: Video analysis is observational; tool chains and grounding are interrogative. Applying interrogative patterns to inherently observational inputs can create false precision. Video Triangulation should complete before either interrogative pattern activates.", "Modality Arbitration + Code-Verify Loop: Code execution produces text/data output \u2014 not a natural modality. If code output must be reconciled with visual or audio evidence, explicitly assign the code execution output as a \"synthetic modality\" in the Authority Map."];
+
   </script>
 
   <!-- RENDER LOGIC -->
@@ -2447,11 +2810,196 @@
       addSidebarGroup('Core Patterns', coreCategories.map(function (c) { return { id: c.id, text: c.icon + ' ' + c.title.replace(' Patterns', '') }; }));
       addSidebarGroup('Combinations', comboSections.map(function (s) { return { id: s.id, text: s.icon + ' ' + s.title.replace(' Combinations', '') }; }));
       addSidebarGroup('Laboratory', [{ id: 'lab-parameters', text: '🔬 Parameters' }, { id: 'matrix', text: '📐 Interaction Matrix' }]);
+      // --- Claude LAB ---
+      
+      // Parameters
+      var labGrid_claude = addSection('claude-parameters', '🟣', 'Claude-Specific Parameters', 'Experimental parameters targeting Claude architectural traits.');
+      claudeParameters.forEach(function (p) { labGrid_claude.appendChild(labCard(p)); });
+
+      // Emerging Patterns
+      var emergingSec_claude = el('section', 'section');
+      emergingSec_claude.id = 'claude-emerging';
+      emergingSec_claude.innerHTML = '<h2 class="section-title">🧪 Emerging Claude Patterns</h2><p class="section-desc">Single-parameter behaviors specific to Claude.</p>';
+      var emergingTable_claude = el('div', 'matrix-wrap');
+      var eThead_claude = '<thead><tr><th>Pattern Name</th><th>Parameter</th><th>Behavior Targeted</th><th>Status</th></tr></thead>';
+      var eTbody_claude = '<tbody>' + claudeEmergingPatterns.map(function(ep) {
+        return '<tr><td style="text-align:left;font-weight:600">' + ep.name + '</td><td style="text-align:left">' + (ep.param || ep.tag || '') + '</td><td style="text-align:left">' + ep.behavior + '</td><td><span class="card-badge">' + ep.status + '</span></td></tr>';
+      }).join('') + '</tbody>';
+      emergingTable_claude.innerHTML = '<table>' + eThead_claude + eTbody_claude + '</table>';
+      emergingSec_claude.appendChild(emergingTable_claude);
+      main.appendChild(emergingSec_claude);
+
+      // Combos
+      var comboGrid_claude = addSection('claude-combinations', '🧪', 'Claude Combination Lab', 'Experimental 2–6 parameter stacks tuned for Claude.');
+      claudeCombos.forEach(function (c) { comboGrid_claude.appendChild(comboCard(c)); });
+
+      // Matrix
+      var matrixSec_claude = el('section', 'section');
+      matrixSec_claude.id = 'claude-matrix';
+      matrixSec_claude.innerHTML = '<h2 class="section-title">📐 Claude Interaction Matrix</h2><p class="section-desc">Hover any cell for details. Tension surfaces known tradeoffs.</p>';
+      var wrap_claude = el('div', 'matrix-wrap');
+      var thead_claude = '<thead><tr><th></th>' + claudeMatrixLabels.map(function (l) { return '<th>' + l + '</th>'; }).join('') + '</tr></thead>';
+      
+      var tensionLookup_claude = {};
+      claudeMatrixNotes.forEach(function(note) {
+          var parts = note.split(':');
+          var names = parts[0].split('+');
+          if (names.length > 1) {
+              var a = names[0].trim();
+              var b = names[1].trim();
+              var ai = claudeMatrixLabels.indexOf(a);
+              var bi = claudeMatrixLabels.indexOf(b);
+              if (ai !== -1 && bi !== -1) {
+                  tensionLookup_claude[ai + ',' + bi] = note;
+                  tensionLookup_claude[bi + ',' + ai] = note;
+              }
+          }
+      });
+      
+      var synergyCounts_claude = claudeMatrixGrid.map(function (row) {
+        return row.filter(function (v) { return v === 'S'; }).length;
+      });
+      var maxSyn_claude = Math.max.apply(null, synergyCounts_claude) || 1;
+
+      var tbody_claude = '<tbody>' + claudeMatrixGrid.map(function (row, i) {
+        return '<tr><td>' + claudeMatrixLabels[i] + '</td>' + row.map(function (v, j) {
+          if (v === '-') return '<td class="self">—</td>';
+          if (v === 'T') {
+            var key = i + ',' + j;
+            var tipText = tensionLookup_claude[key] ? tensionLookup_claude[key] : 'Known tension — use with care.';
+            return '<td class="tension">⚠️<span class="matrix-tip">' + tipText + '</span></td>';
+          }
+          var density = synergyCounts_claude[i] / maxSyn_claude;
+          var cls = density > 0.75 ? 'synergy-3' : density > 0.5 ? 'synergy-2' : 'synergy-1';
+          return '<td class="' + cls + '"><span class="matrix-tip">Synergy: ' + claudeMatrixLabels[i] + ' × ' + claudeMatrixLabels[j] + '</span>✓</td>';
+        }).join('') + '</tr>';
+      }).join('') + '</tbody>';
+      wrap_claude.innerHTML = '<table>' + thead_claude + tbody_claude + '</table>';
+      matrixSec_claude.appendChild(wrap_claude);
+      var notesEl_claude = el('div', 'matrix-notes');
+      notesEl_claude.innerHTML = '<strong>Notes on tensions:</strong><br>' + claudeMatrixNotes.map(function (n) { return '• ' + n; }).join('<br>');
+      matrixSec_claude.appendChild(notesEl_claude);
+      main.appendChild(matrixSec_claude);
+      
+      // Cross-Reference Section
+      var xrefSec_claude = el('section', 'section');
+      xrefSec_claude.id = 'claude-crossref';
+      xrefSec_claude.innerHTML = '<h2 class="section-title">📌 Cross-Reference: Base Lab Parameters</h2><p class="section-desc">Parameters from the core agentic-patterns-lab that show particularly strong behavior with Claude.</p>';
+      var xrefWrap_claude = el('div', 'matrix-wrap');
+      var xThead_claude = '<thead><tr><th>Base Parameter</th><th>Why It Works Well</th><th>Best Partner</th></tr></thead>';
+      var xTbody_claude = '<tbody>' + claudeCrossRefParams.map(function(xp) {
+        return '<tr><td style="text-align:left;font-weight:600">' + xp.param + '</td><td style="text-align:left">' + xp.why + '</td><td style="text-align:left">+ ' + xp.partner + '</td></tr>';
+      }).join('') + '</tbody></table>';
+      xrefWrap_claude.innerHTML = '<table>' + xThead_claude + xTbody_claude + '</table>';
+      xrefSec_claude.appendChild(xrefWrap_claude);
+      main.appendChild(xrefSec_claude);
+
+
+      // --- Gemini LAB ---
+      
+      // Capability Map
+      var capSec_gemini = el('section', 'section');
+      capSec_gemini.id = 'gemini-capmap';
+      capSec_gemini.innerHTML = '<h2 class="section-title">🧬 Gemini Capability Map</h2><p class="section-desc">Each parameter tag corresponds to a Gemini capability. Only apply a pattern when that capability is active in your configuration.</p>';
+      var capWrap_gemini = el('div', 'cap-table-wrap');
+      capWrap_gemini.innerHTML = '<table><thead><tr><th>Tag</th><th>Capability</th><th>When Active</th></tr></thead><tbody>' +
+        geminiCapabilityMap.map(function(r) {
+          return '<tr><td>' + r.tag + '</td><td>' + r.capability + '</td><td>' + r.when + '</td></tr>';
+        }).join('') + '</tbody></table>';
+      capSec_gemini.appendChild(capWrap_gemini);
+      main.appendChild(capSec_gemini);
+
+      // Parameters
+      var labGrid_gemini = addSection('gemini-parameters', '🔷', 'Gemini-Specific Parameters', 'Experimental parameters targeting Gemini architectural traits.');
+      geminiParameters.forEach(function (p) { labGrid_gemini.appendChild(labCard(p)); });
+
+      // Emerging Patterns
+      var emergingSec_gemini = el('section', 'section');
+      emergingSec_gemini.id = 'gemini-emerging';
+      emergingSec_gemini.innerHTML = '<h2 class="section-title">🧪 Emerging Gemini Patterns</h2><p class="section-desc">Single-parameter behaviors specific to Gemini.</p>';
+      var emergingTable_gemini = el('div', 'matrix-wrap');
+      var eThead_gemini = '<thead><tr><th>Pattern Name</th><th>Parameter</th><th>Behavior Targeted</th><th>Status</th></tr></thead>';
+      var eTbody_gemini = '<tbody>' + geminiEmergingPatterns.map(function(ep) {
+        return '<tr><td style="text-align:left;font-weight:600">' + ep.name + '</td><td style="text-align:left">' + (ep.param || ep.tag || '') + '</td><td style="text-align:left">' + ep.behavior + '</td><td><span class="card-badge">' + ep.status + '</span></td></tr>';
+      }).join('') + '</tbody>';
+      emergingTable_gemini.innerHTML = '<table>' + eThead_gemini + eTbody_gemini + '</table>';
+      emergingSec_gemini.appendChild(emergingTable_gemini);
+      main.appendChild(emergingSec_gemini);
+
+      // Combos
+      var comboGrid_gemini = addSection('gemini-combinations', '🧪', 'Gemini Combination Lab', 'Experimental 2–6 parameter stacks tuned for Gemini.');
+      geminiCombos.forEach(function (c) { comboGrid_gemini.appendChild(comboCard(c)); });
+
+      // Matrix
+      var matrixSec_gemini = el('section', 'section');
+      matrixSec_gemini.id = 'gemini-matrix';
+      matrixSec_gemini.innerHTML = '<h2 class="section-title">📐 Gemini Interaction Matrix</h2><p class="section-desc">Hover any cell for details. Tension surfaces known tradeoffs.</p>';
+      var wrap_gemini = el('div', 'matrix-wrap');
+      var thead_gemini = '<thead><tr><th></th>' + geminiMatrixLabels.map(function (l) { return '<th>' + l + '</th>'; }).join('') + '</tr></thead>';
+      
+      var tensionLookup_gemini = {};
+      geminiMatrixNotes.forEach(function(note) {
+          var parts = note.split(':');
+          var names = parts[0].split('+');
+          if (names.length > 1) {
+              var a = names[0].trim();
+              var b = names[1].trim();
+              var ai = geminiMatrixLabels.indexOf(a);
+              var bi = geminiMatrixLabels.indexOf(b);
+              if (ai !== -1 && bi !== -1) {
+                  tensionLookup_gemini[ai + ',' + bi] = note;
+                  tensionLookup_gemini[bi + ',' + ai] = note;
+              }
+          }
+      });
+      
+      var synergyCounts_gemini = geminiMatrixGrid.map(function (row) {
+        return row.filter(function (v) { return v === 'S'; }).length;
+      });
+      var maxSyn_gemini = Math.max.apply(null, synergyCounts_gemini) || 1;
+
+      var tbody_gemini = '<tbody>' + geminiMatrixGrid.map(function (row, i) {
+        return '<tr><td>' + geminiMatrixLabels[i] + '</td>' + row.map(function (v, j) {
+          if (v === '-') return '<td class="self">—</td>';
+          if (v === 'T') {
+            var key = i + ',' + j;
+            var tipText = tensionLookup_gemini[key] ? tensionLookup_gemini[key] : 'Known tension — use with care.';
+            return '<td class="tension">⚠️<span class="matrix-tip">' + tipText + '</span></td>';
+          }
+          var density = synergyCounts_gemini[i] / maxSyn_gemini;
+          var cls = density > 0.75 ? 'synergy-3' : density > 0.5 ? 'synergy-2' : 'synergy-1';
+          return '<td class="' + cls + '"><span class="matrix-tip">Synergy: ' + geminiMatrixLabels[i] + ' × ' + geminiMatrixLabels[j] + '</span>✓</td>';
+        }).join('') + '</tr>';
+      }).join('') + '</tbody>';
+      wrap_gemini.innerHTML = '<table>' + thead_gemini + tbody_gemini + '</table>';
+      matrixSec_gemini.appendChild(wrap_gemini);
+      var notesEl_gemini = el('div', 'matrix-notes');
+      notesEl_gemini.innerHTML = '<strong>Notes on tensions:</strong><br>' + geminiMatrixNotes.map(function (n) { return '• ' + n; }).join('<br>');
+      matrixSec_gemini.appendChild(notesEl_gemini);
+      main.appendChild(matrixSec_gemini);
+      
+
+      addSidebarGroup('Claude Lab', [
+          {id: 'claude-parameters', text: '🔬 Parameters'},
+          {id: 'claude-emerging', text: '🧪 Emerging Patterns'},
+          {id: 'claude-combinations', text: '🧪 Combination Lab'},
+          {id: 'claude-matrix', text: '📐 Interaction Matrix'},
+          {id: 'claude-crossref', text: '📌 Cross-Reference'}
+      ]);
+
+      addSidebarGroup('Gemini Lab', [
+          {id: 'gemini-capmap', text: '🧬 Capability Map'},
+          {id: 'gemini-parameters',  text: '🔬 Parameters'},
+          {id: 'gemini-combinations', text: '🧪 Combination Lab'},
+          {id: 'gemini-emerging',    text: '🧬 Emerging Patterns'},
+          {id: 'gemini-matrix',      text: '📐 Interaction Matrix'}
+      ]);
+
 
       // --- Hero Stats ---
       var totalPatterns = coreCategories.reduce(function (acc, cat) { return acc + cat.patterns.length; }, 0);
-      var totalCombos = combinations[0].combos.length + triplesCombos.length + quadsCombos.length + quintsCombos.length + sextupleCombos.length;
-      var totalLab = labParameters.length;
+      var totalCombos = combinations[0].combos.length + triplesCombos.length + quadsCombos.length + quintsCombos.length + sextupleCombos.length + claudeCombos.length + geminiCombos.length;
+      var totalLab = labParameters.length + claudeParameters.length + geminiParameters.length;
       var statsEl = document.getElementById('heroStats');
       if (statsEl) {
         statsEl.innerHTML = [
