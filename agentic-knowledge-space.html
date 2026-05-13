@@ -3373,6 +3373,23 @@
   }
   #wt-skip:hover { color: rgba(231,222,209,0.55); }
 
+  /* ASCII mascot */
+  .wt-mascot {
+    font-family: 'Space Mono', 'Courier New', monospace;
+    font-size: 0.78rem;
+    line-height: 1.55;
+    color: rgba(231,222,209,0.6);
+    background: rgba(231,222,209,0.03);
+    border: 1px solid rgba(231,222,209,0.1);
+    padding: 16px 20px;
+    margin: 16px 0;
+    white-space: pre;
+    overflow-x: auto;
+    letter-spacing: 0.02em;
+    text-align: left;
+    display: block;
+  }
+
   /* slide content transition */
   .wt-slide-content {
     animation: wt-fadein 0.3s ease both;
@@ -3432,11 +3449,7 @@
       html: `
         <div class="wt-slide-content">
           <p>This is the <strong>Agentic Self-Direction Patterns</strong> knowledge space — a living library of autonomous AI execution primitives, loop architectures, and prompt frameworks.</p>
-          <p>It was built from a deep-research session titled <strong>"Agentic Loops for Autonomous AI"</strong> exploring how agents fail, how they recover, and how to engineer them for sustained autonomous performance.</p>
-          <div class="wt-quote">
-            "before we continue deep think your way into listing every agent failure: common | uncommon | rare"
-            <br><em>— the prompt that seeded this library</em>
-          </div>
+
           <p>Use the search bar, sidebar navigation, and expandable cards to explore patterns. This walkthrough covers the core ideas in ~5 slides.</p>
         </div>`
     },
